@@ -7,7 +7,7 @@ typedef struct {
     u_16 xSize; /* 显示设备的宽度 */
     u_16 ySize; /* 显示设备的高度 */
     void (*SetPixel)(u_16 x, u_16 y, GUI_COLOR Color); /* 显示某个像素 */
-    GUI_COLOR (*GetPixel)(u_16 x, u_16 y);            /* 读取某个像素 */
+    GUI_COLOR (*GetPixel)(u_16 x, u_16 y);             /* 读取某个像素 */
     /* 显示一个区域到屏幕,pBuffer是一块宽度为rowlen的屏幕缓冲区 */
     void (*DispArea)(u_16 x,
         u_16 y,

@@ -63,6 +63,21 @@ void GUI_fastfree(void *ptr)
 }
 
 /* GUI图形硬件物理层接口 */
+static GUI_COLOR Phy_GetPixel(u_16 x, u_16 y);
+static void Phy_SetPixel(u_16 x, u_16 y, GUI_COLOR Color);
+static void Phy_DispArea(u_16 x, u_16 y, u_16 xSize, u_16 ySize,
+    GUI_COLOR *pBuffer, u_16 rowlen);
+
+/* 图形硬件初始化 */
+void GUI_Phy_Init(GUI_PHY_INFO *phys)
+{
+    phys->xSize = sim_getWidth();
+    phys->ySize = sim_getHeight();
+    phys->GetPixel = Phy_GetPixel;
+    phys->SetPixel = Phy_SetPixel;
+    phys->DispArea = Phy_DispArea;
+    sim_lcd_init();
+}
 
 /* 读取屏幕上的点 */
 static GUI_COLOR Phy_GetPixel(u_16 x, u_16 y)
@@ -85,15 +100,4 @@ static void Phy_DispArea(u_16 x,
     u_16 rowlen)
 {
     sim_dispArea(x, y, xSize, ySize, pBuffer, rowlen);
-}
-
-/* 图形硬件初始化 */
-void GUI_Phy_Init(GUI_PHY_INFO *phys)
-{
-    phys->xSize = sim_getWidth();
-    phys->ySize = sim_getHeight();
-    phys->GetPixel = Phy_GetPixel;
-    phys->SetPixel = Phy_SetPixel;
-    phys->DispArea = Phy_DispArea;
-    sim_lcd_init();
 }

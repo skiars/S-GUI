@@ -1,5 +1,6 @@
 /*
  * 本文件包含WinMain函数。
+ * 这个文件主要是由Visual Studio 2015生成。
  **/
 #include "resource.h"
 
