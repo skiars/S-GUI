@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{058E52FB-F701-4330-B53B-6C8176DDF856}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>SGUI</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>GUI\Config;GUI\Core\inc;GUI\Font;GUI\Widget;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <MinimumRequiredVersion>
+      </MinimumRequiredVersion>
+    </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GUI\Config\GUI_Botton.h" />
+    <ClInclude Include="GUI\Config\GUI_Config.h" />
+    <ClInclude Include="GUI\Config\GUI_Typedef.h" />
+    <ClInclude Include="GUI\Core\inc\GUI.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_2D.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_Core.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_KeyBoard.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_Memory.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_RectCalc.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_TouchPad.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_WM.h" />
+    <ClInclude Include="GUI\Core\inc\Linked_List.h" />
+    <ClInclude Include="GUI\Core\inc\mystring.h" />
+    <ClInclude Include="GUI\Core\inc\SCROLLBAR.h" />
+    <ClInclude Include="GUI\Core\inc\Text.h" />
+    <ClInclude Include="GUI\Font\GB2312_16x16.h" />
+    <ClInclude Include="GUI\Font\GUI_Font.h" />
+    <ClInclude Include="GUI\Widget\BUTTON.h" />
+    <ClInclude Include="GUI\Widget\DialogBox.h" />
+    <ClInclude Include="GUI\Widget\LISTBOX.h" />
+    <ClInclude Include="GUI\Widget\RootWindow.h" />
+    <ClInclude Include="GUI\Widget\SCROLLBAR.h" />
+    <ClInclude Include="GUI\Widget\TEXTBOX.h" />
+    <ClInclude Include="GUI\Widget\WIDGET.h" />
+    <ClInclude Include="GUI\Widget\WINDOW.h" />
+    <ClInclude Include="GUI_Test.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="simulate_lcd.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GUI\Config\GUI_Botton.c" />
+    <ClCompile Include="GUI\Core\src\GUI_2D.c" />
+    <ClCompile Include="GUI\Core\src\GUI_Core.c" />
+    <ClCompile Include="GUI\Core\src\GUI_KeyBoard.c" />
+    <ClCompile Include="GUI\Core\src\GUI_Memory.c" />
+    <ClCompile Include="GUI\Core\src\GUI_RectCalc.c" />
+    <ClCompile Include="GUI\Core\src\GUI_TouchPad.c" />
+    <ClCompile Include="GUI\Core\src\GUI_WM.c" />
+    <ClCompile Include="GUI\Core\src\Linked_List.c" />
+    <ClCompile Include="GUI\Core\src\mystring.c" />
+    <ClCompile Include="GUI\Core\src\RootWindow.c" />
+    <ClCompile Include="GUI\Core\src\Text.c" />
+    <ClCompile Include="GUI\Font\ASCII_12x06_font.c" />
+    <ClCompile Include="GUI\Font\ASCII_8x16_font.c" />
+    <ClCompile Include="GUI\Font\GB2312_16x16.c" />
+    <ClCompile Include="GUI\Font\GUI_Font.c" />
+    <ClCompile Include="GUI\Font\UI27-4pp.c" />
+    <ClCompile Include="GUI\Font\UI27_2pp.c" />
+    <ClCompile Include="GUI\Widget\BUTTON.c" />
+    <ClCompile Include="GUI\Widget\DialogBox.c" />
+    <ClCompile Include="GUI\Widget\LISTBOX.c" />
+    <ClCompile Include="GUI\Widget\SCROLLBAR.c" />
+    <ClCompile Include="GUI\Widget\TEXTBOX.c" />
+    <ClCompile Include="GUI\Widget\WIDGET.c" />
+    <ClCompile Include="GUI\Widget\WINDOW.c" />
+    <ClCompile Include="GUI_Test.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="simulate_lcd.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="S-GUI.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="S-GUI.ico" />
+    <Image Include="small.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

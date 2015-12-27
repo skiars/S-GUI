@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\S-GUI">
+      <UniqueIdentifier>{3cbff630-9593-4978-91bd-ca5f5c320d1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\S-GUI\Core">
+      <UniqueIdentifier>{4708c3b6-668b-4231-83ba-c319ca00c9b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\S-GUI\Config">
+      <UniqueIdentifier>{293ff4b6-896e-4063-92bd-155c390eb1e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\S-GUI\Font">
+      <UniqueIdentifier>{76473b88-6ec7-434a-acc7-a31f1315740b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\S-GUI\Widget">
+      <UniqueIdentifier>{01323eb3-7310-4961-ac9d-0f29b20d4865}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\S-GUI">
+      <UniqueIdentifier>{d1bc83eb-1e93-4cee-ba79-ea6df583f337}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\S-GUI\Config">
+      <UniqueIdentifier>{1814bdfb-ab00-4161-abc5-c2ec37519bf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\S-GUI\Core">
+      <UniqueIdentifier>{0721cad2-2485-4b26-be72-2bde3b146c75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\S-GUI\Font">
+      <UniqueIdentifier>{fae6201a-df72-4d59-99f6-23f7ebdef3ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\S-GUI\Widget">
+      <UniqueIdentifier>{fbe30c73-6900-4ae5-942e-d534000ef20d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GUI\Core\inc\GUI.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_2D.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_Core.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_KeyBoard.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_Memory.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_RectCalc.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_TouchPad.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_WM.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\Linked_List.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\mystring.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\SCROLLBAR.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\Text.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Config\GUI_Botton.h">
+      <Filter>头文件\S-GUI\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Config\GUI_Config.h">
+      <Filter>头文件\S-GUI\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Config\GUI_Typedef.h">
+      <Filter>头文件\S-GUI\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Font\GB2312_16x16.h">
+      <Filter>头文件\S-GUI\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Font\GUI_Font.h">
+      <Filter>头文件\S-GUI\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\BUTTON.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\DialogBox.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\LISTBOX.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\RootWindow.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\TEXTBOX.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\WIDGET.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\WINDOW.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\SCROLLBAR.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI_Test.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="simulate_lcd.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GUI\Core\src\GUI_2D.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_Core.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_KeyBoard.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_Memory.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_RectCalc.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_TouchPad.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_WM.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\Linked_List.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\mystring.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\RootWindow.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\Text.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Config\GUI_Botton.c">
+      <Filter>源文件\S-GUI\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Font\GUI_Font.c">
+      <Filter>头文件\S-GUI\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Font\ASCII_8x16_font.c">
+      <Filter>源文件\S-GUI\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Font\ASCII_12x06_font.c">
+      <Filter>源文件\S-GUI\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Font\GB2312_16x16.c">
+      <Filter>源文件\S-GUI\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Font\UI27_2pp.c">
+      <Filter>源文件\S-GUI\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Font\UI27-4pp.c">
+      <Filter>源文件\S-GUI\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget\BUTTON.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget\DialogBox.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget\LISTBOX.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget\SCROLLBAR.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget\TEXTBOX.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget\WIDGET.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget\WINDOW.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI_Test.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="simulate_lcd.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="S-GUI.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="S-GUI.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
