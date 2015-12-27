@@ -1,3 +1,6 @@
+/*
+ * 本文件包含WinMain函数。
+ **/
 #include "resource.h"
 
 #include "simulate_lcd.h"
