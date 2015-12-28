@@ -62,6 +62,7 @@ void GUI_Delay(GUI_TIME tms)
  * 事件队列初始化
  * capacity:队列容量
  * ItemSize:每个结构单元的字节数
+ * 返回值：一个已经初始化的队列指针
  */
 GUI_QUEUE* GUI_EventQueueInit(u_16 capacity, u_16 ItemSize)
 {
@@ -154,12 +155,13 @@ u_8 GUI_QueueIsEmpty(GUI_QUEUE *pQue)
     return 0;
 }
 
-/*  */
+/* 设置现在绘制区域的裁剪矩形链表 */
 void GUI_SetNowRectList(RECT_LIST l)
 {
     GUI_Data->NowRectList = l;
 }
 
+/* 返回现在绘制区域的裁剪矩形链表 */
 RECT_LIST GUI_GetNowRectList(void)
 {
     return GUI_Data->NowRectList;
@@ -167,16 +169,25 @@ RECT_LIST GUI_GetNowRectList(void)
 
 static RECT_NODE *__NowRectNode = NULL;
 
+/* 初始化绘制区域 */
 void GUI_DrawAreaInit(void)
 {
     __NowRectNode = GUI_Data->NowRectList;
 }
 
+/* 返回当前的裁剪矩形 */
 GUI_RECT *GUI_GetNowArea(void)
 {
     return &__NowRectNode->Rect;
 }
 
+/* 获取下一个裁剪矩形
+ * pRect:用于保存返回的裁剪矩形
+ * 返回值:0：当前绘制区域的裁剪矩形已经获取完，主调函数在GUI_GetNextArea
+ *          返回0时应该结束当前图形在裁剪矩形链表里的绘制循环。
+ *       1：当前绘制区域的还有没有绘制的裁剪矩形，主调函数在GUI_GetNextArea
+ *          返回0时应该继续当前图形在裁剪矩形链表里的绘制循环。
+ **/
 u_8 GUI_GetNextArea(GUI_RECT *pRect)
 {    
     if (__NowRectNode == NULL) {

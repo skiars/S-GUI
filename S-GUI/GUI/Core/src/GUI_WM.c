@@ -74,6 +74,7 @@ static u_8 WM__WindowRepaint(WM_Obj *pWin, void *pList)
             if (pWin->Status & WM_WINDOW_TRANS) {
                 WM__RefreshBackgnd(pWin, RectList);
             }
+            /* 重绘窗口 */
             Msg.MsgId = WM_PAINT;
             Msg.hWin = (WM_hWin)pWin;
             GUI_SetNowRectList(RectList);
@@ -109,6 +110,11 @@ void WM_Exec(void)
 }
 
 /*
+ * 注意：下面的几个消息处理函数实际上很有可能工作在线程不安全的环境里，
+ * 因为他们没有GUI资源锁，有时会因为调用这些函数发生内存访问冲突。
+ **/
+
+/*
 *向窗口管理器的指定窗口发送消息
 *hWin:要指定窗口的句柄,为NULL时会将消息发送至当前活动窗口
 */
@@ -126,6 +132,7 @@ void WM__SendMessage(WM_hWin hWin, WM_MESSAGE *pMsg)
     }
 }
 
+/* 向窗口管理器的指定窗口发送不带数据的消息 */
 void MW__SendMsgNoData(WM_hWin hWin, u_16 MsgId)
 {
     WM_MESSAGE Msg;
@@ -136,6 +143,7 @@ void MW__SendMsgNoData(WM_hWin hWin, u_16 MsgId)
     WM__SendMessage(hWin, &Msg);
 }
 
+/* 向窗口管理器的指定窗口发送消息 */
 void WM_SendMessage(WM_hWin hWin, u_16 MsgId, void *data)
 {          
     WM_MESSAGE Msg;
@@ -601,6 +609,7 @@ WM_hWin WM_GetParentHandle(WM_hWin hWin)
     return ((WM_Obj*)hWin)->hParent;
 }
 
+/* 这个结构体用于包装下面函数的输入数据 */
 struct _INV_DATA {
     GUI_RECT *pRect;
     WM_hWin hWin;
@@ -621,7 +630,9 @@ static u_8 WM__InvalidCoverWindow(WM_Obj *pWin, void *pData)
     return 0;
 }
 
-/* 将被一个窗口遮盖的窗口无效化 */
+/* 将被一个窗口遮盖的窗口无效化，
+ * 例如在删除窗口时需要把将要被删除的窗口遮挡的窗口无效化 
+ **/
 void WM_InvalidCoverWindow(WM_hWin hWin, GUI_RECT *pRect)
 {
     struct _INV_DATA data;
@@ -636,11 +647,12 @@ static u_8 WM__MoveWindow(WM_Obj *pObj, void *pData)
 {
     GUI_RECT *Rect;
 
+
     Rect = &pObj->Rect;
     GUI_MoveRect(Rect, ((i_16*)pData)[0],((i_16*)pData)[1]);
     Rect = &pObj->UserRect;
     GUI_MoveRect(Rect, ((i_16*)pData)[0],((i_16*)pData)[1]);
-    WM_Invalidate(pObj); /* 窗口无效 */
+    WM_Invalidate(pObj); /* 窗口无效化 */
     return 0;
 }
 
@@ -660,7 +672,9 @@ void WM_MoveWindow(WM_hWin hWin, i_16 dX, i_16 dY)
     GUI_Unlock();
 }
 
-/* 窗口计时器 */
+/* 窗口计时器
+ * 窗口定时器可以让开启了定时功能的窗口在定时时间到以后产生一个WM_TIME_UPDATA消息
+ **/
 static void WM__WindowTimer(WM_Obj *pObj)
 {
     if (pObj->Status & WM_WINDOW_TIMER) {  /* 窗口有计时器 */
@@ -670,7 +684,7 @@ static void WM__WindowTimer(WM_Obj *pObj)
             Msg.MsgId = WM_TIME_UPDATA;
             Msg.hWin = (WM_hWin)pObj;
             pObj->WinCb(&Msg);
-            pObj->LastTime = GUI_GetTime();
+            pObj->LastTime = GUI_GetTime(); /* 从新获取时间 */
         }
     }
 }
@@ -712,7 +726,9 @@ RECT_LIST GUI_CalcWindowRectList(WM_hWin hWin)
         Rect1 = WM_GetTaliorInvalidRect(pWin);
         RectList->Rect = Rect1;
     }
-    /* 窗口会被它的儿子们或者右边的兄弟们(如果有的话)裁剪,也就是遮挡 */
+    /* 窗口会被它的儿子们或者右边的兄弟们(如果有的话)裁剪,也就是遮挡，遍历这些儿子和兄弟们，
+     *逐个计算窗口的裁剪矩形表，最后就能得到这个窗口被它们遮挡后的裁剪矩形表
+     **/
     if (pWin->hFirstChild) {
         /* 先遍历它所有的子窗口 */
         pObj = pWin->hFirstChild;
@@ -788,13 +804,28 @@ static RECT_LIST GUI__RectListTo(WM_Obj *pWin, WM_Obj *pEnd, RECT_LIST List)
     return RectList;
 }
 
-/*  */
+/*****************************************************************************
+ * 这部分代码用于实窗口透明效果。
+ * 注意：
+ * 这部分程序的效率可能很低。
+ * 
+ * 窗口透明的原理：
+ * 当发现一个窗口有透明属性时，会在重绘了所有被透明窗口遮挡的窗口之后再去重绘当前的透明窗口，
+ * 以保证显示不会重叠。由于事先已经计算出了要现实的透明窗口的裁剪矩形表，所以直接以这个裁剪矩
+ * 形表为基础生成被遮挡窗口的裁剪矩形表，这样，被遮挡的窗口就不会覆盖多余的部分，而是完全包含
+ * 在可见的透明窗口下（也就是我们不会看到被遮挡的窗口越过它的边界显示）。
+ * 一个值得注意的情况是，如果透明窗口遮挡了另一个透明窗口，上述过程就会又进行一次，直到所有透
+ * 明窗口都不再遮挡透明窗口为止。这一机制使用递归很容易就实现了，但是递归的效率不高，并且对堆
+ * 栈的消耗也很大。所以一定要控制透明窗口对透明窗口的遮挡层数。
+ *****************************************************************************/
+
+/* 结构体，用来给下面的代码封装数据 */
 struct REF_BACK {
     RECT_LIST List;
     WM_Obj *pObj;
 };
 
-/*  */
+/* 刷新指定区域内被某个窗口遮挡的区域的回调函数 */
 static u_8 WM__RefBackCb(WM_Obj *pWin, void *pData)
 {
     RECT_LIST List;
@@ -802,8 +833,10 @@ static u_8 WM__RefBackCb(WM_Obj *pWin, void *pData)
     if (pWin == ((struct REF_BACK*)pData)->pObj) {
         return 1;
     }
+    /* 检查两个窗口是否相交 */
     if (GUI_CheckRectIntersect(&((struct REF_BACK*)pData)->pObj->Rect,
       &pWin->Rect)) {
+        /* 计算裁剪链表 */
         List = GUI__RectListTo(pWin, ((struct REF_BACK*)pData)->pObj,
                                ((struct REF_BACK*)pData)->List);
         if (List != NULL) {
@@ -811,8 +844,11 @@ static u_8 WM__RefBackCb(WM_Obj *pWin, void *pData)
 
             /* 透明窗口先刷新遮挡部分 */
             if (pWin->Status & WM_WINDOW_TRANS) {
-                WM__RefreshBackgnd(pWin, List);
+                WM__RefreshBackgnd(pWin, List); /* 注意递归！ */
             }
+            /* 这是被上面的透明窗口遮挡的一个窗口，它现在需要先被刷新，
+             * 然后才能使上面的透明的到刷新。
+             */
             Msg.MsgId = WM_PAINT;
             Msg.hWin = (WM_hWin)pWin;
             GUI_SetNowRectList(List);
@@ -832,3 +868,5 @@ static void WM__RefreshBackgnd(WM_Obj *pWin, RECT_LIST RectList)
     data.List = RectList;
     WM__TraversalWindows(_pRootWin, &data, WM__RefBackCb);
 }
+
+/*********         窗口透明实现部分结束         *********/
