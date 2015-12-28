@@ -46,9 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="..\LICENSE.txt">
-      <Filter>资源文件</Filter>
-    </Text>
+    <Text Include="..\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUI\Core\inc\GUI.h">

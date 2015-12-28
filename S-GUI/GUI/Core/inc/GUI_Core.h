@@ -33,7 +33,7 @@ typedef struct{
     GUI_TIME guitime;      /* GUI运行时间 */
     RECT_LIST RectList;    /* 裁剪矩形私有堆 */
     RECT_LIST NowRectList; /* 当前绘制的裁剪矩链表 */
-    GUI_hWin *RootWin;     /* 根窗口 */
+    GUI_hWin RootWin;     /* 根窗口 */
     GUI_QUEUE *KeyQueue;   /* 按键队列缓冲 */
 #if GUI_USE_MEMORY
     GUI_COLOR *lcdbuf; //LCD缓冲
