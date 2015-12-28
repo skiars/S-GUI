@@ -165,6 +165,5 @@ void WINDOW_SetAllAlpha(WM_hWin hWin, u_8 Alpha)
     
     WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
     Rect = WM_GetWindowAreaRect(hWin);
-    hWin = WM_GetParentHandle(hWin);
-    WM_InvalidateRect(hWin, &Rect);  //整个窗口失效
+    WM_InvalidateRect(hWin, &Rect);/* 将窗口无效化 */
 }

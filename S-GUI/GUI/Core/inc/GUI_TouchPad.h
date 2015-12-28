@@ -1,7 +1,7 @@
 #ifndef __GUI_TOUCHPAD_H
 #define __GUI_TOUCHPAD_H
 
-#include "GUI.h"
+#include "GUI_Typedef.h"
 
 #define GUI_TP_CHECKED   1
 #define GUI_TP_REMOVED   0

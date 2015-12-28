@@ -1,5 +1,4 @@
 #include "simulate_lcd.h"
-#undef WM_PAINT /* WM_PAINT宏定义冲突 */
 #include "GUI_Test.h"
 
 #define SIM_LCD_WIDTH   480  /* 模拟屏幕宽度 */
@@ -25,7 +24,7 @@ static DWORD WINAPI ThreadDisp(LPVOID pM)
             GUI_TouchPadSendValue((u_16)sim_lcd.tPad.x, (u_16)sim_lcd.tPad.y, GUI_TP_CHECKED);
         }
         sim_updata();
-        Sleep(10);
+        Sleep(20);
     }
     return 0;
 }

@@ -55,13 +55,11 @@ static u_8 WM__TraversalWindows(WM_Obj *pRoot, void *pData, u_8 (*pFunc)(WM_Obj*
 
 /*
 *窗口管理器重绘
-*
 */
-static u_8 WM__WindowRepaint(WM_Obj *pWin, void *pData)
+static u_8 WM__WindowRepaint(WM_Obj *pWin, void *pList)
 {
     RECT_LIST RectList;
-    
-    WM__WindowTimer(pWin); /* 窗口计时器 */
+
     if (WM_CheckInvalid(pWin)) { /* 窗口需要重绘 */
         WM_MESSAGE Msg;
         
@@ -78,7 +76,60 @@ static u_8 WM__WindowRepaint(WM_Obj *pWin, void *pData)
             __AllDraw_Rect = GUI_RectOrCalc(&pWin->Rect, &__AllDraw_Rect);
 #endif
         }
-        WM_CleanInvalid(pWin);
+        WM_CleanInvalid(pWin); /* 清除无效化 */
+    }
+    return 0;
+}
+
+/*
+ * 为透明窗口设置适当的无效区域
+ * 
+ * 
+ **/
+static u_8 WM__WindowProcess(WM_Obj *pWin, void *pData)
+{
+    WM_Obj* pObj;
+    GUI_RECT Rect;
+    
+    WM__WindowTimer(pWin); /* 窗口计时器 */
+    if (WM_CheckInvalid(pWin)) { /* 窗口需要重绘 */
+        if (pWin->Status & WM_WINDOW_TRANS) {
+            WM_InvalidCoverWindow(pWin, &pWin->InvalidRect); /* 将被透明窗口遮挡的窗口无效化 */
+            pObj = pWin->hFirstChild;
+            while (pObj) {
+                if (GUI_RectOverlay(&Rect, &pObj->Rect, &pWin->InvalidRect) == GUI_OK) { /* 相交 */
+                    WM_InvalidateRect(pObj, &Rect);
+                }
+                pObj = pObj->hNext;
+            }
+        } else {
+            /* 窗口会被它的儿子们或者右边的兄弟们(如果有的话)裁剪,也就是遮挡 */
+            if (pWin->hFirstChild) {
+                /* 先遍历它所有的子窗口 */
+                pObj = pWin->hFirstChild;
+                while (pObj) {
+                    if (pObj->Status & WM_WINDOW_TRANS) {
+                        if (GUI_CheckRectIntersect(&pObj->Rect, &pWin->InvalidRect)) { /* 相交 */
+                            WM_Invalidate(pObj);
+                        }
+                    }
+                    pObj = pObj->hNext; /* 向右遍历 */
+                }
+            }
+            /* 再遍历它右边的同属窗口及祖先窗口的同属窗口 */
+            pObj = pWin;
+            while (pObj != _pRootWin) {
+                while (pObj->hNext){
+                    pObj = pObj->hNext; /* 向右遍历 */
+                    if (pObj->Status & WM_WINDOW_TRANS) {
+                        if (GUI_CheckRectIntersect(&pObj->Rect, &pWin->InvalidRect)) { /* 相交 */
+                            WM_Invalidate(pObj);
+                        }
+                    }
+                }
+                pObj = pObj->hParent; /* 向上遍历 */
+            }
+        }
     }
     return 0;
 }
@@ -87,6 +138,7 @@ static u_8 WM__WindowRepaint(WM_Obj *pWin, void *pData)
 void WM_Exec(void)
 {
     GUI_Lock();
+    WM__TraversalWindows(_pRootWin, NULL, WM__WindowProcess);
     WM__TraversalWindows(_pRootWin, NULL, WM__WindowRepaint);
 #if GUI_USE_MEMORY
     /* 将内存数据更新到LCD上 */
@@ -307,7 +359,7 @@ GUI_RESULT WM_SetActiveMainWindow(WM_hWin hWin)
     if (WM_GetActiveMainWindow() != pObj) {
         WM__RemoveWindow(pObj); /* 先移除窗口 */
         WM_AttachWindow(pObj, NULL); /* 插入窗口到最后 */
-        WM_InvalidTree(pObj);/* 窗口及其子窗口失效 */
+        WM_InvalidTree(pObj);/* 窗口及其所有的子窗口无效化 */
     }
     GUI_Unlock();
     return GUI_OK;
@@ -604,12 +656,12 @@ struct _INV_DATA {
 static u_8 WM__InvalidCoverWindow(WM_Obj *pWin, void *pData)
 {
     GUI_RECT Rect;
-    
+
     if (pWin == ((struct _INV_DATA*)pData)->hWin) {
         return 1;
     }
-    Rect = ((WM_Obj*)(((struct _INV_DATA*)pData)->hWin))->Rect;
-    if (GUI_RectOverlay(&Rect, &Rect, &pWin->Rect) == GUI_OK) {
+    if (GUI_RectOverlay(&Rect, &pWin->Rect,
+        ((struct _INV_DATA*)pData)->pRect) == GUI_OK) {
         WM_InvalidateRect(pWin, &Rect);
     }
     return 0;
@@ -619,7 +671,7 @@ static u_8 WM__InvalidCoverWindow(WM_Obj *pWin, void *pData)
 void WM_InvalidCoverWindow(WM_hWin hWin, GUI_RECT *pRect)
 {
     struct _INV_DATA data;
-    
+
     data.hWin = hWin;
     data.pRect = pRect;
     WM__TraversalWindows(_pRootWin, &data, WM__InvalidCoverWindow);
@@ -647,9 +699,10 @@ void WM_MoveWindow(WM_hWin hWin, i_16 dX, i_16 dY)
     GUI_Lock();
     xy[0] = dX;
     xy[1] = dY;
+    /* 先将被遮挡的窗口无效化 */
     WM_InvalidCoverWindow(hWin, &((WM_Obj*)hWin)->Rect);
     WM__TraversalWindows(hWin, xy, WM__MoveWindow);
-    WM_Invalidate(hWin);
+    WM_Invalidate(hWin); /* 窗口无效化 */
     GUI_Unlock();
 }
 
@@ -659,6 +712,7 @@ static void WM__WindowTimer(WM_Obj *pObj)
     if (pObj->Status & WM_WINDOW_TIMER) {  /* 窗口有计时器 */
         if (GUI_GetTime() > pObj->LastTime + pObj->TimeCount) {
             WM_MESSAGE Msg;
+
             Msg.MsgId = WM_TIME_UPDATA;
             Msg.hWin = (WM_hWin)pObj;
             pObj->WinCb(&Msg);

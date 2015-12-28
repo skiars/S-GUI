@@ -2,11 +2,6 @@
 #include "GUI.h"
 #include <stdio.h>
 #include <string.h>
-#include "BUTTON.h"
-#include "WINDOW.h"
-#include "TEXTBOX.h"
-#include "LISTBOX.h"
-#include "SCROLLBAR.h"
 
 #define WINDOW1      (WM_USER_ID + 3)
 #define WINDOW2      (WM_USER_ID + 2)
@@ -23,6 +18,7 @@
 
 #define WIN3_TBX1    0x0001
 #define WIN3_BTN1    0x0002
+#define WIN3_BTN2    0x0003
 
 #define WIN4_LBX1    0x0001
 
@@ -148,10 +144,18 @@ void Create_Window1(void)
 
 void Window3_Cb(WM_MESSAGE *pMsg)
 {
+    u_16 Id;
+    WM_hWin hItem;
+    
     switch (pMsg->MsgId) {
         case WM_BUTTON_RELEASED :
-            if (WM_GetDialogId(pMsg->hWinSrc) == WIN3_BTN1) {
+            Id = WM_GetDialogId(pMsg->hWinSrc);
+            if (Id == WIN3_BTN1) {
                 WM_DeleteWindow(pMsg->hWin);
+            } else if (Id == WIN3_BTN2) {
+                WINDOW_SetAllAlpha(pMsg->hWin, 30);
+                hItem = WM_GetDialogItem(pMsg->hWin, WIN4_LBX1);
+                WINDOW_SetAllAlpha(hItem, 80);
             }
             break;
         case WM_KEY_CHECKED :
@@ -173,8 +177,10 @@ void Create_Window3(void)
     TEXTBOX_SetText(hWin2, "This is a Small Graphical User Interface.\n"
                            "It\'s author is Guan Wenliang.\n"
                            "This is a demonstration...");
-    hWin3 = BUTTON_Create(70,220,60,30,hWin,WIN3_BTN1,0);
+    hWin3 = BUTTON_Create(100,220,60,30,hWin,WIN3_BTN1,0);
     BUTTON_SetTitle(hWin3, "Exit");
+    hWin3 = BUTTON_Create(30,220,60,30,hWin,WIN3_BTN2,0);
+    BUTTON_SetTitle(hWin3, "Alpha");
 }
 
 void Window4_Cb(WM_MESSAGE *pMsg)

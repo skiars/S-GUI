@@ -1,11 +1,13 @@
 #include "WIDGET.h"
 #include "GUI.h"
 
+/* 将一个窗口的属性设置为透明 */
 void WIDGET_SetTransWindow(GUI_hWin hWin)
 {
     ((WM_Obj*)hWin)->Status |= WM_WINDOW_TRANS;
 }
 
+/* 设置窗口的透明度 */
 void WIDGET_Alpha(GUI_hWin hWin, u_8 Part, u_8 Id, u_8 Alpha)
 {
     u_8 i;
@@ -49,11 +51,13 @@ void WIDGET_Alpha(GUI_hWin hWin, u_8 Part, u_8 Id, u_8 Alpha)
     GUI_Unlock();
 }
 
+/* 获取窗口的字体 */
 GUI_FontType WIDGET_GetFont(GUI_hWin hWin)
 {
     return ((WIDGET*)hWin)->Skin.Font;
 }
 
+/* 设置窗口的字体 */
 void WIDGET_SetFont(GUI_hWin hWin, GUI_FontType Font)
 {
     if (hWin != NULL) {
