@@ -5,7 +5,7 @@
 
 #include "GUI_Botton.h"
 
-/* 用户自己的头文件 */
+/* 用户自己添加的头文件 */
 #include "..\..\simulate_lcd.h"
 
 /* 用于Windows的互斥信号量 */

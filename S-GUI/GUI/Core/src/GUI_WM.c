@@ -449,7 +449,8 @@ void WM_CleanInvalid(WM_hWin hWin)
     WM_Obj* pWin = hWin;
 
     /* x0,y0设置为屏幕尺寸的值 */
-    GUI_ScreenSize(&pWin->InvalidRect.x0, &pWin->InvalidRect.y0);
+    pWin->InvalidRect.x0 = GUI_GetScreenWidth();
+    pWin->InvalidRect.x0 = GUI_GetScreenHeight();
     pWin->InvalidRect.x1 = 0;
     pWin->InvalidRect.y1 = 0;
 }
