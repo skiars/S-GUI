@@ -6,5 +6,5 @@
 
 详情请参看S-GUI文件夹下的[ReadMe.txt](https://github.com/Le-Seul/S-GUI/blob/master/S-GUI/ReadMe.txt)文件.
 
-查看MIT[许可证](https://github.com/Le-Seul/S-GUI/blob/master/S-GUI/ReadMe.txt)文件.
+查看MIT[许可证](https://github.com/Le-Seul/S-GUI/blob/master/LICENSE.txt)文件.
 
