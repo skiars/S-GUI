@@ -735,7 +735,7 @@ RECT_LIST GUI_CalcWindowRectList(WM_hWin hWin)
         pObj = pWin->hFirstChild;
         while (pObj && RectList) {
             RectList = GUI_ReCalcRectList(RectList, &pObj->Rect);
-            if (pObj->Status & WM_WINDOW_TRANS
+            if (pObj->Status & WM_WINDOW_TRANS /* 与之相交的透明窗口无效化 */
               && GUI_RectOverlay(&Rect2, &pObj->Rect, &Rect1) == GUI_OK) {
                 WM_InvalidateRect(pObj, &Rect2);
             }
@@ -748,7 +748,7 @@ RECT_LIST GUI_CalcWindowRectList(WM_hWin hWin)
         while (pObj->hNext && RectList){
             pObj = pObj->hNext; /* 向右遍历 */
             RectList = GUI_ReCalcRectList(RectList, &pObj->Rect);
-            if (pObj->Status & WM_WINDOW_TRANS
+            if (pObj->Status & WM_WINDOW_TRANS /* 与之相交的透明窗口无效化 */
                 && GUI_RectOverlay(&Rect2, &pObj->Rect, &Rect1) == GUI_OK) {
                 WM_InvalidateRect(pObj, &Rect2);
             }
@@ -766,7 +766,7 @@ static RECT_LIST GUI__RectListTo(WM_Obj *pWin, WM_Obj *pEnd, RECT_LIST List)
     GUI_RECT Rect;
     RECT_LIST pt, RectList = List;
 
-    /* 在考虑遮挡之前,窗口就只有一个裁剪矩形 */
+    /* 统计裁剪矩形链表中的相交数量 */
     for (i = 0; RectList;) {
         if (GUI_CheckRectIntersect(&RectList->Rect, &pWin->Rect)) {
             ++i;
@@ -775,7 +775,7 @@ static RECT_LIST GUI__RectListTo(WM_Obj *pWin, WM_Obj *pEnd, RECT_LIST List)
     }
     RectList = GUI_GetRectList(i);
     pt = RectList;
-    while (pt) {
+    while (pt) { /* 复制相交部分的矩形链表 */
         if (GUI_RectOverlay(&Rect, &List->Rect, &pWin->Rect) == GUI_OK) {
             pt->Rect = Rect;
             pt = pt->pNext;

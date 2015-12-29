@@ -170,7 +170,9 @@ RECT_LIST GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst)
 
     if (GUI_RectOverlay(&r, Src, Dst) == GUI_ERR) { /* 判断是否相交 */
         List = GUI_GetRectList(1); /* 申请链表 */
-        List->Rect = *Src;
+        if (List) {
+            List->Rect = *Src;
+        }
         return List;
     }
     /* 每一个矩形最多可以被另外一个矩形分割为4个 */

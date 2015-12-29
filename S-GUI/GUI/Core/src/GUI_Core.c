@@ -12,7 +12,7 @@ void GUI_Init(void)
     }
     GUI_Phy_Init(&GUI_Data->phy_info);
     GUI_InitOS();
-    GUI_RectListInit(50); /* 注意内存是否足够 */
+    GUI_RectListInit(GUI_RECT_HEAP_SIZE); /* 注意内存是否足够 */
     GUI_KeyBufferInit(); /* 按键处理函数初始化 */
     WM_Init();
 #if GUI_USE_MEMORY
