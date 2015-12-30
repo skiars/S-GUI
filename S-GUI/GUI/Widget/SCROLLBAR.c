@@ -10,7 +10,7 @@ static void __Paint(WM_hWin hWin)
     GUI_RECT Rect;
     SCROLLBAR_Obj *pObj = hWin;
 
-    Rect = WM_GetTaliorInvalidRect(hWin);  //获取需要显示的区域
+    Rect = WM_GetTaliorInvalidRect(hWin); /* 获取需要显示的区域 */
     Rect = ((WM_Obj*)hWin)->Rect;
     x0 = Rect.x0;
     y0 = Rect.y0;

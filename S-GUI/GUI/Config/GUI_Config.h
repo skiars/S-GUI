@@ -3,7 +3,7 @@
 
 #define KEY_BUFFER_NUM        10   /*  键盘缓冲区长度 */
 
-#define GUI_USE_MEMORY        0    /* 是否使用存储器缓冲 */
+#define GUI_USE_MEMORY        1    /* 是否使用存储器缓冲 */
 
 #define GUI_DEF_FONT          Font_ASCII_4PP   /* 默认字体 */
 

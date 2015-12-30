@@ -86,16 +86,16 @@ static void _WINDOW_Callback(WM_MESSAGE *pMsg)
 }
 
 /*
- *创建窗口控件
- *x0:WINDOW控件的最左像素(相对于父窗口)
- *y0:WINDOW控件的最右像素(相对于父窗口)
- *xSize:WINDOW控件的水平宽度
- *ySize:WINDOW控件的竖直高度
- *hParent:父窗口句柄
- *Id:窗口ID
- *Flag:窗口状态
- *cb:用户回调历程指针
- */
+ * 创建窗口控件
+ * x0:WINDOW控件的最左像素(相对于父窗口)
+ * y0:WINDOW控件的最右像素(相对于父窗口)
+ * xSize:WINDOW控件的水平宽度
+ * ySize:WINDOW控件的竖直高度
+ * hParent:父窗口句柄
+ * Id:窗口ID
+ * Flag:窗口状态
+ * cb:用户回调历程指针
+ **/
 WM_hWin WINDOW_Create(i_16 x0,
                       i_16 y0,
                       u_16 xSize,
@@ -113,7 +113,7 @@ WM_hWin WINDOW_Create(i_16 x0,
     if (pObj == NULL) {
         return NULL;
     }
-    pObj->CaptionHeight = WINDOW_DEF_CAPHEIGHT;  //标题栏高度
+    pObj->CaptionHeight = WINDOW_DEF_CAPHEIGHT;  /* 标题栏高度 */
     /* 设置用户区 */
     pObj->Widget.Win.UserRect.x0 = pObj->Widget.Win.Rect.x0 + 3;
     pObj->Widget.Win.UserRect.y0 = pObj->Widget.Win.Rect.y0 +
@@ -121,16 +121,16 @@ WM_hWin WINDOW_Create(i_16 x0,
     pObj->Widget.Win.UserRect.x1 = pObj->Widget.Win.Rect.x1 - 3;
     pObj->Widget.Win.UserRect.y1 = pObj->Widget.Win.Rect.y1 - 3;
     /* 配色 */
-    pObj->Widget.Skin.CaptionColor[0] = WINDOW_CAPTION_UPC;   //标题栏上半部分
-    pObj->Widget.Skin.CaptionColor[1] = WINDOW_CAPTION_DOWNC; //标题栏下半部分
-    pObj->Widget.Skin.EdgeColor[0] = STD_WIN_RIM_OUTC;  //外线
-    pObj->Widget.Skin.EdgeColor[1] = STD_WIN_RIM_MIDC;  //中线
-    pObj->Widget.Skin.EdgeColor[2] = STD_WIN_RIM_INC;   //内线
-    pObj->Widget.Skin.BackColor[0] = WINDOW_BODY_BKC;   //底色
+    pObj->Widget.Skin.CaptionColor[0] = WINDOW_CAPTION_UPC;  /* 标题栏上半部分 */
+    pObj->Widget.Skin.CaptionColor[1] = WINDOW_CAPTION_DOWNC;/* 标题栏下半部分 */
+    pObj->Widget.Skin.EdgeColor[0] = STD_WIN_RIM_OUTC;       /* 外线 */
+    pObj->Widget.Skin.EdgeColor[1] = STD_WIN_RIM_MIDC;       /* 中线 */
+    pObj->Widget.Skin.EdgeColor[2] = STD_WIN_RIM_INC;        /* 内线 */
+    pObj->Widget.Skin.BackColor[0] = WINDOW_BODY_BKC;        /* 底色 */
     pObj->Widget.Skin.FontColor[0] = WINDOW_TITLE_COLOR;
     pObj->Widget.Skin.FontColor[1] = WINDOW_FONT_COLOR;
     pObj->UserCb = cb;
-    WINDOW_SetTitle(pObj, "");      //设置初始字符串
+    WINDOW_SetTitle(pObj, ""); /* 设置初始字符串 */
     WINDOW_SetFont(pObj, GUI_DEF_FONT);
     
     return pObj;
@@ -165,5 +165,5 @@ void WINDOW_SetAllAlpha(WM_hWin hWin, u_8 Alpha)
     
     WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
     Rect = WM_GetWindowAreaRect(hWin);
-    WM_InvalidateRect(hWin, &Rect);/* 将窗口无效化 */
+    WM_InvalidateRect(hWin, &Rect); /* 将窗口无效化 */
 }

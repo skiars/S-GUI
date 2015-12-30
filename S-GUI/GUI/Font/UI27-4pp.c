@@ -3031,19 +3031,19 @@ GUI_CONST_STORAGE GUI_FONT GUI_FontMicrosoftYaHeiUI274pp = {
 
 static u_16 __CharWidget(const char *ch)
 {
-    u_16 Char = *ch - GUI_FontMicrosoftYaHeiUI274pp_Prop1.FirstChar;
+    u_8 Char = *ch - GUI_FontMicrosoftYaHeiUI274pp_Prop1.FirstChar;
     return GUI_FontMicrosoftYaHeiUI274pp_CharInfo[Char].X;
 }
 
 static u_8 __CharWidgetBytes(const char *ch)
 {
-    u_16 Char = *ch - GUI_FontMicrosoftYaHeiUI274pp_Prop1.FirstChar;
+    u_8 Char = *ch - GUI_FontMicrosoftYaHeiUI274pp_Prop1.FirstChar;
     return GUI_FontMicrosoftYaHeiUI274pp_CharInfo[Char].Bytes;
 }
 
 static unsigned const char* __GetChar(const char *ch)
 {
-    u_16 Char = *ch - GUI_FontMicrosoftYaHeiUI274pp_Prop1.FirstChar;
+    u_8 Char = *ch - GUI_FontMicrosoftYaHeiUI274pp_Prop1.FirstChar;
     return GUI_FontMicrosoftYaHeiUI274pp_CharInfo[Char].Data;
 }
 
@@ -3056,4 +3056,3 @@ static GUI_FontStruct __Font_ASCII_4PP = {
 };
 
 const GUI_FontType Font_ASCII_4PP = &__Font_ASCII_4PP;
-

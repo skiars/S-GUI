@@ -3,8 +3,8 @@
 
 #include "GUI.h"
 
-#define TEXTBOX_DEF_BKC                 0x00232329    //底色
-#define TEXTBOX_TEXT_COLOR          0x00FFFFFF  //字体颜色
+#define TEXTBOX_DEF_BKC             0x00232329  /* 背景颜色 */
+#define TEXTBOX_TEXT_COLOR          0x00FFFFFF  /* 字体颜色 */
 
 typedef struct {
     WIDGET Widget;

@@ -223,6 +223,7 @@ void Create_Window4(void)
     LISTBOX_addlist(hWin2, "vfdgreg");
     LISTBOX_addlist(hWin2, "vfdgreg");
     LISTBOX_addlist(hWin2, "Alpha Test");
+    LISTBOX_addlist(hWin2, "ListBox Test");
     //LISTBOX_SetSelFromStr(hWin2, "saff");
     hWin3 = BUTTON_Create(70,220,60,30,hWin,WIN3_BTN1,0);
     BUTTON_SetTitle(hWin3, "Exit");

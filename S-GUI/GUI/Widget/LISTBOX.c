@@ -222,15 +222,15 @@ static void LISTBOX__DrawPage(LISTBOX_Obj *pObj)
     u_16 i, PageItems;
     i_16 x0, y0, xSize, ySize;
 
-    PageItems = pObj->PageItems;//一页可以显示的条数
+    PageItems = pObj->PageItems; /* 一页可以显示的条数 */
     pNode = Get__ItemName(pObj, pObj->TopIndex);
-    for(i = 0; i <= PageItems; i++)//显示条目
+    for(i = 0; i <= PageItems; ++i) /* 显示条目 */
     {
         LISTBOX__DrawList(pObj, i, pNode->data);
         pNode = Get__NextItemName(pObj, pNode);
         /* 已经到了最后一条,但i依然要自加1 */
         if(i + pObj->TopIndex + 1 == pObj->ItemNum) {
-            i++;
+            ++i;
             break;
         }
     }
@@ -239,7 +239,7 @@ static void LISTBOX__DrawPage(LISTBOX_Obj *pObj)
     x0 = Rect.x0;
     y0 = Rect.y0 + i;
     xSize = Rect.x1 - Rect.x0 + 1;
-    ySize = Rect.y1 - Rect.y0 - i + 1;
+    ySize = Rect.y1 - Rect.y0 + 1;
     /* 清空为底色 */
     GUI_FillTailorRect(x0, y0, xSize, ySize, WIDGET_GetBackColor(pObj, 0));
 }

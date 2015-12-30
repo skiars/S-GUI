@@ -50,16 +50,16 @@ static void __Callback(WM_MESSAGE *pMsg)
 }
 
 /*
- *创建文本框
- *x0:TEXTBOX控件的最左像素(相对于父窗口)
- *y0:TEXTBOX控件的最右像素(相对于父窗口)
- *xSize:TEXTBOX控件的水平宽度
- *ySize:TEXTBOX控件的竖直高度
- *hParent:父窗口句柄
- *Id:窗口ID
- *Flag:窗口状态
- *cb:用户回调历程指针
- */
+ * 创建文本框
+ * x0:TEXTBOX控件的最左像素(相对于父窗口)
+ * y0:TEXTBOX控件的最右像素(相对于父窗口)
+ * xSize:TEXTBOX控件的水平宽度
+ * ySize:TEXTBOX控件的竖直高度
+ * hParent:父窗口句柄
+ * Id:窗口ID
+ * Flag:窗口状态
+ * cb:用户回调历程指针
+ **/
 WM_hWin TEXTBOX_Create(i_16 x0,
                       i_16 y0,
                       u_16 xSize,
@@ -84,7 +84,7 @@ WM_hWin TEXTBOX_Create(i_16 x0,
     /* 配色 */
     pObj->Widget.Skin.BackColor[0] = TEXTBOX_DEF_BKC;
     pObj->Widget.Skin.FontColor[0] = TEXTBOX_TEXT_COLOR;
-    TEXTBOX_SetText(pObj, "");      //设置初始字符串
+    TEXTBOX_SetText(pObj, "");      /* 设置初始字符串 */
     TEXTBOX_SetFont(pObj, GUI_DEF_FONT);
     
     return pObj;
@@ -102,7 +102,7 @@ u_8 TEXTBOX_SetText(WM_hWin hWin, const char *str)
     ((TEXTBOX_Obj*)hWin)->Text = (char*)str;
     Rect = WM_GetWindowAreaRect(hWin);
     hWin = WM_GetParentHandle(hWin);
-    WM_InvalidateRect(hWin, &Rect);  //整个窗口失效
+    WM_InvalidateRect(hWin, &Rect);  /* 整个窗口失效 */
     return 0;
 }
 
@@ -125,7 +125,7 @@ void TEXTBOX_SetAllAlpha(WM_hWin hWin, u_8 Alpha)
     WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
     Rect = WM_GetWindowAreaRect(hWin);
     hWin = WM_GetParentHandle(hWin);
-    WM_InvalidateRect(hWin, &Rect);  //整个窗口失效
+    WM_InvalidateRect(hWin, &Rect); /* 整个窗口失效 */
 }
 
 /* 自动换行显示 */
