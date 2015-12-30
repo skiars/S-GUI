@@ -2,7 +2,7 @@
 #include "GUI.h"
 
 GUI_WORK_SPACE *GUI_Data;
-GUI_RECT __Now_DrawRect;  //GUI当前可以绘制的区域
+GUI_RECT __Now_DrawRect;  /* GUI当前可以绘制的区域 */
 
 void GUI_Init(void)
 {    
@@ -17,8 +17,8 @@ void GUI_Init(void)
     WM_Init();
 #if GUI_USE_MEMORY
     GUI_Data->lcdbuf = GUI_malloc(sizeof(GUI_COLOR)
-                                 * GUI_Data->phy_info.xSize
-                                 * GUI_Data->phy_info.ySize);
+                                  * GUI_Data->phy_info.xSize
+                                  * GUI_Data->phy_info.ySize);
 #endif
     GUI_Data->guitime=0;
 }
@@ -54,8 +54,8 @@ u_16 GUI_GetScreenHeight(void)
 void GUI_Delay(GUI_TIME tms)
 {
     GUI_KeyProcess();
-    WM_Exec();  //窗口管理器
-    _GUI_Delay_ms(tms); //延时
+    WM_Exec();          /* 窗口管理器 */
+    _GUI_Delay_ms(tms); /* 延时 */
 }
 
 /*
@@ -87,14 +87,14 @@ void GUI_EventQueueDelete(GUI_QUEUE *pQue)
 }
 
 /*
-*从事件队列里读取一个事件
-*/
+ * 从事件队列里读取一个事件
+ **/
 u_8 GUI_GetEvent(GUI_QUEUE *pQue, GUI_EVENT event)
 {
     u_16 i = pQue->ItemSize;
     u_8 *p1, *p2;
     
-    if (!pQue->size) {   //队列为空
+    if (!pQue->size) {   /* 队列为空 */
         return GUI_ERR;
     }
     pQue->size--;
@@ -103,27 +103,27 @@ u_8 GUI_GetEvent(GUI_QUEUE *pQue, GUI_EVENT event)
     while(i--) {
         *p1++ = *p2++;
     }
-    if (++pQue->front == pQue->capacity) {  //队头绕回到开头
+    if (++pQue->front == pQue->capacity) {  /* 队头绕回到开头 */
         pQue->front = 0;
     }
     return GUI_OK;
 }
 
 /*
-*向事件队列发送一个事件
-*pQue:事件队列指针
-*event:需要发送的事件
-*/
+ * 向事件队列发送一个事件
+ * pQue:事件队列指针
+ * event:需要发送的事件
+ **/
 u_8 GUI_SendEvent(GUI_QUEUE *pQue, GUI_EVENT event)
 {
     u_16 i = pQue->ItemSize;
     u_8 *p1, *p2;
     
-    if (pQue->size == pQue->capacity - 1) { //队列已满
+    if (pQue->size == pQue->capacity - 1) { /* 队列已满 */
         return GUI_ERR;
     }
     pQue->size++;
-    if (++pQue->rear == pQue->capacity) {  //队尾绕回到开头
+    if (++pQue->rear == pQue->capacity) {  /* 队尾绕回到开头 */
         pQue->rear = 0;
     }
     p1 = (u_8*)pQue->pArray + (u_32)pQue->rear * i;
@@ -135,8 +135,8 @@ u_8 GUI_SendEvent(GUI_QUEUE *pQue, GUI_EVENT event)
 }
 
 /*
-*清空事件队列
-*/
+ * 清空事件队列
+ **/
 void GUI_CleanQueue(GUI_QUEUE *pQue)
 {
     pQue->size = 0;
@@ -145,11 +145,11 @@ void GUI_CleanQueue(GUI_QUEUE *pQue)
 }
 
 /*
-*检测事件队列是否为空
-*/
+ * 检测事件队列是否为空
+ **/
 u_8 GUI_QueueIsEmpty(GUI_QUEUE *pQue)
 {
-    if (!pQue->size) {   //队列为空
+    if (!pQue->size) {   /* 队列为空 */
         return 1;
     }
     return 0;

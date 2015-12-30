@@ -3020,21 +3020,24 @@ GUI_CONST_STORAGE GUI_FONT_PROP GUI_FontMicrosoftYaHeiUI27_2pp_Prop1 = {
   ,(GUI_CONST_STORAGE GUI_FONT_PROP *)0 /* pointer to next GUI_FONT_PROP */
 };
 
+/* 获取字符宽度 */
 static u_16 __CharWidget(const char *ch)
 {
-    char Char = *ch - GUI_FontMicrosoftYaHeiUI27_2pp_Prop1.FirstChar;
+    u_16 Char = *ch - GUI_FontMicrosoftYaHeiUI27_2pp_Prop1.FirstChar;
     return GUI_FontMicrosoftYaHeiUI27_2pp_CharInfo[Char].X;
 }
 
+/* 获取这个字符点阵一行的字节数 */
 static u_8 __CharWidgetBytes(const char *ch)
 {
-    char Char = *ch - GUI_FontMicrosoftYaHeiUI27_2pp_Prop1.FirstChar;
+    u_16 Char = *ch - GUI_FontMicrosoftYaHeiUI27_2pp_Prop1.FirstChar;
     return GUI_FontMicrosoftYaHeiUI27_2pp_CharInfo[Char].Bytes;
 }
 
+/* 获取某个字符的点阵 */
 static unsigned const char* __GetChar(const char *ch)
 {
-    char Char = *ch - GUI_FontMicrosoftYaHeiUI27_2pp_Prop1.FirstChar;
+    u_16 Char = *ch - GUI_FontMicrosoftYaHeiUI27_2pp_Prop1.FirstChar;
     return GUI_FontMicrosoftYaHeiUI27_2pp_CharInfo[Char].Data;
 }
 

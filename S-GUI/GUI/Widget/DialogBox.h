@@ -10,7 +10,7 @@ typedef GUI_hWin GUI_WIDGET_CREATE_FUNC (i_16 x0, i_16 y0, u_16 xSize,
 /* 自动创建窗口数据结构定义 */
 typedef struct {
     GUI_WIDGET_CREATE_FUNC * Auto_Create;
-    u_16 Id;  //窗口ID
+    u_16 Id;  /* 窗口ID */
     i_16 x0, y0;
     u_16 xSize, ySize;
     u_8 Cmd;

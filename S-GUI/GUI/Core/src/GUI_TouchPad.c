@@ -22,17 +22,17 @@ void GUI_TouchPadSendValue(u_16 x, u_16 y, u_16 State)
         hWin = WM_GetExposedWindow(x, y);
         /* 判断是否还是上一次的窗口 */
         if (hWin != NULL) {
-            if (Last_hWin == NULL) { //第一次触摸
+            if (Last_hWin == NULL) { /* 第一次触摸 */
                 Last_hWin = hWin;
                 WM_SendMessage(hWin, WM_TP_CHECKED, NULL);
-            } else if (hWin == Last_hWin) { //一直在触摸
+            } else if (hWin == Last_hWin) { /* 一直在触摸 */
                 WM_SendMessage(hWin, WM_TP_PRESS, NULL);
-            } else if (WM_FindWindow(Last_hWin)) { //离开了控件,且窗口存在
+            } else if (WM_FindWindow(Last_hWin)) { /* 离开了控件,且窗口存在 */
                 WM_SendMessage(Last_hWin, WM_TP_LEAVE, NULL);
             }
         }
-    } else {  //触摸松开
-        if (WM_FindWindow(Last_hWin)) {  //窗口还存在
+    } else {  /* 触摸松开 */
+        if (WM_FindWindow(Last_hWin)) {  /* 窗口还存在 */
             WM_SendMessage(Last_hWin, WM_TP_REMOVED, NULL);
         }
         Last_hWin = NULL;

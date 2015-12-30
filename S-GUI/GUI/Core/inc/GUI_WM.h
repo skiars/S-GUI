@@ -9,28 +9,28 @@
 #define WM_NULL_EVENT    0x0000
 
 /* GUI系统保留消息 */
-#define WM_INIT_DIALOG       0x0100    //对话框初始化
-#define WM_PAINT             0x0101    //重绘
+#define WM_INIT_DIALOG       0x0100    /* 对话框初始化 */
+#define WM_PAINT             0x0101    /* 重绘 */
 #define WM_PRE_PAINT         0x0102
 #define WM_POST_PAINT        0x0103
 #define WM_DELETE            0x0104
-#define WM_TP_CHECKED        0x0105    //触摸板按下
-#define WM_TP_REMOVED        0x0106    //触摸板松开
-#define WM_TP_PRESS          0x0107    //触摸坐标一直在当前窗口
-#define WM_TP_LEAVE          0x0108    //触摸坐标离开当前窗口
-#define WM_BUTTON_CLICKED    0x0200    //BUTTON控件按下
-#define WM_BUTTON_RELEASED   0x0201    //BUTTON控件已经释放
-#define WM_NUTTON_MOVED_OUT  0x0202    //BUTTON被点击然后指针移开
+#define WM_TP_CHECKED        0x0105    /* 触摸板按下 */
+#define WM_TP_REMOVED        0x0106    /* 触摸板松开 */
+#define WM_TP_PRESS          0x0107    /* 触摸坐标一直在当前窗口 */
+#define WM_TP_LEAVE          0x0108    /* 触摸坐标离开当前窗口 */
+#define WM_BUTTON_CLICKED    0x0200    /* BUTTON控件按下 */
+#define WM_BUTTON_RELEASED   0x0201    /* BUTTON控件已经释放 */
+#define WM_NUTTON_MOVED_OUT  0x0202    /* BUTTON被点击然后指针移开 */
 #define WM_KEY_CHECKED       0x0210
-#define WM_WIONDOW_CHECKED   0x0203     //窗口被点击
-#define WM_TIME_UPDATA       0x0210     //时间更新
+#define WM_WIONDOW_CHECKED   0x0203     /* 窗口被点击 */
+#define WM_TIME_UPDATA       0x0210     /* 时间更新 */
 /* 1024以后为扩展消息(用户可定义) */
 
 /* Window状态定义 */
-#define WM_WINDOW_ACTIVE    0x0001   //活动窗口
-#define WM_WINDOW_TRANS     0x0002   //透明窗口
-#define WM_WINDOW_UN_DRAW   0x0004   //不绘制内部背景
-#define WM_WINDOW_TIMER     0x0008   //窗口需要计时
+#define WM_WINDOW_ACTIVE    0x0001   /* 活动窗口 */
+#define WM_WINDOW_TRANS     0x0002   /* 透明窗口 */
+#define WM_WINDOW_UN_DRAW   0x0004   /* 不绘制内部背景 */
+#define WM_WINDOW_TIMER     0x0008   /* 窗口需要计时 */
 
 
 #define WM_USER_ID          0x0200
@@ -41,10 +41,10 @@
 typedef GUI_hWin WM_hWin;
 
 typedef struct {
-    u_16 MsgId;      //信息ID,即参数编号
-    WM_hWin hWin;   //目标窗口句柄
-    WM_hWin hWinSrc; //源窗口句柄 
-    void *data;      //参数
+    u_16 MsgId;      /* 信息ID,即参数编号 */
+    WM_hWin hWin;   /* 目标窗口句柄 */
+    WM_hWin hWinSrc; /* 源窗口句柄  */
+    void *data;      /* 参数 */
 } WM_MESSAGE;
 
 /* 窗口信息处理回调函数 */
@@ -54,27 +54,27 @@ typedef void GUI_PAINT_CALLBACK (GUI_hWin hWin);
 
 /* 窗口管理注册表节点 */
 typedef struct {
-    u_8 z;               //窗口的z坐标
-    u_8 IadFlag;         //窗口无效标记
-    WM_MESSAGE *pMsg;    //窗口信息指针
-    WM_CALLBACK *WinCb;  //窗口功能回调函数
-    GUI_PAINT_CALLBACK *PaintCallback;  //窗口重绘函数
+    u_8 z;               /* 窗口的z坐标 */
+    u_8 IadFlag;         /* 窗口无效标记 */
+    WM_MESSAGE *pMsg;    /* 窗口信息指针 */
+    WM_CALLBACK *WinCb;  /* 窗口功能回调函数 */
+    GUI_PAINT_CALLBACK *PaintCallback;  /* 窗口重绘函数 */
 } WM_REGISTRY_NODE;
 
 /* 窗口管理器基类 */
 typedef struct {
-    GUI_RECT Rect;          //窗口尺寸
-    GUI_RECT InvalidRect;   //窗口无效区域
-    GUI_RECT UserRect;      //窗口用户区域
-    WM_hWin hParent;        //父窗口指针
-    WM_hWin hFirstChild;    //第一个子窗口指针
-    WM_hWin hNext;          //指向下一个同属窗口
-    WM_CALLBACK *WinCb;     //窗口信息响应回调函数
-    u_16 Status;            //窗口状态
-    u_8 Sign;               //窗口类型辨识符
-    u_16 Id;                //窗口Id
-    GUI_TIME LastTime;      //上次更新时间
-    u_16 TimeCount;         //时间间隔计数
+    GUI_RECT Rect;          /* 窗口尺寸 */
+    GUI_RECT InvalidRect;   /* 窗口无效区域 */
+    GUI_RECT UserRect;      /* 窗口用户区域 */
+    WM_hWin hParent;        /* 父窗口指针 */
+    WM_hWin hFirstChild;    /* 第一个子窗口指针 */
+    WM_hWin hNext;          /* 指向下一个同属窗口 */
+    WM_CALLBACK *WinCb;     /* 窗口信息响应回调函数 */
+    u_16 Status;            /* 窗口状态 */
+    u_8 Sign;               /* 窗口类型辨识符 */
+    u_16 Id;                /* 窗口Id */
+    GUI_TIME LastTime;      /* 上次更新时间 */
+    u_16 TimeCount;         /* 时间间隔计数 */
 } WM_Obj;
 
 void WM_Init(void);

@@ -15,7 +15,7 @@ typedef u_16 LCD_COLOR;
 
 typedef enum {
     GUI_OK = 0,
-    GUI_ERR,
+    GUI_ERR
 } GUI_RESULT;
 
 #endif

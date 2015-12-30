@@ -46,7 +46,7 @@ void GUI_Test(void)
 
     Create_Window2();
     while(1) {
-        GUI_Delay(20);
+        GUI_Delay(10);
     }
 }
 

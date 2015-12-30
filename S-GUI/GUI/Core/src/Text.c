@@ -3,9 +3,6 @@
 #include "string.h"
 #include "GUI_Font.h"
 
-/* GUI当前的字体 */
-//static GUI_FontType _GUI_CurFont;
-
 /* 获取一个字符串在当前字体下所占的像素数 */
 u_16 GetStringPixel(const char *str, GUI_FontType Font)
 {
@@ -23,7 +20,7 @@ u_16 GUI_SkipWord(const char *str, GUI_FontType Font, u_16 x_pix, u_16 *len)
     u_16 pix = 0, t_pix;
     
     *len = 0;
-    if (*str > 127) { //全角字符
+    if (*str > 127) { /* 全角字符 */
         
     } else if ((*str >= 'A' && *str <= 'Z') ||
                 (*str >= 'a' && *str <= 'z')) {
@@ -50,7 +47,7 @@ u_16 GUI_CharASCII_2PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Fo
     u_16 chh, chw, bCnt;
     const unsigned char *pTab;
 
-    if(ch < 0x20 || ch >= 127) ch = 0x20;  //不可显示的字符显示空格
+    if(ch < 0x20 || ch >= 127) ch = 0x20;  /* 不可显示的字符显示空格 */
     pTab = Font->GetChar(&ch);
     chh = Font->CharHeight;
     chw = Font->CharWidget(&ch);
@@ -84,7 +81,7 @@ u_16 GUI_CharASCII_4PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Fo
     u_16 chh, chw, bCnt;
     const unsigned char *pTab;
 
-    if(ch < 0x20 || ch >= 127) ch = 0x20;  //不可显示的字符显示空格
+    if(ch < 0x20 || ch >= 127) ch = 0x20;  /* 不可显示的字符显示空格 */
     pTab = Font->GetChar(&ch);
     chh = Font->CharHeight;
     chw = Font->CharWidget(&ch);
@@ -114,11 +111,11 @@ u_16 GUI_CharASCII_4PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Fo
 /* 显示一个ASCII字符 */
 u_16 GUI_CharASCII(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
 {
-    u_8 temp, t, pos, bytes, a, b;
-    u_16 ch_h, ch_w;
+    u_8 temp, t, pos, bytes, a;
+    u_16 ch_h, ch_w, b;
     const unsigned char *pTab;
 
-    if(ch < 0x20 || ch >= 127) ch = 0x20;  //不可显示的字符显示空格
+    if(ch < 0x20 || ch >= 127) ch = 0x20;  /* 不可显示的字符显示空格 */
     pTab = Font->GetChar(&ch);
     ch_h = Font->CharHeight;
     ch_w = Font->CharWidget(&ch);
@@ -146,9 +143,8 @@ u_16 GUI_CharASCII(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
 
 u_16 GUI_DispChar(i_16 x, i_16 y, const char *ch, GUI_COLOR Color, GUI_FontType Font)
 {
-    u_16 ch_w;//, ch_h;
+    u_16 ch_w;
     
-    //ch_h = Font->CharHeight;
     ch_w = Font->CharWidget(ch);
     if (*ch <= 127) {
         if (Font->FontType == GUI_FONTTYPE_PROP)
@@ -158,8 +154,8 @@ u_16 GUI_DispChar(i_16 x, i_16 y, const char *ch, GUI_COLOR Color, GUI_FontType 
         else if (Font->FontType == GUI_FONTTYPE_PROP_AA2)
             GUI_CharASCII_2PP(x, y, *ch, Color, Font);
     } else {
-        //中文
-        //pos += 16;
+        /* 中文 */
+        /* pos += 16; */
     }
     return ch_w;
 }

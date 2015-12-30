@@ -10,13 +10,11 @@ static void WM__WindowTimer(WM_Obj *pObj);
 static void WM__RefreshBackgnd(WM_Obj *pWin, RECT_LIST RectList);
 
 /*
-*注意,窗口管理器有多个全局变量,因此在使用操作系统时
-*要注意线程安全性(可重入性).
-*/
+ * 注意,窗口管理器有多个全局变量,因此在使用操作系统时
+ * 要注意线程安全性(可重入性).
+ **/
 
-/*
- *窗口管理器初始化
-*/
+/* 窗口管理器初始化 */
 void WM_Init(void)
 {
     GUI_hWin *p = &_hRootWin;
@@ -26,12 +24,12 @@ void WM_Init(void)
 }
 
 /*
-*遍历窗口树
-*pTop:最上面的窗口,将会遍历它的所有子窗口.
-*pData:传给pFunc的参数,可以提供泛型编程的接口.
-*pFunc:遍历时相关实现功能的函数,pFunc返回非零时本函数将会返回1,
-*      否者本函数将会继续遍历,并在最后返回0.
-*/
+ * 遍历窗口树
+ * pTop:最上面的窗口,将会遍历它的所有子窗口.
+ * pData:传给pFunc的参数,可以提供泛型编程的接口.
+ * pFunc:遍历时相关实现功能的函数,pFunc返回非零时本函数将会返回1,
+ *      否者本函数将会继续遍历,并在最后返回0.
+ **/
 static u_8 WM__TraversalWindows(WM_Obj *pRoot, void *pData, u_8 (*pFunc)(WM_Obj*, void*))
 {
     WM_Obj *pWin = pRoot;
@@ -56,10 +54,8 @@ static u_8 WM__TraversalWindows(WM_Obj *pRoot, void *pData, u_8 (*pFunc)(WM_Obj*
     }
 }
 
-/*
-*窗口管理器重绘
-*/
-static u_8 WM__WindowRepaint(WM_Obj *pWin, void *pList)
+/* 窗口管理器重绘 */
+static u_8 WM__WindowRepaint(WM_Obj *pWin, void *pData)
 {
     RECT_LIST RectList;
 
@@ -115,9 +111,9 @@ void WM_Exec(void)
  **/
 
 /*
-*向窗口管理器的指定窗口发送消息
-*hWin:要指定窗口的句柄,为NULL时会将消息发送至当前活动窗口
-*/
+ * 向窗口管理器的指定窗口发送消息
+ * hWin:要指定窗口的句柄,为NULL时会将消息发送至当前活动窗口
+ **/
 void WM__SendMessage(WM_hWin hWin, WM_MESSAGE *pMsg)
 {
     static u_8 __MseeageCount;
@@ -153,9 +149,7 @@ void WM_SendMessage(WM_hWin hWin, u_16 MsgId, void *data)
     WM__SendMessage(hWin, &Msg);
 }
 
-/*
-*向窗口管理器的指定窗口的父窗口发送消息
-*/
+/* 向窗口管理器的指定窗口的父窗口发送消息 */
 void WM_PostMessageToParent(WM_hWin hWin, u_16 MsgId, void *data)
 {
     WM_MESSAGE Msg;
@@ -167,9 +161,9 @@ void WM_PostMessageToParent(WM_hWin hWin, u_16 MsgId, void *data)
 }
 
 /*
-*获取窗口有效的区域大小
-*-该函数通过将目标窗口的与它所有的祖先窗口的用户区取并集得到有效区域
-*/
+ * 获取窗口有效的区域大小
+ * -该函数通过将目标窗口的与它所有的祖先窗口的用户区取并集得到有效区域
+ **/
 GUI_RECT WM_GetWindowAreaRect(WM_hWin hWin)
 {
     GUI_RECT Rect;
@@ -215,9 +209,7 @@ void WM_AttachWindow(WM_hWin hWin, WM_hWin hParent)
     }
 }
 
-/*
-*将一个窗口从窗口树中移除
-*/
+/* 将一个窗口从窗口树中移除 */
 static void WM__RemoveWindow(WM_hWin hWin)
 {
     WM_Obj *pWin, *pt;
@@ -241,9 +233,9 @@ static void WM__RemoveWindow(WM_hWin hWin)
 }
 
 /*
-*删除一个窗口,这个窗口必须已经脱离窗口树(它至少不能有同属节点) 
-*内部调用
-*/
+ * 删除一个窗口,这个窗口必须已经脱离窗口树(它至少不能有同属节点) 
+ * 内部调用
+ **/
 static void WM__DeleteWindow(WM_hWin hWin)
 {
     WM_MESSAGE Msg;
@@ -277,9 +269,7 @@ static void WM__DeleteWindow(WM_hWin hWin)
     }
 }
 
-/*
-*删除窗口
-*/
+/* 删除窗口 */
 void WM_DeleteWindow(WM_hWin hWin)
 {    
     GUI_Lock();
@@ -290,9 +280,7 @@ void WM_DeleteWindow(WM_hWin hWin)
     GUI_Unlock();
 }
 
-/*
-*获取当前活动窗口的句柄
-*/
+/* 获取当前活动窗口的句柄 */
 WM_hWin WM_GetActiveMainWindow(void)
 {
     WM_Obj *pWin = _RootWin.hFirstChild;
@@ -303,10 +291,10 @@ WM_hWin WM_GetActiveMainWindow(void)
 }
 
 /*
-*设置活动窗口(这个窗口会放在最前面显示)
-*hWin:要设置的窗口句柄
-*返回值:GUI_OK,正常;GUI_ERR,错误,没有该窗口
-*/
+ * 设置活动窗口(这个窗口会放在最前面显示)
+ * hWin:要设置的窗口句柄
+ * 返回值:GUI_OK,正常;GUI_ERR,错误,没有该窗口
+ **/
 GUI_RESULT WM_SetActiveMainWindow(WM_hWin hWin)
 {
     WM_Obj *pObj = hWin;
@@ -321,16 +309,16 @@ GUI_RESULT WM_SetActiveMainWindow(WM_hWin hWin)
     if (WM_GetActiveMainWindow() != pObj) {
         WM__RemoveWindow(pObj); /* 先移除窗口 */
         WM_AttachWindow(pObj, NULL); /* 插入窗口到最后 */
-        WM_InvalidTree(pObj);/* 窗口及其所有的子窗口无效化 */
+        WM_InvalidTree(pObj); /* 窗口及其所有的子窗口无效化 */
     }
     GUI_Unlock();
     return GUI_OK;
 }
 
 /*
-*创建一个窗口作为指定窗口的子窗口
-*当hParent为NULL时,窗口将是RootWindow的子窗口
-*/
+ * 创建一个窗口作为指定窗口的子窗口
+ * 当hParent为NULL时,窗口将是RootWindow的子窗口
+ **/
 WM_hWin WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
                                i_16 y0,             /* 纵坐标 */
                                u_16 xSize,          /* 宽度 */
@@ -373,9 +361,9 @@ WM_hWin WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
 }
 
 /* 
-*检查窗口标识符 
-*返回值:0,标识符匹配;1,标识符不匹配
-*/
+ * 检查窗口标识符 
+ * 返回值:0,标识符匹配;1,标识符不匹配
+ **/
 u_8 WM_CheckWindowSign(WM_hWin hWin, u_16 Sign)
 {
     if (((WM_Obj*)hWin)->Sign == Sign) {
@@ -384,9 +372,7 @@ u_8 WM_CheckWindowSign(WM_hWin hWin, u_16 Sign)
     return 1;
 }
 
-/*
-*窗口部分区域无效化
-*/
+/* 窗口部分区域无效化 */
 void WM_InvalidateRect(WM_hWin hWin, GUI_RECT *pRect)
 {
     WM_Obj* pWin = hWin;
@@ -409,9 +395,7 @@ void WM_InvalidateRect(WM_hWin hWin, GUI_RECT *pRect)
     }
 }
 
-/*
-*整个窗口无效化
-*/
+/* 整个窗口无效化 */
 void WM_Invalidate(WM_hWin hWin)
 {
     WM_InvalidateRect(hWin, NULL);
@@ -432,9 +416,9 @@ GUI_RESULT WM_InvalidTree(WM_hWin hWin)
 }
 
 /* 
-*判断一个窗口是否无效
-*返回0:非无效,1:无效
-*/
+ * 判断一个窗口是否无效
+ * 返回0:非无效,1:无效
+ **/
 u_8 WM_CheckInvalid(WM_hWin hWin)
 {
     GUI_RECT Rect;
@@ -474,10 +458,10 @@ GUI_RECT WM_GetWindowInvalidRect(WM_hWin hWin)
 }
 
 /*
-*在窗口树中寻找一个窗口
-*返回值:0,没有这个窗口;1,有这个窗口
-*内部调用
-*/
+ * 在窗口树中寻找一个窗口
+ * 返回值:0,没有这个窗口;1,有这个窗口
+ * 内部调用
+ **/
 static u_8 WM__FindWindow(WM_Obj *pWin, void *fWin)
 {
     if (fWin == pWin) {
@@ -487,10 +471,10 @@ static u_8 WM__FindWindow(WM_Obj *pWin, void *fWin)
 }
 
 /*
-*在窗口树中寻找一个窗口
-*返回值:0,没有这个窗口;1,有这个窗口
-*外部调用
-*/
+ * 在窗口树中寻找一个窗口
+ * 返回值:0,没有这个窗口;1,有这个窗口
+ * 外部调用
+ **/
 u_8 WM_FindWindow(WM_hWin hWin)
 {
     u_8 Res;
@@ -572,9 +556,9 @@ struct _EXPOS_WIN {
 };
 
 /*
-*获得在输入坐标下暴露的窗口
-*内部调用
-*/
+ * 获得在输入坐标下暴露的窗口
+ * 内部调用
+ **/
 static u_8 WM__GetExposedWindow(WM_Obj *pObj, void *pData)
 {    
     ((struct _EXPOS_WIN *)pData)->tRect = WM_GetWindowAreaRect(pObj);

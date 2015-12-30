@@ -14,18 +14,18 @@ u_16 GUI_RGB888To565(u_32 RGB)
 u_32 GUI_RGB565To888(u_16 RGB)
 {
     u_32 Color;
-    Color  = ((u_32)RGB & 0x001F) << 19;  //B
-    Color |= ((u_32)RGB & 0x07E0) << 5;   //G
-    Color |= ((u_32)RGB & 0xF800) >> 8;   //R
+    Color  = ((u_32)RGB & 0x001F) << 19;  /* B */
+    Color |= ((u_32)RGB & 0x07E0) << 5;   /* G */
+    Color |= ((u_32)RGB & 0xF800) >> 8;   /* R */
     return Color;
 }
 
 /*
-*Alpha混合
-*BkColor:背景颜色
-*Color:目标颜色
-*Alpha:透明度(0~256)
-*/
+ * Alpha混合
+ * BkColor:背景颜色
+ * Color:目标颜色
+ * Alpha:透明度(0~256)
+ **/
 GUI_COLOR GUI_AlphaBlend(GUI_COLOR Color, GUI_COLOR BkColor, u_16 Alpha)
 {
     /* Calc Color seperations for FgColor first */
@@ -44,7 +44,7 @@ GUI_COLOR GUI_AlphaBlend(GUI_COLOR Color, GUI_COLOR BkColor, u_16 Alpha)
 }
 
 
-//画裁剪点
+/* 画裁剪点 */
 void GUI_DrawTailorPoint(i_16 x,i_16 y,GUI_COLOR Color)
 {
     GUI_RECT r1, r2;
@@ -95,10 +95,11 @@ void GUI_VertLine(i_16 x0, i_16 y0, u_16 len, GUI_COLOR Color)
     }    
 }
 
-//画垂直裁剪线
-//x0,y0:坐标
-//len:线长度
-//color:颜色
+/* 画垂直裁剪线
+ * x0,y0:坐标
+ * len:线长度
+ * color:颜色
+ **/
 void GUI_VertTailorLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
 {
     GUI_RECT r1, r2;
@@ -122,8 +123,8 @@ void GUI_VertTailorLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
 }
 
 /*  
-*画有透明效果的水平线
-*/
+ * 画有透明效果的水平线
+ **/
 void GUI_HoriLineAlpha(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
 {
     u_16 Alpha = Color >> 24;
@@ -134,10 +135,11 @@ void GUI_HoriLineAlpha(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
     }
 }
 
-//画水平线
-//x0,y0:坐标
-//len:线长度
-//color:颜色
+/* 画水平线
+ * x0,y0:坐标
+ * len:线长度
+ * color:颜色
+ **/
 void GUI_HoriLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
 {
     while (len--) {
@@ -145,10 +147,11 @@ void GUI_HoriLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
     }    
 }
 
-//画水平裁剪线
-//x0,y0:坐标
-//len:线长度
-//color:颜色
+/* 画水平裁剪线
+ * x0,y0:坐标
+ * len:线长度
+ * color:颜色
+ **/
 void GUI_HoriTailorLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
 {
     GUI_RECT r1, r2;
@@ -171,7 +174,7 @@ void GUI_HoriTailorLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
     }
 }
 
-//画矩形框
+/* 画矩形框 */
 void GUI_DrawRect(i_16 x0,i_16 y0,u_16 xSize,u_16 ySize,GUI_COLOR Color)
 {
     GUI_HoriLine(x0, y0, xSize, Color);
@@ -180,7 +183,7 @@ void GUI_DrawRect(i_16 x0,i_16 y0,u_16 xSize,u_16 ySize,GUI_COLOR Color)
     GUI_VertLine(x0 + xSize - 1, y0, ySize, Color);
 }
 
-//画裁剪矩形框
+/* 画裁剪矩形框 */
 void GUI_DrawTailorRect(i_16 x0,i_16 y0,u_16 xSize,u_16 ySize,GUI_COLOR Color)
 {
     GUI_HoriTailorLine(x0 + 1, y0, xSize - 2, Color);
@@ -205,7 +208,7 @@ void GUI_FillRectAlpha(i_16 x0, i_16 y0,u_16 xSize,u_16 ySize,GUI_COLOR Color)
     }
 }
 
-//填充矩形
+/* 填充矩形 */
 void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Color)
 {                                     
     i_16 x, y;
@@ -219,14 +222,14 @@ void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Color)
     }
 }
 
-//填充裁剪矩形
+/* 填充裁剪矩形 */
 void GUI_FillTailorRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Color)
 {                                     
     GUI_RECT r1, r2;
     
     /* 将矩形坐标转换为结构体 */
     if (GUI_Val2Rect(&r1, x0, y0, xSize, ySize) == GUI_ERR) {
-        return;//非法
+        return; /* 非法 */
     }
     GUI_DrawAreaInit();
     while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
@@ -244,6 +247,7 @@ void GUI_FillTailorRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Colo
     }
 }
 
+#if 0
 //画圆角矩形/填充圆角矩形
 //x,y,width,height:圆角矩形的位置和尺寸
 //r:圆角的半径.
@@ -332,3 +336,4 @@ void GUI_DrawArc(u_16 sx,u_16 sy,u_16 ex,u_16 ey,u_16 rx,u_16 ry,u_16 r,GUI_COLO
         }                               
     }
 }
+#endif

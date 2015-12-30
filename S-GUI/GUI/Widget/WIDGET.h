@@ -29,19 +29,16 @@
 #define WIDGET_FONT            0x04
 
 typedef struct {
-    GUI_COLOR      EdgeColor[3];    //边框颜色
-    GUI_COLOR      BackColor[2];    //内部背景颜色
-    GUI_COLOR      CaptionColor[2]; //标题颜色
-    GUI_FontType   Font;          //字体
-    GUI_COLOR      FontColor[2];  //字体颜色
-}WIDGET_SKIN;      //窗口控件皮肤
-
-//typedef u_8 (*WIDGET_PAINTSKIN)(WIDGET_SKIN* Skin, u_16 Cmd);  //皮肤绘制函数
+    GUI_COLOR      EdgeColor[3];    /* 边框颜色 */
+    GUI_COLOR      BackColor[2];    /* 内部背景颜色 */
+    GUI_COLOR      CaptionColor[2]; /* 标题颜色 */
+    GUI_FontType   Font;          /* 字体 */
+    GUI_COLOR      FontColor[2];  /* 字体颜色 */
+}WIDGET_SKIN;      /* 窗口控件皮肤 */
 
 typedef struct {
     WM_Obj Win;
     WIDGET_SKIN Skin;
-    //WIDGET_PAINTSKIN SkinCb;
 }WIDGET;
 
 void WIDGET_SetTransWindow(GUI_hWin hWin);

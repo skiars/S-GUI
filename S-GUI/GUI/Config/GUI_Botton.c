@@ -71,8 +71,8 @@ static void Phy_DispArea(u_16 x, u_16 y, u_16 xSize, u_16 ySize,
 /* 图形硬件初始化 */
 void GUI_Phy_Init(GUI_PHY_INFO *phys)
 {
-    phys->xSize = sim_getWidth();
-    phys->ySize = sim_getHeight();
+    phys->xSize = (u_16)sim_getWidth();
+    phys->ySize = (u_16)sim_getHeight();
     phys->GetPixel = Phy_GetPixel;
     phys->SetPixel = Phy_SetPixel;
     phys->DispArea = Phy_DispArea;

@@ -1,9 +1,9 @@
 #include "GUI_Memory.h"
 #include "GUI.h"
 
-//GUI内存绘图支持
+/* GUI内存绘图支持 */
 
-//将屏幕缓冲区的数据显示到屏幕
+/* 将屏幕缓冲区的数据显示到屏幕 */
 void GUI_DrawFromMem(u_16 x, u_16 y, u_16 len, u_16 wid)
 {
 #if GUI_USE_MEMORY
@@ -31,7 +31,7 @@ void GUI_DrawBlock(u_16 x, u_16 y, u_16 len, u_16 wid, GUI_COLOR *data)
 #endif
 }
 
-//读取屏幕缓冲区的数据
+/* 读取屏幕缓冲区的数据 */
 void GUI_ReadBack(u_16 x, u_16 y, u_16 len, u_16 wid, GUI_COLOR *pb)
 {
 #if GUI_USE_MEMORY
@@ -51,7 +51,7 @@ void GUI_ReadBack(u_16 x, u_16 y, u_16 len, u_16 wid, GUI_COLOR *pb)
 #endif
 }
 
-//恢复屏幕缓冲区的数据，pb指向数据源
+/* 恢复屏幕缓冲区的数据，pb指向数据源 */
 void GUI_RecoverBack(u_16 x, u_16 y, u_16 len, u_16 wid, GUI_COLOR *pb)
 {
 #if GUI_USE_MEMORY

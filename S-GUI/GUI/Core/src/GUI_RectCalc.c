@@ -76,7 +76,7 @@ u_8 GUI_CheckPointAtRect(u_16 x, u_16 y, GUI_RECT *Rect)
 u_8 GUI_CheckRectNull(GUI_RECT *Rect)
 {
     if (Rect->x1 >= Rect->x0 && Rect->y1 >= Rect->y0) {
-        return 1;  //·Ç¿Õ
+        return 1;  /* ·Ç¿Õ */
     }
     return 0;
 }

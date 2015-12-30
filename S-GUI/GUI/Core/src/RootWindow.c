@@ -24,7 +24,7 @@ static void _RootWin_Callback(WM_MESSAGE *pMsg)
             __Paint(pMsg->hWin);
             break;
         }
-        case WM_DELETE : {  //根窗口不可删除
+        case WM_DELETE : {  /* 根窗口不可删除 */
             break;
         }
         case WM_TIME_UPDATA :
@@ -58,6 +58,6 @@ void WM_RootWindowInit(WM_Obj *pObj)
     pObj->hParent = NULL;
     pObj->hFirstChild = NULL;
     pObj->Status = 0x0000;
-    WM_Invalidate(pObj);  //根窗口无效化
-    WM_SetWindowTimer(pObj, 1000);//需要窗口计时器
+    WM_Invalidate(pObj);  /* 根窗口无效化 */
+    WM_SetWindowTimer(pObj, 1000); /* 需要窗口计时器 */
 }

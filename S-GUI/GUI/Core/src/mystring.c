@@ -1,6 +1,6 @@
 #include "mystring.h"
 
-//将字符串中的大写字母转换为小写
+/* 将字符串中的大写字母转换为小写 */
 void mystrlwr(char *str)
 {
     do {
@@ -8,7 +8,7 @@ void mystrlwr(char *str)
     } while (*str++);
 }
 
-//检查两个字符串是否相同，不区分大小写
+/* 检查两个字符串是否相同，不区分大小写 */
 int mystricmp(char *dst, char *src)
 {
     int ch1, ch2;
