@@ -2,7 +2,6 @@
 #include "GUI.h"
 
 GUI_WORK_SPACE *GUI_Data;
-GUI_RECT __Now_DrawRect;  /* GUI当前可以绘制的区域 */
 
 void GUI_Init(void)
 {    
@@ -156,9 +155,10 @@ u_8 GUI_QueueIsEmpty(GUI_QUEUE *pQue)
 }
 
 /* 设置现在绘制区域的裁剪矩形链表 */
-void GUI_SetNowRectList(RECT_LIST l)
+void GUI_SetNowRectList(RECT_LIST l, GUI_RECT *p)
 {
     GUI_Data->NowRectList = l;
+    GUI_Data->PaintArea = p;
 }
 
 /* 返回现在绘制区域的裁剪矩形链表 */
@@ -170,15 +170,22 @@ RECT_LIST GUI_GetNowRectList(void)
 static RECT_NODE *__NowRectNode = NULL;
 
 /* 初始化绘制区域 */
-void GUI_DrawAreaInit(void)
+void GUI_DrawAreaInit(GUI_RECT *p)
 {
-    __NowRectNode = GUI_Data->NowRectList;
+    if (GUI_CheckRectIntersect(GUI_Data->PaintArea, p)) {
+        __NowRectNode = GUI_Data->NowRectList;
+    } else {
+        __NowRectNode = NULL; /* 绘图区域与当前的有效绘制区域不相交 */
+    }
 }
 
 /* 返回当前的裁剪矩形 */
 GUI_RECT *GUI_GetNowArea(void)
 {
-    return &__NowRectNode->Rect;
+    if (__NowRectNode) {
+        return &__NowRectNode->Rect;
+    }
+    return NULL;
 }
 
 /* 获取下一个裁剪矩形
@@ -189,7 +196,7 @@ GUI_RECT *GUI_GetNowArea(void)
  *          返回0时应该继续当前图形在裁剪矩形链表里的绘制循环。
  **/
 u_8 GUI_GetNextArea(GUI_RECT *pRect)
-{    
+{
     if (__NowRectNode == NULL) {
         return 0;
     }

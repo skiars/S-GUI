@@ -163,59 +163,61 @@ GUI_RESULT GUI_FreeRectList(RECT_NODE *pNode)
  */
 RECT_LIST GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst)
 {
-    u_8 i, j, t[4];
-    GUI_RECT Rect[4], r;
-    RECT_NODE *pNode;
+    GUI_RECT r;
+    RECT_NODE *p1, node;
     RECT_LIST List;
 
     if (GUI_RectOverlay(&r, Src, Dst) == GUI_ERR) { /* 判断是否相交 */
+        /* 不相交，裁剪区域就是Src矩形自己 */
         List = GUI_GetRectList(1); /* 申请链表 */
         if (List) {
             List->Rect = *Src;
         }
         return List;
     }
-    /* 每一个矩形最多可以被另外一个矩形分割为4个 */
-    Rect[0].x0 = Src->x0;
-    Rect[0].y0 = Src->y0;
-    Rect[0].x1 = Src->x1;
-    Rect[0].y1 = r.y0 - 1;
-
-    Rect[1].x0 = Src->x0;
-    Rect[1].y0 = r.y1 + 1;
-    Rect[1].x1 = Src->x1;
-    Rect[1].y1 = Src->y1;
-
-    Rect[2].x0 = Src->x0;
-    Rect[2].y0 = r.y0;
-    Rect[2].x1 = r.x0 - 1;
-    Rect[2].y1 = r.y1;
-
-    Rect[3].x0 = r.x1 + 1;
-    Rect[3].y0 = r.y0;
-    Rect[3].x1 = Src->x1;
-    Rect[3].y1 = r.y1;
-    
-    /* 统计有效矩形数量 */
-    for (i = 0, j = 0; i < 4; ++i) {
-        if (Rect[i].x1 >= Rect[i].x0 && Rect[i].y1 >= Rect[i].y0) {
-            ++j;
-            t[i] = 1; /* 标记有效矩形 */
-        } else {
-            t[i] = 0; /* 标记无效矩形 */
-        }
-    }
-    List = GUI_GetRectList(j); /* 申请链表 */
-    if (List == NULL) {
+    /* Src完全被Src与Dst的相交部分遮挡,将不会有裁剪区域 */
+    if (Src->x0 >= r.x0 && Src->x1 <= r.x1
+        && Src->y0 >= r.y0 && Src->y1 <= r.y1) {
         return NULL;
     }
-    pNode = List;
-    for (i = 0; i < 4; ++i) {
-        if (t[i]) { /* 将有效的矩形赋值给链表成员 */
-            pNode->Rect = Rect[i];
-            pNode = pNode->pNext;
-        }
+    /* 每一个矩形最多可以被另外一个矩形分割为4个 */
+    List = GUI_GetRectList(4); /* 申请链表 */
+    if (List == NULL) { /* 申请失败 */
+        return NULL;
     }
+    node.pNext = List;
+    p1 = &node; /* 使node成为List的"前一个链节" */
+    /* 逐个计算裁剪区域 */
+    if (Src->x0 <= Src->x1 && Src->y0 <= r.y0 - 1) {
+        p1 = p1->pNext;
+        p1->Rect.x0 = Src->x0;
+        p1->Rect.y0 = Src->y0;
+        p1->Rect.x1 = Src->x1;
+        p1->Rect.y1 = r.y0 - 1;
+    }
+    if (Src->x0 <= Src->x1 && r.y1 + 1 <= Src->y1) {
+        p1 = p1->pNext;
+        p1->Rect.x0 = Src->x0;
+        p1->Rect.y0 = r.y1 + 1;
+        p1->Rect.x1 = Src->x1;
+        p1->Rect.y1 = Src->y1;
+    }
+    if (Src->x0 <= r.x0 - 1 && r.y0 <= r.y1) {
+        p1 = p1->pNext;
+        p1->Rect.x0 = Src->x0;
+        p1->Rect.y0 = r.y0;
+        p1->Rect.x1 = r.x0 - 1;
+        p1->Rect.y1 = r.y1;
+    }
+    if (r.x1 + 1 <= Src->x1 && r.y0 <= r.y1) {
+        p1 = p1->pNext;
+        p1->Rect.x0 = r.x1 + 1;
+        p1->Rect.y0 = r.y0;
+        p1->Rect.x1 = Src->x1;
+        p1->Rect.y1 = r.y1;
+    }
+    GUI_FreeRectList(p1->pNext); /* 释放多余的链表 */
+    p1->pNext = NULL;
     return List;
 }
 

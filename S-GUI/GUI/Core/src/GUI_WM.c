@@ -65,6 +65,7 @@ static u_8 WM__WindowRepaint(WM_Obj *pWin, void *pData)
         RectList = GUI_CalcWindowRectList(pWin);
         if (RectList != NULL) {
             WM_MESSAGE Msg;
+            GUI_RECT Rect;
 
             /* 透明窗口先刷新遮挡部分 */
             if (pWin->Status & WM_WINDOW_TRANS) {
@@ -73,7 +74,8 @@ static u_8 WM__WindowRepaint(WM_Obj *pWin, void *pData)
             /* 重绘窗口 */
             Msg.MsgId = WM_PAINT;
             Msg.hWin = (WM_hWin)pWin;
-            GUI_SetNowRectList(RectList);
+            Rect = WM_GetTaliorInvalidRect(pWin);
+            GUI_SetNowRectList(RectList, &Rect);
             pWin->WinCb(&Msg);
             GUI_FreeRectList(RectList);
 #if GUI_USE_MEMORY
@@ -119,12 +121,12 @@ void WM__SendMessage(WM_hWin hWin, WM_MESSAGE *pMsg)
     static u_8 __MseeageCount;
     
     if (__MseeageCount < GUI_MAX_MSG_NEST) {
-        __MseeageCount++;
+        ++__MseeageCount;
         pMsg->hWin = hWin;
         if (((WM_Obj*)hWin)->WinCb) {
             ((WM_Obj*)hWin)->WinCb(pMsg);
         }
-        __MseeageCount--;
+        --__MseeageCount;
     }
 }
 
@@ -742,6 +744,21 @@ RECT_LIST GUI_CalcWindowRectList(WM_hWin hWin)
     return RectList;
 }
 
+/*****************************************************************************
+* 这部分代码用于实窗口透明效果。
+* 注意：
+* 这部分程序的效率可能很低。
+* 
+* 窗口透明的原理：
+* 当发现一个窗口有透明属性时，会在重绘了所有被透明窗口遮挡的窗口之后再去重绘当前的透明窗口，
+* 以保证显示不会重叠。由于事先已经计算出了要现实的透明窗口的裁剪矩形表，所以直接以这个裁剪矩
+* 形表为基础生成被遮挡窗口的裁剪矩形表，这样，被遮挡的窗口就不会覆盖多余的部分，而是完全包含
+* 在可见的透明窗口下（也就是我们不会看到被遮挡的窗口越过它的边界显示）。
+* 一个值得注意的情况是，如果透明窗口遮挡了另一个透明窗口，上述过程就会又进行一次，直到所有透
+* 明窗口都不再遮挡透明窗口为止。这一机制使用递归很容易就实现了，但是递归的效率不高，并且对堆
+* 栈的消耗也很大。所以一定要控制透明窗口对透明窗口的遮挡层数。
+*****************************************************************************/
+
 /* 为一个窗口计算裁剪矩形链表，直到遇到某个窗口 */
 static RECT_LIST GUI__RectListTo(WM_Obj *pWin, WM_Obj *pEnd, RECT_LIST List)
 {
@@ -751,15 +768,14 @@ static RECT_LIST GUI__RectListTo(WM_Obj *pWin, WM_Obj *pEnd, RECT_LIST List)
     RECT_LIST pt, RectList = List;
 
     /* 统计裁剪矩形链表中的相交数量 */
-    for (i = 0; RectList;) {
+    for (i = 0; RectList; RectList = RectList->pNext) {
         if (GUI_CheckRectIntersect(&RectList->Rect, &pWin->Rect)) {
             ++i;
         }
-        RectList = RectList->pNext;
     }
     RectList = GUI_GetRectList(i);
     pt = RectList;
-    while (pt) { /* 复制相交部分的矩形链表 */
+    while (pt && List) { /* 复制相交部分的矩形链表 */
         if (GUI_RectOverlay(&Rect, &List->Rect, &pWin->Rect) == GUI_OK) {
             pt->Rect = Rect;
             pt = pt->pNext;
@@ -789,21 +805,6 @@ static RECT_LIST GUI__RectListTo(WM_Obj *pWin, WM_Obj *pEnd, RECT_LIST List)
     return RectList;
 }
 
-/*****************************************************************************
- * 这部分代码用于实窗口透明效果。
- * 注意：
- * 这部分程序的效率可能很低。
- * 
- * 窗口透明的原理：
- * 当发现一个窗口有透明属性时，会在重绘了所有被透明窗口遮挡的窗口之后再去重绘当前的透明窗口，
- * 以保证显示不会重叠。由于事先已经计算出了要现实的透明窗口的裁剪矩形表，所以直接以这个裁剪矩
- * 形表为基础生成被遮挡窗口的裁剪矩形表，这样，被遮挡的窗口就不会覆盖多余的部分，而是完全包含
- * 在可见的透明窗口下（也就是我们不会看到被遮挡的窗口越过它的边界显示）。
- * 一个值得注意的情况是，如果透明窗口遮挡了另一个透明窗口，上述过程就会又进行一次，直到所有透
- * 明窗口都不再遮挡透明窗口为止。这一机制使用递归很容易就实现了，但是递归的效率不高，并且对堆
- * 栈的消耗也很大。所以一定要控制透明窗口对透明窗口的遮挡层数。
- *****************************************************************************/
-
 /* 结构体，用来给下面的代码封装数据 */
 struct REF_BACK {
     RECT_LIST List;
@@ -820,7 +821,7 @@ static u_8 WM__RefBackCb(WM_Obj *pWin, void *pData)
     }
     /* 检查两个窗口是否相交 */
     if (GUI_CheckRectIntersect(&((struct REF_BACK*)pData)->pObj->Rect,
-      &pWin->Rect)) {
+                               &pWin->Rect)) {
         /* 计算裁剪链表 */
         List = GUI__RectListTo(pWin, ((struct REF_BACK*)pData)->pObj,
                                ((struct REF_BACK*)pData)->List);
@@ -836,7 +837,7 @@ static u_8 WM__RefBackCb(WM_Obj *pWin, void *pData)
              */
             Msg.MsgId = WM_PAINT;
             Msg.hWin = (WM_hWin)pWin;
-            GUI_SetNowRectList(List);
+            GUI_SetNowRectList(List, &pWin->Rect);
             pWin->WinCb(&Msg);
             GUI_FreeRectList(List);
         }
@@ -851,7 +852,7 @@ static void WM__RefreshBackgnd(WM_Obj *pWin, RECT_LIST RectList)
 
     data.pObj = pWin;
     data.List = RectList;
-    WM__TraversalWindows(_pRootWin, &data, WM__RefBackCb);
+    WM__TraversalWindows(pWin->hParent, &data, WM__RefBackCb);
 }
 
 /*********         窗口透明实现部分结束         *********/

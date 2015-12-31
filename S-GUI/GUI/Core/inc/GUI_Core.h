@@ -33,7 +33,8 @@ typedef struct{
     GUI_TIME guitime;      /* GUI运行时间 */
     RECT_LIST RectList;    /* 裁剪矩形私有堆 */
     RECT_LIST NowRectList; /* 当前绘制的裁剪矩链表 */
-    GUI_hWin RootWin;     /* 根窗口 */
+    GUI_RECT *PaintArea;   /* 当前绘制的区域 */
+    GUI_hWin RootWin;      /* 根窗口 */
     GUI_QUEUE *KeyQueue;   /* 按键队列缓冲 */
 #if GUI_USE_MEMORY
     GUI_COLOR *lcdbuf; /* LCD缓冲 */
@@ -55,8 +56,8 @@ u_8 GUI_SendEvent(GUI_QUEUE *pQue, GUI_EVENT event); /* 向事件队列发送一个事件 *
 u_8 GUI_QueueIsEmpty(GUI_QUEUE *pQue); /* 检测事件队列是否为空 */
 void GUI_CleanQueue(GUI_QUEUE *pQue); /* 清空事件队列 */
 
-void GUI_SetNowRectList(RECT_LIST l);
-void GUI_DrawAreaInit(void);
+void GUI_SetNowRectList(RECT_LIST l, GUI_RECT *p);
+void GUI_DrawAreaInit(GUI_RECT *p);
 GUI_RECT *GUI_GetNowArea(void);
 u_8 GUI_GetNextArea(GUI_RECT *pRect);
 

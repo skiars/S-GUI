@@ -50,7 +50,7 @@ void GUI_DrawTailorPoint(i_16 x,i_16 y,GUI_COLOR Color)
     GUI_RECT r1, r2;
 
     GUI_Val2Rect(&r1, x, y, 1, 1);
-    GUI_DrawAreaInit();
+    GUI_DrawAreaInit(&r1);
     while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
         if (GUI_RectOverlay(&r2, &r2, &r1) == GUI_OK) {
             if (Color >> 24) {
@@ -67,12 +67,11 @@ GUI_COLOR GUI_ReadTailorPoint(i_16 x, i_16 y)
     GUI_RECT *r;
     
     r = GUI_GetNowArea();
-    if (x >= r->x0 && x <= r->x1 &&
+    if (r && x >= r->x0 && x <= r->x1 &&
         y >= r->y0 && y <= r->y1) {
-        return GUI_ReadPixel(x, y);
-    } else {
-        return 0x00000000;
+            return GUI_ReadPixel(x, y);
     }
+    return 0x00000000;
 }
 
 /* 画有透明效果的垂直线 */
@@ -107,7 +106,7 @@ void GUI_VertTailorLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
     if (GUI_Val2Rect(&r1, x0, y0, 1, len) == GUI_ERR) {
         return; /* 长度为0 */
     }
-    GUI_DrawAreaInit();
+    GUI_DrawAreaInit(&r1);
     while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
         if (GUI_RectOverlay(&r2, &r2, &r1) == GUI_OK) {
             x0 = r2.x0;
@@ -159,7 +158,7 @@ void GUI_HoriTailorLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
     if (GUI_Val2Rect(&r1, x0, y0, len, 1) == GUI_ERR) {
         return; /* 长度为0 */
     }
-    GUI_DrawAreaInit();
+    GUI_DrawAreaInit(&r1);
     while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
         if (GUI_RectOverlay(&r2, &r2, &r1) == GUI_OK) {
             x0 = r2.x0;
@@ -231,7 +230,7 @@ void GUI_FillTailorRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Colo
     if (GUI_Val2Rect(&r1, x0, y0, xSize, ySize) == GUI_ERR) {
         return; /* 非法 */
     }
-    GUI_DrawAreaInit();
+    GUI_DrawAreaInit(&r1);
     while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
         if (GUI_RectOverlay(&r2, &r2, &r1) == GUI_OK) {
             x0 = r2.x0;
