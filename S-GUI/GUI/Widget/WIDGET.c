@@ -4,7 +4,7 @@
 /* 将一个窗口的属性设置为透明 */
 void WIDGET_SetTransWindow(GUI_hWin hWin)
 {
-    ((WM_Obj*)hWin)->Status |= WM_WINDOW_TRANS;
+    ((WM_Obj*)hWin)->Style |= WM_WINDOW_TRANS;
 }
 
 /* 设置窗口的透明度 */

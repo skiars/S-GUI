@@ -2,6 +2,20 @@
 #include "GUI.h"
 #include "SCROLLBAR.h"
 
+#define LBOX_DFT_LBKCOLOR       0x00524C3C        /* 内部背景色 */
+#define LBOX_DFT_LSELCOLOR      0x00FFFFFF        /* 选中list后的字体颜色 */
+#define LBOX_DFT_LSELBKCOLOR    0x00CDCD96        /* 选中list后的背景色 */
+#define LBOX_DFT_LNCOLOR        0x00000000        /* 未选中的list字体颜色 */
+#define LBOX_DFT_RIMCOLOR       0x00000000        /* 边框颜色 */
+#define LBOX_DFT_LINECOLOR      0x0033302A        /* 分隔线颜色 */
+
+#define LBOX_DFT_HEIGHT         28      /* 条目高度 */
+#define LBOX_DFT_SCROENDWID     48      /* 滚动显示末尾空白宽度 */
+#define LBOX_DFT_UNSCRO_TIME    600     /* 选中项开始不滚动的ms数 */
+#define LBOX_DFT_SCRO_TIME      50      /* 选中项显示滚动一个像素间隔时间(ms) */
+#define LBOX_DFT_SCRO_PIX       2       /* 每次滚动的像素数 */
+#define LBOX_SCB_WIDTH          5       /* 滚动条宽度为5个像素 */
+
 static void LISTBOX__DrawPage(LISTBOX_Obj *pObj);
 static void LISTBOX__TextScroll(LISTBOX_Obj *pObj);
 static void LISTBOX__SetSelInfo(LISTBOX_Obj *pObj);
@@ -9,7 +23,7 @@ static void LISTBOX__SetSelInfo(LISTBOX_Obj *pObj);
 /* LISTBOX控件自动回调函数 */
 static void __Callback(WM_MESSAGE *pMsg)
 {
-    static i_16 dY;
+    static i_16 dY; /* 这儿，不可重入！！！ */
     /* 检测是否为LISTBOX控件 */
     if (WM_CheckWindowSign(pMsg->hWin, WIDGET_LISTBOX)) {
         return;
@@ -44,24 +58,24 @@ static void __Callback(WM_MESSAGE *pMsg)
 }
 
 /*
- *创建LISTBOX
- *x0:LISTBOX控件的最左像素(相对于父窗口)
- *y0:LISTBOX控件的最右像素(相对于父窗口)
- *xSize:LISTBOX控件的水平宽度
- *ySize:LISTBOX控件的竖直高度
- *hParent:父窗口句柄
- *Id:窗口ID
- *Flag:窗口状态
- *cb:用户回调历程指针
- */
+ * 创建LISTBOX
+ * x0:LISTBOX控件的最左像素(相对于父窗口)
+ * y0:LISTBOX控件的最右像素(相对于父窗口)
+ * xSize:LISTBOX控件的水平宽度
+ * ySize:LISTBOX控件的竖直高度
+ * hParent:父窗口句柄
+ * Id:窗口ID
+ * Flag:窗口状态
+ * namepos:每个列表栏的字节数
+ **/
 WM_hWin LISTBOX_Create(i_16 x0,
-                      i_16 y0,
-                      u_16 xSize,
-                      u_16 ySize,
-                      WM_hWin hParent,
-                      u_16 Id,
-                      u_8 Flag,
-                      u_16 namepos)
+    i_16 y0,
+    u_16 xSize,
+    u_16 ySize,
+    WM_hWin hParent,
+    u_16 Id,
+    u_8 Flag,
+    u_16 namepos)
 {
     LISTBOX_Obj *pObj;
     
@@ -77,26 +91,26 @@ WM_hWin LISTBOX_Create(i_16 x0,
     pObj->Widget.Win.UserRect.x1 = pObj->Widget.Win.Rect.x1;
     pObj->Widget.Win.UserRect.y1 = pObj->Widget.Win.Rect.y1;
     /* 配色 */
-    pObj->Widget.Skin.BackColor[0] = LBOX_DFT_LBKCOLOR;   //未选中背景
-    pObj->Widget.Skin.BackColor[1] = LBOX_DFT_LSELBKCOLOR;//选中背景
-    pObj->Widget.Skin.FontColor[0] = LBOX_DFT_LNCOLOR;    //未选中字体
-    pObj->Widget.Skin.FontColor[1] = LBOX_DFT_LSELCOLOR;  //选中字体
-    pObj->Widget.Skin.EdgeColor[0] = LBOX_DFT_RIMCOLOR;   //边框颜色
-    pObj->Widget.Skin.EdgeColor[0] = LBOX_DFT_LINECOLOR;  //分隔线颜色
+    pObj->Widget.Skin.BackColor[0] = LBOX_DFT_LBKCOLOR;   /* 未选中背景 */
+    pObj->Widget.Skin.BackColor[1] = LBOX_DFT_LSELBKCOLOR;/* 选中背景 */
+    pObj->Widget.Skin.FontColor[0] = LBOX_DFT_LNCOLOR;    /* 未选中字体 */
+    pObj->Widget.Skin.FontColor[1] = LBOX_DFT_LSELCOLOR;  /* 选中字体 */
+    pObj->Widget.Skin.EdgeColor[0] = LBOX_DFT_RIMCOLOR;   /* 边框颜色 */
+    pObj->Widget.Skin.EdgeColor[0] = LBOX_DFT_LINECOLOR;  /* 分隔线颜色 */
     WIDGET_SetFont(pObj, GUI_DEF_FONT);
-    pObj->ItemHei=LBOX_DFT_HEIGHT;             //条目高度+分隔线高度
+    pObj->ItemHei=LBOX_DFT_HEIGHT;             /* 条目高度+分隔线高度 */
     pObj->TopIndex = 0;
-    pObj->SelIndex = 0;                           //选中的索引
+    pObj->SelIndex = 0;                           /* 选中的索引 */
     pObj->SelPixs = 0;
-    pObj->PageItems = ySize / (pObj->ItemHei + 1);//每页可显示的条目数
-    pObj->ItemNum=0;                //总条目数清零
-     pObj->pList=ListInit(namepos);    //空链表,链表数据长度为namepos
+    pObj->PageItems = ySize / (pObj->ItemHei + 1); /* 每页可显示的条目数 */
+    pObj->ItemNum=0;                /* 总条目数清零 */
+     pObj->pList=ListInit(namepos);    /* 空链表,链表数据长度为namepos */
     pObj->LastNode=pObj->pList;
     pObj->StrTab = NULL;
     pObj->hScro  = NULL;
     pObj->ScbWidth = LBOX_SCB_WIDTH;
     pObj->DispPosPix = 0;
-    WM_SetWindowTimer(pObj, LBOX_DFT_SCRO_TIME);//需要窗口计时器
+    
     return pObj;
 }
 
@@ -267,7 +281,7 @@ static void LISTBOX__TextScroll(LISTBOX_Obj *pObj)
     if (ListWidth + pObj->DispPosPix == pObj->SelPixs + LBOX_DFT_SCROENDWID) {
         pObj->DispPosPix = 0;
     } else {
-        pObj->DispPosPix += 1;
+        pObj->DispPosPix += LBOX_DFT_SCRO_PIX;
     }
     Rect.y0 += ItemPos * (pObj->ItemHei + 1);
     Rect.y1 = Rect.y0 + pObj->ItemHei - 1;
@@ -416,4 +430,10 @@ u_8 LISTBOX_SetSelFromStr(WM_hWin hWin, const char *Str)
         return LISTBOX_SetSel(pObj, Index - 1);
     }
     return GUI_ERR;
+}
+
+/* 列表框使用滚动显示功能 */
+void LISTBOX_ScrollDisplay(GUI_hWin hWin)
+{
+    WM_SetWindowTimer(hWin, LBOX_DFT_SCRO_TIME);
 }

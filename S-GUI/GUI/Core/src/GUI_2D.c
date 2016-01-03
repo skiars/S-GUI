@@ -1,6 +1,8 @@
 #include "GUI_2D.h"
 #include "GUI.h"
-#include "math.h"
+
+#define RETURN_TRANSPARENT() \
+    if (Color >> 24 == 0xff) return;
 
 u_16 GUI_RGB888To565(u_32 RGB)
 {
@@ -49,6 +51,7 @@ void GUI_DrawTailorPoint(i_16 x,i_16 y,GUI_COLOR Color)
 {
     GUI_RECT r1, r2;
 
+    RETURN_TRANSPARENT();
     GUI_Val2Rect(&r1, x, y, 1, 1);
     GUI_DrawAreaInit(&r1);
     while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
@@ -103,6 +106,7 @@ void GUI_VertTailorLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
 {
     GUI_RECT r1, r2;
 
+    RETURN_TRANSPARENT();
     if (GUI_Val2Rect(&r1, x0, y0, 1, len) == GUI_ERR) {
         return; /* 长度为0 */
     }
@@ -155,6 +159,7 @@ void GUI_HoriTailorLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
 {
     GUI_RECT r1, r2;
 
+    RETURN_TRANSPARENT();
     if (GUI_Val2Rect(&r1, x0, y0, len, 1) == GUI_ERR) {
         return; /* 长度为0 */
     }
@@ -226,6 +231,7 @@ void GUI_FillTailorRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Colo
 {                                     
     GUI_RECT r1, r2;
     
+    RETURN_TRANSPARENT();
     /* 将矩形坐标转换为结构体 */
     if (GUI_Val2Rect(&r1, x0, y0, xSize, ySize) == GUI_ERR) {
         return; /* 非法 */
@@ -245,94 +251,3 @@ void GUI_FillTailorRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Colo
         }
     }
 }
-
-#if 0
-//画圆角矩形/填充圆角矩形
-//x,y,width,height:圆角矩形的位置和尺寸
-//r:圆角的半径.
-//mode:0,画矩形框;1,填充矩形.
-//upcolor:上半部分颜色
-//downcolor:下半部分颜色
-void GUI_DrawArcRect(u_16 x,u_16 y,u_16 width,u_16 height,u_8 r,u_8 mode,GUI_COLOR upcolor,GUI_COLOR downcolor)
-{
-    u_16 btnxh=0;
-    if(height%2)btnxh=height+1;//基偶数处理
-    else btnxh=height;
-    if(mode)//填充
-    {
-         GUI_FillRect(x+r,y,width-2*r,btnxh/2,upcolor);            //中上
-        GUI_FillRect(x+r,y+btnxh/2,width-2*r,btnxh/2,downcolor);    //中下
-        GUI_FillRect(x,y+r,r,btnxh/2-r,upcolor);                    //左上
-        GUI_FillRect(x,y+btnxh/2,r,btnxh/2-r,downcolor);            //左下
-        GUI_FillRect(x+width-r,y+r,r,btnxh/2-r,upcolor);            //右上
-        GUI_FillRect(x+width-r,y+btnxh/2,r,btnxh/2-r,downcolor);    //右下
-    }else
-    {
-        GUI_HoriLine (x+r,y,width-2*r,upcolor);                    //上           
-        GUI_HoriLine (x+r,y+btnxh-1,width-2*r,downcolor);            //下           
-        GUI_VertLine (x,y+r,btnxh/2-r,upcolor);                    //左上           
-        GUI_VertLine (x,y+btnxh/2,btnxh/2-r,downcolor);            //左下           
-        GUI_VertLine (x+width-1,y+r,btnxh/2-r,upcolor);            //右上
-        GUI_VertLine (x+width-1,y+btnxh/2,btnxh/2-r,downcolor);    //右下                   
-    }
-    GUI_DrawArc(x,y,x+r,y+r,x+r,y+r,r,upcolor,mode);//左上    
-    GUI_DrawArc(x,y+btnxh-r,x+r,y+btnxh-1,x+r,y+btnxh-r-1,r,downcolor,mode);//左下    
-    GUI_DrawArc(x+width-r,y,x+width,y+r,x+width-r-1,y+r,r,upcolor,mode);     //右上
-    GUI_DrawArc(x+width-r,y+btnxh-r,x+width,y+btnxh-1,x+width-r-1,y+btnxh-r-1,r,downcolor,mode);//右下
-}
-
-//在区域内画点
-//(sx,sy),(ex,ey):设定的显示范围
-//(x,y):点坐标
-//color:颜色
-static void _draw_expoint(u_16 sx,u_16 sy,u_16 ex,u_16 ey,u_16 x,u_16 y,GUI_COLOR color)        
-{
-    if(x<=ex && x>=sx && y<=ey && y>=sy)
-    {
-        GUI_DrawPixel(x,y,color);        
-    }
-}
-
-//画8点(Bresenham算法)          
-//(sx,sy),(ex,ey):设定的显示范围
-//(rx,ry,a,b):参数
-//color:颜色
-static void _draw_circle8(u_16 sx,u_16 sy,u_16 ex,u_16 ey,u_16 rx,u_16 ry,int a,int b,GUI_COLOR color)
-{
-    _draw_expoint(sx,sy,ex,ey,rx+a,ry-b,color);              
-    _draw_expoint(sx,sy,ex,ey,rx+b,ry-a,color);                       
-    _draw_expoint(sx,sy,ex,ey,rx+b,ry+a,color);                           
-    _draw_expoint(sx,sy,ex,ey,rx+a,ry+b,color);             
-    _draw_expoint(sx,sy,ex,ey,rx-a,ry+b,color);                  
-    _draw_expoint(sx,sy,ex,ey,rx-b,ry+a,color);               
-    _draw_expoint(sx,sy,ex,ey,rx-b,ry-a,color);                      
-    _draw_expoint(sx,sy,ex,ey,rx-a,ry-b,color);                  
-}        
-
-//在指定位置画一个指定大小的圆
-//(rx,ry):圆心
-//(sx,sy),(ex,ey):设定的显示范围
-//r    :半径
-//color:颜色
-//mode :0,不填充;1,填充
-void GUI_DrawArc(u_16 sx,u_16 sy,u_16 ex,u_16 ey,u_16 rx,u_16 ry,u_16 r,GUI_COLOR color,u_8 mode)
-{
-    int a,b,c;
-    int di;      
-    a=0;b=r;      
-    di=3-(r<<1);    //判断下个点位置的标志
-    while(a<=b)
-    {
-        if(mode)for(c=a;c<=b;c++)_draw_circle8(sx,sy,ex,ey,rx,ry,a,c,color);//画实心圆
-         else _draw_circle8(sx,sy,ex,ey,rx,ry,a,b,color);                       //画空心圆
-        a++;
-        //使用Bresenham算法画圆     
-        if(di<0)di +=4*a+6;      
-        else
-        {
-            di+=10+4*(a-b);   
-            b--;
-        }                               
-    }
-}
-#endif

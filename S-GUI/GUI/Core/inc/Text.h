@@ -1,7 +1,8 @@
 #ifndef __TEXT_H
 #define __TEXT_H
 
-#include "GUI.h"
+#include "GUI_Typedef.h"
+#include "GUI_Font.h"
 
 u_16 GetStringPixel(const char *str, GUI_FontType Font);
 u_16 GUI_SkipWord(const char *str, GUI_FontType Font, u_16 x_pix, u_16 *len);

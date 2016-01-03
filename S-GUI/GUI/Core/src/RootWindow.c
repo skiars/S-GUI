@@ -2,23 +2,26 @@
 #include "GUI.h"
 #include "stdlib.h"
 
-static char Str[15];
+#define ROOTWINDOW_BACK_COLOR 0x00FFFFFF     /* 根窗口默认背景色 */
+
+void (*RootWinPaint_Cb)(WM_hWin hWin) = NULL;
+void (*RootWinTimer_Cb)(WM_hWin hWin) = NULL;
 
 static void __Paint(WM_hWin hWin)
 {
     GUI_RECT Rect = WM_GetWindowRect(hWin);
 
-    /* 绘制背景 */
-    GUI_FillTailorRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1,
-                       Rect.y1 - Rect.y0 +1, ROOTWINDOW_BACK_COLOR);
-    GUI_DispStringCurRect(10, 300, Str, 0x00000000, Font_ASCII_8X16);
+    if (RootWinPaint_Cb) {
+        RootWinPaint_Cb(hWin);
+    } else {
+        /* 绘制背景 */
+        GUI_FillTailorRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1,
+            Rect.y1 - Rect.y0 +1, ROOTWINDOW_BACK_COLOR);
+    }
 }
 
 static void _RootWin_Callback(WM_MESSAGE *pMsg)
 {
-    static u_8 i = 0;
-    GUI_RECT Rect;
-    
     switch (pMsg->MsgId) {
         case WM_PAINT : {
             __Paint(pMsg->hWin);
@@ -29,16 +32,9 @@ static void _RootWin_Callback(WM_MESSAGE *pMsg)
         }
         case WM_TIME_UPDATA :
             /* 用户函数 */
-            Str[0] = i / 100 + '0';
-            Str[1] = i % 100 / 10 + '0';
-            Str[2] = i % 10 + '0';
-            Str[3] = '\0';
-            i++;
-            Rect.x0 = 10;
-            Rect.y0 = 300;
-            Rect.x1 = 180;
-            Rect.y1 = 320;
-            WM_InvalidateRect(pMsg->hWin, &Rect);
+            if (RootWinTimer_Cb) {
+                RootWinTimer_Cb(pMsg->hWin);
+            }
             break;
     }
 }
@@ -57,7 +53,7 @@ void WM_RootWindowInit(WM_Obj *pObj)
     pObj->hNext = NULL;
     pObj->hParent = NULL;
     pObj->hFirstChild = NULL;
-    pObj->Status = 0x0000;
+    pObj->Style = 0x0000;
     WM_Invalidate(pObj);  /* 根窗口无效化 */
     WM_SetWindowTimer(pObj, 1000); /* 需要窗口计时器 */
 }

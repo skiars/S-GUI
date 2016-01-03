@@ -7,6 +7,9 @@
 #define GUI_FONTTYPE_PROP_AA2    0x01
 #define GUI_FONTTYPE_PROP_AA4    0x02
 
+#define CHAR_VAILD(c, f) \
+    if ((c) < (f).FirstChar || (c) > (f).LastChar) { return 0; }
+
 typedef struct {
     u_16 X;
     u_16 X1;

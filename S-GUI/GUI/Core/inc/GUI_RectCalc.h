@@ -11,6 +11,7 @@ GUI_RECT GUI_RectOrCalc(GUI_RECT *pRect1, GUI_RECT *pRect2);
 u_8 GUI_CheckPointAtRect(u_16 x, u_16 y, GUI_RECT *Rect);
 u_8 GUI_CheckRectNull(GUI_RECT *Rect);
 u_8 GUI_CheckRectIntersect(GUI_RECT *pRect1, GUI_RECT *pRect2);
+u_8 GUI_RectInclude(GUI_RECT *pSrc, GUI_RECT *pDst);
 void GUI_MoveRect(GUI_RECT *Rect, i_16 dX, i_16 dY);
 u_8 GUI_RectListInit(u_16 num);
 RECT_LIST GUI_GetRectList(u_16 num);

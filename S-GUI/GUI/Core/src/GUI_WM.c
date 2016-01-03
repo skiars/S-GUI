@@ -68,7 +68,7 @@ static u_8 WM__WindowRepaint(WM_Obj *pWin, void *pData)
             GUI_RECT Rect;
 
             /* 透明窗口先刷新遮挡部分 */
-            if (pWin->Status & WM_WINDOW_TRANS) {
+            if (pWin->Style & WM_WINDOW_TRANS) {
                 WM__RefreshBackgnd(pWin, RectList);
             }
             /* 重绘窗口 */
@@ -345,7 +345,7 @@ WM_hWin WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
     if (pObj == NULL) return NULL;
     WM_AttachWindow(pObj, pParent); /* 注册到父窗口 */
     pObj->hFirstChild = NULL;
-    pObj->Status = Flag;
+    pObj->Style = Flag;
     pObj->Sign = Sign;
     pObj->Id = Id;
     pObj->WinCb = WinCb;
@@ -436,7 +436,7 @@ void WM_CleanInvalid(WM_hWin hWin)
 
     /* x0,y0设置为屏幕尺寸的值 */
     pWin->InvalidRect.x0 = GUI_GetScreenWidth();
-    pWin->InvalidRect.x0 = GUI_GetScreenHeight();
+    pWin->InvalidRect.y0 = GUI_GetScreenHeight();
     pWin->InvalidRect.x1 = 0;
     pWin->InvalidRect.y1 = 0;
 }
@@ -573,10 +573,10 @@ static u_8 WM__GetExposedWindow(WM_Obj *pObj, void *pData)
 }
 
 /*
-*获得在输入坐标下暴露的窗口
-*返回值:目标窗口的句柄
-*外部调用
-*/
+* 获得在输入坐标下暴露的窗口
+* 返回值:目标窗口的句柄
+* 外部调用
+**/
 WM_hWin WM_GetExposedWindow(u_16 x, u_16 y)
 {
     struct _EXPOS_WIN data;
@@ -648,7 +648,12 @@ void WM_MoveWindow(WM_hWin hWin, i_16 dX, i_16 dY)
 {
     i_16 xy[2];
     
-    if (dX == 0 && dY == 0) return;
+    if (!(((WM_Obj*)hWin)->Style & WM_WINDOW_MOVE)) {
+        return; /* 不可移动的窗口 */
+    }
+    if (dX == 0 && dY == 0) {
+        return;
+    }
     GUI_Lock();
     xy[0] = dX;
     xy[1] = dY;
@@ -659,12 +664,18 @@ void WM_MoveWindow(WM_hWin hWin, i_16 dX, i_16 dY)
     GUI_Unlock();
 }
 
+/* 设置可移动的窗口 */
+void WM_SetMoveWindow(WM_hWin hWin)
+{
+    ((WM_Obj*)hWin)->Style |= WM_WINDOW_MOVE;
+}
+
 /* 窗口计时器
  * 窗口定时器可以让开启了定时功能的窗口在定时时间到以后产生一个WM_TIME_UPDATA消息
  **/
 static void WM__WindowTimer(WM_Obj *pObj)
 {
-    if (pObj->Status & WM_WINDOW_TIMER) {  /* 窗口有计时器 */
+    if (pObj->Style & WM_WINDOW_TIMER) {  /* 窗口有计时器 */
         if (GUI_GetTime() > pObj->LastTime + pObj->TimeCount) {
             WM_MESSAGE Msg;
 
@@ -682,7 +693,7 @@ void WM_SetWindowTimer(WM_hWin hWin, u_16 Count)
     WM_Obj *pObj = hWin;
     
     GUI_Lock();
-    pObj->Status |= WM_WINDOW_TIMER;
+    pObj->Style |= WM_WINDOW_TIMER;
     pObj->TimeCount = Count;
     pObj->LastTime = GUI_GetTime();
     GUI_Unlock();
@@ -721,7 +732,7 @@ RECT_LIST GUI_CalcWindowRectList(WM_hWin hWin)
         pObj = pWin->hFirstChild;
         while (pObj && RectList) {
             RectList = GUI_ReCalcRectList(RectList, &pObj->Rect);
-            if (pObj->Status & WM_WINDOW_TRANS /* 与之相交的透明窗口无效化 */
+            if (pObj->Style & WM_WINDOW_TRANS /* 与之相交的透明窗口无效化 */
               && GUI_RectOverlay(&Rect2, &pObj->Rect, &Rect1) == GUI_OK) {
                 WM_InvalidateRect(pObj, &Rect2);
             }
@@ -734,7 +745,7 @@ RECT_LIST GUI_CalcWindowRectList(WM_hWin hWin)
         while (pObj->hNext && RectList){
             pObj = pObj->hNext; /* 向右遍历 */
             RectList = GUI_ReCalcRectList(RectList, &pObj->Rect);
-            if (pObj->Status & WM_WINDOW_TRANS /* 与之相交的透明窗口无效化 */
+            if (pObj->Style & WM_WINDOW_TRANS /* 与之相交的透明窗口无效化 */
                 && GUI_RectOverlay(&Rect2, &pObj->Rect, &Rect1) == GUI_OK) {
                 WM_InvalidateRect(pObj, &Rect2);
             }
@@ -829,11 +840,11 @@ static u_8 WM__RefBackCb(WM_Obj *pWin, void *pData)
             WM_MESSAGE Msg;
 
             /* 透明窗口先刷新遮挡部分 */
-            if (pWin->Status & WM_WINDOW_TRANS) {
+            if (pWin->Style & WM_WINDOW_TRANS) {
                 WM__RefreshBackgnd(pWin, List); /* 注意递归！ */
             }
             /* 这是被上面的透明窗口遮挡的一个窗口，它现在需要先被刷新，
-             * 然后才能使上面的透明的到刷新。
+             * 然后才能使上面的透明窗口得到刷新。
              */
             Msg.MsgId = WM_PAINT;
             Msg.hWin = (WM_hWin)pWin;
@@ -852,6 +863,10 @@ static void WM__RefreshBackgnd(WM_Obj *pWin, RECT_LIST RectList)
 
     data.pObj = pWin;
     data.List = RectList;
+    /* 从这个窗口的父窗口开始遍历 */
+    if (pWin->hParent == _hRootWin) {
+        WM__TraversalWindows(_hRootWin, &data, WM__RefBackCb);
+    }
     WM__TraversalWindows(pWin->hParent, &data, WM__RefBackCb);
 }
 

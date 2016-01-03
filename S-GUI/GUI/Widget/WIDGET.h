@@ -10,6 +10,8 @@
 #define WIDGET_WINDOW          0x03
 #define WIDGET_TEXTBOX         0x04
 #define WIDGET_SCROLLBAR       0x05
+#define WIDGET_ICONVIEW        0x06
+#define WIDGET_GRAPH           0x07
 
 #define WIDGET_DRAW_EDGE1      0x0000
 #define WIDGET_DRAW_EDGE2      0x0001
@@ -32,8 +34,8 @@ typedef struct {
     GUI_COLOR      EdgeColor[3];    /* 边框颜色 */
     GUI_COLOR      BackColor[2];    /* 内部背景颜色 */
     GUI_COLOR      CaptionColor[2]; /* 标题颜色 */
-    GUI_FontType   Font;          /* 字体 */
-    GUI_COLOR      FontColor[2];  /* 字体颜色 */
+    GUI_FontType   Font;            /* 字体 */
+    GUI_COLOR      FontColor[2];    /* 字体颜色 */
 }WIDGET_SKIN;      /* 窗口控件皮肤 */
 
 typedef struct {

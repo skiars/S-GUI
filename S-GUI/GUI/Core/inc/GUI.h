@@ -24,6 +24,7 @@
 #include "WINDOW.h"
 #include "LISTBOX.h"
 #include "SCROLLBAR.h"
+#include "GRAPH.h"
 
 #define GUI_COUNTOF(a)          (sizeof(a) / sizeof(a[0]))
 

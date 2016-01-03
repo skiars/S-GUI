@@ -41,17 +41,19 @@ u_16 GUI_SkipWord(const char *str, GUI_FontType Font, u_16 x_pix, u_16 *len)
 }
 
 /* 显示一个ASCII字符，2pp的抗锯齿 */
-u_16 GUI_CharASCII_2PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
+static void _CharASCII_2PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
 {
     u_8 btx, yCnt, xCnt, bl, d1, d2, i;
     u_16 chh, chw, bCnt;
     const unsigned char *pTab;
 
-    if(ch < 0x20 || ch >= 127) ch = 0x20;  /* 不可显示的字符显示空格 */
     pTab = Font->GetChar(&ch);
     chh = Font->CharHeight;
     chw = Font->CharWidget(&ch);
     bl = Font->CharWidgetBytes(&ch);
+    /* 不在裁剪区域就返回 */
+    CHECK_X(x, x + chw);
+    CHECK_Y(y, y + chh);
     bCnt = 0;   /* 字节计数 */
     for (yCnt = 0; yCnt < chh; ++yCnt) /* chh行高度 */
     {        
@@ -71,21 +73,22 @@ u_16 GUI_CharASCII_2PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Fo
         }
         bCnt += bl;
     }
-    return chw;
 }
 
 /* 显示一个ASCII字符，4pp的抗锯齿 */
-u_16 GUI_CharASCII_4PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
+static void _CharASCII_4PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
 {
     u_8 btx, yCnt, xCnt, bl, d1, d2, i;
     u_16 chh, chw, bCnt;
     const unsigned char *pTab;
 
-    if(ch < 0x20 || ch >= 127) ch = 0x20;  /* 不可显示的字符显示空格 */
     pTab = Font->GetChar(&ch);
     chh = Font->CharHeight;
     chw = Font->CharWidget(&ch);
     bl = Font->CharWidgetBytes(&ch);
+    /* 不在裁剪区域就返回 */
+    CHECK_X(x, x + chw);
+    CHECK_Y(y, y + chh);
     bCnt = 0;   /* 字节计数 */
     for (yCnt = 0; yCnt < chh; ++yCnt) /* chh行高度 */
     {        
@@ -105,21 +108,22 @@ u_16 GUI_CharASCII_4PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Fo
         }
         bCnt += bl;
     }
-    return chw;
 }
 
 /* 显示一个ASCII字符 */
-u_16 GUI_CharASCII(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
+static void _CharASCII(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
 {
     u_8 temp, t, pos, bytes, a;
     u_16 ch_h, ch_w, b;
     const unsigned char *pTab;
 
-    if(ch < 0x20 || ch >= 127) ch = 0x20;  /* 不可显示的字符显示空格 */
     pTab = Font->GetChar(&ch);
     ch_h = Font->CharHeight;
     ch_w = Font->CharWidget(&ch);
     bytes = Font->CharWidgetBytes(&ch);
+    /* 不在裁剪区域就返回 */
+    CHECK_X(x, x + ch_w);
+    CHECK_Y(y, y + ch_h);
     for (pos = 0; pos < ch_h; pos++)
     {        
         for (t = 0; t < bytes; t++) {
@@ -138,7 +142,6 @@ u_16 GUI_CharASCII(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
             }
         }  
     }
-    return ch_w;
 }
 
 u_16 GUI_DispChar(i_16 x, i_16 y, const char *ch, GUI_COLOR Color, GUI_FontType Font)
@@ -148,11 +151,11 @@ u_16 GUI_DispChar(i_16 x, i_16 y, const char *ch, GUI_COLOR Color, GUI_FontType 
     ch_w = Font->CharWidget(ch);
     if (*ch <= 127) {
         if (Font->FontType == GUI_FONTTYPE_PROP)
-            GUI_CharASCII(x, y, *ch, Color, Font);
+            _CharASCII(x, y, *ch, Color, Font);
         else if (Font->FontType == GUI_FONTTYPE_PROP_AA4)
-            GUI_CharASCII_4PP(x, y, *ch, Color, Font);
+            _CharASCII_4PP(x, y, *ch, Color, Font);
         else if (Font->FontType == GUI_FONTTYPE_PROP_AA2)
-            GUI_CharASCII_2PP(x, y, *ch, Color, Font);
+            _CharASCII_2PP(x, y, *ch, Color, Font);
     } else {
         /* 中文 */
         /* pos += 16; */

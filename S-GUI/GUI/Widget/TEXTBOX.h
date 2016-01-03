@@ -3,9 +3,6 @@
 
 #include "GUI.h"
 
-#define TEXTBOX_DEF_BKC             0x00232329  /* ±³¾°ÑÕÉ« */
-#define TEXTBOX_TEXT_COLOR          0x00FFFFFF  /* ×ÖÌåÑÕÉ« */
-
 typedef struct {
     WIDGET Widget;
     char *Text;

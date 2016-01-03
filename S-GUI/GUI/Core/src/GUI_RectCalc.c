@@ -91,6 +91,18 @@ u_8 GUI_CheckRectIntersect(GUI_RECT *pRect1, GUI_RECT *pRect2)
     return 1;/* 相交 */
 }
 
+/* 检查一个矩形是否包含另一个矩形 */
+u_8 GUI_RectInclude(GUI_RECT *pSrc, GUI_RECT *pDst)
+{
+    if (pSrc->x0 <= pDst->x0 && pSrc->y0 <= pDst->y0
+     && pSrc->x1 >= pDst->x1 && pSrc->y1 >= pDst->y1) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+/* 移动一个矩形 */
 void GUI_MoveRect(GUI_RECT *Rect, i_16 dX, i_16 dY)
 {
     Rect->x0 += dX;
@@ -177,7 +189,7 @@ RECT_LIST GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst)
     }
     /* Src完全被Src与Dst的相交部分遮挡,将不会有裁剪区域 */
     if (Src->x0 >= r.x0 && Src->x1 <= r.x1
-        && Src->y0 >= r.y0 && Src->y1 <= r.y1) {
+     && Src->y0 >= r.y0 && Src->y1 <= r.y1) {
         return NULL;
     }
     /* 每一个矩形最多可以被另外一个矩形分割为4个 */

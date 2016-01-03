@@ -94,9 +94,6 @@
     <ClInclude Include="GUI\Config\GUI_Typedef.h">
       <Filter>头文件\S-GUI\Config</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Font\GB2312_16x16.h">
-      <Filter>头文件\S-GUI\Font</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\Font\GUI_Font.h">
       <Filter>头文件\S-GUI\Font</Filter>
     </ClInclude>
@@ -132,6 +129,12 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\ICONVIEW.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\GRAPH.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -177,12 +180,6 @@
     <ClCompile Include="GUI\Font\ASCII_8x16_font.c">
       <Filter>源文件\S-GUI\Font</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Font\ASCII_12x06_font.c">
-      <Filter>源文件\S-GUI\Font</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Font\GB2312_16x16.c">
-      <Filter>源文件\S-GUI\Font</Filter>
-    </ClCompile>
     <ClCompile Include="GUI\Font\UI27_2pp.c">
       <Filter>源文件\S-GUI\Font</Filter>
     </ClCompile>
@@ -218,6 +215,12 @@
     </ClCompile>
     <ClCompile Include="main.c">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget\ICONVIEW.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget\GRAPH.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

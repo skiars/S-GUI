@@ -3,14 +3,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#define WINDOW1      (WM_USER_ID + 3)
 #define WINDOW2      (WM_USER_ID + 2)
+#define WINDOW1      (WM_USER_ID + 3)
 #define WINDOW3      (WM_USER_ID + 4)
 #define WINDOW4      (WM_USER_ID + 5)
+#define WINDOW5      (WM_USER_ID + 6)
 
 #define WIN2_BTN1    0x0001
 #define WIN2_BTN2    0x0002
 #define WIN2_BTN3    0x0003
+#define WIN2_BTN4    0x0004
 
 #define WIN1_BTN1    0x0001
 #define WIN1_BTN2    0x0002
@@ -22,82 +24,49 @@
 
 #define WIN4_LBX1    0x0001
 
-//GUI_hWin ListBox_AutoCreate(u16 x0, u16 y0, u16 xSize, u16 ySize, u8 cmd);
-//void win1_callback (WM_MESSAGE *pMsg);
+#define WIN5_GPH1    0x0001
+#define WIN5_BTN1    0x0002
 
-//GUI_hWin Window1(void);
-//GUI_hWin Window2(void);
 
-/*
-static GUI_WIDGET_CREATE_INFO test_win_1[]=
-{
-    ListBox_AutoCreate, 0, WIN1_LBOX0, 34, 45, 100, 200, 0,
-    ListBox_AutoCreate, 0, WIN1_LBOX1, 0, 60, 100, 200, 0,
-};
-*/
 
 void GUI_2D_Test(void);
 void Create_Window2(void);
 
+static char _Str[15] = "";
+static u_16 _FpsVal; /* 帧率 */
+
+static void _RootWinPaint(WM_hWin hWin)
+{
+    GUI_RECT Rect = WM_GetWindowRect(hWin);;
+
+    /* 绘制背景 */
+    GUI_FillTailorRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1,
+        Rect.y1 - Rect.y0 +1, 0x00FFFFFF);
+    GUI_DispStringCurRect(10, 300, _Str, 0x00000000, Font_ASCII_8X16);
+}
+
+static void _RootWinTimer(WM_hWin hWin)
+{
+    GUI_RECT Rect = {10, 300, 100, 320};
+
+    sprintf_s(_Str, sizeof(_Str), "FPS: %d", _FpsVal);
+    WM_InvalidateRect(_hRootWin, &Rect);
+    _FpsVal = 0; /* 帧率清零 */
+}
+
+
 //GUI测试
 void GUI_Test(void)
 {
+    RootWinPaint_Cb = _RootWinPaint;
+    RootWinTimer_Cb = _RootWinTimer;
     GUI_Init();
-
     Create_Window2();
     while(1) {
         GUI_Delay(10);
+        ++_FpsVal; /* 统计帧率 */
     }
 }
-
-/*
-GUI_hWin ListBox_AutoCreate(u16 x0, u16 y0, u16 xSize, u16 ySize, u8 cmd)
-{
-    return LISTBOX_Creat(x0, y0, xSize, ySize, cmd,50);
-}
-
-void win1_callback (WM_MESSAGE *pMsg)
-{
-    u16 i;
-    u8 str[50];
-    GUI_hWin hItem;
-    if(pMsg -> MsgId == WM_INIT_DIALOG)
-    {
-        hItem = WM_GetDialogItem(pMsg -> hWin,WIN1_LBOX0);
-        for(i=1;i<=14;i++)
-        {
-            sprintf((char *)str,"Item%d",i);
-            LISTBOX_AddString((LISTBOX_Handle)hItem,(PData)str);
-        }
-        LISTBOX_Draw((LISTBOX_Handle)hItem);
-
-        hItem = WM_GetDialogItem(pMsg -> hWin,WIN1_LBOX1);
-        for(i=1;i<=14;i++)
-        {
-            sprintf((char *)str,"Item%d",i);
-            LISTBOX_AddString((LISTBOX_Handle)hItem,(PData)str);
-        }
-        LISTBOX_Draw((LISTBOX_Handle)hItem);
-    }
-    else if(pMsg -> MsgId ==  WM_KEY)
-    {
-        if(GUI_GetKey() == GUI_KEY_UP) {
-            hItem = WM_GetDialogItem(pMsg -> hWin,WIN1_LBOX1);
-            LISTBOX_Up((LISTBOX_Handle)hItem);
-        }
-    }
-}
-
-GUI_hWin Window1(void)
-{
-    return GUI_CreateDialogBox(test_win_1,GUI_COUNTOF(test_win_1), win1_callback, 0, 0);
-}
-
-GUI_hWin Window2(void)
-{
-    return GUI_CreateDialogBox(test_win_1,GUI_COUNTOF(test_win_1), win1_callback, 25, 50);
-}
-*/
 
 void Window1_Cb(WM_MESSAGE *pMsg)
 {
@@ -153,9 +122,9 @@ void Window3_Cb(WM_MESSAGE *pMsg)
             if (Id == WIN3_BTN1) {
                 WM_DeleteWindow(pMsg->hWin);
             } else if (Id == WIN3_BTN2) {
-                WINDOW_SetAllAlpha(pMsg->hWin, 30);
+                WINDOW_SetAllAlpha(pMsg->hWin, 150);
                 hItem = WM_GetDialogItem(pMsg->hWin, WIN4_LBX1);
-                WINDOW_SetAllAlpha(hItem, 80);
+                WINDOW_SetAllAlpha(hItem, 200);
             }
             break;
         case WM_KEY_CHECKED :
@@ -172,7 +141,7 @@ void Create_Window3(void)
     hWin = WINDOW_Create(10,10,220,300,NULL, WINDOW3,0, Window3_Cb);
     if (hWin == NULL) return;
     WINDOW_SetTitle(hWin, "Infomation");
-    hWin2 = TEXTBOX_Create(0,0,214,210,hWin,WIN3_TBX1,WM_WINDOW_UN_DRAW);
+    hWin2 = TEXTBOX_Create(0,0,214,210,hWin,WIN3_TBX1,0);
     //WIDGET_SetFont(hWin2, Font_ASCII_8X16);
     TEXTBOX_SetText(hWin2, "This is a Small Graphical User Interface.\n"
                            "It\'s author is Guan Wenliang.\n"
@@ -229,6 +198,36 @@ void Create_Window4(void)
     BUTTON_SetTitle(hWin3, "Exit");
 }
 
+void Window5_Cb(WM_MESSAGE *pMsg)
+{
+    WM_hWin hItem;
+    switch (pMsg->MsgId) {
+    case WM_BUTTON_RELEASED:
+        if (WM_GetDialogId(pMsg->hWinSrc) == WIN5_BTN1) {
+            WM_DeleteWindow(pMsg->hWin);
+        }
+        break;
+    case WM_KEY_CHECKED:
+        break;
+    }
+}
+
+void Create_Window5(void)
+{
+    i_16 yd[10] = { 15, 10, 15, 38, 58, 99, 85, 32, 56, 78 };
+    i_16 xd[10] = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+    GUI_hWin hWin, hWin2, hWin3;
+
+    hWin = WINDOW_Create(10,10,220,300,NULL, WINDOW5,0, Window5_Cb);
+    if (hWin == NULL) return;
+    WINDOW_SetTitle(hWin, "GRPHA Test");
+    hWin2 = GRAPH_Create(0,0,214,210,hWin,WIN5_GPH1, 0, 100);
+    GRAPH_SetData(hWin2, xd, yd, 10);
+
+    hWin3 = BUTTON_Create(70,220,60,30,hWin,WIN5_BTN1,0);
+    BUTTON_SetTitle(hWin3, "Exit");
+}
+
 void Window2_Cb(WM_MESSAGE *pMsg)
 {
     switch (pMsg->MsgId) {
@@ -239,6 +238,9 @@ void Window2_Cb(WM_MESSAGE *pMsg)
                 Create_Window3();
             } else if (WM_GetDialogId(pMsg->hWinSrc) == WIN2_BTN3) {
                 Create_Window4();
+            }
+            else if (WM_GetDialogId(pMsg->hWinSrc) == WIN2_BTN4) {
+                Create_Window5();
             }
             break;
         case WM_KEY_CHECKED :
@@ -252,7 +254,7 @@ void Create_Window2(void)
 {
     GUI_hWin hWin, hWin1;
 
-    hWin = WINDOW_Create(30,80,180,170,NULL,WINDOW2,0, Window2_Cb);
+    hWin = WINDOW_Create(30,80,180,220,NULL,WINDOW2,0, Window2_Cb);
     WINDOW_SetTitle(hWin, "S-GUI Demo");
     hWin1 = BUTTON_Create(5, 5, 112, 35,hWin,WIN2_BTN1,0);
     BUTTON_SetTitle(hWin1, "Alpha Test");
@@ -260,5 +262,7 @@ void Create_Window2(void)
     BUTTON_SetTitle(hWin1, "TEXTBOX Test");
     hWin1 = BUTTON_Create(5, 85, 150, 35,hWin,WIN2_BTN3,0);
     BUTTON_SetTitle(hWin1, "LISTBOX Test");
+    hWin1 = BUTTON_Create(5, 125, 150, 35,hWin,WIN2_BTN4,0);
+    BUTTON_SetTitle(hWin1, "GRAPH Test");
     BUTTON_SetFont(hWin1, Font_ASCII_2PP);
 }

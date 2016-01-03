@@ -29,7 +29,7 @@
 /* Window状态定义 */
 #define WM_WINDOW_ACTIVE    0x0001   /* 活动窗口 */
 #define WM_WINDOW_TRANS     0x0002   /* 透明窗口 */
-#define WM_WINDOW_UN_DRAW   0x0004   /* 不绘制内部背景 */
+#define WM_WINDOW_MOVE      0x0004   /* 可移动的窗口 */
 #define WM_WINDOW_TIMER     0x0008   /* 窗口需要计时 */
 
 
@@ -70,7 +70,7 @@ typedef struct {
     WM_hWin hFirstChild;    /* 第一个子窗口指针 */
     WM_hWin hNext;          /* 指向下一个同属窗口 */
     WM_CALLBACK *WinCb;     /* 窗口信息响应回调函数 */
-    u_16 Status;            /* 窗口状态 */
+    u_16 Style;             /* 窗口风格 */
     u_8 Sign;               /* 窗口类型辨识符 */
     u_16 Id;                /* 窗口Id */
     GUI_TIME LastTime;      /* 上次更新时间 */

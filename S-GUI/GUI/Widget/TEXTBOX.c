@@ -1,6 +1,9 @@
 #include "TEXTBOX.h"
 #include "GUI.h"
 
+#define TEXTBOX_DEF_BKC             0x00232329  /* 背景颜色 */
+#define TEXTBOX_TEXT_COLOR          0x00FFFFFF  /* 字体颜色 */
+
 void TEXTBOX_LineFeedDisp( const char *str, GUI_COLOR Color, GUI_FontType Font, GUI_RECT *Rect);
 
 /* 自绘函数 */

@@ -3,7 +3,10 @@
 
 #include "GUI.h"
 
-#define ROOTWINDOW_BACK_COLOR 0x00FFFFFF     /* 根窗口默认背景色 */
+/* 用户自定义的根窗口绘制函数 */
+extern void (*RootWinPaint_Cb)(WM_hWin hWin);
+/* 用户自定义的根窗口定时器处理函数 */
+extern void (*RootWinTimer_Cb)(WM_hWin hWin);
 
 void WM_RootWindowInit(WM_Obj *pObj);
 

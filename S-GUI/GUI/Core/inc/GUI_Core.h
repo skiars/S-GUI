@@ -5,7 +5,8 @@
 #include "GUI_Typedef.h"
 #include "GUI_Botton.h"
 
-#define _hRootWin  (GUI_Data->RootWin)
+#define _hRootWin   (GUI_Data->RootWin)
+#define _PaintArea  (GUI_Data->PaintArea)
 
 /* ¾ØÐÎ */
 typedef struct { i_16 x0, y0, x1, y1; } GUI_RECT;
