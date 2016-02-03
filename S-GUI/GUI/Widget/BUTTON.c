@@ -17,7 +17,7 @@ static void _BUTTON_Paint(WM_hWin hWin)
     ySize = Rect.y1 - y0 + 1;
     Color = pObj->Widget.Skin.EdgeColor[0];
     /* 绘制边框 */
-    GUI_DrawTailorRect(x0, y0, xSize, ySize, Color);
+    GUI_DrawRect(x0, y0, xSize, ySize, Color);
     if (pObj->Check) {
         Color = pObj->Widget.Skin.BackColor[1];
         FontColor = pObj->Widget.Skin.FontColor[1];
@@ -26,7 +26,7 @@ static void _BUTTON_Paint(WM_hWin hWin)
         FontColor = pObj->Widget.Skin.FontColor[0];
     }
     /* 绘制按键内部 */
-    GUI_FillTailorRect(x0 + 1, y0 + 1, xSize - 2, ySize - 2, Color);
+    GUI_FillRect(x0 + 1, y0 + 1, xSize - 2, ySize - 2, Color);
     /* 绘制标题 */
     GUI_DspStringCurRectMiddle(x0 + 1, y0 + 1,
                                xSize - 2, ySize - 2,

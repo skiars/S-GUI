@@ -24,7 +24,7 @@ static void __Paint(WM_hWin hWin)
     
     /* »æÖÆ±³¾° */
     Color = pObj->Widget.Skin.BackColor[0];
-    GUI_FillTailorRect(x0, y0, xSize, ySize, Color);
+    GUI_FillRect(x0, y0, xSize, ySize, Color);
     /* »æÖÆ»¬¿é */
     ScrLen = ySize / pObj->Totality;
     if(ScrLen < pObj->MinThick)
@@ -33,7 +33,7 @@ static void __Paint(WM_hWin hWin)
     }
     y0 += pObj->Loation * (ySize - ScrLen) / (pObj->Totality - 1);
     Color = pObj->Widget.Skin.BackColor[1];
-    GUI_FillTailorRect(x0, y0, xSize, ScrLen, Color);
+    GUI_FillRect(x0, y0, xSize, ScrLen, Color);
 }
 
 static void __Callback(WM_MESSAGE *pMsg)

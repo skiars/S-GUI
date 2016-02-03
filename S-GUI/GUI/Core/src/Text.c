@@ -66,7 +66,7 @@ static void _CharASCII_2PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontTyp
                 d2 = (d1 >> ((3 - i) << 1)) & 0x03;
                 if (d2) {
                     d2 = (0x03 - d2) * 85;
-                    GUI_DrawTailorPoint(x + xCnt, y + yCnt, Color | ((u_32)d2 << 24));
+                    GUI_DrawPoint(x + xCnt, y + yCnt, Color | ((u_32)d2 << 24));
                 }
                 ++xCnt;
             }
@@ -101,7 +101,7 @@ static void _CharASCII_4PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontTyp
                 d2 = (d1 >> ((1 - i) << 2)) & 0x0f;
                 if (d2) {
                     d2 = (0x0f - d2) * 17;
-                    GUI_DrawTailorPoint(x + xCnt, y + yCnt, Color | ((u_32)d2 << 24));
+                    GUI_DrawPoint(x + xCnt, y + yCnt, Color | ((u_32)d2 << 24));
                 }
                 ++xCnt;
             }
@@ -136,7 +136,7 @@ static void _CharASCII(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Fo
             for (a = 0; a < b; a++) {
                 if(temp & 0x80)
                 {
-                    GUI_DrawTailorPoint(x + t * 8 + a, y + pos, Color);
+                    GUI_DrawPoint(x + t * 8 + a, y + pos, Color);
                 }
                 temp <<= 1;    
             }

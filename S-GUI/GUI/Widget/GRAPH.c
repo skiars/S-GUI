@@ -26,7 +26,7 @@ static void __Paint(GRAPH_Obj *pObj)
     ySize = y1 - y0 + 1;
     /* 绘制背景 */
     Color = pObj->Widget.Skin.BackColor[0];
-    GUI_FillTailorRect(x0, y0, xSize, ySize, Color);
+    GUI_FillRect(x0, y0, xSize, ySize, Color);
     Rect = WM_GetWindowUserRect(pObj);
     x0 = Rect.x0;
     y0 = Rect.y0;
@@ -37,14 +37,14 @@ static void __Paint(GRAPH_Obj *pObj)
     /* 绘制网格 */
     Color = pObj->Widget.Skin.EdgeColor[0];
     for (i = x0; i < x1; i += pObj->xDist) { /* 垂直部分 */
-        GUI_VertTailorLine(i, y0, ySize, Color);
+        GUI_VertLine(i, y0, ySize, Color);
     }
     for (i = y0; i < y1; i += pObj->yDist) { /* 水平部分 */
-        GUI_HoriTailorLine(x0, i, xSize, Color);
+        GUI_HoriLine(x0, i, xSize, Color);
     }
-    GUI_VertTailorLine(x1, y0, ySize, Color);
-    GUI_HoriTailorLine(x0, y1, xSize, Color);
-    __Draw_Point(pObj, &Rect); /* 绘制 */
+    GUI_VertLine(x1, y0, ySize, Color);
+    GUI_HoriLine(x0, y1, xSize, Color);
+    __Draw_Point(pObj, &Rect); /* 绘制曲线 */
 }
 
 /* GRAPH控件自动回调函数 */
@@ -138,10 +138,12 @@ static void __Draw_Point(GRAPH_Obj *pObj, GUI_RECT *pr)
     
     Color = pObj->Widget.Skin.EdgeColor[1];
     for (i = 0; i < pObj->Len; ++i) {
+        /* 转换为绝对坐标 */
         tx = pObj->xData[i] + pr->x0;
         ty = pr->y1 - pObj->yData[i];
+        /* 绘制点 */
         if (tx >= pr->x0 && tx <= pr->x1 && ty >= pr->y0 && ty <= pr->y1) {
-            GUI_DrawTailorPoint(tx, ty, Color);
+            GUI_DrawPoint(tx, ty, Color);
         }
     }
 }

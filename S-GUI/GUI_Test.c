@@ -40,7 +40,7 @@ static void _RootWinPaint(WM_hWin hWin)
     GUI_RECT Rect = WM_GetWindowRect(hWin);;
 
     /* »æÖÆ±³¾° */
-    GUI_FillTailorRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1,
+    GUI_FillRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1,
         Rect.y1 - Rect.y0 +1, 0x00FFFFFF);
     GUI_DispStringCurRect(10, 300, _Str, 0x00000000, Font_ASCII_8X16);
 }
@@ -99,7 +99,7 @@ void Create_Window1(void)
 {
     GUI_hWin hWin, hWin2, hWin3;
 
-    hWin = WINDOW_Create(7,10,200,140,NULL, WINDOW1,0, Window1_Cb);
+    hWin = WINDOW_Create(7,10,200,140,NULL, WINDOW1, WM_WINDOW_MOVE, Window1_Cb);
     if (hWin == NULL) return;
     WINDOW_SetTitle(hWin, "Hello World!");
     hWin2 = BUTTON_Create(12,20,72,30,hWin,WIN1_BTN2,0);
@@ -200,7 +200,6 @@ void Create_Window4(void)
 
 void Window5_Cb(WM_MESSAGE *pMsg)
 {
-    WM_hWin hItem;
     switch (pMsg->MsgId) {
     case WM_BUTTON_RELEASED:
         if (WM_GetDialogId(pMsg->hWinSrc) == WIN5_BTN1) {
@@ -218,10 +217,12 @@ void Create_Window5(void)
     i_16 xd[10] = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
     GUI_hWin hWin, hWin2, hWin3;
 
-    hWin = WINDOW_Create(10,10,220,300,NULL, WINDOW5,0, Window5_Cb);
-    if (hWin == NULL) return;
+    hWin = WINDOW_Create(10, 10, 220, 300, NULL, WINDOW5,0, Window5_Cb);
+    if (hWin == NULL) {
+        return;
+    }
     WINDOW_SetTitle(hWin, "GRPHA Test");
-    hWin2 = GRAPH_Create(0,0,214,210,hWin,WIN5_GPH1, 0, 100);
+    hWin2 = GRAPH_Create(0, 0, 214, 210, hWin, WIN5_GPH1, 0);
     GRAPH_SetData(hWin2, xd, yd, 10);
 
     hWin3 = BUTTON_Create(70,220,60,30,hWin,WIN5_BTN1,0);

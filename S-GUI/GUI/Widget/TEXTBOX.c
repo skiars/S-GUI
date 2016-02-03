@@ -22,7 +22,7 @@ static void __Paint(WM_hWin hWin)
     ySize = Rect.y1 - y0 + 1;
     /* 绘制内部背景 */
     Color = pObj->Widget.Skin.BackColor[0];
-    GUI_FillTailorRect(x0, y0, xSize, ySize, Color);
+    GUI_FillRect(x0, y0, xSize, ySize, Color);
     /* 绘制文本内容 */
     Color = pObj->Widget.Skin.FontColor[0];
     TEXTBOX_LineFeedDisp(pObj->Text, Color,  WIDGET_GetFont(pObj), &Rect);

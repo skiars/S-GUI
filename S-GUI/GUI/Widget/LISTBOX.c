@@ -215,20 +215,20 @@ static void LISTBOX__DrawList(LISTBOX_Obj *pObj, u_16 ItemPos, char *Str)
         FontColor = WIDGET_GetFontColor(pObj, 0);
         xPixPos = 0;
     }
-    GUI_FillTailorRect(x0, y0, xSize, ySize - 1, BkColor);
+    GUI_FillRect(x0, y0, xSize, ySize - 1, BkColor);
     /* 分隔线 */
     BkColor = WIDGET_GetEdgeColor(pObj, 0);
-    GUI_HoriTailorLine(x0 + 1, y0 + ySize - 1, xSize - 2, BkColor);
+    GUI_HoriLine(x0 + 1, y0 + ySize - 1, xSize - 2, BkColor);
     /* 显示条目内容,文字不能覆盖分隔线 */
     Font = WIDGET_GetFont(pObj);
     if (pObj->ItemHei > Font->CharHeight) { /* 字体高度居中显示 */
         y0 += (pObj->ItemHei - Font->CharHeight) / 2;
     }
-    x0 -= xPixPos;   //显示偏移
+    x0 -= xPixPos;   /* 显示偏移 */
     GUI_DispStringCurRect(x0, y0, Str, FontColor, Font);
 }
 
-//绘制一页pObj,从pObj->TopIndex开始绘制
+/* 绘制一页pObj,从pObj->TopIndex开始绘制 */
 static void LISTBOX__DrawPage(LISTBOX_Obj *pObj)
 {
     PNode pNode;
@@ -255,7 +255,7 @@ static void LISTBOX__DrawPage(LISTBOX_Obj *pObj)
     xSize = Rect.x1 - Rect.x0 + 1;
     ySize = Rect.y1 - Rect.y0 + 1;
     /* 清空为底色 */
-    GUI_FillTailorRect(x0, y0, xSize, ySize, WIDGET_GetBackColor(pObj, 0));
+    GUI_FillRect(x0, y0, xSize, ySize, WIDGET_GetBackColor(pObj, 0));
 }
 
 /* LISTBOX滚动显示 */

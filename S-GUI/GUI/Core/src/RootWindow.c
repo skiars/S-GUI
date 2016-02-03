@@ -15,7 +15,7 @@ static void __Paint(WM_hWin hWin)
         RootWinPaint_Cb(hWin);
     } else {
         /* ªÊ÷∆±≥æ∞ */
-        GUI_FillTailorRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1,
+        GUI_FillRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1,
             Rect.y1 - Rect.y0 +1, ROOTWINDOW_BACK_COLOR);
     }
 }

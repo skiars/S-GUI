@@ -340,9 +340,11 @@ WM_hWin WM_CreateWindowAsChild(i_16 x0,             /* ™M×ø±ê */
         WM_SetActiveMainWindow(pObj);
         return NULL;
     }
-    GUI_Lock();
     pObj = GUI_fastmalloc(sizeof(WM_Obj) + bytes);
-    if (pObj == NULL) return NULL;
+    if (pObj == NULL) {
+        return NULL;
+    }
+    GUI_Lock();
     WM_AttachWindow(pObj, pParent); /* ×¢²áµ½¸¸´°¿Ú */
     pObj->hFirstChild = NULL;
     pObj->Style = Flag;

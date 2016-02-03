@@ -31,31 +31,31 @@ static void _WINDOW_Paint(WM_hWin hWin)
     
     /* 绘制外框 */
     Color = pObj->Widget.Skin.EdgeColor[0];
-    GUI_DrawTailorRect(x0, y0, xSize, ySize, Color);
+    GUI_DrawRect(x0, y0, xSize, ySize, Color);
     /* 绘制中框 */
     Color = pObj->Widget.Skin.EdgeColor[1];
-    GUI_VertTailorLine(x0 + 1, y0  + pObj->CaptionHeight + 1,
+    GUI_VertLine(x0 + 1, y0  + pObj->CaptionHeight + 1,
                        ySize - pObj->CaptionHeight - 2, Color);
-    GUI_VertTailorLine(x0 + xSize - 2, y0  + pObj->CaptionHeight + 1,
+    GUI_VertLine(x0 + xSize - 2, y0  + pObj->CaptionHeight + 1,
                        ySize - pObj->CaptionHeight - 2, Color);
-    GUI_HoriTailorLine(x0 + 1, y0  + ySize - 2, xSize - 2, Color);
+    GUI_HoriLine(x0 + 1, y0  + ySize - 2, xSize - 2, Color);
     /* 绘制内框 */
     Color = pObj->Widget.Skin.EdgeColor[2];
-    GUI_DrawTailorRect(x0 + 2, y0 + pObj->CaptionHeight + 1,
+    GUI_DrawRect(x0 + 2, y0 + pObj->CaptionHeight + 1,
                  xSize - 4, ySize - pObj->CaptionHeight - 3, 
                  Color);
 
     /* 绘制标题栏 */
     Color = pObj->Widget.Skin.CaptionColor[0];
-    GUI_FillTailorRect(x0 + 1, y0 + 1, xSize - 2,
+    GUI_FillRect(x0 + 1, y0 + 1, xSize - 2,
                  pObj->CaptionHeight / 2, Color);
     Color = pObj->Widget.Skin.CaptionColor[1];
-    GUI_FillTailorRect(x0 + 1, y0 + pObj->CaptionHeight / 2 + 1,
+    GUI_FillRect(x0 + 1, y0 + pObj->CaptionHeight / 2 + 1,
                  xSize - 2, pObj->CaptionHeight / 2, Color);
 
     /* 绘制内部背景 */
     Color = pObj->Widget.Skin.BackColor[0];
-    GUI_FillTailorRect(x0 + 3, y0 + pObj->CaptionHeight + 2,
+    GUI_FillRect(x0 + 3, y0 + pObj->CaptionHeight + 2,
                  xSize - 6, ySize - pObj->CaptionHeight - 5, Color);
     /* 绘制标题 */
     Color = pObj->Widget.Skin.FontColor[0];
