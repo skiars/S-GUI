@@ -2,6 +2,10 @@
 #include "GUI.h"
 #include "RootWindow.h"
 
+/* 找到窗口Z序最大的子窗口（包括它自己）的下一个窗口，注意窗口h一定不能是NULL */
+#define WM__FindChildEnd(h) \
+    (((WM_Obj *)WM_GetTopChildWindow(h))->hNextLine)
+
 #if GUI_USE_MEMORY
 static GUI_RECT __AllDraw_Rect;
 #endif
@@ -231,7 +235,7 @@ WM_hWin WM_GetFrontWindow(WM_hWin hWin)
     return pWin;
 }
 
-/* 获得某个窗口Z序最大的子窗口 */
+/* 获得某个窗口Z序最高的子窗口 */
 WM_hWin WM_GetTopChildWindow(WM_hWin hWin)
 {
     WM_Obj *pWin = hWin;
@@ -251,18 +255,20 @@ WM_hWin WM_GetTopChildWindow(WM_hWin hWin)
     return pWin;
 }
 
-/* 将一个窗口添加到其父窗口下的最顶层 */
+/* 将一个窗口添加到父窗口下的最顶层 */
 void WM_AttachWindow(WM_hWin hWin, WM_hWin hParent)
 {
-    WM_Obj *pWin, *pObj, *ptr;
+    WM_Obj *pWin = hWin, *pObj, *ptr;
 
+    if (pWin == NULL) {
+        return;
+    }
     GUI_LOCK();
     if (hParent == NULL) { /* hParent为NULL时作为根窗口的子窗口 */
         pObj = _pRootWin;
     } else {
         pObj = hParent;
     }
-    pWin = hWin;
     pWin->hNext = NULL;
     pWin->hParent = pObj;
     if (pObj->hFirstChild == NULL) { /* 父窗口没有子窗口 */
@@ -273,7 +279,7 @@ void WM_AttachWindow(WM_hWin hWin, WM_hWin hParent)
             pObj = pObj->hNext;
         }
         pObj->hNext = pWin;
-        /* 取这个窗口Z序最大的子窗口 */
+        /* 取这个窗口Z序最高的子窗口 */
         pObj = WM_GetTopChildWindow(pObj);
     }
     /* 连接链表 */
@@ -286,14 +292,14 @@ void WM_AttachWindow(WM_hWin hWin, WM_hWin hParent)
 /* 将一个窗口从窗口树中移除 */
 void WM_RemoveWindow(WM_hWin hWin)
 {
-    WM_Obj *pWin, *pObj;
+    WM_Obj *pWin = hWin, *pObj;
     
-    GUI_LOCK();
-    pWin = hWin;
-    pObj = pWin->hParent;
-    if (pObj == NULL) { /* 根窗口,无需移除 */
+    /* 窗口不能为NULL,根窗口无需移除 */
+    if (pWin == NULL || pWin->hParent == NULL) {
         return;
     }
+    pObj = pWin->hParent;
+    GUI_LOCK();
     if (pObj->hFirstChild == pWin) { /* 它是父窗口的第一个子窗口 */
         pObj->hFirstChild = pWin->hNext;   
     } else {
@@ -361,7 +367,7 @@ GUI_RESULT WM_SetActiveMainWindow(WM_hWin hWin)
         return GUI_ERR;
     }
     GUI_LOCK();
-    while (pObj->hParent != _pRootWin) {
+    while (pObj && pObj->hParent != _pRootWin) {
         pObj = pObj->hParent;
     }
     if (WM_GetActiveMainWindow() != pObj) {
@@ -392,7 +398,7 @@ WM_hWin WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
 
     GUI_LOCK();
     /* 检查窗口ID是否已经注册 */
-    pObj = WM_GetDialogItem(hParent, Id);
+    pObj = WM_GetWindowHandle(Id);
     if (pObj != NULL) {
         WM_SetActiveMainWindow(pObj); /* 将已经注册的窗口放到最前 */
         GUI_UNLOCK();
@@ -426,12 +432,12 @@ WM_hWin WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
  * 检查窗口标识符 
  * 返回值:0,标识符匹配;1,标识符不匹配
  **/
-u_8 WM_CheckWindowSign(WM_hWin hWin, u_16 Sign)
+GUI_RESULT WM_CheckWindowSign(WM_hWin hWin, u_16 Sign)
 {
-    if (((WM_Obj*)hWin)->Sign == Sign) {
-        return 0;
+    if (hWin && ((WM_Obj*)hWin)->Sign == Sign) {
+        return GUI_OK;
     }
-    return 1;
+    return GUI_ERR;
 }
 
 /* 窗口部分区域无效化 */
@@ -465,16 +471,22 @@ void WM_Invalidate(WM_hWin hWin)
     WM_InvalidateRect(hWin, NULL);
 }
 
-/* 将一个窗口及其子窗口无效化,外部调用（似乎不必要） */
+/* 将一个窗口及其子窗口无效化 */
 GUI_RESULT WM_InvalidTree(WM_hWin hWin)
 {
     WM_Obj *pWin = hWin;
 
-    hWin = WM_GetTopChildWindow(pWin);
+    if (pWin == NULL) {
+        return GUI_ERR;
+    }
+    GUI_LOCK();
+    /* 找到遍历子窗口的终点 */
+    hWin = WM__FindChildEnd(pWin);
     while (pWin && pWin != hWin) {
         WM_InvalidateRect(pWin, NULL);
         pWin = pWin->hNextLine;
     }
+    GUI_UNLOCK();
     return GUI_OK;
 }
 
@@ -544,20 +556,43 @@ GUI_RESULT WM_FindWindow(WM_hWin hWin)
     return GUI_ERR; /* 不存在该窗口 */
 }
 
-/* 获得指定ID的子窗口句柄(不包括孙窗口...) */
+/* 获得指定ID的子窗口句柄 */
 WM_hWin WM_GetDialogItem(WM_hWin hWin, u_16 Id)
 {
 
     WM_Obj *pWin = hWin;
 
+    /* WM_NULL_ID不可寻找 */
+    if (Id == WM_NULL_ID) {
+        return NULL;
+    }
     GUI_LOCK();
     if (pWin && pWin->hFirstChild) {
-        pWin = pWin->hFirstChild;
-        while (pWin && pWin->Id != Id) {
-            pWin = pWin->hNext;
+        pWin = pWin->hFirstChild; /* 从子窗口开始寻找 */
+        /* 找到遍历子窗口的终点 */
+        hWin = WM__FindChildEnd(hWin);
+        while (pWin && pWin->Id != Id && pWin != hWin) {
+            pWin = pWin->hNextLine;
         }
     } else {
         pWin = NULL;
+    }
+    GUI_UNLOCK();
+    return pWin;
+}
+
+/* 获得指定ID的窗口句柄 */
+WM_hWin WM_GetWindowHandle(u_16 Id)
+{
+    WM_Obj *pWin = _pRootWin;
+
+    /* WM_NULL_ID不可寻找 */
+    if (Id == WM_NULL_ID) {
+        return NULL;
+    }
+    GUI_LOCK();
+    while (pWin && pWin->Id != Id) { /* 遍历窗口 */
+        pWin = pWin->hNextLine;
     }
     GUI_UNLOCK();
     return pWin;
@@ -598,7 +633,7 @@ WM_hWin WM_GetParentHandle(WM_hWin hWin)
     return ((WM_Obj*)hWin)->hParent;
 }
 
-/* 将被一个窗口遮盖的窗口无效化，
+/* 将被一个窗口遮盖的窗口及其子窗口无效化，
  * 例如在删除窗口时需要把将要被删除的窗口遮挡的窗口无效化 
  **/
 void WM_InvalidCoverWindow(WM_hWin hWin, GUI_RECT *pRect)
@@ -615,7 +650,7 @@ void WM_InvalidCoverWindow(WM_hWin hWin, GUI_RECT *pRect)
     GUI_UNLOCK();
 }
 
-/* 移动窗口外部调用API */
+/* 移动窗口及它所有的子窗口 */
 void WM_MoveWindow(WM_hWin hWin, i_16 dX, i_16 dY)
 {
     WM_Obj *p = hWin;
@@ -624,9 +659,9 @@ void WM_MoveWindow(WM_hWin hWin, i_16 dX, i_16 dY)
     /* 先将被遮挡的窗口无效化 */
     WM_InvalidCoverWindow(p, &p->Rect);
     if (p && p->Style & WM_WINDOW_MOVE && (dX || dY)) {
-        hWin = WM_GetTopChildWindow(p);
-        hWin = ((WM_Obj *)hWin)->hNextLine;
-        for (; p != hWin; p = p->hNextLine) {
+        /* 找到遍历子窗口的终点 */
+        hWin = WM__FindChildEnd(p);
+        for (; p != hWin; p = p->hNextLine) { /* 遍历子窗口 */
             GUI_MoveRect(&p->Rect, dX, dY);
             GUI_MoveRect(&p->UserRect, dX, dY);
             WM_Invalidate(p); /* 窗口无效化 */

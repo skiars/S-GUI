@@ -3,29 +3,29 @@
 #include <stdio.h>
 #include <string.h>
 
-#define WINDOW2      (WM_USER_ID + 2)
-#define WINDOW1      (WM_USER_ID + 3)
-#define WINDOW3      (WM_USER_ID + 4)
-#define WINDOW4      (WM_USER_ID + 5)
-#define WINDOW5      (WM_USER_ID + 6)
+#define WINDOW2      (WM_USER_ID + 0x0010)
+#define WINDOW1      (WM_USER_ID + 0x0020)
+#define WINDOW3      (WM_USER_ID + 0x0030)
+#define WINDOW4      (WM_USER_ID + 0x0040)
+#define WINDOW5      (WM_USER_ID + 0x0050)
 
-#define WIN2_BTN1    0x0001
-#define WIN2_BTN2    0x0002
-#define WIN2_BTN3    0x0003
-#define WIN2_BTN4    0x0004
+#define WIN2_BTN1    (WINDOW2 + 0x0001)
+#define WIN2_BTN2    (WINDOW2 + 0x0002)
+#define WIN2_BTN3    (WINDOW2 + 0x0003)
+#define WIN2_BTN4    (WINDOW2 + 0x0004)
 
-#define WIN1_BTN1    0x0001
-#define WIN1_BTN2    0x0002
-#define WIN1_BTN3    0x0003
+#define WIN1_BTN1    (WINDOW1 + 0x0001)
+#define WIN1_BTN2    (WINDOW1 + 0x0002)
+#define WIN1_BTN3    (WINDOW1 + 0x0003)
 
-#define WIN3_TBX1    0x0001
-#define WIN3_BTN1    0x0002
-#define WIN3_BTN2    0x0003
+#define WIN3_TBX1    (WINDOW3 + 0x0001)
+#define WIN3_BTN1    (WINDOW3 + 0x0002)
+#define WIN3_BTN2    (WINDOW3 + 0x0003)
 
-#define WIN4_LBX1    0x0001
+#define WIN4_LBX1    (WINDOW4 + 0x0001)
 
-#define WIN5_GPH1    0x0001
-#define WIN5_BTN1    0x0002
+#define WIN5_GPH1    (WINDOW5 + 0x0001)
+#define WIN5_BTN1    (WINDOW5 + 0x0002)
 
 
 
@@ -123,8 +123,8 @@ void Window3_Cb(WM_MESSAGE *pMsg)
                 WM_DeleteWindow(pMsg->hWin);
             } else if (Id == WIN3_BTN2) {
                 WINDOW_SetAllAlpha(pMsg->hWin, 150);
-                hItem = WM_GetDialogItem(pMsg->hWin, WIN4_LBX1);
-                WINDOW_SetAllAlpha(hItem, 200);
+                hItem = WM_GetDialogItem(pMsg->hWin, WIN3_TBX1);
+                TEXTBOX_SetAllAlpha(hItem, 200);
             }
             break;
         case WM_KEY_CHECKED :
@@ -178,21 +178,21 @@ void Create_Window4(void)
     WINDOW_SetTitle(hWin, "LISTBOX Test");
     hWin2 = LISTBOX_Create(0,0,214,210,hWin,WIN4_LBX1, 0, 100);
     //WIDGET_SetFont(hWin2, Font_ASCII_8X16);
-    LISTBOX_addlist(hWin2, "This is a Listbox test...Scroll...asdfg-ASDFGqwertyuiopQWERTYUIOP");
-    LISTBOX_addlist(hWin2, "Hello");
-    LISTBOX_addlist(hWin2, "abcdefg");
-    LISTBOX_addlist(hWin2, "ABCDEFG");
-    LISTBOX_addlist(hWin2, "hijklmn");
-    LISTBOX_addlist(hWin2, "HIJKLMN");
-    LISTBOX_addlist(hWin2, "dgs");
-    LISTBOX_addlist(hWin2, "saff");
-    LISTBOX_addlist(hWin2, "csafe");
-    LISTBOX_addlist(hWin2, "srwetw");
-    LISTBOX_addlist(hWin2, "vfdgreg");
-    LISTBOX_addlist(hWin2, "vfdgreg");
-    LISTBOX_addlist(hWin2, "vfdgreg");
-    LISTBOX_addlist(hWin2, "Alpha Test");
-    LISTBOX_addlist(hWin2, "ListBox Test");
+    LISTBOX_AddList(hWin2, "This is a Listbox test...Scroll...asdfg-ASDFGqwertyuiopQWERTYUIOP");
+    LISTBOX_AddList(hWin2, "Hello");
+    LISTBOX_AddList(hWin2, "abcdefg");
+    LISTBOX_AddList(hWin2, "ABCDEFG");
+    LISTBOX_AddList(hWin2, "hijklmn");
+    LISTBOX_AddList(hWin2, "HIJKLMN");
+    LISTBOX_AddList(hWin2, "dgs");
+    LISTBOX_AddList(hWin2, "saff");
+    LISTBOX_AddList(hWin2, "csafe");
+    LISTBOX_AddList(hWin2, "srwetw");
+    LISTBOX_AddList(hWin2, "vfdgreg");
+    LISTBOX_AddList(hWin2, "vfdgreg");
+    LISTBOX_AddList(hWin2, "vfdgreg");
+    LISTBOX_AddList(hWin2, "Alpha Test");
+    LISTBOX_AddList(hWin2, "ListBox Test");
     //LISTBOX_SetSelFromStr(hWin2, "saff");
     hWin3 = BUTTON_Create(70,220,60,30,hWin,WIN3_BTN1,0);
     BUTTON_SetTitle(hWin3, "Exit");

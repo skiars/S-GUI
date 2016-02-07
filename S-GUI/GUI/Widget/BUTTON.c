@@ -37,9 +37,7 @@ static void _BUTTON_Paint(WM_hWin hWin)
 static void _BUTTON_Callback(WM_MESSAGE *pMsg)
 {
     /* 检测是否为BUTTON控件 */
-    if (WM_CheckWindowSign(pMsg->hWin, WIDGET_BUTTON)) {
-        return;
-    }
+    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_BUTTON);
     switch (pMsg->MsgId) {
         case WM_PAINT :
             _BUTTON_Paint(pMsg->hWin);
@@ -98,45 +96,30 @@ WM_hWin BUTTON_Create(i_16 x0,
     return pObj;
 }
 
-u_8 BUTTON_SetTitle(WM_hWin hWin, const char *str)
+GUI_RESULT BUTTON_SetTitle(WM_hWin hWin, const char *str)
 {
     /* 检测是否为BUTTON控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_BUTTON)) {
-        return 1;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_BUTTON);
     ((BUTTON_Obj*)hWin)->Title = (char*)str;
-    return 0;
+    return GUI_OK;
 }
 
-u_8 BUTTON_SetFont(WM_hWin hWin, GUI_FontType Font)
+GUI_RESULT BUTTON_SetFont(WM_hWin hWin, GUI_FontType Font)
 {
     /* 检测是否为BUTTON控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_BUTTON)) {
-        return 1;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_BUTTON);
     WIDGET_SetFont(hWin, Font);
-    return 0;
+    return GUI_OK;
 }
 
 /* 按键按下API */
-void BUTTON_Check(WM_hWin hWin, u_8 NewStatus)
+GUI_RESULT BUTTON_Check(WM_hWin hWin, u_8 NewStatus)
 {
     BUTTON_Obj *pObj = hWin;
     
     /* 检测是否为BUTTON控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_BUTTON)) {
-        return;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_BUTTON);
     pObj->Check = NewStatus;
     WM_Invalidate(hWin);
-}
-
-void BUTTON_Test(void)
-{
-#if  0
-    WM_MESSAGE Msg;
-    Msg.hWin = BUTTON_Create(20,20,50,20,NULL,0,0);
-    Msg.MsgId = WM_PAINT;
-    _BUTTON_Callback(&Msg);
-#endif
+    return GUI_OK;
 }

@@ -25,9 +25,7 @@ static void __Callback(WM_MESSAGE *pMsg)
 {
     static i_16 dY; /* 这儿，不可重入！！！ */
     /* 检测是否为LISTBOX控件 */
-    if (WM_CheckWindowSign(pMsg->hWin, WIDGET_LISTBOX)) {
-        return;
-    }
+    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_LISTBOX);
     switch (pMsg->MsgId) {
         case WM_PAINT :
             LISTBOX__DrawPage(pMsg->hWin);
@@ -126,22 +124,21 @@ static u_8 __CreateScro(GUI_hWin hWin)
         x0 = Rect.x1 - Rect.x0 - pObj->ScbWidth + 1;
         pObj->hScro = SCROLLBAR_Create(x0, 0, pObj->ScbWidth,
                                        Rect.y1 - Rect.y0 + 1,
-                                       pObj, 0x0001, 0);
+                                       pObj, WM_NULL_ID, 0);
         return GUI_OK;
     }
     return GUI_ERR;
 }
 
 //增加一条pObj的条目
-//0,增加成功;
-//1,增加失败
-u_8 LISTBOX_addlist(WM_hWin hWin,char *name)
+//GUI_OK,增加成功;
+//GUI_ERR,增加失败
+GUI_RESULT LISTBOX_AddList(WM_hWin hWin,char *name)
 {
     LISTBOX_Obj *pObj = hWin;
     
-    if (WM_CheckWindowSign(hWin, WIDGET_LISTBOX)) {
-        return GUI_ERR;
-    }
+    /* 检测是否为LISTBOX控件 */
+    WIDGET_SignErrorReturn(hWin, WIDGET_LISTBOX);
     //if(pObj->StrTab) return GUI_ERR;  //已经锁定使用一次性添加模式
     Insert(name,pObj->LastNode); //插入到链表结尾
     pObj->LastNode=pObj->LastNode->next;   //仅有本函数使用
@@ -306,6 +303,8 @@ void LISTBOX_ItemDown(WM_hWin hWin)
     GUI_RECT Rect;
     u_16 PageItems, ItemPos;
 
+    /* 检测是否为LISTBOX控件 */
+    WIDGET_SignErrorReturnVoid(hWin, WIDGET_LISTBOX);
     Rect = WM_GetWindowUserRect(pObj);
     ItemPos = pObj->SelIndex - pObj->TopIndex;
     PageItems = pObj->PageItems;
@@ -330,12 +329,14 @@ void LISTBOX_ItemDown(WM_hWin hWin)
 }
 
 //将列表框的选中项上移移一栏
-void LISTBOX_ItemUp(WM_hWin hWin)
+GUI_RESULT LISTBOX_ItemUp(WM_hWin hWin)
 {
     LISTBOX_Obj *pObj = hWin;
     GUI_RECT Rect;
     u_16 PageItems, ItemPos, Temp;
 
+    /* 检测是否为LISTBOX控件 */
+    WIDGET_SignErrorReturn(hWin, WIDGET_LISTBOX);
     Rect = WM_GetWindowUserRect(pObj);
     ItemPos = pObj->SelIndex - pObj->TopIndex;
     PageItems = pObj->PageItems;
@@ -360,6 +361,7 @@ void LISTBOX_ItemUp(WM_hWin hWin)
         SCROLLBAR_SetLoation(pObj->hScro, pObj->SelIndex);
     }
     WM_InvalidateRect(pObj, &Rect);  /* 无效化窗口 */
+    return GUI_OK;
 }
 
 /* 返回选中项目数 */
@@ -368,8 +370,8 @@ u_16 LISTBOX_GetSel(WM_hWin hWin)
     LISTBOX_Obj *pObj = hWin;
     
     /* 检测是否为LISTBOX控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_LISTBOX)) {
-        return 0;
+    if (WM_CheckWindowSign(hWin, WIDGET_LISTBOX) == GUI_ERR) {
+        return 0xffff;
     }
     return pObj->SelIndex;
 }
@@ -381,21 +383,19 @@ char *LISTBOX_GetSelText(WM_hWin hWin)
     
     /* 检测是否为LISTBOX控件 */
     if (WM_CheckWindowSign(hWin, WIDGET_LISTBOX)) {
-        return 0;
+        return NULL;
     }
     return pObj->SelItem;
 }
 
 /* 设置选中项 */
-u_8 LISTBOX_SetSel(WM_hWin hWin, u_16 Index)
+GUI_RESULT LISTBOX_SetSel(WM_hWin hWin, u_16 Index)
 {
     u_16 Temp;
     LISTBOX_Obj *pObj = hWin;
     
     /* 检测是否为LISTBOX控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_LISTBOX)) {
-        return GUI_ERR;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_LISTBOX);
     if (Index < pObj->ItemNum) {
         pObj->SelIndex = Index;
         if (pObj->hScro) {  /* 设置滚动条 */
@@ -416,15 +416,13 @@ u_8 LISTBOX_SetSel(WM_hWin hWin, u_16 Index)
 }
 
 /* 设置选中项,以输入的字符串来搜索 */
-u_8 LISTBOX_SetSelFromStr(WM_hWin hWin, const char *Str)
+GUI_RESULT LISTBOX_SetSelFromStr(WM_hWin hWin, const char *Str)
 {
     u_16 Index;
     LISTBOX_Obj *pObj = hWin;
     
     /* 检测是否为LISTBOX控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_LISTBOX)) {
-        return GUI_ERR;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_LISTBOX);
     Index = FindNodeStr(pObj->pList, (char*)Str);
     if (Index) {
         return LISTBOX_SetSel(pObj, Index - 1);

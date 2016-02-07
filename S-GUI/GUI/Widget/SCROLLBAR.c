@@ -39,9 +39,7 @@ static void __Paint(WM_hWin hWin)
 static void __Callback(WM_MESSAGE *pMsg)
 {
     /* 检测是否为SCROLLBAR控件 */
-    if (WM_CheckWindowSign(pMsg->hWin, WIDGET_SCROLLBAR)) {
-        return;
-    }
+    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_SCROLLBAR);
     switch (pMsg->MsgId) {
         case WM_PAINT :
             __Paint(pMsg->hWin);
@@ -52,7 +50,7 @@ static void __Callback(WM_MESSAGE *pMsg)
     }
 }
 
-/* 创建按键控件 */
+/* 创建SCROLLBAR控件 */
 WM_hWin SCROLLBAR_Create(i_16 x0,
                       i_16 y0,
                       u_16 xSize,
@@ -83,26 +81,24 @@ WM_hWin SCROLLBAR_Create(i_16 x0,
     return pObj;
 }
 
-void SCROLLBAR_SetTotality(GUI_hWin hWin, u_16 Totality)
+GUI_RESULT SCROLLBAR_SetTotality(GUI_hWin hWin, u_16 Totality)
 {
     SCROLLBAR_Obj *pObj = hWin;
     
     /* 检测是否为SCROLLBAR控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_SCROLLBAR)) {
-        return;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_SCROLLBAR);
     pObj->Totality = Totality;
     WM_Invalidate(hWin);
+    return GUI_OK;
 }
 
-void SCROLLBAR_SetLoation(GUI_hWin hWin, u_16 Loation)
+GUI_RESULT SCROLLBAR_SetLoation(GUI_hWin hWin, u_16 Loation)
 {
     SCROLLBAR_Obj *pObj = hWin;
     
     /* 检测是否为SCROLLBAR控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_SCROLLBAR)) {
-        return;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_SCROLLBAR);
     pObj->Loation = Loation;
     WM_Invalidate(hWin);
+    return GUI_OK;
 }

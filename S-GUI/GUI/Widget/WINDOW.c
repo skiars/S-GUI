@@ -71,9 +71,7 @@ static void _WINDOW_Callback(WM_MESSAGE *pMsg)
     i_16 dX, dY;
     
     /* 检测是否为WINDOW控件 */
-    if (WM_CheckWindowSign(pMsg->hWin, WIDGET_WINDOW)) {
-        return;
-    }
+    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_WINDOW);
     switch (pMsg->MsgId) {
         case WM_PAINT :
             _WINDOW_Paint(pMsg->hWin);
@@ -152,33 +150,32 @@ WM_hWin WINDOW_Create(i_16 x0,
 }
 
 /* WINDOW设置标题 */
-u_8 WINDOW_SetTitle(WM_hWin hWin, const char *str)
+GUI_RESULT WINDOW_SetTitle(WM_hWin hWin, const char *str)
 {
     /* 检测是否为WINDOW控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_WINDOW)) {
-        return 1;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
     ((WINDOW_Obj*)hWin)->Title = (char*)str;
-    return 0;
+    return GUI_OK;
 }
 
 /* WINDOW设置字体 */
-u_8 WINDOW_SetFont(WM_hWin hWin, GUI_FontType Font)
+GUI_RESULT WINDOW_SetFont(WM_hWin hWin, GUI_FontType Font)
 {
     /* 检测是否为WINDOW控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_WINDOW)) {
-        return 1;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
     WIDGET_SetFont(hWin, Font);
-    return 0;
+    return GUI_OK;
 }
 
 /* WINDOW设置为透明窗口 */
-void WINDOW_SetAllAlpha(WM_hWin hWin, u_8 Alpha)
+GUI_RESULT WINDOW_SetAllAlpha(WM_hWin hWin, u_8 Alpha)
 {
     GUI_RECT Rect;
     
+    /* 检测是否为WINDOW控件 */
+    WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
     WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
     Rect = WM_GetWindowAreaRect(hWin);
     WM_InvalidateRect(hWin, &Rect); /* 将窗口无效化 */
+    return GUI_OK;
 }

@@ -20,6 +20,6 @@ GUI_hWin GRAPH_Create(i_16 x0,
     WM_hWin hParent,
     u_16 Id,
     u_8 Flag);
-void GRAPH_SetData(GUI_hWin hWin, i_16 *x, i_16 *y, u_16 len);
+GUI_RESULT GRAPH_SetData(GUI_hWin hWin, i_16 *x, i_16 *y, u_16 len);
 
 #endif

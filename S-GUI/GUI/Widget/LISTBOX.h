@@ -29,13 +29,13 @@ WM_hWin LISTBOX_Create(i_16 x0,
                       u_16 Id,
                       u_8 Flag,
                       u_16 namepos);
-u_8 LISTBOX_addlist(WM_hWin hWin,char *name);
+GUI_RESULT LISTBOX_AddList(WM_hWin hWin,char *name);
 void LISTBOX_ItemDown(WM_hWin hWin);
-void LISTBOX_ItemUp(WM_hWin hWin);
+GUI_RESULT LISTBOX_ItemUp(WM_hWin hWin);
 u_16 LISTBOX_GetSel(WM_hWin hWin);
 char *LISTBOX_GetSelText(WM_hWin hWin);
-u_8 LISTBOX_SetSel(WM_hWin hWin, u_16 Index);
-u_8 LISTBOX_SetSelFromStr(WM_hWin hWin, const char *Str);
+GUI_RESULT LISTBOX_SetSel(WM_hWin hWin, u_16 Index);
+GUI_RESULT LISTBOX_SetSelFromStr(WM_hWin hWin, const char *Str);
 void LISTBOX_ScrollDisplay(GUI_hWin hWin);
 
 #endif

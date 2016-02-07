@@ -4,7 +4,9 @@
 /* 将一个窗口的属性设置为透明 */
 void WIDGET_SetTransWindow(GUI_hWin hWin)
 {
-    ((WM_Obj*)hWin)->Style |= WM_WINDOW_TRANS;
+    if (hWin) {
+        ((WM_Obj*)hWin)->Style |= WM_WINDOW_TRANS;
+    }
 }
 
 /* 设置窗口的透明度 */
@@ -13,6 +15,10 @@ void WIDGET_Alpha(GUI_hWin hWin, u_8 Part, u_8 Id, u_8 Alpha)
     u_8 i;
     WIDGET_SKIN *pSkin;
     GUI_COLOR A = (GUI_COLOR)Alpha << 24;
+
+    if (hWin == NULL) {
+        return;
+    }
     GUI_LOCK();
     WIDGET_SetTransWindow(hWin);
     pSkin = &((WIDGET*)hWin)->Skin;

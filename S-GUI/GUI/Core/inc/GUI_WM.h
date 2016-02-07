@@ -32,7 +32,8 @@
 #define WM_WINDOW_MOVE      0x0004   /* 可移动的窗口 */
 #define WM_WINDOW_TIMER     0x0008   /* 窗口需要计时 */
 
-
+#define WM_NULL_ID          0x0000
+#define WM_ROOTWIN_ID       0x0001
 #define WM_USER_ID          0x0200
 
 #define _pRootWin ((WM_Obj*)_hRootWin)
@@ -86,7 +87,7 @@ WM_hWin WM_CreateWindowAsChild(i_16 x0, i_16 y0, u_16 xSize,
                                u_16 Flag, u_8 Sign, u_16 Id,
                                WM_CALLBACK *WinCb, u_32 bytes);
 void WM_DeleteWindow(WM_hWin hWin);
-u_8 WM_CheckWindowSign(WM_hWin hWin, u_16 Sign);
+GUI_RESULT WM_CheckWindowSign(WM_hWin hWin, u_16 Sign);
 void WM_InvalidateRect(WM_hWin hWin, GUI_RECT *pRect);
 void WM_Invalidate(WM_hWin hWin);
 GUI_RESULT WM_InvalidTree(WM_hWin hWin);
@@ -97,6 +98,7 @@ GUI_RECT WM_GetWindowUserRect(WM_hWin hWin);
 GUI_RECT WM_GetWindowInvalidRect(WM_hWin hWin);
 GUI_RESULT WM_FindWindow(WM_hWin hWin);
 WM_hWin WM_GetDialogItem(WM_hWin hWin, u_16 Id);
+WM_hWin WM_GetWindowHandle(u_16 Id);
 u_16 WM_GetDialogId(WM_hWin hWin);
 WM_hWin WM_GetExposedWindow(u_16 x, u_16 y);
 WM_hWin WM_GetParentHandle(WM_hWin hWin);

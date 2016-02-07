@@ -1,6 +1,5 @@
 #include "RootWindow.h"
 #include "GUI.h"
-#include "stdlib.h"
 
 #define ROOTWINDOW_BACK_COLOR 0x00FFFFFF     /* 根窗口默认背景色 */
 
@@ -55,6 +54,8 @@ void WM_RootWindowInit(WM_Obj *pObj)
     pObj->hParent = NULL;
     pObj->hFirstChild = NULL;
     pObj->Style = 0x0000;
+    pObj->Id = WM_ROOTWIN_ID;
+    pObj->Sign = WIDGET_ROOTWIN;
     WM_Invalidate(pObj);  /* 根窗口无效化 */
     WM_SetWindowTimer(pObj, 1000); /* 需要窗口计时器 */
 }

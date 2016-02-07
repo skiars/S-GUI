@@ -4,7 +4,7 @@
 #define TEXTBOX_DEF_BKC             0x00232329  /* 背景颜色 */
 #define TEXTBOX_TEXT_COLOR          0x00FFFFFF  /* 字体颜色 */
 
-void TEXTBOX_LineFeedDisp( const char *str, GUI_COLOR Color, GUI_FontType Font, GUI_RECT *Rect);
+static void TEXTBOX_LineFeedDisp( const char *str, GUI_COLOR Color, GUI_FontType Font, GUI_RECT *Rect);
 
 /* 自绘函数 */
 static void __Paint(WM_hWin hWin)
@@ -32,9 +32,7 @@ static void __Paint(WM_hWin hWin)
 static void __Callback(WM_MESSAGE *pMsg)
 {
     /* 检测是否为TEXTBOX控件 */
-    if (WM_CheckWindowSign(pMsg->hWin, WIDGET_TEXTBOX)) {
-        return;
-    }
+    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_TEXTBOX);
     switch (pMsg->MsgId) {
         case WM_PAINT :
             __Paint(pMsg->hWin);
@@ -94,45 +92,44 @@ WM_hWin TEXTBOX_Create(i_16 x0,
 }
 
 /* TEXTBOX设置标题 */
-u_8 TEXTBOX_SetText(WM_hWin hWin, const char *str)
+GUI_RESULT TEXTBOX_SetText(WM_hWin hWin, const char *str)
 {
     GUI_RECT Rect;
 
     /* 检测是否为TEXTBOX控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_TEXTBOX)) {
-        return 1;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
     ((TEXTBOX_Obj*)hWin)->Text = (char*)str;
     Rect = WM_GetWindowAreaRect(hWin);
     hWin = WM_GetParentHandle(hWin);
     WM_InvalidateRect(hWin, &Rect);  /* 整个窗口失效 */
-    return 0;
+    return GUI_OK;
 }
 
 /* TEXTBOX设置字体 */
-u_8 TEXTBOX_SetFont(WM_hWin hWin, GUI_FontType Font)
+GUI_RESULT TEXTBOX_SetFont(WM_hWin hWin, GUI_FontType Font)
 {
     /* 检测是否为TEXTBOX控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_TEXTBOX)) {
-        return 1;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
     WIDGET_SetFont(hWin, Font);
-    return 0;
+    return GUI_OK;
 }
 
 /* TEXTBOX设置为透明窗口 */
-void TEXTBOX_SetAllAlpha(WM_hWin hWin, u_8 Alpha)
+GUI_RESULT TEXTBOX_SetAllAlpha(WM_hWin hWin, u_8 Alpha)
 {
     GUI_RECT Rect;
     
+    /* 检测是否为TEXTBOX控件 */
+    WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
     WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
     Rect = WM_GetWindowAreaRect(hWin);
     hWin = WM_GetParentHandle(hWin);
     WM_InvalidateRect(hWin, &Rect); /* 整个窗口失效 */
+    return GUI_OK;
 }
 
 /* 自动换行显示 */
-void TEXTBOX_LineFeedDisp( const char *str, GUI_COLOR Color, GUI_FontType Font, GUI_RECT *Rect)
+static void TEXTBOX_LineFeedDisp( const char *str, GUI_COLOR Color, GUI_FontType Font, GUI_RECT *Rect)
 {
     u_16 pix, ch_num, x_pix;
     i_16 x0, x1, y0;

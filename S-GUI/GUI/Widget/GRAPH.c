@@ -51,9 +51,7 @@ static void __Paint(GRAPH_Obj *pObj)
 static void __Callback(WM_MESSAGE *pMsg)
 {
     /* 检测是否为GRPHA控件 */
-    if (WM_CheckWindowSign(pMsg->hWin, WIDGET_GRAPH)) {
-        return;
-    }
+    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_GRAPH);
     switch (pMsg->MsgId) {
     case WM_PAINT :
         __Paint(pMsg->hWin);
@@ -109,15 +107,13 @@ GUI_hWin GRAPH_Create(i_16 x0,
     return pObj;
 }
 
-void GRAPH_SetData(GUI_hWin hWin, i_16 *x, i_16 *y, u_16 len)
+GUI_RESULT GRAPH_SetData(GUI_hWin hWin, i_16 *x, i_16 *y, u_16 len)
 {
     i_16 *px, *py;
     GRAPH_Obj *pObj = hWin;
     
     /* 检测是否为GRPHA控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_GRAPH)) {
-        return;
-    }
+    WIDGET_SignErrorReturn(hWin, WIDGET_GRAPH);
     pObj->Len = len;
     pObj->xData = GUI_fastmalloc(len * sizeof(i_16));
     pObj->yData = GUI_fastmalloc(len * sizeof(i_16));
@@ -127,6 +123,7 @@ void GRAPH_SetData(GUI_hWin hWin, i_16 *x, i_16 *y, u_16 len)
         *px++ = *x++;
         *py++ = *y++;
     }
+    return GUI_OK;
 }
 
 /* 绘制点 */

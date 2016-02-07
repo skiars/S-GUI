@@ -17,7 +17,7 @@ WM_hWin SCROLLBAR_Create(i_16 x0,
                       WM_hWin hParent,
                       u_16 Id,
                       u_8 Flag);
-void SCROLLBAR_SetTotality(GUI_hWin hWin, u_16 Totality);
-void SCROLLBAR_SetLoation(GUI_hWin hWin, u_16 Loation);
+GUI_RESULT SCROLLBAR_SetTotality(GUI_hWin hWin, u_16 Totality);
+GUI_RESULT SCROLLBAR_SetLoation(GUI_hWin hWin, u_16 Loation);
 
 #endif
