@@ -1,5 +1,5 @@
-#ifndef __GUI_BOOL_H
-#define __GUI_BOOL_H
+#ifndef __GUI_RECTCALC_H
+#define __GUI_RECTCALC_H
 
 #include "GUI_Core.h"
 
@@ -8,7 +8,7 @@ GUI_RESULT GUI_Val2Rect(GUI_RECT *pDst,
 GUI_RESULT GUI_RectOverlay(GUI_RECT *pDst, GUI_RECT *a, GUI_RECT *b);
 GUI_RECT GUI_RectAndCalc(GUI_RECT *pRect1, GUI_RECT *pRect2);
 GUI_RECT GUI_RectOrCalc(GUI_RECT *pRect1, GUI_RECT *pRect2);
-u_8 GUI_CheckPointAtRect(u_16 x, u_16 y, GUI_RECT *Rect);
+GUI_RESULT GUI_CheckPointAtRect(u_16 x, u_16 y, GUI_RECT *Rect);
 u_8 GUI_CheckRectNull(GUI_RECT *Rect);
 u_8 GUI_CheckRectIntersect(GUI_RECT *pRect1, GUI_RECT *pRect2);
 u_8 GUI_RectInclude(GUI_RECT *pSrc, GUI_RECT *pDst);
@@ -19,4 +19,4 @@ GUI_RESULT GUI_FreeRectList(RECT_NODE *pNode);
 RECT_LIST GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst);
 RECT_LIST GUI_ReCalcRectList(RECT_LIST List, GUI_RECT *Rect);
 
-#endif
+#endif /* __GUI_RECTCALC_H */

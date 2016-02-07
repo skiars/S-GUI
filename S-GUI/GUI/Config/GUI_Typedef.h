@@ -18,4 +18,4 @@ typedef enum {
     GUI_ERR
 } GUI_RESULT;
 
-#endif
+#endif /* __GUI_TYPEDEF_H */

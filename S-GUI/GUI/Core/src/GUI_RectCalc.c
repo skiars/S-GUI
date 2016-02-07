@@ -63,13 +63,13 @@ GUI_RECT GUI_RectOrCalc(GUI_RECT *pRect1, GUI_RECT *pRect2)
 }
 
 /* 检查一个点是否在一个矩形内 */
-u_8 GUI_CheckPointAtRect(u_16 x, u_16 y, GUI_RECT *Rect)
+GUI_RESULT GUI_CheckPointAtRect(u_16 x, u_16 y, GUI_RECT *Rect)
 {
     if (x >= Rect->x0 && x <= Rect->x1 &&
         y >= Rect->y0 && y <= Rect->y1) {
-        return 1;
+        return GUI_OK;
     }
-    return 0;
+    return GUI_ERR;
 }
 
 /* 检查一个矩形是否为空 */

@@ -85,18 +85,19 @@ static void _WINDOW_Callback(WM_MESSAGE *pMsg)
             WM_SetActiveMainWindow(pMsg->hWin);
             break;
         case WM_TP_PRESS:
-            dX = GUI_GetTouchPad_MoveX();
-            dY = GUI_GetTouchPad_MoveY();
+            dX = ((GUI_POINT*)pMsg->Param)[1].x;
+            dY = ((GUI_POINT*)pMsg->Param)[1].y;
             WM_MoveWindow(pMsg->hWin, dX, dY);
             break;
         case WM_TP_LEAVE:
-            dX = GUI_GetTouchPad_MoveX();
-            dY = GUI_GetTouchPad_MoveY();
+            dX = ((GUI_POINT*)pMsg->Param)[1].x;
+            dY = ((GUI_POINT*)pMsg->Param)[1].y;
             WM_MoveWindow(pMsg->hWin, dX, dY);
             break;
+        default : /* 执行用户回调函数 */
+            ((WINDOW_Obj*)pMsg->hWin)->UserCb(pMsg);
     }
-    /* 执行用户回调函数 */
-    ((WINDOW_Obj*)pMsg->hWin)->UserCb(pMsg);
+    
 }
 
 /*

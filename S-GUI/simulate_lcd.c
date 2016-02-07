@@ -6,6 +6,10 @@
 
 static SIM_DEVICE sim_lcd;
 
+/* 暂时用一下 */
+GUI_RESULT GUI_Init(void);
+void GUI_Delay(GUI_TIME tms);
+
 /* GUI测试线程 */
 static DWORD WINAPI ThreadGUI(LPVOID pM)
 {
@@ -24,6 +28,7 @@ static DWORD WINAPI ThreadDisp(LPVOID pM)
             GUI_TouchPadSendValue((u_16)sim_lcd.tPad.x, (u_16)sim_lcd.tPad.y, GUI_TP_CHECKED);
         }
         sim_updata();
+        GUI_Delay(10);
         Sleep(10);
     }
     return 0;
@@ -32,8 +37,9 @@ static DWORD WINAPI ThreadDisp(LPVOID pM)
 /* 模拟器开始运行 */
 void simulate_lcd_start(void)
 {
-    CreateThread(NULL, 0, ThreadGUI, NULL, 0, NULL); /* 新建线程 */
-    CreateThread(NULL, 0, ThreadDisp, NULL, 0, NULL); /* 新建线程 */
+    GUI_Init();
+    CreateThread(NULL, 0, ThreadGUI, "ThreadGUI", 0, NULL); /* 新建线程 */
+    CreateThread(NULL, 0, ThreadDisp, "ThreadDisp", 0, NULL); /* 新建线程 */
 }
 
 /* 屏幕模拟器初始化 */

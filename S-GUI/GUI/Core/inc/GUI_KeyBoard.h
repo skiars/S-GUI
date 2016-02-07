@@ -19,4 +19,4 @@ u_8 GUI_GetKey(void); /* 从键盘缓冲器读取键值 */
 void GUI_KeyProcess(void); /* 键盘处理 */
 void GUI_CleanKeyBuffer(void); /* 清空键盘缓冲器 */
 
-#endif
+#endif /* __GUI_KEYBOARD_H */

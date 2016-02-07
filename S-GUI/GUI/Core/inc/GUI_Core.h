@@ -4,30 +4,21 @@
 #include "GUI_Config.h"
 #include "GUI_Typedef.h"
 #include "GUI_Botton.h"
+#include "GUI_Queue.h"
 
 #define _hRootWin   (GUI_Data->RootWin)
 #define _PaintArea  (GUI_Data->PaintArea)
 
 /* 矩形 */
 typedef struct { i_16 x0, y0, x1, y1; } GUI_RECT;
+/* 点 */
+typedef struct { i_16 x, y; } GUI_POINT;
 
 /* 矩形链表 */
 typedef struct RECT_NODE {
     GUI_RECT Rect;
     struct RECT_NODE *pNext;
 } RECT_NODE, *RECT_LIST;
-
-typedef void * GUI_EVENT;   /* GUI事件 */
-
-/* 队列结构定义 */
-typedef struct {
-    GUI_EVENT pArray;   /* 队列指针 */
-    u_16 capacity;      /* 队列数组容量 */
-    u_16 ItemSize;      /* 队列中数据单元的长度，以字节为单位 */
-    u_16 size;          /* 队列目前数据单元数量 */
-    u_16 front;         /* 队头 */
-    u_16 rear;          /* 队尾 */
-} GUI_QUEUE;
 
 typedef struct{
     GUI_PHY_INFO phy_info; /* 硬件信息 */
@@ -36,7 +27,7 @@ typedef struct{
     RECT_LIST NowRectList; /* 当前绘制的裁剪矩链表 */
     GUI_RECT *PaintArea;   /* 当前绘制的区域 */
     GUI_hWin RootWin;      /* 根窗口 */
-    GUI_QUEUE *KeyQueue;   /* 按键队列缓冲 */
+    GUI_QUEUE *MsgQueue;   /* GUI消息队列 */
 #if GUI_USE_MEMORY
     GUI_COLOR *lcdbuf; /* LCD缓冲 */
 #endif
@@ -44,22 +35,20 @@ typedef struct{
 
 extern GUI_WORK_SPACE *GUI_Data;
 
-void GUI_Init(void);
+GUI_RESULT GUI_Init(void);
 void GUI_Unload(void);
 void GUI_ScreenSize(u_16 *xSize, u_16 *ySize);
 u_16 GUI_GetScreenWidth(void);
 u_16 GUI_GetScreenHeight(void);
-void GUI_Delay(GUI_TIME tms); /* GUI延时并更新 */
-GUI_QUEUE* GUI_EventQueueInit(u_16 capacity, u_16 ItemSize); /* 事件队列初始化 */
-void GUI_EventQueueDelete(GUI_QUEUE *pQue); /* 删除队列 */
-u_8 GUI_GetEvent(GUI_QUEUE *pQue, GUI_EVENT event); /* 从事件队列里读取一个事件 */
-u_8 GUI_SendEvent(GUI_QUEUE *pQue, GUI_EVENT event); /* 向事件队列发送一个事件 */
-u_8 GUI_QueueIsEmpty(GUI_QUEUE *pQue); /* 检测事件队列是否为空 */
-void GUI_CleanQueue(GUI_QUEUE *pQue); /* 清空事件队列 */
+void GUI_Delay(GUI_TIME tms);
+GUI_RESULT GUI_GetMessage(GUI_MESSAGE *pMsg);
+GUI_RESULT GUI_PostMessage(GUI_MESSAGE *pMsg);
+void GUI_LOCK(void);
+void GUI_UNLOCK(void);
 
 void GUI_SetNowRectList(RECT_LIST l, GUI_RECT *p);
 void GUI_DrawAreaInit(GUI_RECT *p);
 GUI_RECT *GUI_GetNowArea(void);
 u_8 GUI_GetNextArea(GUI_RECT *pRect);
 
-#endif
+#endif /* __GUI_CORE_H */

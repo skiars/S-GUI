@@ -51,6 +51,7 @@ void WM_RootWindowInit(WM_Obj *pObj)
     pObj->UserRect = pObj->Rect;
     pObj->WinCb = _RootWin_Callback;
     pObj->hNext = NULL;
+    pObj->hNextLine = NULL;
     pObj->hParent = NULL;
     pObj->hFirstChild = NULL;
     pObj->Style = 0x0000;

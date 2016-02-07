@@ -1,61 +1,77 @@
 #include "GUI_TouchPad.h"
 #include "GUI.h"
 
-static i_16 __GUI_TP_X, __GUI_TP_Y, __GUI_TP_MoveX, __GUI_TP_MoveY;
-
-void GUI_TouchPadSendValue(u_16 x, u_16 y, u_16 State)
+/* 设置触摸板状态 */
+void GUI_TouchPadSendValue(i_16 x, i_16 y, u_16 State)
 {
-    GUI_hWin hWin;
-    static GUI_hWin Last_hWin = NULL;
     static u_16 LastState = GUI_TP_REMOVED;
+
+    /*
+     * 触摸板当前状态为按下或上一次的状态为按下。
+     * 也就是说只会向GUI消息队列发送一次触摸松开消息。
+     **/
+    if (State == GUI_TP_CHECKED || LastState == GUI_TP_CHECKED) {
+        u_32 Point;
+        GUI_MESSAGE Msg;
+
+        LastState = State;
+        Point = ((u_32)x << 16) | y;
+        /* 填充消息结构体 */
+        Msg.hWin = NULL;
+        Msg.hWinSrc = NULL;
+        if (State == GUI_TP_CHECKED) {
+            Msg.MsgId = WM_TP_CHECKED;
+        } else {
+            Msg.MsgId = WM_TP_REMOVED;
+        }
+        Msg.Param = (GUI_PARAM)Point;
+        GUI_PostMessage(&Msg); /* 发送消息到GUI消息队列 */
+    }
+}
+
+/* 触摸板消息处理 */
+GUI_RESULT GUI_TouchPadMessageHandle(GUI_MESSAGE *pMsg)
+{
+    static GUI_hWin Last_hWin = NULL;
+    static GUI_POINT __LastPos;
     
-    /* 一直没有被触摸 */
-    if (State == LastState && State == GUI_TP_REMOVED) {
-        return;
-    }
-    __GUI_TP_MoveX = (i_16)x - __GUI_TP_X;
-    __GUI_TP_MoveY = (i_16)y - __GUI_TP_Y;
-    __GUI_TP_X = x;
-    __GUI_TP_Y = y;
-    LastState = State;
-    if (State == GUI_TP_CHECKED) {
-        hWin = WM_GetExposedWindow(x, y);
-        /* 判断是否还是上一次的窗口 */
-        if (hWin != NULL) {
-            if (Last_hWin == NULL) { /* 第一次触摸 */
-                Last_hWin = hWin;
-                WM_SendMessage(hWin, WM_TP_CHECKED, NULL);
-            } else if (hWin == Last_hWin) { /* 一直在触摸 */
-                WM_SendMessage(hWin, WM_TP_PRESS, NULL);
-            } else if (WM_FindWindow(Last_hWin)) { /* 离开了控件,且窗口存在 */
-                WM_SendMessage(Last_hWin, WM_TP_LEAVE, NULL);
+    /* 检查是否是WM触摸板消息 */
+    if (pMsg->MsgId == WM_TP_CHECKED || pMsg->MsgId == WM_TP_REMOVED) {
+        GUI_hWin hWin;
+        GUI_POINT Point;
+
+        Point.x = (u_32)pMsg->Param >> 16;
+        Point.y = (u_32)pMsg->Param & 0xffff;
+        if (pMsg->MsgId == WM_TP_CHECKED) {
+            hWin = WM_GetExposedWindow(Point.x, Point.y);
+            /* 判断是否还是上一次的窗口 */
+            if (hWin != NULL) {
+                GUI_POINT Pos[2];
+
+                /* 当前坐标 */
+                Pos[0].x = Point.x;
+                Pos[0].y = Point.x;
+                /* 坐标偏移 */
+                Pos[1].x = Point.x - __LastPos.x;
+                Pos[1].y = Point.y - __LastPos.y;
+                if (Last_hWin == NULL) { /* 第一次触摸 */
+                    Last_hWin = hWin;
+                    WM_SendMessage(hWin, WM_TP_CHECKED, &Point);
+                } else if (hWin == Last_hWin) { /* 一直在触摸 */
+                    WM_SendMessage(hWin, WM_TP_PRESS, &Pos);
+                } else if (WM_FindWindow(Last_hWin) == GUI_OK) {
+                    /* 离开了控件且窗口存在 */
+                    WM_SendMessage(Last_hWin, WM_TP_LEAVE, &Pos);
+                }
+                __LastPos = Point;
             }
+        } else {  /* 触摸松开 */
+            if (WM_FindWindow(Last_hWin) == GUI_OK) {  /* 窗口还存在 */
+                WM_SendMessage(Last_hWin, WM_TP_REMOVED, NULL);
+            }
+            Last_hWin = NULL;
         }
-    } else {  /* 触摸松开 */
-        if (WM_FindWindow(Last_hWin)) {  /* 窗口还存在 */
-            WM_SendMessage(Last_hWin, WM_TP_REMOVED, NULL);
-        }
-        Last_hWin = NULL;
+        return GUI_OK;
     }
+    return GUI_ERR;
 }
-
-i_16 GUI_GetTouchPad_X(void)
-{
-    return __GUI_TP_X;
-}
-
-i_16 GUI_GetTouchPad_Y(void)
-{
-    return __GUI_TP_Y;
-}
-
-i_16 GUI_GetTouchPad_MoveX(void)
-{
-    return __GUI_TP_MoveX;
-}
-
-i_16 GUI_GetTouchPad_MoveY(void)
-{
-    return __GUI_TP_MoveY;
-}
-

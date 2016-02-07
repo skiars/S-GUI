@@ -39,13 +39,7 @@
 #define _RootWin (*_pRootWin)
 
 typedef GUI_hWin WM_hWin;
-
-typedef struct {
-    u_16 MsgId;      /* 信息ID,即参数编号 */
-    WM_hWin hWin;   /* 目标窗口句柄 */
-    WM_hWin hWinSrc; /* 源窗口句柄  */
-    void *data;      /* 参数 */
-} WM_MESSAGE;
+typedef GUI_MESSAGE WM_MESSAGE;
 
 /* 窗口信息处理回调函数 */
 typedef void WM_CALLBACK (WM_MESSAGE *pMsg);
@@ -69,6 +63,7 @@ typedef struct {
     WM_hWin hParent;        /* 父窗口指针 */
     WM_hWin hFirstChild;    /* 第一个子窗口指针 */
     WM_hWin hNext;          /* 指向下一个同属窗口 */
+    WM_hWin hNextLine;      /* 指向下一链节 */
     WM_CALLBACK *WinCb;     /* 窗口信息响应回调函数 */
     u_16 Style;             /* 窗口风格 */
     u_8 Sign;               /* 窗口类型辨识符 */
@@ -77,7 +72,7 @@ typedef struct {
     u_16 TimeCount;         /* 时间间隔计数 */
 } WM_Obj;
 
-void WM_Init(void);
+GUI_RESULT WM_Init(void);
 void WM_Exec(void);
 void WM_SendMessage(WM_hWin hWin, u_16 MsgId, void *data);
 void WM_PostMessageToParent(WM_hWin hWin, u_16 MsgId, void *data);
@@ -100,9 +95,8 @@ void WM_CleanInvalid(WM_hWin hWin);
 GUI_RECT WM_GetWindowRect(WM_hWin hWin);
 GUI_RECT WM_GetWindowUserRect(WM_hWin hWin);
 GUI_RECT WM_GetWindowInvalidRect(WM_hWin hWin);
-u_8 WM_FindWindow(WM_hWin hWin);
+GUI_RESULT WM_FindWindow(WM_hWin hWin);
 WM_hWin WM_GetDialogItem(WM_hWin hWin, u_16 Id);
-WM_hWin WM_GetChildItem(WM_hWin hWin, u_16 Id);
 u_16 WM_GetDialogId(WM_hWin hWin);
 WM_hWin WM_GetExposedWindow(u_16 x, u_16 y);
 WM_hWin WM_GetParentHandle(WM_hWin hWin);
@@ -114,4 +108,4 @@ u_16 WM_GetWindowTimerCount(WM_hWin hWin);
 RECT_LIST GUI_CalcWindowRectList(WM_hWin hWin);
 void WM_InvalidCoverWindow(WM_hWin hWin, GUI_RECT *pRect);
 
-#endif
+#endif /* __GUI_WM_H */

@@ -13,7 +13,7 @@ void WIDGET_Alpha(GUI_hWin hWin, u_8 Part, u_8 Id, u_8 Alpha)
     u_8 i;
     WIDGET_SKIN *pSkin;
     GUI_COLOR A = (GUI_COLOR)Alpha << 24;
-    GUI_Lock();
+    GUI_LOCK();
     WIDGET_SetTransWindow(hWin);
     pSkin = &((WIDGET*)hWin)->Skin;
     switch (Part) {
@@ -48,7 +48,7 @@ void WIDGET_Alpha(GUI_hWin hWin, u_8 Part, u_8 Id, u_8 Alpha)
             }
             break;
     }
-    GUI_Unlock();
+    GUI_UNLOCK();
 }
 
 /* 获取窗口的字体 */

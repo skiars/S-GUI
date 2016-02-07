@@ -60,7 +60,7 @@ void GUI_Test(void)
 {
     RootWinPaint_Cb = _RootWinPaint;
     RootWinTimer_Cb = _RootWinTimer;
-    GUI_Init();
+    //GUI_Init();
     Create_Window2();
     while(1) {
         GUI_Delay(10);
@@ -138,7 +138,7 @@ void Create_Window3(void)
 {
     GUI_hWin hWin, hWin2, hWin3;
 
-    hWin = WINDOW_Create(10,10,220,300,NULL, WINDOW3,0, Window3_Cb);
+    hWin = WINDOW_Create(10,10,220,300,NULL, WINDOW3, WM_WINDOW_MOVE, Window3_Cb);
     if (hWin == NULL) return;
     WINDOW_SetTitle(hWin, "Infomation");
     hWin2 = TEXTBOX_Create(0,0,214,210,hWin,WIN3_TBX1,0);

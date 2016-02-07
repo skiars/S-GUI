@@ -79,9 +79,6 @@
     <ClInclude Include="GUI\Core\inc\mystring.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Core\inc\SCROLLBAR.h">
-      <Filter>头文件\S-GUI\Core</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\Core\inc\Text.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
@@ -135,6 +132,9 @@
     </ClInclude>
     <ClInclude Include="GUI\Widget\GRAPH.h">
       <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_Queue.h">
+      <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +221,9 @@
     </ClCompile>
     <ClCompile Include="GUI\Widget\GRAPH.c">
       <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_Queue.c">
+      <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

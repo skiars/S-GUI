@@ -39,7 +39,7 @@ static void __Callback(WM_MESSAGE *pMsg)
             WM_SetActiveMainWindow(pMsg->hWin);
             break;
         case WM_TP_PRESS :
-            dY += GUI_GetTouchPad_MoveY();
+            dY += ((GUI_POINT*)pMsg->Param)[1].y;
             if (dY > 20) {
                 dY = 0;
                 LISTBOX_ItemDown(pMsg->hWin);

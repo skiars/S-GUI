@@ -84,7 +84,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Custom</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
@@ -167,12 +167,12 @@
     <ClInclude Include="GUI\Core\inc\GUI_Core.h" />
     <ClInclude Include="GUI\Core\inc\GUI_KeyBoard.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Memory.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_Queue.h" />
     <ClInclude Include="GUI\Core\inc\GUI_RectCalc.h" />
     <ClInclude Include="GUI\Core\inc\GUI_TouchPad.h" />
     <ClInclude Include="GUI\Core\inc\GUI_WM.h" />
     <ClInclude Include="GUI\Core\inc\Linked_List.h" />
     <ClInclude Include="GUI\Core\inc\mystring.h" />
-    <ClInclude Include="GUI\Core\inc\SCROLLBAR.h" />
     <ClInclude Include="GUI\Core\inc\Text.h" />
     <ClInclude Include="GUI\Font\GUI_Font.h" />
     <ClInclude Include="GUI\Widget\BUTTON.h" />
@@ -195,6 +195,7 @@
     <ClCompile Include="GUI\Core\src\GUI_Core.c" />
     <ClCompile Include="GUI\Core\src\GUI_KeyBoard.c" />
     <ClCompile Include="GUI\Core\src\GUI_Memory.c" />
+    <ClCompile Include="GUI\Core\src\GUI_Queue.c" />
     <ClCompile Include="GUI\Core\src\GUI_RectCalc.c" />
     <ClCompile Include="GUI\Core\src\GUI_TouchPad.c" />
     <ClCompile Include="GUI\Core\src\GUI_WM.c" />

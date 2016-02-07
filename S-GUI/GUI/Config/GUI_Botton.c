@@ -18,15 +18,21 @@ void GUI_InitOS(void)
 }
 
 /* GUI上锁 */
-void GUI_Lock(void)
+void GUI_TaskLock(void)
 {
     WaitForSingleObject(GUI_hMutex, INFINITE); /* 等待互斥量 */
 }
 
 /* GUI解锁 */
-void GUI_Unlock(void)
+void GUI_TaskUnlock(void)
 {
     ReleaseMutex(GUI_hMutex); /* 释放互斥量 */
+}
+
+/* GUI获取任务ID */
+u_32 GUI_GetTaskId(void)
+{
+    return GetCurrentThreadId();
 }
 
 /* 获得GUI时间,单位ms */

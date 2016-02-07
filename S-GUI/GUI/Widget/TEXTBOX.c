@@ -28,10 +28,10 @@ static void __Paint(WM_hWin hWin)
     TEXTBOX_LineFeedDisp(pObj->Text, Color,  WIDGET_GetFont(pObj), &Rect);
 }
 
-/* WINDOW控件自动回调函数 */
+/* TEXTBOX控件自动回调函数 */
 static void __Callback(WM_MESSAGE *pMsg)
 {
-    /* 检测是否为WINDOW控件 */
+    /* 检测是否为TEXTBOX控件 */
     if (WM_CheckWindowSign(pMsg->hWin, WIDGET_TEXTBOX)) {
         return;
     }

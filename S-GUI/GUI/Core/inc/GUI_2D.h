@@ -22,4 +22,4 @@ void GUI_HoriLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color); /* 画水平线 */
 void GUI_DrawRect(i_16 x0,i_16 y0,u_16 xSize,u_16 ySize,GUI_COLOR Color); /* 画矩形框 */
 void GUI_FillRect(i_16 x0,i_16 y0,u_16 xSize,u_16 ySize,GUI_COLOR Color); /* 填充矩形 */
 
-#endif
+#endif /* __GUI_2D_H */

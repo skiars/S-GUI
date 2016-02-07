@@ -21,7 +21,7 @@ void GUI_ReadBack(u_16 x,u_16 y,u_16 len,u_16 wid,GUI_COLOR *pb);
 void GUI_RecoverBack(u_16 x,u_16 y,u_16 len,u_16 wid,GUI_COLOR *pb);
 void GUI_MemToMem(u_16 x,u_16 y,u_16 len,u_16 wid,GUI_COLOR *pb);
 
-#endif
+#endif /* __GUI_MEMORY_H */
 
 
 

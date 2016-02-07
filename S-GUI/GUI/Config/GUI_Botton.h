@@ -18,8 +18,9 @@ typedef struct {
 } GUI_PHY_INFO;
 
 void GUI_InitOS(void);
-void GUI_Lock(void);
-void GUI_Unlock(void);
+void GUI_TaskLock(void);
+void GUI_TaskUnlock(void);
+u_32 GUI_GetTaskId(void);
 GUI_TIME GUI_GetTime(void);
 void _GUI_Delay_ms(GUI_TIME tms);
 

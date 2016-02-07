@@ -4,6 +4,9 @@
 /*  键盘缓冲区长度 */
 #define KEY_BUFFER_NUM        10
 
+/* 定义消息队列最大消息数 */
+#define GUI_MSG_QUEUE_SIZE    20
+
 /* 是否使用存储器缓冲.
  * 0:不使用屏幕缓冲.
  * 1:使用屏幕缓冲.
