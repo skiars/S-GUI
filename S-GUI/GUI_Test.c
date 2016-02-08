@@ -23,6 +23,7 @@
 #define WIN3_BTN2    (WINDOW3 + 0x0003)
 
 #define WIN4_LBX1    (WINDOW4 + 0x0001)
+#define Win4_BTN1    (WINDOW4 + 0x0002)
 
 #define WIN5_GPH1    (WINDOW5 + 0x0001)
 #define WIN5_BTN1    (WINDOW5 + 0x0002)
@@ -60,7 +61,7 @@ void GUI_Test(void)
 {
     RootWinPaint_Cb = _RootWinPaint;
     RootWinTimer_Cb = _RootWinTimer;
-    //GUI_Init();
+    GUI_Init();
     Create_Window2();
     while(1) {
         GUI_Delay(10);
@@ -157,7 +158,7 @@ void Window4_Cb(WM_MESSAGE *pMsg)
     WM_hWin hItem;
     switch (pMsg->MsgId) {
         case WM_BUTTON_RELEASED :
-            if (WM_GetDialogId(pMsg->hWinSrc) == WIN3_BTN1) {
+            if (WM_GetDialogId(pMsg->hWinSrc) == Win4_BTN1) {
                 WM_DeleteWindow(pMsg->hWin);
             }
             break;
@@ -194,7 +195,7 @@ void Create_Window4(void)
     LISTBOX_AddList(hWin2, "Alpha Test");
     LISTBOX_AddList(hWin2, "ListBox Test");
     //LISTBOX_SetSelFromStr(hWin2, "saff");
-    hWin3 = BUTTON_Create(70,220,60,30,hWin,WIN3_BTN1,0);
+    hWin3 = BUTTON_Create(70,220,60,30,hWin, Win4_BTN1,0);
     BUTTON_SetTitle(hWin3, "Exit");
 }
 

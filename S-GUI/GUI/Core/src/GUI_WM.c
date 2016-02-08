@@ -72,7 +72,6 @@ static u_8 WM__WindowRepaint(WM_Obj *pWin)
         /* 计算窗口裁剪矩形,并设置为当前的绘制链表 */
         RectList = GUI_CalcWindowRectList(pWin);
         if (RectList != NULL) {
-            WM_MESSAGE Msg;
             GUI_RECT Rect;
 
             /* 透明窗口先刷新遮挡部分 */
@@ -80,11 +79,9 @@ static u_8 WM__WindowRepaint(WM_Obj *pWin)
                 WM__RefreshBackgnd(pWin, RectList);
             }
             /* 重绘窗口 */
-            Msg.MsgId = WM_PAINT;
-            Msg.hWin = (WM_hWin)pWin;
             Rect = WM_GetTaliorInvalidRect(pWin);
             GUI_SetNowRectList(RectList, &Rect);
-            pWin->WinCb(&Msg);
+            WM_SendMessage(pWin, WM_PAINT, (GUI_PARAM)NULL);
             GUI_FreeRectList(RectList);
 #if GUI_USE_MEMORY
             /* 需要刷新的矩形 */
@@ -132,18 +129,17 @@ void WM_Exec(void)
 }
 
 /*
- * 注意：下面的几个消息处理函数实际上很有可能工作在线程不安全的环境里，
- * 因为他们没有GUI资源锁，有时会因为调用这些函数发生内存访问冲突。
+ * 向窗口管理器的指定窗口发送消息。
+ * hWin:要指定窗口的句柄,为NULL时将直接返回。
  **/
-
-/*
- * 向窗口管理器的指定窗口发送消息
- * hWin:要指定窗口的句柄,为NULL时会将消息发送至当前活动窗口
- **/
-void WM__SendMessage(WM_hWin hWin, WM_MESSAGE *pMsg)
+static void WM__SendMessage(WM_hWin hWin, WM_MESSAGE *pMsg)
 {
     static u_8 __MseeageCount;
     
+    if (hWin == NULL) { /* hWin不能为NULL */
+        return;
+    }
+    GUI_LOCK();
     if (__MseeageCount < GUI_MAX_MSG_NEST) {
         ++__MseeageCount;
         pMsg->hWin = hWin;
@@ -152,49 +148,34 @@ void WM__SendMessage(WM_hWin hWin, WM_MESSAGE *pMsg)
         }
         --__MseeageCount;
     }
-}
-
-/* 向窗口管理器的指定窗口发送不带数据的消息 */
-void MW__SendMsgNoData(WM_hWin hWin, u_16 MsgId)
-{
-    WM_MESSAGE Msg;
-
-    GUI_LOCK();
-    Msg.Param = (GUI_PARAM)NULL;
-    Msg.hWinSrc = NULL;
-    Msg.MsgId = MsgId;
-    WM__SendMessage(hWin, &Msg);
     GUI_UNLOCK();
 }
 
 /* 向窗口管理器的指定窗口发送消息 */
-void WM_SendMessage(WM_hWin hWin, u_16 MsgId, void *data)
-{          
-    WM_MESSAGE Msg;
-
-    GUI_LOCK();
-    Msg.MsgId = MsgId;
-    Msg.Param = (GUI_PARAM)data;
-    WM__SendMessage(hWin, &Msg);
-    GUI_UNLOCK();
-}
-
-/* 向窗口管理器的指定窗口的父窗口发送消息 */
-void WM_PostMessageToParent(WM_hWin hWin, u_16 MsgId, void *data)
+void WM_SendMessage(WM_hWin hWin, u_16 MsgId, GUI_PARAM Param)
 {
     WM_MESSAGE Msg;
 
-    GUI_LOCK();
+    Msg.MsgId = MsgId;
+    Msg.Param = Param;
+    WM__SendMessage(hWin, &Msg);
+}
+
+/* 向窗口管理器的指定窗口的父窗口发送消息 */
+void WM_SendMessageToParent(WM_hWin hWin, u_16 MsgId, GUI_PARAM Param)
+{
+    WM_MESSAGE Msg;
+
     Msg.hWinSrc = hWin;
     Msg.MsgId = MsgId;
-    Msg.Param = (GUI_PARAM)data;
+    Msg.Param = Param;
     WM__SendMessage(((WM_Obj*)hWin)->hParent, &Msg);
-    GUI_UNLOCK();
 }
 
 /*
  * 获取窗口有效的区域大小
  * -该函数通过将目标窗口的与它所有的祖先窗口的用户区取并集得到有效区域
+ * -hWin不能是NULL
  **/
 GUI_RECT WM_GetWindowAreaRect(WM_hWin hWin)
 {
@@ -210,7 +191,7 @@ GUI_RECT WM_GetWindowAreaRect(WM_hWin hWin)
     return Rect;
 }
 
-/* 获得裁剪后的窗口无效区域大小 */
+/* 获得裁剪后的窗口无效区域大小，hWin不能是NULL */
 GUI_RECT WM_GetTaliorInvalidRect(WM_hWin hWin)
 {
     GUI_RECT Rect;
@@ -225,8 +206,11 @@ GUI_RECT WM_GetTaliorInvalidRect(WM_hWin hWin)
 /* 获得比某个窗口Z序小1的窗口 */
 WM_hWin WM_GetFrontWindow(WM_hWin hWin)
 {
-    WM_Obj *pWin = _hRootWin;
+    WM_Obj *pWin = _pRootWin;
 
+    if (hWin == _hRootWin) { /* 根窗口Z序最小 */
+        return NULL;
+    }
     GUI_LOCK();
     while (pWin && pWin->hNextLine != hWin) {
         pWin = pWin->hNextLine;
@@ -260,7 +244,7 @@ void WM_AttachWindow(WM_hWin hWin, WM_hWin hParent)
 {
     WM_Obj *pWin = hWin, *pObj, *ptr;
 
-    if (pWin == NULL) {
+    if (hWin == NULL) {
         return;
     }
     GUI_LOCK();
@@ -295,7 +279,7 @@ void WM_RemoveWindow(WM_hWin hWin)
     WM_Obj *pWin = hWin, *pObj;
     
     /* 窗口不能为NULL,根窗口无需移除 */
-    if (pWin == NULL || pWin->hParent == NULL) {
+    if (hWin == NULL || hWin == _pRootWin) {
         return;
     }
     pObj = pWin->hParent;
@@ -323,20 +307,20 @@ void WM_RemoveWindow(WM_hWin hWin)
 /* 删除窗口 */
 void WM_DeleteWindow(WM_hWin hWin)
 {
-    WM_Obj *pWin = hWin, *pObj;
-    WM_MESSAGE Msg;
+    WM_Obj *pWin = hWin;
 
+    if (hWin == NULL) { /* hWin不能为NULL */
+        return;
+    }
     GUI_LOCK();
     /* 被遮挡的窗口无效化 */
     WM_InvalidCoverWindow(pWin, &pWin->Rect);
-    hWin = pWin->hNext;
     WM_RemoveWindow(pWin); /* 先移除窗口 */
     while (pWin) {
-        pObj = pWin;
+        hWin = pWin;
         pWin = pWin->hNextLine;
-        Msg.hWin = pObj;
-        Msg.MsgId = WM_DELETE;
-        pObj->WinCb(&Msg); /* 调用回调函数删除节点 */
+        /* 调用回调函数删除节点 */
+        WM_SendMessage(hWin, WM_DELETE, (GUI_PARAM)NULL);
     }
     GUI_UNLOCK();
 }
@@ -476,7 +460,7 @@ GUI_RESULT WM_InvalidTree(WM_hWin hWin)
 {
     WM_Obj *pWin = hWin;
 
-    if (pWin == NULL) {
+    if (hWin == NULL) {
         return GUI_ERR;
     }
     GUI_LOCK();
@@ -641,6 +625,9 @@ void WM_InvalidCoverWindow(WM_hWin hWin, GUI_RECT *pRect)
     WM_Obj *p;
     GUI_RECT Rect;
 
+    if (hWin == NULL) { /* hWin不能为NULL */
+        return;
+    }
     GUI_LOCK();
     for (p = _pRootWin;  p && p != hWin; p = p->hNextLine) {
         if (GUI_RectOverlay(&Rect, &p->Rect, pRect) == GUI_OK) {
@@ -683,11 +670,7 @@ static void WM__WindowTimer(WM_Obj *pObj)
 {
     if (pObj->Style & WM_WINDOW_TIMER) {  /* 窗口有计时器 */
         if (GUI_GetTime() > pObj->LastTime + pObj->TimeCount) {
-            WM_MESSAGE Msg;
-
-            Msg.MsgId = WM_TIME_UPDATA;
-            Msg.hWin = (WM_hWin)pObj;
-            pObj->WinCb(&Msg);
+            WM_SendMessage(pObj, WM_TIME_UPDATA, (GUI_PARAM)NULL);
             pObj->LastTime = GUI_GetTime(); /* 从新获取时间 */
         }
     }

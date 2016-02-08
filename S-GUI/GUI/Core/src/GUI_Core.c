@@ -37,6 +37,7 @@ void GUI_Unload(void)
     WM_DeleteWindow(_hRootWin); /* 删除所有窗口 */
     GUI_QueueDelete(GUI_Data->MsgQueue); /* 删除消息队列 */
     GUI_fastfree(GUI_Data); /* 删除GUI工作空间 */
+    GUI_Data = NULL;
 }
 
 /* 获取屏幕尺寸 */

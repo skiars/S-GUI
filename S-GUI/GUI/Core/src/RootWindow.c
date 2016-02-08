@@ -26,7 +26,8 @@ static void _RootWin_Callback(WM_MESSAGE *pMsg)
             __Paint(pMsg->hWin);
             break;
         }
-        case WM_DELETE : {  /* 根窗口不可删除 */
+        case WM_DELETE : {
+            GUI_fastfree(pMsg->hWin);
             break;
         }
         case WM_TIME_UPDATA :

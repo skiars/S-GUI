@@ -32,8 +32,8 @@ void GUI_TouchPadSendValue(i_16 x, i_16 y, u_16 State)
 /* 触摸板消息处理 */
 GUI_RESULT GUI_TouchPadMessageHandle(GUI_MESSAGE *pMsg)
 {
-    static GUI_hWin Last_hWin = NULL;
-    static GUI_POINT __LastPos;
+    static GUI_hWin _CurWin = NULL;
+    static GUI_POINT _CurPos;
     
     /* 检查是否是WM触摸板消息 */
     if (pMsg->MsgId == WM_TP_CHECKED || pMsg->MsgId == WM_TP_REMOVED) {
@@ -52,24 +52,24 @@ GUI_RESULT GUI_TouchPadMessageHandle(GUI_MESSAGE *pMsg)
                 Pos[0].x = Point.x;
                 Pos[0].y = Point.x;
                 /* 坐标偏移 */
-                Pos[1].x = Point.x - __LastPos.x;
-                Pos[1].y = Point.y - __LastPos.y;
-                if (Last_hWin == NULL) { /* 第一次触摸 */
-                    Last_hWin = hWin;
-                    WM_SendMessage(hWin, WM_TP_CHECKED, &Point);
-                } else if (hWin == Last_hWin) { /* 一直在触摸 */
-                    WM_SendMessage(hWin, WM_TP_PRESS, &Pos);
-                } else if (WM_FindWindow(Last_hWin) == GUI_OK) {
+                Pos[1].x = Point.x - _CurPos.x;
+                Pos[1].y = Point.y - _CurPos.y;
+                if (_CurWin == NULL) { /* 第一次触摸 */
+                    _CurWin = hWin;
+                    WM_SendMessage(hWin, WM_TP_CHECKED, (GUI_PARAM)&Point);
+                } else if (hWin == _CurWin) { /* 一直在触摸 */
+                    WM_SendMessage(hWin, WM_TP_PRESS, (GUI_PARAM)&Pos);
+                } else if (WM_FindWindow(_CurWin) == GUI_OK) {
                     /* 离开了控件且窗口存在 */
-                    WM_SendMessage(Last_hWin, WM_TP_LEAVE, &Pos);
+                    WM_SendMessage(_CurWin, WM_TP_LEAVE, (GUI_PARAM)&Pos);
                 }
-                __LastPos = Point;
+                _CurPos = Point;
             }
         } else {  /* 触摸松开 */
-            if (WM_FindWindow(Last_hWin) == GUI_OK) {  /* 窗口还存在 */
-                WM_SendMessage(Last_hWin, WM_TP_REMOVED, NULL);
+            if (WM_FindWindow(_CurWin) == GUI_OK) {  /* 窗口还存在 */
+                WM_SendMessage(_CurWin, WM_TP_REMOVED, (GUI_PARAM)NULL);
             }
-            Last_hWin = NULL;
+            _CurWin = NULL;
         }
         return GUI_OK;
     }

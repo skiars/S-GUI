@@ -48,14 +48,17 @@ static void _BUTTON_Callback(WM_MESSAGE *pMsg)
         case WM_TP_CHECKED :
             BUTTON_Check(pMsg->hWin, 1);
             WM_SetActiveMainWindow(pMsg->hWin);
-            WM_PostMessageToParent(pMsg->hWin, WM_BUTTON_CLICKED, NULL);
+            WM_SendMessageToParent(pMsg->hWin,
+                WM_BUTTON_CLICKED, (GUI_PARAM)NULL);
             break;
         case WM_TP_REMOVED :
             BUTTON_Check(pMsg->hWin, 0);
-            WM_PostMessageToParent(pMsg->hWin, WM_BUTTON_RELEASED, NULL);
+            WM_SendMessageToParent(pMsg->hWin,
+                WM_BUTTON_RELEASED, (GUI_PARAM)NULL);
             break;
         case WM_TP_LEAVE   :
-            WM_PostMessageToParent(pMsg->hWin, WM_NUTTON_MOVED_OUT, NULL);
+            WM_SendMessageToParent(pMsg->hWin,
+                WM_NUTTON_MOVED_OUT, (GUI_PARAM)NULL);
             break;
     }
 }
@@ -71,9 +74,9 @@ WM_hWin BUTTON_Create(i_16 x0,
 {
     BUTTON_Obj *pObj;
     
-    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
-                                  WIDGET_BUTTON, Id, _BUTTON_Callback,
-                                  sizeof(BUTTON_Obj) - sizeof(WM_Obj));
+    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize,
+        hParent, Flag, WIDGET_BUTTON, Id, _BUTTON_Callback,
+        sizeof(BUTTON_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         return NULL;
     }

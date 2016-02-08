@@ -28,7 +28,7 @@ static DWORD WINAPI ThreadDisp(LPVOID pM)
             GUI_TouchPadSendValue((u_16)sim_lcd.tPad.x, (u_16)sim_lcd.tPad.y, GUI_TP_CHECKED);
         }
         sim_updata();
-        GUI_Delay(10);
+        //GUI_Delay(10);
         Sleep(10);
     }
     return 0;

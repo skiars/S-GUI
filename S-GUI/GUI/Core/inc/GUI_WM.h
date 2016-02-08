@@ -75,10 +75,12 @@ typedef struct {
 
 GUI_RESULT WM_Init(void);
 void WM_Exec(void);
-void WM_SendMessage(WM_hWin hWin, u_16 MsgId, void *data);
-void WM_PostMessageToParent(WM_hWin hWin, u_16 MsgId, void *data);
+void WM_SendMessage(WM_hWin hWin, u_16 MsgId, GUI_PARAM Param);
+void WM_SendMessageToParent(WM_hWin hWin, u_16 MsgId, GUI_PARAM Param);
 GUI_RECT WM_GetWindowAreaRect(WM_hWin hWin);
 GUI_RECT WM_GetTaliorInvalidRect(WM_hWin hWin);
+WM_hWin WM_GetFrontWindow(WM_hWin hWin);
+WM_hWin WM_GetTopChildWindow(WM_hWin hWin);
 void WM_AttachWindow(WM_hWin hWin, WM_hWin hParent);
 WM_hWin WM_GetActiveMainWindow(void);
 GUI_RESULT WM_SetActiveMainWindow(WM_hWin hWin);
