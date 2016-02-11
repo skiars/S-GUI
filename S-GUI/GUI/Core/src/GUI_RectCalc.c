@@ -18,7 +18,7 @@ GUI_RESULT GUI_Val2Rect(GUI_RECT *pDst,
     return GUI_ERR;
 }
 
-/* 取两个矩形相交的部分,结果存储在*pDst里面,比GUI_RectAndCalc快 */
+/* 取两个矩形相交的部分,结果存储在*pDst里面,比GUI_RectAndCalc()快 */
 GUI_RESULT GUI_RectOverlay(GUI_RECT *pDst, GUI_RECT *a, GUI_RECT *b)
 {
     /*  左上角的交点  */
@@ -32,6 +32,17 @@ GUI_RESULT GUI_RectOverlay(GUI_RECT *pDst, GUI_RECT *a, GUI_RECT *b)
         return GUI_ERR; /* 两个矩形不相交 */
     }
     return GUI_OK;
+}
+
+/* 取两个矩形并集,比GUI_RectOrCalc()快 */
+void GUI_RectSum(GUI_RECT *pDst, GUI_RECT *a, GUI_RECT *b)
+{
+    /*  左上角的开始点  */
+    pDst->x0 = a->x0 < b->x0 ? a->x0 : b->x0;
+    pDst->y0 = a->y0 < b->y0 ? a->y0 : b->y0;
+    /*  右下角的结束点  */
+    pDst->x1 = a->x1 > b->x1 ? a->x1 : b->x1;
+    pDst->y1 = a->y1 > b->y1 ? a->y1 : b->y1;
 }
 
 /* 矩形与运算 */

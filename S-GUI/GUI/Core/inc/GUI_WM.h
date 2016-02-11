@@ -11,13 +11,12 @@
 /* GUI系统保留消息 */
 #define WM_INIT_DIALOG       0x0100    /* 对话框初始化 */
 #define WM_PAINT             0x0101    /* 重绘 */
-#define WM_PRE_PAINT         0x0102
-#define WM_POST_PAINT        0x0103
-#define WM_DELETE            0x0104
-#define WM_TP_CHECKED        0x0105    /* 触摸板按下 */
-#define WM_TP_REMOVED        0x0106    /* 触摸板松开 */
-#define WM_TP_PRESS          0x0107    /* 触摸坐标一直在当前窗口 */
-#define WM_TP_LEAVE          0x0108    /* 触摸坐标离开当前窗口 */
+#define WM_DELETE            0x0102    /* 删除窗口 */
+#define WM_CREATED           0x0105    /* 窗口已经创建 */
+#define WM_TP_CHECKED        0x0120    /* 触摸板按下 */
+#define WM_TP_REMOVED        0x0121    /* 触摸板松开 */
+#define WM_TP_PRESS          0x0122    /* 触摸坐标一直在当前窗口 */
+#define WM_TP_LEAVE          0x0123    /* 触摸坐标离开当前窗口 */
 #define WM_BUTTON_CLICKED    0x0200    /* BUTTON控件按下 */
 #define WM_BUTTON_RELEASED   0x0201    /* BUTTON控件已经释放 */
 #define WM_NUTTON_MOVED_OUT  0x0202    /* BUTTON被点击然后指针移开 */
@@ -77,6 +76,7 @@ GUI_RESULT WM_Init(void);
 void WM_Exec(void);
 void WM_SendMessage(WM_hWin hWin, u_16 MsgId, GUI_PARAM Param);
 void WM_SendMessageToParent(WM_hWin hWin, u_16 MsgId, GUI_PARAM Param);
+GUI_RESULT WM_PostMessage(WM_hWin hWin, u_16 MsgId, GUI_PARAM Param);
 GUI_RECT WM_GetWindowAreaRect(WM_hWin hWin);
 GUI_RECT WM_GetTaliorInvalidRect(WM_hWin hWin);
 WM_hWin WM_GetFrontWindow(WM_hWin hWin);

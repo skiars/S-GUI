@@ -108,7 +108,6 @@ WM_hWin LISTBOX_Create(i_16 x0,
     pObj->hScro  = NULL;
     pObj->ScbWidth = LBOX_SCB_WIDTH;
     pObj->DispPosPix = 0;
-    
     return pObj;
 }
 

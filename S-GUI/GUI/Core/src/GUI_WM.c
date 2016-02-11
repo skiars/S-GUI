@@ -10,6 +10,7 @@
 static GUI_RECT __AllDraw_Rect;
 #endif
 
+static void WM__SendMessage(WM_hWin hWin, WM_MESSAGE *pMsg);
 static void WM__WindowTimer(WM_Obj *pObj);
 static void WM__RefreshBackgnd(WM_Obj *pWin, RECT_LIST RectList);
 
@@ -31,43 +32,11 @@ GUI_RESULT WM_Init(void)
     return GUI_OK;
 }
 
-/*
- * 遍历窗口树
- * pTop:最上面的窗口,将会遍历它的所有子窗口.
- * pData:传给pFunc的参数,可以提供泛型编程的接口.
- * pFunc:遍历时相关实现功能的函数,pFunc返回非零时本函数将会返回1,
- *      否者本函数将会继续遍历,并在最后返回0.
- **/
-static u_8 WM__TraversalWindows(WM_Obj *pRoot, void *pData, u_8 (*pFunc)(WM_Obj*, void*))
-{
-    WM_Obj *pWin = pRoot;
-
-    while (1) {
-        while (1) {
-            if (pFunc(pWin, pData)) { /* 实现功能 */
-                return 1;
-            }
-            if (pWin->hFirstChild == NULL) {
-                break;
-            }
-            pWin = pWin->hFirstChild; /* 遍历子节点 */
-        }
-        while (pWin->hNext == NULL) {
-            pWin = pWin->hParent; /* 回溯 */
-            if (pWin == pRoot) {
-                return 0;
-            }
-        }
-        pWin = pWin->hNext; /* 遍历同属节点 */
-    }
-}
-
 /* 窗口管理器重绘 */
 static u_8 WM__WindowRepaint(WM_Obj *pWin)
 {
     RECT_LIST RectList;
 
-    WM__WindowTimer(pWin); /* 窗口计时器 */
     if (WM_CheckInvalid(pWin)) { /* 窗口需要重绘 */
         /* 计算窗口裁剪矩形,并设置为当前的绘制链表 */
         RectList = GUI_CalcWindowRectList(pWin);
@@ -93,27 +62,41 @@ static u_8 WM__WindowRepaint(WM_Obj *pWin)
     return 0;
 }
 
+/* 重绘所有窗口 */
+static void _PaintAll(void)
+{
+    WM_Obj *pWin;
+
+    GUI_LOCK();
+    /* 遍历并重绘窗口 */
+    for (pWin = _hRootWin; pWin; pWin = pWin->hNextLine) {
+        WM__WindowTimer(pWin);
+        WM__WindowRepaint(pWin);
+    }
+    GUI_UNLOCK();
+}
+
 /* 派发消息 */
 static void WM__DispatchMessage(WM_MESSAGE *pMsg)
 {
-    GUI_TouchPadMessageHandle(pMsg); /* 处理触摸事件 */
+    if (pMsg->hWin) { /* 有目标窗口的消息 */
+        WM__SendMessage(pMsg->hWin, pMsg);
+    } else {
+        GUI_TouchPadMessageHandle(pMsg); /* 处理触摸事件 */
+    }
 }
 
 /* 通过执行回调重绘无效窗口(所有工作) */
 void WM_Exec(void)
 {
     WM_MESSAGE Msg;
-    WM_Obj *pWin;
 
     GUI_LOCK();
     /* WM消息环 */
     while (GUI_GetMessage(&Msg) == GUI_OK) {
         WM__DispatchMessage(&Msg); /* 派发消息 */
     }
-    /* 遍历并重绘窗口 */
-    for (pWin = _hRootWin;  pWin; pWin = pWin->hNextLine) {
-        WM__WindowRepaint(pWin);
-    }
+    _PaintAll(); /* 重绘所有窗口 */
 #if GUI_USE_MEMORY
     /* 将内存数据更新到LCD上 */
     __AllDraw_Rect = GUI_RectAndCalc(&_pRootWin->Rect, &__AllDraw_Rect);
@@ -170,6 +153,17 @@ void WM_SendMessageToParent(WM_hWin hWin, u_16 MsgId, GUI_PARAM Param)
     Msg.MsgId = MsgId;
     Msg.Param = Param;
     WM__SendMessage(((WM_Obj*)hWin)->hParent, &Msg);
+}
+
+/* 向消息队列发送消息 */
+GUI_RESULT WM_PostMessage(WM_hWin hWin, u_16 MsgId, GUI_PARAM Param)
+{
+    WM_MESSAGE Msg;
+
+    Msg.hWin = hWin;
+    Msg.MsgId = MsgId;
+    Msg.Param = Param;
+    GUI_PostMessage(&Msg);
 }
 
 /*
@@ -409,6 +403,8 @@ WM_hWin WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
     pObj->Rect.y1 = y0 + ySize - 1;
     WM_Invalidate(pObj); /* 整个窗口失效 */
     GUI_UNLOCK();
+    /* 向消息队列发送窗口已创建消息(稍后会处理消息) */
+    WM_PostMessage(pObj, WM_CREATED, (GUI_PARAM)NULL);
     return pObj;
 }
 
@@ -428,22 +424,23 @@ GUI_RESULT WM_CheckWindowSign(WM_hWin hWin, u_16 Sign)
 void WM_InvalidateRect(WM_hWin hWin, GUI_RECT *pRect)
 {
     WM_Obj* pWin = hWin;
+    GUI_RECT *r = &pWin->Rect, *ri = &pWin->InvalidRect;
 
     GUI_LOCK();
     if (pRect == NULL) {
         pWin->InvalidRect = pWin->Rect;
     } else { /* 或操作 */
-        if (pWin->InvalidRect.x0 > pRect->x0) {
-            pWin->InvalidRect.x0 = pRect->x0;
+        if (ri->x0 > pRect->x0) {
+            ri->x0 = pRect->x0 >= r->x0 ? pRect->x0 : r->x0;
         }
-        if (pWin->InvalidRect.y0 > pRect->y0) {
-            pWin->InvalidRect.y0 = pRect->y0;
+        if (ri->y0 > pRect->y0) {
+            ri->y0 = pRect->y0 >= r->y0 ? pRect->y0 : r->y0;
         }
-        if (pWin->InvalidRect.x1 < pRect->x1) {
-            pWin->InvalidRect.x1 = pRect->x1;
+        if (ri->x1 < pRect->x1) {
+            ri->x1 = pRect->x1 <= r->x1 ? pRect->x1 : r->x1;
         }
-        if (pWin->InvalidRect.y1 < pRect->y1) {
-            pWin->InvalidRect.y1 = pRect->y1;
+        if (ri->y1 < pRect->y1) {
+            ri->y1 = pRect->y1 <= r->y1 ? pRect->y1 : r->y1;
         }
     }
     GUI_UNLOCK();
@@ -622,16 +619,22 @@ WM_hWin WM_GetParentHandle(WM_hWin hWin)
  **/
 void WM_InvalidCoverWindow(WM_hWin hWin, GUI_RECT *pRect)
 {
-    WM_Obj *p;
-    GUI_RECT Rect;
+    WM_Obj *p = hWin;
+    GUI_RECT r;
 
-    if (hWin == NULL) { /* hWin不能为NULL */
+    /* hWin不能为NULL,也不能是RootWindow */
+    if (hWin == NULL && p->hParent == NULL) { 
+        return;
+    }
+    /* 空矩形直接返回 */
+    if (GUI_CheckRectNull(pRect) == 0) {
         return;
     }
     GUI_LOCK();
-    for (p = _pRootWin;  p && p != hWin; p = p->hNextLine) {
-        if (GUI_RectOverlay(&Rect, &p->Rect, pRect) == GUI_OK) {
-            WM_InvalidateRect(p, &Rect);
+    /*这个窗口最多只能遮盖到它的父窗口*/
+    for (p = p->hParent;  p && p != hWin; p = p->hNextLine) {
+        if (GUI_RectOverlay(&r, &p->Rect, pRect) == GUI_OK) {
+            WM_InvalidateRect(p, &r);
         }
     }
     GUI_UNLOCK();
@@ -720,7 +723,7 @@ RECT_LIST GUI_CalcWindowRectList(WM_hWin hWin)
         /* 先遍历它所有的子窗口 */
         pObj = pWin->hFirstChild;
         while (pObj && RectList) {
-            RectList = GUI_ReCalcRectList(RectList, &pObj->Rect);
+                RectList = GUI_ReCalcRectList(RectList, &pObj->Rect);
             if (pObj->Style & WM_WINDOW_TRANS /* 与之相交的透明窗口无效化 */
               && GUI_RectOverlay(&Rect2, &pObj->Rect, &Rect1) == GUI_OK) {
                 WM_InvalidateRect(pObj, &Rect2);
@@ -733,7 +736,7 @@ RECT_LIST GUI_CalcWindowRectList(WM_hWin hWin)
     while (pObj != _pRootWin && RectList) {
         while (pObj->hNext && RectList){
             pObj = pObj->hNext; /* 向右遍历 */
-            RectList = GUI_ReCalcRectList(RectList, &pObj->Rect);
+                RectList = GUI_ReCalcRectList(RectList, &pObj->Rect);
             if (pObj->Style & WM_WINDOW_TRANS /* 与之相交的透明窗口无效化 */
                 && GUI_RectOverlay(&Rect2, &pObj->Rect, &Rect1) == GUI_OK) {
                 WM_InvalidateRect(pObj, &Rect2);
@@ -805,26 +808,13 @@ static RECT_LIST GUI__RectListTo(WM_Obj *pWin, WM_Obj *pEnd, RECT_LIST List)
     return RectList;
 }
 
-/* 结构体，用来给下面的代码封装数据 */
-struct REF_BACK {
-    RECT_LIST List;
-    WM_Obj *pObj;
-};
-
 /* 刷新指定区域内被某个窗口遮挡的区域的回调函数 */
-static u_8 WM__RefBackCb(WM_Obj *pWin, void *pData)
+static void WM__RefBackCb(WM_Obj *pWin, WM_Obj *pObj, RECT_LIST List)
 {
-    RECT_LIST List;
-
-    if (pWin == ((struct REF_BACK*)pData)->pObj) {
-        return 1;
-    }
     /* 检查两个窗口是否相交 */
-    if (GUI_CheckRectIntersect(&((struct REF_BACK*)pData)->pObj->Rect,
-                               &pWin->Rect)) {
+    if (GUI_CheckRectIntersect(&pObj->Rect, &pWin->Rect)) {
         /* 计算裁剪链表 */
-        List = GUI__RectListTo(pWin, ((struct REF_BACK*)pData)->pObj,
-                               ((struct REF_BACK*)pData)->List);
+        List = GUI__RectListTo(pWin, pObj, List);
         if (List != NULL) {
             WM_MESSAGE Msg;
 
@@ -842,21 +832,17 @@ static u_8 WM__RefBackCb(WM_Obj *pWin, void *pData)
             GUI_FreeRectList(List);
         }
     }
-    return 0;
 }
 
 /* 刷新指定区域内被某个窗口遮挡的区域，用于透明窗口刷新背景 */
 static void WM__RefreshBackgnd(WM_Obj *pWin, RECT_LIST RectList)
 {
-    struct REF_BACK data;
+    WM_Obj *pObj;
 
-    data.pObj = pWin;
-    data.List = RectList;
     /* 从这个窗口的父窗口开始遍历 */
-    if (pWin->hParent == _hRootWin) {
-        WM__TraversalWindows(_hRootWin, &data, WM__RefBackCb);
+    for (pObj = pWin->hParent; pObj != pWin; pObj = pObj->hNextLine) {
+        WM__RefBackCb(pObj, pWin, RectList);
     }
-    WM__TraversalWindows(pWin->hParent, &data, WM__RefBackCb);
 }
 
 /*********         窗口透明实现部分结束         *********/

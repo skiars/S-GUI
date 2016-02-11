@@ -14,7 +14,7 @@ typedef struct {
     char padStatus;
 } SIM_DEVICE;
 
-void simulate_lcd_start(void);
+void simulate_lcd_start(HWND hWnd);
 void sim_lcd_init(void);
 int sim_getWidth(void);
 int sim_getHeight(void);

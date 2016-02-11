@@ -8,13 +8,11 @@
 
 #define MAX_LOADSTRING 100
 
-/* 外部定义的函数 */
-void GUI_Test(void);
-
 // 全局变量: 
 HINSTANCE hInst;                                // 当前实例
 WCHAR szTitle[MAX_LOADSTRING];                  // 标题栏文本
 WCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
+HWND hMainWin;
 
 // 此代码模块中包含的函数的前向声明: 
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -46,7 +44,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SGUI));
     
     /* GUI模拟测试开始运行 */
-    simulate_lcd_start();
+    simulate_lcd_start(hMainWin);
     
     MSG msg;
     // 主消息循环: 
@@ -117,6 +115,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
+   hMainWin = hWnd;
 
    return TRUE;
 }

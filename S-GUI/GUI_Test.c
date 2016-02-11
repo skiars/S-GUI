@@ -42,13 +42,13 @@ static void _RootWinPaint(WM_hWin hWin)
 
     /* 绘制背景 */
     GUI_FillRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1,
-        Rect.y1 - Rect.y0 +1, 0x00FFFFFF);
+        Rect.y1 - Rect.y0 + 1, 0x00FFFFFF);
     GUI_DispStringCurRect(10, 300, _Str, 0x00000000, Font_ASCII_8X16);
 }
 
 static void _RootWinTimer(WM_hWin hWin)
 {
-    GUI_RECT Rect = {10, 300, 100, 320};
+    GUI_RECT Rect = { 10, 300, 100, 320 };
 
     sprintf_s(_Str, sizeof(_Str), "FPS: %d", _FpsVal);
     WM_InvalidateRect(_hRootWin, &Rect);
@@ -63,7 +63,7 @@ void GUI_Test(void)
     RootWinTimer_Cb = _RootWinTimer;
     GUI_Init();
     Create_Window2();
-    while(1) {
+    while (1) {
         GUI_Delay(10);
         ++_FpsVal; /* 统计帧率 */
     }
@@ -72,66 +72,67 @@ void GUI_Test(void)
 void Window1_Cb(WM_MESSAGE *pMsg)
 {
     static u_8 Alpha;
-    WM_hWin hWin;
+    WM_hWin hWin = pMsg->hWin, hItem;
+
     switch (pMsg->MsgId) {
-        case WM_BUTTON_RELEASED :
-            if (WM_GetDialogId(pMsg->hWinSrc) == WIN1_BTN1) {
-                WM_DeleteWindow(pMsg->hWin);
-                Alpha = 0;
-            } else if (WM_GetDialogId(pMsg->hWinSrc) == WIN1_BTN2) {
-                hWin = pMsg->hWin;
-                WINDOW_SetAllAlpha(hWin, Alpha);
-                if (Alpha < 200 ) Alpha += 10;
-            } else if (WM_GetDialogId(pMsg->hWinSrc) == WIN1_BTN3) {
-                hWin = pMsg->hWin;
-                WINDOW_SetAllAlpha(hWin, Alpha);
-                if (Alpha >= 10) Alpha -= 10;
-            }
-            break;
-        case WM_KEY_CHECKED :
-                GUI_GetKey();
-                WM_DeleteWindow(pMsg->hWin);
-                Alpha = 0;
-            break;
+    case WM_CREATED:
+        hItem = BUTTON_Create(12, 20, 72, 30, hWin, WIN1_BTN2, 0);
+        BUTTON_SetTitle(hItem, "Alpha+");
+        hItem = BUTTON_Create(108, 20, 72, 30, hWin, WIN1_BTN3, 0);
+        BUTTON_SetTitle(hItem, "Alpha-");
+        hItem = BUTTON_Create(70, 70, 60, 30, hWin, WIN1_BTN1, 0);
+        BUTTON_SetTitle(hItem, "Exit");
+        break;
+    case WM_BUTTON_RELEASED:
+        if (WM_GetDialogId(pMsg->hWinSrc) == WIN1_BTN1) {
+            WM_DeleteWindow(pMsg->hWin);
+            Alpha = 0;
+        } else if (WM_GetDialogId(pMsg->hWinSrc) == WIN1_BTN2) {
+            hWin = pMsg->hWin;
+            WINDOW_SetAllAlpha(hWin, Alpha);
+            if (Alpha < 200) Alpha += 10;
+        } else if (WM_GetDialogId(pMsg->hWinSrc) == WIN1_BTN3) {
+            hWin = pMsg->hWin;
+            WINDOW_SetAllAlpha(hWin, Alpha);
+            if (Alpha >= 10) Alpha -= 10;
+        }
+        break;
+    case WM_KEY_CHECKED:
+        GUI_GetKey();
+        WM_DeleteWindow(pMsg->hWin);
+        Alpha = 0;
+        break;
     }
 }
 
 void Create_Window1(void)
 {
-    GUI_hWin hWin, hWin2, hWin3;
+    WM_hWin hWin;
 
-    hWin = WINDOW_Create(7,10,200,140,NULL, WINDOW1, WM_WINDOW_MOVE, Window1_Cb);
-    if (hWin == NULL) return;
+    hWin = WINDOW_Create(7, 10, 200, 140, NULL, WINDOW1, WM_WINDOW_MOVE, Window1_Cb);
     WINDOW_SetTitle(hWin, "Hello World!");
-    hWin2 = BUTTON_Create(12,20,72,30,hWin,WIN1_BTN2,0);
-    BUTTON_SetTitle(hWin2, "Alpha+");
-    hWin2 = BUTTON_Create(108,20,72,30,hWin,WIN1_BTN3,0);
-    BUTTON_SetTitle(hWin2, "Alpha-");
-    hWin2 = hWin;
-    hWin3 = BUTTON_Create(70,70,60,30,hWin,WIN1_BTN1,0);
-    BUTTON_SetTitle(hWin3, "Exit");
 }
 
 void Window3_Cb(WM_MESSAGE *pMsg)
 {
     u_16 Id;
     WM_hWin hItem;
-    
+
     switch (pMsg->MsgId) {
-        case WM_BUTTON_RELEASED :
-            Id = WM_GetDialogId(pMsg->hWinSrc);
-            if (Id == WIN3_BTN1) {
-                WM_DeleteWindow(pMsg->hWin);
-            } else if (Id == WIN3_BTN2) {
-                WINDOW_SetAllAlpha(pMsg->hWin, 150);
-                hItem = WM_GetDialogItem(pMsg->hWin, WIN3_TBX1);
-                TEXTBOX_SetAllAlpha(hItem, 200);
-            }
-            break;
-        case WM_KEY_CHECKED :
-                GUI_GetKey();
-                WINDOW_SetAllAlpha(pMsg->hWin, 30);
-            break;
+    case WM_BUTTON_RELEASED:
+        Id = WM_GetDialogId(pMsg->hWinSrc);
+        if (Id == WIN3_BTN1) {
+            WM_DeleteWindow(pMsg->hWin);
+        } else if (Id == WIN3_BTN2) {
+            WINDOW_SetAllAlpha(pMsg->hWin, 150);
+            hItem = WM_GetDialogItem(pMsg->hWin, WIN3_TBX1);
+            TEXTBOX_SetAllAlpha(hItem, 200);
+        }
+        break;
+    case WM_KEY_CHECKED:
+        GUI_GetKey();
+        WINDOW_SetAllAlpha(pMsg->hWin, 30);
+        break;
     }
 }
 
@@ -139,17 +140,17 @@ void Create_Window3(void)
 {
     GUI_hWin hWin, hWin2, hWin3;
 
-    hWin = WINDOW_Create(10,10,220,300,NULL, WINDOW3, WM_WINDOW_MOVE, Window3_Cb);
+    hWin = WINDOW_Create(10, 10, 220, 300, NULL, WINDOW3, WM_WINDOW_MOVE, Window3_Cb);
     if (hWin == NULL) return;
     WINDOW_SetTitle(hWin, "Infomation");
-    hWin2 = TEXTBOX_Create(0,0,214,210,hWin,WIN3_TBX1,0);
+    hWin2 = TEXTBOX_Create(0, 0, 214, 210, hWin, WIN3_TBX1, 0);
     //WIDGET_SetFont(hWin2, Font_ASCII_8X16);
     TEXTBOX_SetText(hWin2, "This is a Small Graphical User Interface.\n"
-                           "It\'s author is Guan Wenliang.\n"
-                           "This is a demonstration...");
-    hWin3 = BUTTON_Create(100,220,60,30,hWin,WIN3_BTN1,0);
+        "It\'s author is Guan Wenliang.\n"
+        "This is a demonstration...");
+    hWin3 = BUTTON_Create(100, 220, 60, 30, hWin, WIN3_BTN1, 0);
     BUTTON_SetTitle(hWin3, "Exit");
-    hWin3 = BUTTON_Create(30,220,60,30,hWin,WIN3_BTN2,0);
+    hWin3 = BUTTON_Create(30, 220, 60, 30, hWin, WIN3_BTN2, 0);
     BUTTON_SetTitle(hWin3, "Alpha");
 }
 
@@ -157,16 +158,16 @@ void Window4_Cb(WM_MESSAGE *pMsg)
 {
     WM_hWin hItem;
     switch (pMsg->MsgId) {
-        case WM_BUTTON_RELEASED :
-            if (WM_GetDialogId(pMsg->hWinSrc) == Win4_BTN1) {
-                WM_DeleteWindow(pMsg->hWin);
-            }
-            break;
-        case WM_KEY_CHECKED :
-            GUI_GetKey();
-            hItem = WM_GetDialogItem(pMsg->hWin, WIN4_LBX1);
-            LISTBOX_ItemDown(hItem);
-            break;
+    case WM_BUTTON_RELEASED:
+        if (WM_GetDialogId(pMsg->hWinSrc) == Win4_BTN1) {
+            WM_DeleteWindow(pMsg->hWin);
+        }
+        break;
+    case WM_KEY_CHECKED:
+        GUI_GetKey();
+        hItem = WM_GetDialogItem(pMsg->hWin, WIN4_LBX1);
+        LISTBOX_ItemDown(hItem);
+        break;
     }
 }
 
@@ -174,10 +175,11 @@ void Create_Window4(void)
 {
     GUI_hWin hWin, hWin2, hWin3;
 
-    hWin = WINDOW_Create(10,10,220,300,NULL, WINDOW4,0, Window4_Cb);
+    hWin = WINDOW_Create(10, 10, 220, 300, NULL, WINDOW4, WM_WINDOW_MOVE, Window4_Cb);
     if (hWin == NULL) return;
     WINDOW_SetTitle(hWin, "LISTBOX Test");
-    hWin2 = LISTBOX_Create(0,0,214,210,hWin,WIN4_LBX1, 0, 100);
+    hWin2 = LISTBOX_Create(0, 0, 214, 210, hWin, WIN4_LBX1, 0, 100);
+    LISTBOX_ScrollDisplay(hWin2);
     //WIDGET_SetFont(hWin2, Font_ASCII_8X16);
     LISTBOX_AddList(hWin2, "This is a Listbox test...Scroll...asdfg-ASDFGqwertyuiopQWERTYUIOP");
     LISTBOX_AddList(hWin2, "Hello");
@@ -195,7 +197,7 @@ void Create_Window4(void)
     LISTBOX_AddList(hWin2, "Alpha Test");
     LISTBOX_AddList(hWin2, "ListBox Test");
     //LISTBOX_SetSelFromStr(hWin2, "saff");
-    hWin3 = BUTTON_Create(70,220,60,30,hWin, Win4_BTN1,0);
+    hWin3 = BUTTON_Create(70, 220, 60, 30, hWin, Win4_BTN1, 0);
     BUTTON_SetTitle(hWin3, "Exit");
 }
 
@@ -218,7 +220,7 @@ void Create_Window5(void)
     i_16 xd[10] = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
     GUI_hWin hWin, hWin2, hWin3;
 
-    hWin = WINDOW_Create(10, 10, 220, 300, NULL, WINDOW5,0, Window5_Cb);
+    hWin = WINDOW_Create(10, 10, 220, 300, NULL, WINDOW5, 0, Window5_Cb);
     if (hWin == NULL) {
         return;
     }
@@ -226,45 +228,53 @@ void Create_Window5(void)
     hWin2 = GRAPH_Create(0, 0, 214, 210, hWin, WIN5_GPH1, 0);
     GRAPH_SetData(hWin2, xd, yd, 10);
 
-    hWin3 = BUTTON_Create(70,220,60,30,hWin,WIN5_BTN1,0);
+    hWin3 = BUTTON_Create(70, 220, 60, 30, hWin, WIN5_BTN1, 0);
     BUTTON_SetTitle(hWin3, "Exit");
 }
 
 void Window2_Cb(WM_MESSAGE *pMsg)
 {
+    WM_hWin hItem, hWin = pMsg->hWin;
+
     switch (pMsg->MsgId) {
-        case WM_BUTTON_RELEASED :
-            if (WM_GetDialogId(pMsg->hWinSrc) == WIN2_BTN1) {
-                Create_Window1();
-            } else if (WM_GetDialogId(pMsg->hWinSrc) == WIN2_BTN2) {
-                Create_Window3();
-            } else if (WM_GetDialogId(pMsg->hWinSrc) == WIN2_BTN3) {
-                Create_Window4();
-            }
-            else if (WM_GetDialogId(pMsg->hWinSrc) == WIN2_BTN4) {
-                Create_Window5();
-            }
+    case WM_CREATED:
+        hItem = BUTTON_Create(5, 5, 112, 35, hWin, WIN2_BTN1, 0);
+        BUTTON_SetTitle(hItem, "Alpha Test");
+        hItem = BUTTON_Create(5, 45, 150, 35, hWin, WIN2_BTN2, 0);
+        BUTTON_SetTitle(hItem, "TEXTBOX Test");
+        hItem = BUTTON_Create(5, 85, 150, 35, hWin, WIN2_BTN3, 0);
+        BUTTON_SetTitle(hItem, "LISTBOX Test");
+        hItem = BUTTON_Create(5, 125, 150, 35, hWin, WIN2_BTN4, 0);
+        BUTTON_SetTitle(hItem, "GRAPH Test");
+        BUTTON_SetFont(hItem, Font_ASCII_2PP);
+        break;
+    case WM_BUTTON_RELEASED:
+        /* 根据点击的按键创建窗口 */
+        switch (WM_GetDialogId(pMsg->hWinSrc)) {
+        case WIN2_BTN1:
+            Create_Window1();
             break;
-        case WM_KEY_CHECKED :
-                GUI_CleanKeyBuffer();
-                Create_Window1();
+        case WIN2_BTN2:
+            Create_Window3();
             break;
+        case WIN2_BTN3:
+            Create_Window4();
+            break;
+        case WIN2_BTN4:
+            Create_Window5();
+            break;
+        }
+        break;
+    case WM_KEY_CHECKED:
+        GUI_CleanKeyBuffer();
+        Create_Window1();
+        break;
     }
 }
 
 void Create_Window2(void)
 {
     GUI_hWin hWin, hWin1;
-
-    hWin = WINDOW_Create(30,80,180,220,NULL,WINDOW2,0, Window2_Cb);
+    hWin = WINDOW_Create(30, 80, 180, 220, NULL, WINDOW2, 0, Window2_Cb);
     WINDOW_SetTitle(hWin, "S-GUI Demo");
-    hWin1 = BUTTON_Create(5, 5, 112, 35,hWin,WIN2_BTN1,0);
-    BUTTON_SetTitle(hWin1, "Alpha Test");
-    hWin1 = BUTTON_Create(5, 45, 150, 35,hWin,WIN2_BTN2,0);
-    BUTTON_SetTitle(hWin1, "TEXTBOX Test");
-    hWin1 = BUTTON_Create(5, 85, 150, 35,hWin,WIN2_BTN3,0);
-    BUTTON_SetTitle(hWin1, "LISTBOX Test");
-    hWin1 = BUTTON_Create(5, 125, 150, 35,hWin,WIN2_BTN4,0);
-    BUTTON_SetTitle(hWin1, "GRAPH Test");
-    BUTTON_SetFont(hWin1, Font_ASCII_2PP);
 }

@@ -35,8 +35,10 @@ static DWORD WINAPI ThreadDisp(LPVOID pM)
 }
 
 /* 模拟器开始运行 */
-void simulate_lcd_start(void)
+void simulate_lcd_start(HWND hWnd)
 {
+    /* 获取窗口句柄 */
+    sim_lcd.hwnd = hWnd;
     GUI_Init();
     CreateThread(NULL, 0, ThreadGUI, "ThreadGUI", 0, NULL); /* 新建线程 */
     CreateThread(NULL, 0, ThreadDisp, "ThreadDisp", 0, NULL); /* 新建线程 */
@@ -51,8 +53,6 @@ void sim_lcd_init(void)
     /* 分配内存，储存像素数据 */
     sim_lcd.PixBuf = malloc(sim_lcd.BufSize);
     memset(sim_lcd.PixBuf, 0x00, sim_lcd.BufSize);
-    /* 获取窗口句柄 */
-    sim_lcd.hwnd = GetForegroundWindow();
     /* 获取客户区的DC */
     sim_lcd.hdc = GetDC(sim_lcd.hwnd);
     /* 为帧缓冲创建一个DC */
