@@ -39,10 +39,8 @@ void GUI_ReadBack(u_16 x, u_16 y, u_16 len, u_16 wid, GUI_COLOR *pb)
     GUI_COLOR *plcd;
     plcd = GUI_Data->lcdbuf;
     plcd += y*lcd_w;
-    for (i = 0; i < wid; i++)
-    {
-        for (j = 0; j < len; j++)
-        {
+    for (i = 0; i < wid; i++) {
+        for (j = 0; j < len; j++) {
             pb[j] = plcd[x + j];
         }
         pb += len;
@@ -86,4 +84,3 @@ void GUI_MemToMem(u_16 x, u_16 y, u_16 len, u_16 wid, GUI_COLOR *pb)
     }
 #endif
 }
-

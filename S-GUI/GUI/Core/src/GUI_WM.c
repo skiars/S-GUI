@@ -163,7 +163,7 @@ GUI_RESULT WM_PostMessage(WM_hWin hWin, u_16 MsgId, GUI_PARAM Param)
     Msg.hWin = hWin;
     Msg.MsgId = MsgId;
     Msg.Param = Param;
-    GUI_PostMessage(&Msg);
+    return GUI_PostMessage(&Msg);
 }
 
 /*
@@ -646,9 +646,9 @@ void WM_MoveWindow(WM_hWin hWin, i_16 dX, i_16 dY)
     WM_Obj *p = hWin;
     
     GUI_LOCK();
-    /* 先将被遮挡的窗口无效化 */
-    WM_InvalidCoverWindow(p, &p->Rect);
     if (p && p->Style & WM_WINDOW_MOVE && (dX || dY)) {
+        /* 先将被遮挡的窗口无效化 */
+        WM_InvalidCoverWindow(p, &p->Rect);
         /* 找到遍历子窗口的终点 */
         hWin = WM__FindChildEnd(p);
         for (; p != hWin; p = p->hNextLine) { /* 遍历子窗口 */

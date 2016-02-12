@@ -32,7 +32,9 @@ void GUI_QueueDelete(GUI_QUEUE *pQue)
  **/
 GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
 {
+    GUI_LOCK();
     if (!pQue->size) {   /* 队列为空 */
+        GUI_UNLOCK();
         return GUI_ERR;
     }
     --pQue->size;
@@ -40,6 +42,7 @@ GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
     if (++pQue->front == pQue->Capacity) {  /* 队头绕回到开头 */
         pQue->front = 0;
     }
+    GUI_UNLOCK();
     return GUI_OK;
 }
 

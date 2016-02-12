@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "Bitmap.h"
+
 #define WINDOW2      (WM_USER_ID + 0x0010)
 #define WINDOW1      (WM_USER_ID + 0x0020)
 #define WINDOW3      (WM_USER_ID + 0x0030)
@@ -28,7 +30,7 @@
 #define WIN5_GPH1    (WINDOW5 + 0x0001)
 #define WIN5_BTN1    (WINDOW5 + 0x0002)
 
-
+#define RWIN_TBX1    WM_USER_ID + 0x0060
 
 void GUI_2D_Test(void);
 void Create_Window2(void);
@@ -41,8 +43,11 @@ static void _RootWinPaint(WM_hWin hWin)
     GUI_RECT Rect = WM_GetWindowRect(hWin);;
 
     /* ªÊ÷∆±≥æ∞ */
+    /*
     GUI_FillRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1,
         Rect.y1 - Rect.y0 + 1, 0x00FFFFFF);
+    */
+    GUI_DrawBitmap(0, 0, 640, 320, &bmpic_rootwin);
     GUI_DispStringCurRect(10, 300, _Str, 0x00000000, Font_ASCII_8X16);
 }
 
@@ -55,13 +60,12 @@ static void _RootWinTimer(WM_hWin hWin)
     _FpsVal = 0; /* ÷°¬ «Â¡„ */
 }
 
-
 //GUI≤‚ ‘
 void GUI_Test(void)
 {
     RootWinPaint_Cb = _RootWinPaint;
     RootWinTimer_Cb = _RootWinTimer;
-    GUI_Init();
+    //GUI_Init();
     Create_Window2();
     while (1) {
         GUI_Delay(10);
@@ -274,7 +278,15 @@ void Window2_Cb(WM_MESSAGE *pMsg)
 
 void Create_Window2(void)
 {
-    GUI_hWin hWin, hWin1;
-    hWin = WINDOW_Create(30, 80, 180, 220, NULL, WINDOW2, 0, Window2_Cb);
+    GUI_hWin hWin;
+
+    /*
+    hWin = TEXTBOX_Create(30, 30, 220, 160, NULL, RWIN_TBX1, 0);
+    TEXTBOX_SetText(hWin, "This is a Small Graphical User Interface.\n"
+        "It\'s author is Guan Wenliang.\n"
+        "This is a demonstration...");
+    TEXTBOX_SetAllAlpha(hWin, 255);
+    */
+    hWin = WINDOW_Create(30, 80, 180, 220, NULL, WINDOW2, WM_WINDOW_MOVE, Window2_Cb);
     WINDOW_SetTitle(hWin, "S-GUI Demo");
 }

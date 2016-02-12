@@ -16,6 +16,8 @@
 #include "GUI_KeyBoard.h"
 #include "GUI_TouchPad.h"
 
+#include "GUI_Bitmap.h"
+
 #include "WIDGET.h"
 #include "BUTTON.h"
 #include "DialogBox.h"

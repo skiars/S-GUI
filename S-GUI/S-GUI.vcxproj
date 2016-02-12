@@ -159,11 +159,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bitmap.h" />
     <ClInclude Include="GUI\Config\GUI_Botton.h" />
     <ClInclude Include="GUI\Config\GUI_Config.h" />
     <ClInclude Include="GUI\Config\GUI_Typedef.h" />
     <ClInclude Include="GUI\Core\inc\GUI.h" />
     <ClInclude Include="GUI\Core\inc\GUI_2D.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_Bitmap.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Core.h" />
     <ClInclude Include="GUI\Core\inc\GUI_KeyBoard.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Memory.h" />
@@ -191,6 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUI\Config\GUI_Botton.c" />
+    <ClCompile Include="GUI\Core\src\GGUI_Bitmap.c" />
     <ClCompile Include="GUI\Core\src\GUI_2D.c" />
     <ClCompile Include="GUI\Core\src\GUI_Core.c" />
     <ClCompile Include="GUI\Core\src\GUI_KeyBoard.c" />
@@ -218,6 +221,7 @@
     <ClCompile Include="GUI\Widget\WINDOW.c" />
     <ClCompile Include="GUI_Test.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="pic_rootwin.c" />
     <ClCompile Include="simulate_lcd.c" />
   </ItemGroup>
   <ItemGroup>

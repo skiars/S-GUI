@@ -136,6 +136,12 @@
     <ClInclude Include="GUI\Core\inc\GUI_Queue.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_Bitmap.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Bitmap.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUI\Core\src\GUI_2D.c">
@@ -223,6 +229,12 @@
       <Filter>源文件\S-GUI\Widget</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Core\src\GUI_Queue.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="pic_rootwin.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GGUI_Bitmap.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
   </ItemGroup>

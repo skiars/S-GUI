@@ -34,6 +34,15 @@ static DWORD WINAPI ThreadDisp(LPVOID pM)
     return 0;
 }
 
+/* 刷新显示线程 */
+static DWORD WINAPI Threadxxx(LPVOID pM)
+{
+    while (1) {
+        GUI_Delay(1);
+    }
+    return 0;
+}
+
 /* 模拟器开始运行 */
 void simulate_lcd_start(HWND hWnd)
 {
@@ -42,6 +51,7 @@ void simulate_lcd_start(HWND hWnd)
     GUI_Init();
     CreateThread(NULL, 0, ThreadGUI, "ThreadGUI", 0, NULL); /* 新建线程 */
     CreateThread(NULL, 0, ThreadDisp, "ThreadDisp", 0, NULL); /* 新建线程 */
+    //CreateThread(NULL, 0, Threadxxx, "Threadxxx", 0, NULL); /* 新建线程 */
 }
 
 /* 屏幕模拟器初始化 */
