@@ -171,6 +171,7 @@
     <ClInclude Include="GUI\Core\inc\GUI_Memory.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Queue.h" />
     <ClInclude Include="GUI\Core\inc\GUI_RectCalc.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_Timer.h" />
     <ClInclude Include="GUI\Core\inc\GUI_TouchPad.h" />
     <ClInclude Include="GUI\Core\inc\GUI_WM.h" />
     <ClInclude Include="GUI\Core\inc\Linked_List.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="GUI\Core\src\GUI_Memory.c" />
     <ClCompile Include="GUI\Core\src\GUI_Queue.c" />
     <ClCompile Include="GUI\Core\src\GUI_RectCalc.c" />
+    <ClCompile Include="GUI\Core\src\GUI_Timer.c" />
     <ClCompile Include="GUI\Core\src\GUI_TouchPad.c" />
     <ClCompile Include="GUI\Core\src\GUI_WM.c" />
     <ClCompile Include="GUI\Core\src\Linked_List.c" />

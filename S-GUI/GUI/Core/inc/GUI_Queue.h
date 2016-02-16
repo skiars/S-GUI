@@ -11,16 +11,16 @@ typedef struct {
     u_16 MsgId;       /* 消息编号 */
     GUI_hWin hWin;    /* 目标窗口句柄 */
     GUI_hWin hWinSrc; /* 源窗口句柄  */
-    GUI_PARAM Param;      /* 参数 */
+    GUI_PARAM Param;  /* 参数 */
 } GUI_MESSAGE;
 
 /* 队列结构定义 */
 typedef struct {
     GUI_MESSAGE *pArray; /* 队列指针 */
-    u_16 Capacity;      /* 队列数组容量 */
-    u_16 size;          /* 队列目前数据单元数量 */
-    u_16 front;         /* 队头 */
-    u_16 rear;          /* 队尾 */
+    u_16 Capacity;       /* 队列数组容量 */
+    u_16 size;           /* 队列目前数据单元数量 */
+    u_16 front;          /* 队头 */
+    u_16 rear;           /* 队尾 */
 } GUI_QUEUE;
 
 GUI_QUEUE * GUI_QueueInit(u_16 Capacity);

@@ -40,6 +40,7 @@ GUI_RESULT GUI_TouchPadMessageHandle(GUI_MESSAGE *pMsg)
         GUI_hWin hWin;
         GUI_POINT Point;
 
+        GUI_LOCK();
         Point.x = (u_32)pMsg->Param >> 16;
         Point.y = (u_32)pMsg->Param & 0xffff;
         if (pMsg->MsgId == WM_TP_CHECKED) {
@@ -71,6 +72,7 @@ GUI_RESULT GUI_TouchPadMessageHandle(GUI_MESSAGE *pMsg)
             }
             _CurWin = NULL;
         }
+        GUI_UNLOCK();
         return GUI_OK;
     }
     return GUI_ERR;

@@ -162,7 +162,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONDOWN: /* 鼠标左键按下 */
         sim_pad_cleck();
         break;
-
     case WM_LBUTTONUP: /* 鼠标左键松开 */
         sim_pad_removed();
         break;

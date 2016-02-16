@@ -12,6 +12,7 @@ typedef struct {
     int win_w, win_h, BufSize;
     POINT tPad;
     char padStatus;
+    char Update; /* 缓冲区更新标志 */
 } SIM_DEVICE;
 
 void simulate_lcd_start(HWND hWnd);

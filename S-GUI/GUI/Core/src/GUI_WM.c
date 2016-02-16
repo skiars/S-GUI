@@ -7,11 +7,12 @@
     (((WM_Obj *)WM_GetTopChildWindow(h))->hNextLine)
 
 #if GUI_USE_MEMORY
-static GUI_RECT __AllDraw_Rect;
+static GUI_RECT __PaintArea;
 #endif
 
+static int __InvalidWindowNum = 0;
+
 static void WM__SendMessage(WM_hWin hWin, WM_MESSAGE *pMsg);
-static void WM__WindowTimer(WM_Obj *pObj);
 static void WM__RefreshBackgnd(WM_Obj *pWin, RECT_LIST RectList);
 
 /*
@@ -54,7 +55,7 @@ static u_8 WM__WindowRepaint(WM_Obj *pWin)
             GUI_FreeRectList(RectList);
 #if GUI_USE_MEMORY
             /* 需要刷新的矩形 */
-            __AllDraw_Rect = GUI_RectOrCalc(&pWin->Rect, &__AllDraw_Rect);
+            __PaintArea = GUI_RectOrCalc(&pWin->Rect, &__PaintArea);
 #endif
         }
         WM_CleanInvalid(pWin); /* 清除无效化 */
@@ -67,13 +68,15 @@ static void _PaintAll(void)
 {
     WM_Obj *pWin;
 
-    GUI_LOCK();
-    /* 遍历并重绘窗口 */
-    for (pWin = _hRootWin; pWin; pWin = pWin->hNextLine) {
-        WM__WindowTimer(pWin);
-        WM__WindowRepaint(pWin);
+    if (__InvalidWindowNum) {
+        GUI_LOCK();
+        /* 遍历并重绘窗口 */
+        for (pWin = _hRootWin; pWin; pWin = pWin->hNextLine) {
+            WM__WindowRepaint(pWin);
+            --__InvalidWindowNum;
+        }
+        GUI_UNLOCK();
     }
-    GUI_UNLOCK();
 }
 
 /* 派发消息 */
@@ -91,24 +94,27 @@ void WM_Exec(void)
 {
     WM_MESSAGE Msg;
 
-    GUI_LOCK();
     /* WM消息环 */
     while (GUI_GetMessage(&Msg) == GUI_OK) {
         WM__DispatchMessage(&Msg); /* 派发消息 */
     }
+    GUI_TimerHandle();
     _PaintAll(); /* 重绘所有窗口 */
 #if GUI_USE_MEMORY
+    GUI_LOCK();
     /* 将内存数据更新到LCD上 */
-    __AllDraw_Rect = GUI_RectAndCalc(&_pRootWin->Rect, &__AllDraw_Rect);
-    GUI_DrawFromMem(__AllDraw_Rect.x0, __AllDraw_Rect.y0,
-                    __AllDraw_Rect.x1 - __AllDraw_Rect.x0 + 1,
-                    __AllDraw_Rect.y1 - __AllDraw_Rect.y0 + 1);
-    __AllDraw_Rect.x0 = 0;
-    __AllDraw_Rect.y0 = 0;
-    __AllDraw_Rect.x1 = 0;
-    __AllDraw_Rect.y1 = 0;
-#endif
+    if (__PaintArea.x1 || __PaintArea.y1) {
+        __PaintArea = GUI_RectAndCalc(&_pRootWin->Rect, &__PaintArea);
+        GUI_DrawFromMem(__PaintArea.x0, __PaintArea.y0,
+            __PaintArea.x1 - __PaintArea.x0 + 1,
+            __PaintArea.y1 - __PaintArea.y0 + 1);
+        __PaintArea.x0 = 0;
+        __PaintArea.y0 = 0;
+        __PaintArea.x1 = 0;
+        __PaintArea.y1 = 0;
+    }
     GUI_UNLOCK();
+#endif
 }
 
 /*
@@ -126,8 +132,8 @@ static void WM__SendMessage(WM_hWin hWin, WM_MESSAGE *pMsg)
     if (__MseeageCount < GUI_MAX_MSG_NEST) {
         ++__MseeageCount;
         pMsg->hWin = hWin;
-        if (((WM_Obj*)hWin)->WinCb) {
-            ((WM_Obj*)hWin)->WinCb(pMsg);
+        if (((WM_Obj *)hWin)->WinCb) {
+            ((WM_Obj *)hWin)->WinCb(pMsg);
         }
         --__MseeageCount;
     }
@@ -313,6 +319,8 @@ void WM_DeleteWindow(WM_hWin hWin)
     while (pWin) {
         hWin = pWin;
         pWin = pWin->hNextLine;
+        /* 删除窗口的定时器 */
+        GUI_SetWindowTimer(hWin, 0);
         /* 调用回调函数删除节点 */
         WM_SendMessage(hWin, WM_DELETE, (GUI_PARAM)NULL);
     }
@@ -443,6 +451,7 @@ void WM_InvalidateRect(WM_hWin hWin, GUI_RECT *pRect)
             ri->y1 = pRect->y1 <= r->y1 ? pRect->y1 : r->y1;
         }
     }
+    ++__InvalidWindowNum;
     GUI_UNLOCK();
 }
 
@@ -540,7 +549,6 @@ GUI_RESULT WM_FindWindow(WM_hWin hWin)
 /* 获得指定ID的子窗口句柄 */
 WM_hWin WM_GetDialogItem(WM_hWin hWin, u_16 Id)
 {
-
     WM_Obj *pWin = hWin;
 
     /* WM_NULL_ID不可寻找 */
@@ -664,43 +672,6 @@ void WM_MoveWindow(WM_hWin hWin, i_16 dX, i_16 dY)
 void WM_SetMoveWindow(WM_hWin hWin)
 {
     ((WM_Obj*)hWin)->Style |= WM_WINDOW_MOVE;
-}
-
-/* 窗口计时器
- * 窗口定时器可以让开启了定时功能的窗口在定时时间到以后产生一个WM_TIME_UPDATA消息
- **/
-static void WM__WindowTimer(WM_Obj *pObj)
-{
-    if (pObj->Style & WM_WINDOW_TIMER) {  /* 窗口有计时器 */
-        if (GUI_GetTime() > pObj->LastTime + pObj->TimeCount) {
-            WM_SendMessage(pObj, WM_TIME_UPDATA, (GUI_PARAM)NULL);
-            pObj->LastTime = GUI_GetTime(); /* 从新获取时间 */
-        }
-    }
-}
-
-/* 设置窗口计时器,时间间隔单位为ms */
-void WM_SetWindowTimer(WM_hWin hWin, u_16 Count)
-{
-    WM_Obj *pObj = hWin;
-    
-    GUI_LOCK();
-    pObj->Style |= WM_WINDOW_TIMER;
-    pObj->TimeCount = Count;
-    pObj->LastTime = GUI_GetTime();
-    GUI_UNLOCK();
-}
-
-/* 设置窗口时间间隔计数 */
-void WM_SetWindowTimerCount(WM_hWin hWin, u_16 Count)
-{
-    ((WM_Obj*)hWin)->TimeCount = Count;
-}
-
-/* 返回窗口时间间隔计数 */
-u_16 WM_GetWindowTimerCount(WM_hWin hWin)
-{
-    return ((WM_Obj*)hWin)->TimeCount;
 }
 
 /* 为一个窗口计算裁剪矩形链表 */

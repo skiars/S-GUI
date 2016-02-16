@@ -9,5 +9,6 @@ extern void (*RootWinPaint_Cb)(WM_hWin hWin);
 extern void (*RootWinTimer_Cb)(WM_hWin hWin);
 
 void WM_RootWindowInit(WM_Obj *pObj);
+void GUI_SetRootWindowTimer(GUI_TIME timer);
 
 #endif

@@ -43,10 +43,7 @@ static void _RootWinPaint(WM_hWin hWin)
     GUI_RECT Rect = WM_GetWindowRect(hWin);;
 
     /* 绘制背景 */
-    /*
-    GUI_FillRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1,
-        Rect.y1 - Rect.y0 + 1, 0x00FFFFFF);
-    */
+    //GUI_FillRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1, Rect.y1 - Rect.y0 + 1, 0x00FFFFFF);
     GUI_DrawBitmap(0, 0, 640, 320, &bmpic_rootwin);
     GUI_DispStringCurRect(10, 300, _Str, 0x00000000, Font_ASCII_8X16);
 }
@@ -60,15 +57,16 @@ static void _RootWinTimer(WM_hWin hWin)
     _FpsVal = 0; /* 帧率清零 */
 }
 
-//GUI测试
+/* GUI测试 */
 void GUI_Test(void)
 {
     RootWinPaint_Cb = _RootWinPaint;
     RootWinTimer_Cb = _RootWinTimer;
-    //GUI_Init();
+    GUI_Init();
+    GUI_SetRootWindowTimer(1000);
     Create_Window2();
     while (1) {
-        GUI_Delay(10);
+        GUI_Delay(20);
         ++_FpsVal; /* 统计帧率 */
     }
 }

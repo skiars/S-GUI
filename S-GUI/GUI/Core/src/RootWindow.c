@@ -58,5 +58,10 @@ void WM_RootWindowInit(WM_Obj *pObj)
     pObj->Id = WM_ROOTWIN_ID;
     pObj->Sign = WIDGET_ROOTWIN;
     WM_Invalidate(pObj);  /* 根窗口无效化 */
-    WM_SetWindowTimer(pObj, 1000); /* 需要窗口计时器 */
+}
+
+/* 设置根窗口的定时器 */
+void GUI_SetRootWindowTimer(GUI_TIME timer)
+{
+    GUI_SetWindowTimer(_hRootWin, timer);
 }

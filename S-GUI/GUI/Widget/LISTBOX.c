@@ -267,11 +267,11 @@ static void LISTBOX__TextScroll(LISTBOX_Obj *pObj)
         return;   //不需要滚动显示
     }
     if (pObj->DispPosPix == 0) {
-        if (WM_GetWindowTimerCount(pObj) == LBOX_DFT_SCRO_TIME) {
-            WM_SetWindowTimerCount(pObj, LBOX_DFT_UNSCRO_TIME);
+        if (GUI_GetWindowTimer(pObj) == LBOX_DFT_SCRO_TIME) {
+            GUI_SetWindowTimer(pObj, LBOX_DFT_UNSCRO_TIME);
             return;
         }
-        WM_SetWindowTimerCount(pObj, LBOX_DFT_SCRO_TIME);
+        GUI_SetWindowTimer(pObj, LBOX_DFT_SCRO_TIME);
     }
     ItemPos = pObj->SelIndex - pObj->TopIndex;
     if (ListWidth + pObj->DispPosPix == pObj->SelPixs + LBOX_DFT_SCROENDWID) {
@@ -432,5 +432,5 @@ GUI_RESULT LISTBOX_SetSelFromStr(WM_hWin hWin, const char *Str)
 /* 列表框使用滚动显示功能 */
 void LISTBOX_ScrollDisplay(GUI_hWin hWin)
 {
-    WM_SetWindowTimer(hWin, LBOX_DFT_SCRO_TIME);
+    GUI_SetWindowTimer(hWin, LBOX_DFT_SCRO_TIME);
 }

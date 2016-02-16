@@ -25,20 +25,11 @@ static DWORD WINAPI ThreadDisp(LPVOID pM)
         if (sim_lcd.padStatus == GUI_TP_CHECKED) {
             GetCursorPos(&sim_lcd.tPad); /* 获取鼠标位置 */
             ScreenToClient(sim_lcd.hwnd, &sim_lcd.tPad);
-            GUI_TouchPadSendValue((u_16)sim_lcd.tPad.x, (u_16)sim_lcd.tPad.y, GUI_TP_CHECKED);
+            GUI_TouchPadSendValue((u_16)sim_lcd.tPad.x,
+                (u_16)sim_lcd.tPad.y, GUI_TP_CHECKED);
         }
         sim_updata();
-        //GUI_Delay(10);
-        Sleep(10);
-    }
-    return 0;
-}
-
-/* 刷新显示线程 */
-static DWORD WINAPI Threadxxx(LPVOID pM)
-{
-    while (1) {
-        GUI_Delay(1);
+        Sleep(20);
     }
     return 0;
 }
@@ -48,10 +39,8 @@ void simulate_lcd_start(HWND hWnd)
 {
     /* 获取窗口句柄 */
     sim_lcd.hwnd = hWnd;
-    GUI_Init();
     CreateThread(NULL, 0, ThreadGUI, "ThreadGUI", 0, NULL); /* 新建线程 */
     CreateThread(NULL, 0, ThreadDisp, "ThreadDisp", 0, NULL); /* 新建线程 */
-    //CreateThread(NULL, 0, Threadxxx, "Threadxxx", 0, NULL); /* 新建线程 */
 }
 
 /* 屏幕模拟器初始化 */
@@ -59,6 +48,7 @@ void sim_lcd_init(void)
 {
     sim_lcd.win_w = GetSystemMetrics(SM_CXSCREEN);
     sim_lcd.win_h = GetSystemMetrics(SM_CYSCREEN);
+    sim_lcd.Update = 0;
     sim_lcd.BufSize = sizeof(COLORREF) * sim_lcd.win_w * sim_lcd.win_h;
     /* 分配内存，储存像素数据 */
     sim_lcd.PixBuf = malloc(sim_lcd.BufSize);
@@ -68,7 +58,8 @@ void sim_lcd_init(void)
     /* 为帧缓冲创建一个DC */
     sim_lcd.hFrame = CreateCompatibleDC(sim_lcd.hdc);
     /* 为客户区创建一个Bitmap */
-    sim_lcd.hBmp = CreateCompatibleBitmap(sim_lcd.hdc, sim_lcd.win_w, sim_lcd.win_h);
+    sim_lcd.hBmp = CreateCompatibleBitmap(sim_lcd.hdc,
+        sim_lcd.win_w, sim_lcd.win_h);
     /* 为帧缓冲的DC选择client_bitmap作为对象 */
     SelectObject(sim_lcd.hFrame, sim_lcd.hBmp);
 }
@@ -94,6 +85,7 @@ void sim_drawPix(int x, int y, COLORREF Color)
     g = Color & 0x0000ff00;
     b = Color & 0x00ff0000;
     sim_lcd.PixBuf[y * sim_lcd.win_w + x] = r << 16 | g | b >> 16;
+    sim_lcd.Update = 1;
 }
 
 /* 屏幕模拟器读取像素 */
@@ -109,7 +101,12 @@ COLORREF sim_readPix(int x, int y)
 }
 
 /* 屏幕模拟器显示一个区域 */
-void sim_dispArea(int x, int y, int Width, int Height, COLORREF *Buffer, int rowlen)
+void sim_dispArea(int x,
+    int y,
+    int Width,
+    int Height,
+    COLORREF *Buffer,
+    int rowlen)
 {
     int i, win_w = sim_lcd.win_w;
     COLORREF r, g, b;
@@ -128,16 +125,20 @@ void sim_dispArea(int x, int y, int Width, int Height, COLORREF *Buffer, int row
         Buffer += rowlen;
         pLCD += win_w;
     }
+    sim_lcd.Update = 1;
 }
 
 /* 屏幕模拟器刷新显示,并更新状态 */
 void sim_updata(void)
 {
-    SetBitmapBits(sim_lcd.hBmp, sim_lcd.BufSize, sim_lcd.PixBuf);
-    BitBlt(sim_lcd.hdc, 0, 0,
-           sim_lcd.win_w, sim_lcd.win_h,
-           sim_lcd.hFrame, 0, 0,
-           SRCCOPY);
+    if (sim_lcd.Update) {
+        SetBitmapBits(sim_lcd.hBmp, sim_lcd.BufSize, sim_lcd.PixBuf);
+        BitBlt(sim_lcd.hdc, 0, 0,
+            sim_lcd.win_w, sim_lcd.win_h,
+            sim_lcd.hFrame, 0, 0,
+            SRCCOPY);
+        sim_lcd.Update = 0; /* 复位更新标志 */
+    }
 }
 
 /* 触摸设备按下 */
@@ -151,6 +152,7 @@ void sim_pad_cleck(void)
 /* 触摸设备松开 */
 void sim_pad_removed(void)
 {
-    GUI_TouchPadSendValue((u_16)sim_lcd.tPad.x, (u_16)sim_lcd.tPad.y, GUI_TP_REMOVED);
+    GUI_TouchPadSendValue((u_16)sim_lcd.tPad.x,
+        (u_16)sim_lcd.tPad.y, GUI_TP_REMOVED);
     sim_lcd.padStatus = GUI_TP_REMOVED;
 }

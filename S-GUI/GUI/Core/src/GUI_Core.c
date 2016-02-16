@@ -62,9 +62,13 @@ u_16 GUI_GetScreenHeight(void)
 /* GUI延时并更新 */
 void GUI_Delay(GUI_TIME tms)
 {
-    GUI_KeyProcess();
-    WM_Exec();          /* 窗口管理器 */
-    _GUI_Delay_ms(tms); /* 延时 */
+    GUI_TIME t = GUI_GetTime();
+
+    WM_Exec();
+    t = GUI_GetTime() - t; /* 计算执行WM_Exec()的时间 */
+    if (tms > t) {
+        _GUI_Delay_ms(tms - t); /* 延时 */
+    }
 }
 
 /* -------------------- GUI消息处理 -------------------- */
