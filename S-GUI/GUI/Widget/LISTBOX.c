@@ -2,12 +2,12 @@
 #include "GUI.h"
 #include "SCROLLBAR.h"
 
-#define LBOX_DFT_LBKCOLOR       0x00524C3C        /* 内部背景色 */
+#define LBOX_DFT_LBKCOLOR       0x003C4C52        /* 内部背景色 */
 #define LBOX_DFT_LSELCOLOR      0x00FFFFFF        /* 选中list后的字体颜色 */
-#define LBOX_DFT_LSELBKCOLOR    0x00CDCD96        /* 选中list后的背景色 */
+#define LBOX_DFT_LSELBKCOLOR    0x0096CDCD        /* 选中list后的背景色 */
 #define LBOX_DFT_LNCOLOR        0x00000000        /* 未选中的list字体颜色 */
 #define LBOX_DFT_RIMCOLOR       0x00000000        /* 边框颜色 */
-#define LBOX_DFT_LINECOLOR      0x0033302A        /* 分隔线颜色 */
+#define LBOX_DFT_LINECOLOR      0x002A3033        /* 分隔线颜色 */
 
 #define LBOX_DFT_HEIGHT         28      /* 条目高度 */
 #define LBOX_DFT_SCROENDWID     48      /* 滚动显示末尾空白宽度 */

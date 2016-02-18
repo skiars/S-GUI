@@ -86,7 +86,7 @@ void GUI_SetWindowTimer(GUI_hWin hWin, GUI_TIME Interval)
 /* 返回窗口计数器时间间隔 */
 GUI_TIME GUI_GetWindowTimer(GUI_hWin hWin)
 {
-    GUI_TIMER * pNode;
+    GUI_TIMER *pNode;
     GUI_TIME Interval;
     
     if (hWin == NULL) {

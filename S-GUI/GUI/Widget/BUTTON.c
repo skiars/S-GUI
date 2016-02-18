@@ -88,9 +88,9 @@ WM_hWin BUTTON_Create(i_16 x0,
     /* 配色 */
     pObj->Widget.Skin.EdgeColor[0] = 0x00FFFFFF;  /* 边线未按下 */
     pObj->Widget.Skin.EdgeColor[1] = 0x00FFFFFF;  /* 边线按下 */
-    pObj->Widget.Skin.BackColor[0] = 0X0066FF99;
-    pObj->Widget.Skin.BackColor[1] = 0X007171C6;
-    pObj->Widget.Skin.FontColor[0] = 0X00367200;
+    pObj->Widget.Skin.BackColor[0] = 0X0099FF66;
+    pObj->Widget.Skin.BackColor[1] = 0X00C67171;
+    pObj->Widget.Skin.FontColor[0] = 0X00007236;
     pObj->Widget.Skin.FontColor[1] = 0X00FFFFFF;
     pObj->Check = 0;                /* 没有按下 */
     BUTTON_SetTitle(pObj, "");      /* 设置初始字符串 */

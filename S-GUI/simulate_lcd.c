@@ -109,18 +109,15 @@ void sim_dispArea(int x,
     int rowlen)
 {
     int i, win_w = sim_lcd.win_w;
-    COLORREF r, g, b;
-    COLORREF *pLCD = sim_lcd.PixBuf;
+    COLORREF *p1, *p2, *pLCD = sim_lcd.PixBuf;
 
     Buffer += y * rowlen + x; /* 偏移到第一个要显示的点的位置 */
     pLCD   += y * win_w + x; /* 偏移到第一个要显示的点的位置 */
     while (Height--) {
+        p1 = pLCD;
+        p2 = Buffer;
         for (i = 0; i < Width; ++i) {
-            b = Buffer[i];
-            r = b & 0x000000ff;
-            g = b & 0x0000ff00;
-            b = b & 0x00ff0000;
-            pLCD[i] = r << 16 | g | b >> 16;
+            *p1++ = *p2++;
         }
         Buffer += rowlen;
         pLCD += win_w;

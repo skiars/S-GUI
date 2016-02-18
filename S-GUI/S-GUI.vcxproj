@@ -194,7 +194,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUI\Config\GUI_Botton.c" />
-    <ClCompile Include="GUI\Core\src\GGUI_Bitmap.c" />
+    <ClCompile Include="GUI\Core\src\GUI_Bitmap.c" />
     <ClCompile Include="GUI\Core\src\GUI_2D.c" />
     <ClCompile Include="GUI\Core\src\GUI_Core.c" />
     <ClCompile Include="GUI\Core\src\GUI_KeyBoard.c" />

@@ -1,5 +1,5 @@
 #include "GUI_Queue.h"
-#include "GUI_Botton.h"
+#include "GUI.h"
 
 /*
  * 消息队列初始化

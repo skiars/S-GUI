@@ -3,16 +3,16 @@
 #define WINDOW_DEF_CAPHEIGHT   32
 /* 默认的窗体caption背景色caption的颜色. */
 /* 以及窗体背景色. */
-#define WINDOW_CAPTION_UPC          0x00524C3C  /* 窗口CAPTION上部分填充色 */
-#define WINDOW_CAPTION_DOWNC        0x00423E33  /* 窗口CAPTION下部分填充色 */
-#define WINDOW_TITLE_COLOR          0x00CDCD96  /* 窗口标题颜色 */
-#define WINDOW_BODY_BKC             0x00232329  /* 窗口底色 */
+#define WINDOW_CAPTION_UPC          0x003C4C52  /* 窗口CAPTION上部分填充色 */
+#define WINDOW_CAPTION_DOWNC        0x00333E42  /* 窗口CAPTION下部分填充色 */
+#define WINDOW_TITLE_COLOR          0x0096CDCD  /* 窗口标题颜色 */
+#define WINDOW_BODY_BKC             0x00292323  /* 窗口底色 */
 #define WINDOW_FONT_COLOR           0x00FFFFFF  /* 窗口字体颜色 */
 
 /* 标准窗体边框颜色定义 */
-#define STD_WIN_RIM_OUTC            0x0033302A  /* 外线颜色 */
-#define STD_WIN_RIM_MIDC            0x006D6654  /* 中线颜色 */
-#define STD_WIN_RIM_INC             0x00423D30  /* 内线颜色 */
+#define STD_WIN_RIM_OUTC            0x002A3033  /* 外线颜色 */
+#define STD_WIN_RIM_MIDC            0x0054666D  /* 中线颜色 */
+#define STD_WIN_RIM_INC             0x00303D42  /* 内线颜色 */
 
 /* Window自绘函数 */
 static void _WINDOW_Paint(WM_hWin hWin)

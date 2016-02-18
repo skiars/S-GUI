@@ -139,11 +139,11 @@
     <ClInclude Include="GUI\Core\inc\GUI_Bitmap.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Bitmap.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\Core\inc\GUI_Timer.h">
       <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Bitmap.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -237,10 +237,10 @@
     <ClCompile Include="pic_rootwin.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Core\src\GGUI_Bitmap.c">
+    <ClCompile Include="GUI\Core\src\GUI_Timer.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Core\src\GUI_Timer.c">
+    <ClCompile Include="GUI\Core\src\GUI_Bitmap.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
   </ItemGroup>

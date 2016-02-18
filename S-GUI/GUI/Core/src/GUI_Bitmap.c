@@ -12,7 +12,7 @@ static void _DrawBitmap24b(i_16 x,
     int yMag)
 {
     GUI_COLOR tC;
-    unsigned char *pC, *pt;
+    const unsigned char *pC, *pt;
     u_16 i = 0, j = 0, a1, a2, b1, b2;
     u_32 l = xMag * 3;
 
@@ -24,9 +24,9 @@ static void _DrawBitmap24b(i_16 x,
     for (j = a1; j < a2 && j < yMag; ++j) {
         pC = pt;
         for (i = b1; i < b2 && i < xMag; ++i) {
-            tC = *pC++;
+            tC = *pC++ << 16;
             tC |= *pC++ << 8;
-            tC |= *pC++ << 16;
+            tC |= *pC++;
             GUI_DrawPixel(i + x, j + y, tC);
         }
         pt += l;
