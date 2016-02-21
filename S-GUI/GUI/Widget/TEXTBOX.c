@@ -7,7 +7,7 @@
 static void TEXTBOX_LineFeedDisp( const char *str, GUI_COLOR Color, GUI_FontType Font, GUI_RECT *Rect);
 
 /* 自绘函数 */
-static void __Paint(WM_hWin hWin)
+static void __Paint(WM_HWIN hWin)
 {
     i_16 x0, y0;
     u_16 xSize, ySize;
@@ -37,9 +37,7 @@ static void __Callback(WM_MESSAGE *pMsg)
         case WM_PAINT :
             __Paint(pMsg->hWin);
             break;
-        case WM_DELETE :
-            GUI_fastfree(pMsg->hWin);
-            break;
+
         case WM_TP_CHECKED :
             WM_SetActiveMainWindow(pMsg->hWin);
             break;
@@ -61,11 +59,11 @@ static void __Callback(WM_MESSAGE *pMsg)
  * Flag:窗口状态
  * cb:用户回调历程指针
  **/
-WM_hWin TEXTBOX_Create(i_16 x0,
+WM_HWIN TEXTBOX_Create(i_16 x0,
                       i_16 y0,
                       u_16 xSize,
                       u_16 ySize,
-                      WM_hWin hParent,
+                      WM_HWIN hParent,
                       u_16 Id,
                       u_8 Flag)
 {
@@ -77,11 +75,6 @@ WM_hWin TEXTBOX_Create(i_16 x0,
     if (pObj == NULL) {
         return NULL;
     }
-    /* 设置用户区 */
-    pObj->Widget.Win.UserRect.x0 = pObj->Widget.Win.Rect.x0;
-    pObj->Widget.Win.UserRect.y0 = pObj->Widget.Win.Rect.y0;
-    pObj->Widget.Win.UserRect.x1 = pObj->Widget.Win.Rect.x1;
-    pObj->Widget.Win.UserRect.y1 = pObj->Widget.Win.Rect.y1;
     /* 配色 */
     pObj->Widget.Skin.BackColor[0] = TEXTBOX_DEF_BKC;
     pObj->Widget.Skin.FontColor[0] = TEXTBOX_TEXT_COLOR;
@@ -92,7 +85,7 @@ WM_hWin TEXTBOX_Create(i_16 x0,
 }
 
 /* TEXTBOX设置标题 */
-GUI_RESULT TEXTBOX_SetText(WM_hWin hWin, const char *str)
+GUI_RESULT TEXTBOX_SetText(WM_HWIN hWin, const char *str)
 {
     GUI_RECT Rect;
 
@@ -106,7 +99,7 @@ GUI_RESULT TEXTBOX_SetText(WM_hWin hWin, const char *str)
 }
 
 /* TEXTBOX设置字体 */
-GUI_RESULT TEXTBOX_SetFont(WM_hWin hWin, GUI_FontType Font)
+GUI_RESULT TEXTBOX_SetFont(WM_HWIN hWin, GUI_FontType Font)
 {
     /* 检测是否为TEXTBOX控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
@@ -115,7 +108,7 @@ GUI_RESULT TEXTBOX_SetFont(WM_hWin hWin, GUI_FontType Font)
 }
 
 /* TEXTBOX设置为透明窗口 */
-GUI_RESULT TEXTBOX_SetAllAlpha(WM_hWin hWin, u_8 Alpha)
+GUI_RESULT TEXTBOX_SetAllAlpha(WM_HWIN hWin, u_8 Alpha)
 {
     GUI_RECT Rect;
     

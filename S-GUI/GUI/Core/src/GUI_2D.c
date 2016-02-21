@@ -62,7 +62,7 @@ void GUI_DrawPoint(i_16 x,i_16 y,GUI_COLOR Color)
     GUI_Val2Rect(&r1, x, y, 1, 1);
     GUI_DrawAreaInit(&r1);
     while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
-        if (GUI_RectOverlay(&r2, &r2, &r1) == GUI_OK) {
+        if (GUI_RectOverlay(&r2, &r2, &r1)) {
             if (Color >> 24) {
                 Color = GUI_AlphaBlend(Color, GUI_ReadPixel(x, y), Color >> 24);
             }
@@ -114,12 +114,12 @@ void GUI_VertLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
     GUI_RECT r1, r2;
 
     RETURN_TRANSPARENT();
-    if (GUI_Val2Rect(&r1, x0, y0, 1, len) == GUI_ERR) {
+    if (GUI_Val2Rect(&r1, x0, y0, 1, len) == FALSE) {
         return; /* 长度为0 */
     }
     GUI_DrawAreaInit(&r1);
     while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
-        if (GUI_RectOverlay(&r2, &r2, &r1) == GUI_OK) {
+        if (GUI_RectOverlay(&r2, &r2, &r1)) {
             x0 = r2.x0;
             y0 = r2.y0;
             len = r2.y1 - r2.y0 + 1;
@@ -167,12 +167,12 @@ void GUI_HoriLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
     GUI_RECT r1, r2;
 
     RETURN_TRANSPARENT();
-    if (GUI_Val2Rect(&r1, x0, y0, len, 1) == GUI_ERR) {
+    if (GUI_Val2Rect(&r1, x0, y0, len, 1) == FALSE) {
         return; /* 长度为0 */
     }
     GUI_DrawAreaInit(&r1);
     while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
-        if (GUI_RectOverlay(&r2, &r2, &r1) == GUI_OK) {
+        if (GUI_RectOverlay(&r2, &r2, &r1)) {
             x0 = r2.x0;
             y0 = r2.y0;
             len = r2.x1 - r2.x0 + 1;
@@ -232,12 +232,12 @@ void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Color)
     
     RETURN_TRANSPARENT();
     /* 将矩形坐标转换为结构体 */
-    if (GUI_Val2Rect(&r1, x0, y0, xSize, ySize) == GUI_ERR) {
+    if (GUI_Val2Rect(&r1, x0, y0, xSize, ySize) == FALSE) {
         return; /* 非法 */
     }
     GUI_DrawAreaInit(&r1);
     while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
-        if (GUI_RectOverlay(&r2, &r2, &r1) == GUI_OK) {
+        if (GUI_RectOverlay(&r2, &r2, &r1)) {
             x0 = r2.x0;
             y0 = r2.y0;
             xSize = r2.x1 + 1 - x0;

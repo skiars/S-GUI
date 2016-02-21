@@ -27,7 +27,7 @@ static void __Paint(GRAPH_Obj *pObj)
     /* 绘制背景 */
     Color = pObj->Widget.Skin.BackColor[0];
     GUI_FillRect(x0, y0, xSize, ySize, Color);
-    Rect = WM_GetWindowUserRect(pObj);
+    Rect = WM_GetWindowRect(pObj);
     x0 = Rect.x0;
     y0 = Rect.y0;
     x1 = Rect.x1;
@@ -56,9 +56,6 @@ static void __Callback(WM_MESSAGE *pMsg)
     case WM_PAINT :
         __Paint(pMsg->hWin);
         break;
-    case WM_DELETE :
-        GUI_fastfree(pMsg->hWin);
-        break;
     }
 }
 
@@ -72,11 +69,11 @@ static void __Callback(WM_MESSAGE *pMsg)
 * Id:窗口ID
 * Flag:窗口状态
 **/
-GUI_hWin GRAPH_Create(i_16 x0,
+GUI_HWIN GRAPH_Create(i_16 x0,
     i_16 y0,
     u_16 xSize,
     u_16 ySize,
-    WM_hWin hParent,
+    WM_HWIN hParent,
     u_16 Id,
     u_8 Flag)
 {
@@ -88,11 +85,6 @@ GUI_hWin GRAPH_Create(i_16 x0,
     if (pObj == NULL) {
         return NULL;
     }
-    /* 设置用户区 */
-    pObj->Widget.Win.UserRect.x0 = pObj->Widget.Win.Rect.x0 + 8;
-    pObj->Widget.Win.UserRect.y0 = pObj->Widget.Win.Rect.y0 + 8;
-    pObj->Widget.Win.UserRect.x1 = pObj->Widget.Win.Rect.x1 - 8;
-    pObj->Widget.Win.UserRect.y1 = pObj->Widget.Win.Rect.y1 - 8;
     /* 设置颜色 */
     pObj->Widget.Skin.BackColor[0] = DFT_BACKCOLOR;
     pObj->Widget.Skin.EdgeColor[0] = DFT_EDGECOLOR;
@@ -107,7 +99,7 @@ GUI_hWin GRAPH_Create(i_16 x0,
     return pObj;
 }
 
-GUI_RESULT GRAPH_SetData(GUI_hWin hWin, i_16 *x, i_16 *y, u_16 len)
+GUI_RESULT GRAPH_SetData(GUI_HWIN hWin, i_16 *x, i_16 *y, u_16 len)
 {
     i_16 *px, *py;
     GRAPH_Obj *pObj = hWin;

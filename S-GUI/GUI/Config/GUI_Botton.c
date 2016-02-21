@@ -6,6 +6,7 @@
 #include "GUI_Botton.h"
 
 /* 用户自己添加的头文件 */
+#include <stdio.h>
 #include "..\..\simulate_lcd.h"
 
 /* 用于Windows的互斥信号量 */
@@ -107,3 +108,16 @@ static void Phy_DispArea(u_16 x,
 {
     sim_dispArea(x, y, xSize, ySize, pBuffer, rowlen);
 }
+
+/* GUI调试输出 */
+#if GUI_DEBUG_MODE
+void _GUI_DebugOut(const char *s)
+{
+    /* 代码仅Win32适用 */
+    AllocConsole();
+    unsigned long lgsize;
+    HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    WriteFile(hOutput, s, strlen(s), &lgsize, 0);
+    while (1);
+}
+#endif

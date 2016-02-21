@@ -10,16 +10,16 @@
  * x0,起始x坐标
  * y0,起始y坐标
  **/
-GUI_hWin GUI_CreateDialogBox(GUI_WIDGET_CREATE_INFO *pWinfo,
+GUI_HWIN GUI_CreateDialogBox(GUI_WIDGET_CREATE_INFO *pWinfo,
                              u_16 NumWidgets,
                              WM_CALLBACK *cb,
-                             WM_hWin hParent,
+                             WM_HWIN hParent,
                              i_16 x0,
                              i_16 y0)
 {
 #if 0
     u_16 i, xSize, ySize;
-    GUI_hWin hWin;
+    GUI_HWIN hWin;
     
     x0 += pWinfo[0].x0;
     y0 += pWinfo[0].y0;
@@ -33,7 +33,7 @@ GUI_hWin GUI_CreateDialogBox(GUI_WIDGET_CREATE_INFO *pWinfo,
     return hWin;
 
     /* u_16 i, xSize, ySize; */
-    GUI_hWin hWin;
+    GUI_HWIN hWin;
 
     /* 创建对话框 */
     WM_CreateWindowAsChild(x0, y0, 0, 0, hParent, 0, 0, 0, cb,0);
@@ -49,7 +49,7 @@ GUI_hWin GUI_CreateDialogBox(GUI_WIDGET_CREATE_INFO *pWinfo,
 /*
 *删除对话框
 */
-void GUI_DeleteDialogBox(GUI_hWin hWin)
+void GUI_DeleteDialogBox(GUI_HWIN hWin)
 {
     
 }

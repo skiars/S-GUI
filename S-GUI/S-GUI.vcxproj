@@ -170,7 +170,7 @@
     <ClInclude Include="GUI\Core\inc\GUI_KeyBoard.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Memory.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Queue.h" />
-    <ClInclude Include="GUI\Core\inc\GUI_RectCalc.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_Rect.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Timer.h" />
     <ClInclude Include="GUI\Core\inc\GUI_TouchPad.h" />
     <ClInclude Include="GUI\Core\inc\GUI_WM.h" />
@@ -200,7 +200,7 @@
     <ClCompile Include="GUI\Core\src\GUI_KeyBoard.c" />
     <ClCompile Include="GUI\Core\src\GUI_Memory.c" />
     <ClCompile Include="GUI\Core\src\GUI_Queue.c" />
-    <ClCompile Include="GUI\Core\src\GUI_RectCalc.c" />
+    <ClCompile Include="GUI\Core\src\GUI_Rect.c" />
     <ClCompile Include="GUI\Core\src\GUI_Timer.c" />
     <ClCompile Include="GUI\Core\src\GUI_TouchPad.c" />
     <ClCompile Include="GUI\Core\src\GUI_WM.c" />

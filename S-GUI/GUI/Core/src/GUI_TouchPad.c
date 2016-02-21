@@ -32,12 +32,12 @@ void GUI_TouchPadSendValue(i_16 x, i_16 y, u_16 State)
 /* 触摸板消息处理 */
 GUI_RESULT GUI_TouchPadMessageHandle(GUI_MESSAGE *pMsg)
 {
-    static GUI_hWin _CurWin = NULL;
+    static GUI_HWIN _CurWin = NULL;
     static GUI_POINT _CurPos;
     
     /* 检查是否是WM触摸板消息 */
     if (pMsg->MsgId == WM_TP_CHECKED || pMsg->MsgId == WM_TP_REMOVED) {
-        GUI_hWin hWin;
+        GUI_HWIN hWin;
         GUI_POINT Point;
 
         GUI_LOCK();

@@ -17,25 +17,25 @@ typedef struct {
     List pList;         /* 链表 */
     PNode LastNode;     /* 尾部节点 */
     const char *StrTab;
-    WM_hWin hScro;      /* 滚动条句柄 */
+    WM_HWIN hScro;      /* 滚动条句柄 */
     u_16 ScbWidth;
 }LISTBOX_Obj;
 
-WM_hWin LISTBOX_Create(i_16 x0,
+WM_HWIN LISTBOX_Create(i_16 x0,
                       i_16 y0,
                       u_16 xSize,
                       u_16 ySize,
-                      WM_hWin hParent,
+                      WM_HWIN hParent,
                       u_16 Id,
                       u_8 Flag,
                       u_16 namepos);
-GUI_RESULT LISTBOX_AddList(WM_hWin hWin,char *name);
-void LISTBOX_ItemDown(WM_hWin hWin);
-GUI_RESULT LISTBOX_ItemUp(WM_hWin hWin);
-u_16 LISTBOX_GetSel(WM_hWin hWin);
-char *LISTBOX_GetSelText(WM_hWin hWin);
-GUI_RESULT LISTBOX_SetSel(WM_hWin hWin, u_16 Index);
-GUI_RESULT LISTBOX_SetSelFromStr(WM_hWin hWin, const char *Str);
-void LISTBOX_ScrollDisplay(GUI_hWin hWin);
+GUI_RESULT LISTBOX_AddList(WM_HWIN hWin,char *name);
+void LISTBOX_ItemDown(WM_HWIN hWin);
+GUI_RESULT LISTBOX_ItemUp(WM_HWIN hWin);
+u_16 LISTBOX_GetSel(WM_HWIN hWin);
+char *LISTBOX_GetSelText(WM_HWIN hWin);
+GUI_RESULT LISTBOX_SetSel(WM_HWIN hWin, u_16 Index);
+GUI_RESULT LISTBOX_SetSelFromStr(WM_HWIN hWin, const char *Str);
+void LISTBOX_ScrollDisplay(GUI_HWIN hWin);
 
 #endif

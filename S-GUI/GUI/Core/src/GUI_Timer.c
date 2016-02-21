@@ -3,7 +3,7 @@
 
 static GUI_TIMER *_ListPtr = NULL;
 
-static GUI_TIMER * _FindWindowInList(GUI_hWin hWin)
+static GUI_TIMER * _FindWindowInList(GUI_HWIN hWin)
 {
     GUI_TIMER *pNode = _ListPtr;
 
@@ -15,7 +15,7 @@ static GUI_TIMER * _FindWindowInList(GUI_hWin hWin)
     return pNode;
 }
 
-static void _DeleteWindowInList(GUI_hWin hWin)
+static void _DeleteWindowInList(GUI_HWIN hWin)
 {
     if (_ListPtr) {
         GUI_TIMER *pNode = _ListPtr, *pLast = NULL;
@@ -56,7 +56,7 @@ void GUI_TimerHandle(void)
 }
 
 /* 设置窗口计时器,时间间隔单位为ms,如果Interval为0，就会删除该窗口的定时器 */
-void GUI_SetWindowTimer(GUI_hWin hWin, GUI_TIME Interval)
+void GUI_SetWindowTimer(GUI_HWIN hWin, GUI_TIME Interval)
 {
     if (hWin == NULL) {
         return;
@@ -84,7 +84,7 @@ void GUI_SetWindowTimer(GUI_hWin hWin, GUI_TIME Interval)
 }
 
 /* 返回窗口计数器时间间隔 */
-GUI_TIME GUI_GetWindowTimer(GUI_hWin hWin)
+GUI_TIME GUI_GetWindowTimer(GUI_HWIN hWin)
 {
     GUI_TIMER *pNode;
     GUI_TIME Interval;

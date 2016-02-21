@@ -166,3 +166,11 @@ u_8 GUI_GetNextArea(GUI_RECT *pRect)
     __NowRectNode = __NowRectNode->pNext;
     return 1;
 }
+
+/* GUIµ÷ÊÔÊä³ö */
+#if GUI_DEBUG_MODE
+void GUI_DebugOut(const char *s)
+{
+    _GUI_DebugOut(s);
+}
+#endif

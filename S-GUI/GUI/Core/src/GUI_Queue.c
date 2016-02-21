@@ -47,13 +47,16 @@ GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
 }
 
 /*
- * 向消息队列发送一个消息
+ * 向消息队列发送一条消息
  * pQue:事件队列指针
  * pMsg:需要发送的消息
  **/
 GUI_RESULT GUI_PostMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
 {
     if (pQue->size == pQue->Capacity - 1) { /* 队列已满 */
+#if GUI_DEBUG_MODE
+        GUI_DEBUG_OUT("GUI message queue is full.");
+#endif
         return GUI_ERR;
     }
     ++pQue->size;

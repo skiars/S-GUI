@@ -15,5 +15,6 @@ void GUI_DspStringCurRectMiddle(i_16 x0, i_16 y0, i_16 xSize,
                                 GUI_COLOR Color, GUI_FontType Font);
 void GUI_DispStringAt(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize,
                       const char *str, GUI_COLOR Color, GUI_FontType Font);
+void GUI__DispDebugInfo(const char *str);
 
 #endif

@@ -79,25 +79,14 @@ int sim_getHeight(void)
 /* 屏幕模拟器显示像素 */
 void sim_drawPix(int x, int y, COLORREF Color)
 {
-    COLORREF r, g, b;
-    
-    r = Color & 0x000000ff;
-    g = Color & 0x0000ff00;
-    b = Color & 0x00ff0000;
-    sim_lcd.PixBuf[y * sim_lcd.win_w + x] = r << 16 | g | b >> 16;
-    sim_lcd.Update = 1;
+    sim_lcd.PixBuf[y * sim_lcd.win_w + x] = Color;
+    sim_lcd.Update = 2;
 }
 
 /* 屏幕模拟器读取像素 */
 COLORREF sim_readPix(int x, int y)
 {
-    COLORREF r, g, b;
-
-    b = sim_lcd.PixBuf[y * sim_lcd.win_w + x];
-    r = b & 0x00ff0000;
-    g = b & 0x0000ff00;
-    b = b & 0x000000ff;
-    return r >> 16 | g | b << 16;
+    return sim_lcd.PixBuf[y * sim_lcd.win_w + x];
 }
 
 /* 屏幕模拟器显示一个区域 */
@@ -134,7 +123,12 @@ void sim_updata(void)
             sim_lcd.win_w, sim_lcd.win_h,
             sim_lcd.hFrame, 0, 0,
             SRCCOPY);
-        sim_lcd.Update = 0; /* 复位更新标志 */
+        /* 如果sim_lcd.Update为1则表示是帧更新，否者需要一直刷新 */
+        if (sim_lcd.Update == 1) {
+            sim_lcd.Update = 0; /* 复位更新标志 */
+        } else {
+            Sleep(10);
+        }
     }
 }
 

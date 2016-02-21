@@ -7,22 +7,31 @@ typedef unsigned long  u_32;
 typedef short          i_16;
 typedef int            i_32;
 
-
-typedef void * GUI_hWin;      /* 窗口句柄 */
+typedef void * GUI_HWIN;      /* 窗口句柄 */
 typedef u_32 GUI_TIME;        /* GUI时间 */
 typedef u_32 GUI_COLOR;
 typedef u_16 LCD_COLOR;
 
 typedef enum {
     GUI_OK = 0,
-    GUI_ERR
+    GUI_ERR,
 } GUI_RESULT;
+
+typedef u_8 GUI_BOOL;
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+  #define FALSE 0
+#endif
 
 #ifndef NULL
 #ifdef __cplusplus
-#define NULL 0
+  #define NULL 0
 #else
-#define NULL ((void *)0)
+  #define NULL ((void *)0)
 #endif
 #endif
 

@@ -9,8 +9,8 @@ typedef u_32 GUI_PARAM;
 /* 消息结构体定义 */
 typedef struct {
     u_16 MsgId;       /* 消息编号 */
-    GUI_hWin hWin;    /* 目标窗口句柄 */
-    GUI_hWin hWinSrc; /* 源窗口句柄  */
+    GUI_HWIN hWin;    /* 目标窗口句柄 */
+    GUI_HWIN hWinSrc; /* 源窗口句柄  */
     GUI_PARAM Param;  /* 参数 */
 } GUI_MESSAGE;
 

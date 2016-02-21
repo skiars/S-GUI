@@ -1,6 +1,7 @@
 #ifndef __GUI_BOTTON_H
 #define __GUI_BOTTON_H
 
+#include "GUI_Config.h"
 #include "GUI_Typedef.h"
 
 typedef struct {
@@ -23,12 +24,11 @@ void GUI_TaskUnlock(void);
 u_32 GUI_GetTaskId(void);
 GUI_TIME GUI_GetTime(void);
 void _GUI_Delay_ms(GUI_TIME tms);
-
 void *GUI_malloc(u_32 size);
 void GUI_free(void *ptr);
 void *GUI_fastmalloc(u_32 size);
 void GUI_fastfree(void *ptr);
-
 void GUI_Phy_Init(GUI_PHY_INFO *phys);
+void _GUI_DebugOut(const char *s);
 
 #endif /* __GUI_BOTTON_H */

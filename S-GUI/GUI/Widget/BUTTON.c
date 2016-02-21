@@ -2,7 +2,7 @@
 #include "GUI.h"
 
 /* 按键控件自绘函数 */
-static void _BUTTON_Paint(WM_hWin hWin)
+static void _BUTTON_Paint(WM_HWIN hWin)
 {
     i_16 x0, y0;
     u_16 xSize, ySize;
@@ -36,39 +36,35 @@ static void _BUTTON_Paint(WM_hWin hWin)
 
 static void _BUTTON_Callback(WM_MESSAGE *pMsg)
 {
-    /* 检测是否为BUTTON控件 */
-    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_BUTTON);
     switch (pMsg->MsgId) {
         case WM_PAINT :
             _BUTTON_Paint(pMsg->hWin);
             break;
-        case WM_DELETE :
-            GUI_fastfree(pMsg->hWin);
-            break;
         case WM_TP_CHECKED :
             BUTTON_Check(pMsg->hWin, 1);
-            WM_SetActiveMainWindow(pMsg->hWin);
-            WM_SendMessageToParent(pMsg->hWin,
-                WM_BUTTON_CLICKED, (GUI_PARAM)NULL);
+            pMsg->MsgId = WM_BUTTON_CLICKED;
+            WM_SendMessageToParent(pMsg->hWin, pMsg);
             break;
         case WM_TP_REMOVED :
             BUTTON_Check(pMsg->hWin, 0);
-            WM_SendMessageToParent(pMsg->hWin,
-                WM_BUTTON_RELEASED, (GUI_PARAM)NULL);
+            pMsg->MsgId = WM_BUTTON_RELEASED;
+            WM_SendMessageToParent(pMsg->hWin, pMsg);
             break;
         case WM_TP_LEAVE   :
-            WM_SendMessageToParent(pMsg->hWin,
-                WM_NUTTON_MOVED_OUT, (GUI_PARAM)NULL);
+            pMsg->MsgId = WM_NUTTON_MOVED_OUT;
+            WM_SendMessageToParent(pMsg->hWin, pMsg);
             break;
+        default:
+            WM_DefaultProc(pMsg);
     }
 }
 
 /* 创建按键控件 */
-WM_hWin BUTTON_Create(i_16 x0,
+WM_HWIN BUTTON_Create(i_16 x0,
                       i_16 y0,
                       u_16 xSize,
                       u_16 ySize,
-                      WM_hWin hParent,
+                      WM_HWIN hParent,
                       u_16 Id,
                       u_8 Flag)
 {
@@ -80,11 +76,6 @@ WM_hWin BUTTON_Create(i_16 x0,
     if (pObj == NULL) {
         return NULL;
     }
-    /* 设置用户区 */
-    pObj->Widget.Win.UserRect.x0 = pObj->Widget.Win.Rect.x0 + 1;
-    pObj->Widget.Win.UserRect.y0 = pObj->Widget.Win.Rect.y0 + 1;
-    pObj->Widget.Win.UserRect.x1 = pObj->Widget.Win.Rect.x1 - 1;
-    pObj->Widget.Win.UserRect.y1 = pObj->Widget.Win.Rect.y1 - 1;
     /* 配色 */
     pObj->Widget.Skin.EdgeColor[0] = 0x00FFFFFF;  /* 边线未按下 */
     pObj->Widget.Skin.EdgeColor[1] = 0x00FFFFFF;  /* 边线按下 */
@@ -99,7 +90,7 @@ WM_hWin BUTTON_Create(i_16 x0,
     return pObj;
 }
 
-GUI_RESULT BUTTON_SetTitle(WM_hWin hWin, const char *str)
+GUI_RESULT BUTTON_SetTitle(WM_HWIN hWin, const char *str)
 {
     /* 检测是否为BUTTON控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_BUTTON);
@@ -107,7 +98,7 @@ GUI_RESULT BUTTON_SetTitle(WM_hWin hWin, const char *str)
     return GUI_OK;
 }
 
-GUI_RESULT BUTTON_SetFont(WM_hWin hWin, GUI_FontType Font)
+GUI_RESULT BUTTON_SetFont(WM_HWIN hWin, GUI_FontType Font)
 {
     /* 检测是否为BUTTON控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_BUTTON);
@@ -116,7 +107,7 @@ GUI_RESULT BUTTON_SetFont(WM_hWin hWin, GUI_FontType Font)
 }
 
 /* 按键按下API */
-GUI_RESULT BUTTON_Check(WM_hWin hWin, u_8 NewStatus)
+GUI_RESULT BUTTON_Check(WM_HWIN hWin, u_8 NewStatus)
 {
     BUTTON_Obj *pObj = hWin;
     

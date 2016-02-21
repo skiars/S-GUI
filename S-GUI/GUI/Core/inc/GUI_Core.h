@@ -9,6 +9,8 @@
 #define _hRootWin   (GUI_Data->RootWin)
 #define _PaintArea  (GUI_Data->PaintArea)
 
+#define GUI_DEBUG_OUT(s) GUI_DebugOut(s);
+
 /* 矩形 */
 typedef struct { i_16 x0, y0, x1, y1; } GUI_RECT;
 /* 点 */
@@ -26,7 +28,7 @@ typedef struct{
     RECT_LIST RectList;    /* 裁剪矩形私有堆 */
     RECT_LIST NowRectList; /* 当前绘制的裁剪矩链表 */
     GUI_RECT *PaintArea;   /* 当前绘制的区域 */
-    GUI_hWin RootWin;      /* 根窗口 */
+    GUI_HWIN RootWin;      /* 根窗口 */
     GUI_QUEUE *MsgQueue;   /* GUI消息队列 */
 #if GUI_USE_MEMORY
     GUI_COLOR *lcdbuf; /* LCD缓冲 */
@@ -45,6 +47,7 @@ GUI_RESULT GUI_GetMessage(GUI_MESSAGE *pMsg);
 GUI_RESULT GUI_PostMessage(GUI_MESSAGE *pMsg);
 void GUI_LOCK(void);
 void GUI_UNLOCK(void);
+void GUI_DebugOut(const char *s);
 
 void GUI_SetNowRectList(RECT_LIST l, GUI_RECT *p);
 void GUI_DrawAreaInit(GUI_RECT *p);

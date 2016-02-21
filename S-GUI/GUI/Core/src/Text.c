@@ -231,5 +231,3 @@ void GUI_DispStringAt(i_16 x0,
 {
 
 }
-
-

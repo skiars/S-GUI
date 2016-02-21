@@ -48,7 +48,7 @@ void GUI_DrawBitmap24b(i_16 x0,
     GUI_Val2Rect(&r1, x0, y0, xSize, ySize);
     GUI_DrawAreaInit(&r1);
     while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
-        if (GUI_RectOverlay(&r2, &r2, &r1) == GUI_OK) {
+        if (GUI_RectOverlay(&r2, &r2, &r1)) {
             _DrawBitmap24b(x0, y0, r2.x0, r2.y0, r2.x1, r2.y1,
                 pPixel, xMag, yMag);
         }

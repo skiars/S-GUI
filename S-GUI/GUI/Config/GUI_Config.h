@@ -5,7 +5,7 @@
 #define KEY_BUFFER_NUM        10
 
 /* 定义消息队列最大消息数 */
-#define GUI_MSG_QUEUE_SIZE    20
+#define GUI_MSG_QUEUE_SIZE    10
 
 /* 是否使用存储器缓冲.
  * 0:不使用屏幕缓冲.
@@ -22,6 +22,9 @@
 /* 裁剪矩形链表堆大小，注意不能太小，发现现实出现问题时，应该先增加
  * GUI_RECT_HEAP_SIZE 的值，如果问题没有解决再去排除其他地方的问题。
  **/
-#define GUI_RECT_HEAP_SIZE    100
+#define GUI_RECT_HEAP_SIZE    50
+
+/* 调试模式开关 */
+#define GUI_DEBUG_MODE        1
 
 #endif

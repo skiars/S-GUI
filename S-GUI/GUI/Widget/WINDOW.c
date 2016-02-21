@@ -1,4 +1,5 @@
 #include "WINDOW.h"
+#include "GUI.h"
 
 #define WINDOW_DEF_CAPHEIGHT   32
 /* 默认的窗体caption背景色caption的颜色. */
@@ -14,8 +15,13 @@
 #define STD_WIN_RIM_MIDC            0x0054666D  /* 中线颜色 */
 #define STD_WIN_RIM_INC             0x00303D42  /* 内线颜色 */
 
+static WM_HWIN __GetClient(WINDOW_Obj *pObj)
+{
+    return pObj->hClient;
+}
+
 /* Window自绘函数 */
-static void _WINDOW_Paint(WM_hWin hWin)
+static void __Paint(WM_HWIN hWin)
 {
     i_16 x0, y0;
     u_16 xSize, ySize;
@@ -44,7 +50,6 @@ static void _WINDOW_Paint(WM_hWin hWin)
     GUI_DrawRect(x0 + 2, y0 + pObj->CaptionHeight + 1,
                  xSize - 4, ySize - pObj->CaptionHeight - 3, 
                  Color);
-
     /* 绘制标题栏 */
     Color = pObj->Widget.Skin.CaptionColor[0];
     GUI_FillRect(x0 + 1, y0 + 1, xSize - 2,
@@ -53,10 +58,6 @@ static void _WINDOW_Paint(WM_hWin hWin)
     GUI_FillRect(x0 + 1, y0 + pObj->CaptionHeight / 2 + 1,
                  xSize - 2, pObj->CaptionHeight / 2, Color);
 
-    /* 绘制内部背景 */
-    Color = pObj->Widget.Skin.BackColor[0];
-    GUI_FillRect(x0 + 3, y0 + pObj->CaptionHeight + 2,
-                 xSize - 6, ySize - pObj->CaptionHeight - 5, Color);
     /* 绘制标题 */
     Color = pObj->Widget.Skin.FontColor[0];
     GUI_DspStringCurRectMiddle(x0 + 1, y0 + 1, xSize - 2,
@@ -66,36 +67,73 @@ static void _WINDOW_Paint(WM_hWin hWin)
 }
 
 /* WINDOW控件自动回调函数 */
-static void _WINDOW_Callback(WM_MESSAGE *pMsg)
+static void __Callback(WM_MESSAGE *pMsg)
 {
-    i_16 dX, dY;
-    
-    /* 检测是否为WINDOW控件 */
-    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_WINDOW);
+    WM_CALLBACK *cb = ((WINDOW_Obj*)pMsg->hWin)->UserCb;
+
     switch (pMsg->MsgId) {
-        case WM_PAINT :
-            _WINDOW_Paint(pMsg->hWin);
-            break;
-        case WM_DELETE :
-            GUI_fastfree(pMsg->hWin);
-            break;
-        case WM_TP_CHECKED :
-            WM_SetActiveMainWindow(pMsg->hWin);
-            break;
-        case WM_TP_PRESS:
-            dX = ((GUI_POINT*)pMsg->Param)[1].x;
-            dY = ((GUI_POINT*)pMsg->Param)[1].y;
-            WM_MoveWindow(pMsg->hWin, dX, dY);
-            break;
-        case WM_TP_LEAVE:
-            dX = ((GUI_POINT*)pMsg->Param)[1].x;
-            dY = ((GUI_POINT*)pMsg->Param)[1].y;
-            WM_MoveWindow(pMsg->hWin, dX, dY);
-            break;
-        default : /* 执行用户回调函数 */
-            ((WINDOW_Obj*)pMsg->hWin)->UserCb(pMsg);
+    case WM_PAINT:
+        __Paint(pMsg->hWin);
+        break;
+    case WM_DELETE:
+        return;
+    case WM_GET_CLIENT:
+        pMsg->Param = (GUI_PARAM)__GetClient(pMsg->hWin);
+        break;
+    default:
+        WM_DefaultProc(pMsg);
     }
-    
+}
+
+/* 客户区自绘函数 */
+static void __PaintClient(WM_HWIN hWin)
+{
+    GUI_RECT *pr = &((WM_Obj*)hWin)->Rect;
+    WINDOW_Obj *pObj = WM_GetParentHandle(hWin);
+
+    /* 绘制背景 */
+    GUI_FillRect(pr->x0, pr->y0, pr->x1 - pr->x0 + 1,
+        pr->y1 - pr->y0 + 1, pObj->Widget.Skin.BackColor[0]);
+}
+
+static void __ClientCallback(WM_MESSAGE *pMsg)
+{
+    WM_HWIN hParent;
+    WM_CALLBACK *cb;
+
+    switch (pMsg->MsgId) {
+    case WM_PAINT:
+        __PaintClient(pMsg->hWin);
+        break;
+    case WM_DELETE:
+        return;
+    default:
+        WM_DefaultProc(pMsg);
+        hParent = WM_GetParentHandle(pMsg->hWin);
+        cb = ((WINDOW_Obj*)hParent)->UserCb;
+        if (cb) {
+            pMsg->hWin = ((WM_Obj *)pMsg->hWin)->hParent;
+            cb(pMsg);
+        }
+    }
+}
+
+static void __CreateClient(WINDOW_Obj *pObj)
+{
+    int xSize, ySize;
+    GUI_RECT *pr = &pObj->Widget.Win.Rect;
+
+    xSize = pr->x1 - pr->x0 - 5;
+    ySize = pr->y1 - pr->y0 - pObj->CaptionHeight - 4;
+    if (xSize < 0) {
+        xSize = 0;
+    }
+    if (ySize < 0) {
+        ySize = 0;
+    }
+    pObj->hClient = WM_CreateWindowAsChild(3, pObj->CaptionHeight + 2,
+        (u_16)xSize, (u_16)ySize, pObj, 0, WIDGET_CLIENT, WM_NULL_ID,
+        __ClientCallback, 0);
 }
 
 /*
@@ -109,30 +147,24 @@ static void _WINDOW_Callback(WM_MESSAGE *pMsg)
  * Flag:窗口状态
  * cb:用户回调历程指针
  **/
-WM_hWin WINDOW_Create(i_16 x0,
+WM_HWIN WINDOW_Create(i_16 x0,
                       i_16 y0,
                       u_16 xSize,
                       u_16 ySize,
-                      WM_hWin hParent,
+                      WM_HWIN hParent,
                       u_16 Id,
                       u_8 Flag,
                       WM_CALLBACK *cb)
 {
     WINDOW_Obj *pObj;
     
+    GUI_LOCK();
     pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
-                                  WIDGET_WINDOW, Id, _WINDOW_Callback,
-                                  sizeof(WINDOW_Obj) - sizeof(WM_Obj));
+        WIDGET_WINDOW, Id, __Callback, sizeof(WINDOW_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         return NULL;
     }
     pObj->CaptionHeight = WINDOW_DEF_CAPHEIGHT;  /* 标题栏高度 */
-    /* 设置用户区 */
-    pObj->Widget.Win.UserRect.x0 = pObj->Widget.Win.Rect.x0 + 3;
-    pObj->Widget.Win.UserRect.y0 = pObj->Widget.Win.Rect.y0 +
-                                   pObj->CaptionHeight + 2;
-    pObj->Widget.Win.UserRect.x1 = pObj->Widget.Win.Rect.x1 - 3;
-    pObj->Widget.Win.UserRect.y1 = pObj->Widget.Win.Rect.y1 - 3;
     /* 配色 */
     pObj->Widget.Skin.CaptionColor[0] = WINDOW_CAPTION_UPC;  /* 标题栏上半部分 */
     pObj->Widget.Skin.CaptionColor[1] = WINDOW_CAPTION_DOWNC;/* 标题栏下半部分 */
@@ -145,12 +177,14 @@ WM_hWin WINDOW_Create(i_16 x0,
     pObj->UserCb = cb;
     WINDOW_SetTitle(pObj, ""); /* 设置初始字符串 */
     WINDOW_SetFont(pObj, GUI_DEF_FONT);
-    
+    __CreateClient(pObj); /* 建立客户区 */
+    WM_SendMessage(pObj->hClient, WM_CREATED, (GUI_PARAM)NULL);
+    GUI_UNLOCK();
     return pObj;
 }
 
 /* WINDOW设置标题 */
-GUI_RESULT WINDOW_SetTitle(WM_hWin hWin, const char *str)
+GUI_RESULT WINDOW_SetTitle(WM_HWIN hWin, const char *str)
 {
     /* 检测是否为WINDOW控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
@@ -159,7 +193,7 @@ GUI_RESULT WINDOW_SetTitle(WM_hWin hWin, const char *str)
 }
 
 /* WINDOW设置字体 */
-GUI_RESULT WINDOW_SetFont(WM_hWin hWin, GUI_FontType Font)
+GUI_RESULT WINDOW_SetFont(WM_HWIN hWin, GUI_FontType Font)
 {
     /* 检测是否为WINDOW控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
@@ -168,14 +202,17 @@ GUI_RESULT WINDOW_SetFont(WM_hWin hWin, GUI_FontType Font)
 }
 
 /* WINDOW设置为透明窗口 */
-GUI_RESULT WINDOW_SetAllAlpha(WM_hWin hWin, u_8 Alpha)
+GUI_RESULT WINDOW_SetAllAlpha(WM_HWIN hWin, u_8 Alpha)
 {
-    GUI_RECT Rect;
+    WINDOW_Obj *pObj = hWin;
     
     /* 检测是否为WINDOW控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
+    /* 设置Alpha */
     WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
-    Rect = WM_GetWindowAreaRect(hWin);
-    WM_InvalidateRect(hWin, &Rect); /* 将窗口无效化 */
+    WIDGET_SetTransWindow(pObj->hClient);
+    /* 窗口无效化 */
+    WM_Invalidate(hWin);
+    WM_Invalidate(pObj->hClient);
     return GUI_OK;
 }

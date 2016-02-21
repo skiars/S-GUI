@@ -3,10 +3,10 @@
 
 #define ROOTWINDOW_BACK_COLOR 0x00FFFFFF     /* 根窗口默认背景色 */
 
-void (*RootWinPaint_Cb)(WM_hWin hWin) = NULL;
-void (*RootWinTimer_Cb)(WM_hWin hWin) = NULL;
+void (*RootWinPaint_Cb)(WM_HWIN hWin) = NULL;
+void (*RootWinTimer_Cb)(WM_HWIN hWin) = NULL;
 
-static void __Paint(WM_hWin hWin)
+static void __Paint(WM_HWIN hWin)
 {
     GUI_RECT Rect = WM_GetWindowRect(hWin);
 
@@ -48,13 +48,12 @@ void WM_RootWindowInit(WM_Obj *pObj)
     pObj->Rect.y0 = 0;
     pObj->Rect.x1 = xSize - 1;
     pObj->Rect.y1 = ySize - 1;
-    pObj->UserRect = pObj->Rect;
     pObj->WinCb = _RootWin_Callback;
     pObj->hNext = NULL;
     pObj->hNextLine = NULL;
     pObj->hParent = NULL;
     pObj->hFirstChild = NULL;
-    pObj->Style = 0x0000;
+    pObj->Status = 0x0000;
     pObj->Id = WM_ROOTWIN_ID;
     pObj->Sign = WIDGET_ROOTWIN;
     WM_Invalidate(pObj);  /* 根窗口无效化 */

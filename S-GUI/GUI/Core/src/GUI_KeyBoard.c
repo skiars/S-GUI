@@ -46,7 +46,7 @@ void GUI_CleanKeyBuffer(void)
 void GUI_KeyProcess(void)
 {
     /*
-    GUI_hWin hWin;
+    GUI_HWIN hWin;
     
     if (!GUI_QueueIsEmpty(GUI_Data->KeyQueue)) {
         hWin = WM_GetActiveMainWindow();

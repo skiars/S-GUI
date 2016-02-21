@@ -7,7 +7,7 @@
 #define SCLB_DFT_BKCOLOR       0X002E323D  /* 背景颜色 */
 
 /* 按键控件自绘函数 */
-static void __Paint(WM_hWin hWin)
+static void __Paint(WM_HWIN hWin)
 {
     i_16 x0, y0;
     u_16 xSize, ySize, ScrLen;
@@ -44,18 +44,15 @@ static void __Callback(WM_MESSAGE *pMsg)
         case WM_PAINT :
             __Paint(pMsg->hWin);
             break;
-        case WM_DELETE :
-            GUI_fastfree(pMsg->hWin);
-            break;
     }
 }
 
 /* 创建SCROLLBAR控件 */
-WM_hWin SCROLLBAR_Create(i_16 x0,
+WM_HWIN SCROLLBAR_Create(i_16 x0,
                       i_16 y0,
                       u_16 xSize,
                       u_16 ySize,
-                      WM_hWin hParent,
+                      WM_HWIN hParent,
                       u_16 Id,
                       u_8 Flag)
 {
@@ -67,11 +64,6 @@ WM_hWin SCROLLBAR_Create(i_16 x0,
     if (pObj == NULL) {
         return NULL;
     }
-    /* 设置用户区 */
-    pObj->Widget.Win.UserRect.x0 = pObj->Widget.Win.Rect.x0;
-    pObj->Widget.Win.UserRect.y0 = pObj->Widget.Win.Rect.y0;
-    pObj->Widget.Win.UserRect.x1 = pObj->Widget.Win.Rect.x0;
-    pObj->Widget.Win.UserRect.y1 = pObj->Widget.Win.Rect.y0;
     /* 配色 */
     pObj->Widget.Skin.BackColor[0] = SCLB_DFT_BKCOLOR;
     pObj->Widget.Skin.BackColor[1] = SCLB_DFT_BTNCOLOR;
@@ -81,7 +73,7 @@ WM_hWin SCROLLBAR_Create(i_16 x0,
     return pObj;
 }
 
-GUI_RESULT SCROLLBAR_SetTotality(GUI_hWin hWin, u_16 Totality)
+GUI_RESULT SCROLLBAR_SetTotality(GUI_HWIN hWin, u_16 Totality)
 {
     SCROLLBAR_Obj *pObj = hWin;
     
@@ -92,7 +84,7 @@ GUI_RESULT SCROLLBAR_SetTotality(GUI_hWin hWin, u_16 Totality)
     return GUI_OK;
 }
 
-GUI_RESULT SCROLLBAR_SetLoation(GUI_hWin hWin, u_16 Loation)
+GUI_RESULT SCROLLBAR_SetLoation(GUI_HWIN hWin, u_16 Loation)
 {
     SCROLLBAR_Obj *pObj = hWin;
     

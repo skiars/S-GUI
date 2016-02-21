@@ -9,7 +9,7 @@
 #include "Text.h"
 #include "GUI_Bitmap.h"
 #include "GUI_WM.h"
-#include "GUI_RectCalc.h"
+#include "GUI_Rect.h"
 #include "DialogBox.h"
 #include "GUI_Botton.h"
 #include "GUI_Memory.h"

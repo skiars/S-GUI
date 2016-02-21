@@ -2,7 +2,7 @@
 #include "GUI.h"
 
 /* ICONVIEW重绘函数 */
-static void __Paint(GUI_hWin hWin)
+static void __Paint(GUI_HWIN hWin)
 {
     ICONVIEW_Obj *pObj = hWin;
 
@@ -18,9 +18,6 @@ static void __Callback(WM_MESSAGE *pMsg)
     switch (pMsg->MsgId) {
     case WM_PAINT :
         __Paint(pMsg->hWin);
-        break;
-    case WM_DELETE :
-        GUI_fastfree(pMsg->hWin);
         break;
     case WM_TP_CHECKED :
         WM_SetActiveMainWindow(pMsg->hWin);
@@ -45,11 +42,11 @@ static void __Callback(WM_MESSAGE *pMsg)
 * Flag:窗口状态
 * cb:用户回调历程指针
 **/
-GUI_hWin ICONVIEW_Create(i_16 x0,
+GUI_HWIN ICONVIEW_Create(i_16 x0,
     i_16 y0,
     u_16 xSize,
     u_16 ySize,
-    WM_hWin hParent,
+    WM_HWIN hParent,
     u_16 Id,
     u_8 Flag,
     u_16 namepos)
