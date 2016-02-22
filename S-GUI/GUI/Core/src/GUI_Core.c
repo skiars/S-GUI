@@ -27,7 +27,6 @@ GUI_RESULT GUI_Init(void)
                                   * GUI_Data->phy_info.xSize
                                   * GUI_Data->phy_info.ySize);
 #endif
-    GUI_Data->guitime=0;
     return GUI_OK;
 }
 

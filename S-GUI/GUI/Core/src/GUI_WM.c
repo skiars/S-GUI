@@ -706,21 +706,36 @@ u_16 WM_GetDialogId(WM_HWIN hWin)
 }
 
 /*
- * 获得在输入坐标下暴露的窗口
- * 返回值:目标窗口的句柄
+ * 获得在输入坐标下暴露的窗口(被指定坐标选中的窗口).
+ * 返回值:选中窗口的句柄.
  **/
 WM_HWIN WM_GetExposedWindow(u_16 x, u_16 y)
 {
-    WM_Obj *pWin = NULL, *p;
-    GUI_RECT r;
+    WM_Obj *p1 = _pRootWin, *p2 = NULL, *pWin = NULL;
+    GUI_RECT r, rParent = p1->Rect;
 
     GUI_LOCK();
-    for (p = _pRootWin;  p; p = p->hNextLine) {
-        r = WM_GetWindowAreaRect(p);
-        if (GUI_CheckPointAtRect(x, y, &r)) {
-            pWin = p;
+    /* 找到同级别中Z序最高的选中窗口，然后检查它的是否有孩子或孩子中是否有选中窗口，
+       如果它没有孩子或孩子中没有选中窗口则返回这个窗口，有则继续向窗口树深处寻找. */
+    do {
+        while (p1) { /* 遍历同级窗口 */
+            /* 计算窗口在被祖先窗口裁剪之后的矩形（暴露矩形），
+               然后检查这个窗口是否被输入坐标选中 */
+            if (GUI_RectOverlay(&r, &p1->Rect, &rParent)) {
+                if (GUI_CheckPointAtRect(x, y, &r)) {
+                    p2 = p1; /* 记录选中窗口 */
+                }
+            }
+            p1 = p1->hNext;
+        } /* 循环结束之后p2即为Z序最高的被选中窗口 */
+        if (p2 == pWin) { /* 子窗口没中没有选中窗口 */
+            break;
         }
-    }
+        pWin = p2; /* 记录目前Z序最高的选中窗口 */
+        p1 = pWin->hFirstChild; /* 接下来检查选中窗口的子窗口 */
+        /* 下一级窗口的暴露矩形用当前选中窗口的暴露矩形来计算 */
+        GUI_RectOverlay(&rParent, &rParent, &pWin->Rect);
+    } while (p1); /* 选中窗口没有子窗口，结束循环 */
     GUI_UNLOCK();
     return pWin;
 }
@@ -799,7 +814,7 @@ GUI_RECT * WM_GetClientRect(WM_HWIN hWin)
     return &pClient->Rect;
 }
 
-/* 获取 */
+/* 默认消息处理函数 */
 void WM_DefaultProc(GUI_MESSAGE *pMsg)
 {
     WM_Obj *pWin = pMsg->hWin;

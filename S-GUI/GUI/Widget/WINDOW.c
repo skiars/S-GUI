@@ -162,6 +162,7 @@ WM_HWIN WINDOW_Create(i_16 x0,
     pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
         WIDGET_WINDOW, Id, __Callback, sizeof(WINDOW_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
+        GUI_UNLOCK();
         return NULL;
     }
     pObj->CaptionHeight = WINDOW_DEF_CAPHEIGHT;  /* 标题栏高度 */
@@ -178,7 +179,7 @@ WM_HWIN WINDOW_Create(i_16 x0,
     WINDOW_SetTitle(pObj, ""); /* 设置初始字符串 */
     WINDOW_SetFont(pObj, GUI_DEF_FONT);
     __CreateClient(pObj); /* 建立客户区 */
-    WM_SendMessage(pObj->hClient, WM_CREATED, (GUI_PARAM)NULL);
+    WM_PostMessage(pObj->hClient, WM_CREATED, (GUI_PARAM)NULL);
     GUI_UNLOCK();
     return pObj;
 }

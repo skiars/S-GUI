@@ -24,7 +24,6 @@ typedef struct RECT_NODE {
 
 typedef struct{
     GUI_PHY_INFO phy_info; /* 硬件信息 */
-    GUI_TIME guitime;      /* GUI运行时间 */
     RECT_LIST RectList;    /* 裁剪矩形私有堆 */
     RECT_LIST NowRectList; /* 当前绘制的裁剪矩链表 */
     GUI_RECT *PaintArea;   /* 当前绘制的区域 */

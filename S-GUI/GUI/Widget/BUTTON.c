@@ -42,6 +42,7 @@ static void _BUTTON_Callback(WM_MESSAGE *pMsg)
             break;
         case WM_TP_CHECKED :
             BUTTON_Check(pMsg->hWin, 1);
+            WM_SetActiveMainWindow(pMsg->hWin); /* 设置祖先为活动窗口 */
             pMsg->MsgId = WM_BUTTON_CLICKED;
             WM_SendMessageToParent(pMsg->hWin, pMsg);
             break;

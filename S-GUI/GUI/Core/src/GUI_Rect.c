@@ -108,9 +108,8 @@ GUI_BOOL GUI_RectInclude(GUI_RECT *pSrc, GUI_RECT *pDst)
     if (pSrc->x0 <= pDst->x0 && pSrc->y0 <= pDst->y0
      && pSrc->x1 >= pDst->x1 && pSrc->y1 >= pDst->y1) {
         return TRUE;
-    } else {
-        return FALSE;
     }
+    return FALSE;
 }
 
 /* 移动一个矩形 */

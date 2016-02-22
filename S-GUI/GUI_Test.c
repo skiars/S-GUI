@@ -117,17 +117,16 @@ void Create_Window1(void)
 void Window3_Cb(WM_MESSAGE *pMsg)
 {
     u_16 Id;
-    WM_HWIN hClient, hItem;
+    WM_HWIN hWin = pMsg->hWin, hItem;
 
-    hClient = WM_GetClientWindow(pMsg->hWin);
     switch (pMsg->MsgId) {
     case WM_BUTTON_RELEASED:
         Id = WM_GetDialogId(pMsg->hWinSrc);
         if (Id == WIN3_BTN1) {
-            WM_DeleteWindow(pMsg->hWin);
+            WM_DeleteWindow(hWin);
         } else if (Id == WIN3_BTN2) {
-            WINDOW_SetAllAlpha(hClient, 150);
-            hItem = WM_GetDialogItem(hClient, WIN3_TBX1);
+            WINDOW_SetAllAlpha(hWin, 150);
+            hItem = WM_GetDialogItem(hWin, WIN3_TBX1);
             TEXTBOX_SetAllAlpha(hItem, 200);
         }
         break;
