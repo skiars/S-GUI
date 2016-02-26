@@ -1,11 +1,12 @@
 #include "GUI_Timer.h"
 #include "GUI.h"
 
-static GUI_TIMER *_ListPtr = NULL;
+static GUI_TIMER *__TimerList = NULL;
 
+/* 在定时器链表中寻找当前窗口 */
 static GUI_TIMER * _FindWindowInList(GUI_HWIN hWin)
 {
-    GUI_TIMER *pNode = _ListPtr;
+    GUI_TIMER *pNode = __TimerList;
 
     if (pNode) {
         while (pNode && pNode->hWin != hWin) {
@@ -15,10 +16,11 @@ static GUI_TIMER * _FindWindowInList(GUI_HWIN hWin)
     return pNode;
 }
 
+/* 在定时器链表中删除一个窗口 */
 static void _DeleteWindowInList(GUI_HWIN hWin)
 {
-    if (_ListPtr) {
-        GUI_TIMER *pNode = _ListPtr, *pLast = NULL;
+    if (__TimerList) {
+        GUI_TIMER *pNode = __TimerList, *pLast = NULL;
 
         while (pNode && pNode->hWin != hWin ) {
             pLast = pNode;
@@ -29,8 +31,10 @@ static void _DeleteWindowInList(GUI_HWIN hWin)
                 pLast->pNext = pNode->pNext;
                 GUI_fastfree(pNode);
             } else {
-                GUI_fastfree(_ListPtr);
-                _ListPtr = NULL;
+                pNode = __TimerList;
+                __TimerList = pNode->pNext;
+                GUI_fastfree(pNode);
+                
             }
         }
     }
@@ -42,12 +46,12 @@ static void _DeleteWindowInList(GUI_HWIN hWin)
 void GUI_TimerHandle(void)
 {
     GUI_LOCK();
-    if (_ListPtr) {
+    if (__TimerList) {
         GUI_TIMER *pNode;
 
-        for (pNode = _ListPtr; pNode; pNode = pNode->pNext) {
+        for (pNode = __TimerList; pNode; pNode = pNode->pNext) {
             if (GUI_GetTime() >= pNode->LastTime + pNode->Interval) {
-                WM_SendMessage(pNode->hWin, WM_TIME_UPDATA, (GUI_PARAM)NULL);
+                WM_SendMessage(pNode->hWin, WM_TIME_UPDATA, 0);
                 pNode->LastTime = GUI_GetTime(); /* 重新获取时间 */
             }
         }
@@ -71,13 +75,13 @@ void GUI_SetWindowTimer(GUI_HWIN hWin, GUI_TIME Interval)
         if (pNode) { /* 存在节点 */
             pNode->Interval = Interval;
         } else {
-            /* 插入新节点 */
-            pNode = _ListPtr;
-            _ListPtr = GUI_fastmalloc(sizeof(GUI_TIMER));
-            _ListPtr->hWin = hWin;
-            _ListPtr->Interval = Interval;
-            _ListPtr->LastTime = GUI_GetTime();
-            _ListPtr->pNext = pNode;
+            /* 插入新节点到链表头 */
+            pNode = __TimerList;
+            __TimerList = GUI_fastmalloc(sizeof(GUI_TIMER));
+            __TimerList->hWin = hWin;
+            __TimerList->Interval = Interval;
+            __TimerList->LastTime = GUI_GetTime();
+            __TimerList->pNext = pNode;
         }
     }
     GUI_UNLOCK();

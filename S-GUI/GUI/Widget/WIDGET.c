@@ -58,39 +58,59 @@ void WIDGET_Alpha(GUI_HWIN hWin, u_8 Part, u_8 Id, u_8 Alpha)
 }
 
 /* 获取窗口的字体 */
-GUI_FontType WIDGET_GetFont(GUI_HWIN hWin)
+GUI_FONT WIDGET_GetFont(GUI_HWIN hWin)
 {
     return ((WIDGET*)hWin)->Skin.Font;
 }
 
 /* 设置窗口的字体 */
-void WIDGET_SetFont(GUI_HWIN hWin, GUI_FontType Font)
+void WIDGET_SetFont(GUI_HWIN hWin, GUI_FONT Font)
 {
     if (hWin != NULL) {
         ((WIDGET*)hWin)->Skin.Font = Font;
     }
 }
 
+/* 设置背景色 */
 GUI_COLOR WIDGET_GetBackColor(GUI_HWIN hWin, u_8 n)
 {
     WIDGET *pObj = hWin;
     return pObj->Skin.BackColor[n];
 }
 
+/* 设置边线颜色 */
 GUI_COLOR WIDGET_GetEdgeColor(GUI_HWIN hWin, u_8 n)
 {
     WIDGET *pObj = hWin;
     return pObj->Skin.EdgeColor[n];
 }
 
+/* 获取标题栏颜色 */
 GUI_COLOR WIDGET_GetCaptionColor(GUI_HWIN hWin, u_8 n)
 {
     WIDGET *pObj = hWin;
     return pObj->Skin.CaptionColor[n];
 }
 
+/* 获取字体颜色 */
 GUI_COLOR WIDGET_GetFontColor(GUI_HWIN hWin, u_8 n)
 {
     WIDGET *pObj = hWin;
     return pObj->Skin.FontColor[n];
+}
+
+/* WIDGET设置焦点 */
+GUI_HWIN WIDGET_SetFocus(GUI_MESSAGE *pMsg)
+{
+    WM_Obj *pFocus = pMsg->hWinSrc;
+
+    if (!pMsg->Param && pFocus) { /* 寻找下一个焦点 */
+        /* 如果pMsg->Param为1说明当前窗口可以设置焦点 */
+        while (!pMsg->Param && pFocus->hNext) {
+            pFocus = pFocus->hNext;
+            WM__SendMessage(pFocus, pMsg);
+        }
+    }
+    GUI_Context.hFocus = pFocus;
+    return pFocus;
 }

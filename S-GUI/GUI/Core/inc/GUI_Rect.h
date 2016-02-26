@@ -15,9 +15,9 @@ GUI_BOOL GUI_CheckRectIntersect(GUI_RECT *pRect1, GUI_RECT *pRect2);
 GUI_BOOL GUI_RectInclude(GUI_RECT *pSrc, GUI_RECT *pDst);
 void GUI_MoveRect(GUI_RECT *Rect, i_16 dX, i_16 dY);
 GUI_RESULT GUI_RectListInit(u_16 num);
-RECT_LIST GUI_GetRectList(u_16 num);
-GUI_RESULT GUI_FreeRectList(RECT_NODE *pNode);
-RECT_LIST GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst);
-RECT_LIST GUI_ReCalcRectList(RECT_LIST List, GUI_RECT *Rect);
+GUI_AREA GUI_GetRectList(u_16 num);
+GUI_RESULT GUI_FreeRectList(GUI_AREA Area);
+GUI_AREA GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst);
+GUI_AREA GUI_ReCalcRectList(GUI_AREA Area, GUI_RECT *Rect);
 
 #endif /* __GUI_RECT_H */

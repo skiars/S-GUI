@@ -65,6 +65,7 @@ void GUI_Test(void)
     Create_Window2();
     while (1) {
         GUI_Delay(20);
+        GUI_SendKey(GUI_KEY_DOWN);
         ++_FpsVal; /* Í³¼ÆÖ¡ÂÊ */
     }
 }
@@ -98,8 +99,7 @@ void Window1_Cb(WM_MESSAGE *pMsg)
             if (Alpha >= 10) Alpha -= 10;
         }
         break;
-    case WM_KEY_CHECKED:
-        GUI_GetKey();
+    case WM_KEY:
         WM_DeleteWindow(pMsg->hWin);
         Alpha = 0;
         break;
@@ -130,8 +130,7 @@ void Window3_Cb(WM_MESSAGE *pMsg)
             TEXTBOX_SetAllAlpha(hItem, 200);
         }
         break;
-    case WM_KEY_CHECKED:
-        GUI_GetKey();
+    case WM_KEY:
         WINDOW_SetAllAlpha(pMsg->hWin, 30);
         break;
     }
@@ -167,8 +166,7 @@ void Window4_Cb(WM_MESSAGE *pMsg)
             WM_DeleteWindow(pMsg->hWin);
         }
         break;
-    case WM_KEY_CHECKED:
-        GUI_GetKey();
+    case WM_KEY:
         hItem = WM_GetDialogItem(pMsg->hWin, WIN4_LBX1);
         LISTBOX_ItemDown(hItem);
         break;
@@ -214,7 +212,7 @@ void Window5_Cb(WM_MESSAGE *pMsg)
             WM_DeleteWindow(pMsg->hWin);
         }
         break;
-    case WM_KEY_CHECKED:
+    case WM_KEY:
         break;
     }
 }
@@ -272,8 +270,7 @@ void Window2_Cb(WM_MESSAGE *pMsg)
             break;
         }
         break;
-    case WM_KEY_CHECKED:
-        GUI_CleanKeyBuffer();
+    case WM_KEY:
         Create_Window1();
         break;
     }

@@ -33,8 +33,11 @@ static void __Callback(WM_MESSAGE *pMsg)
         case WM_DELETE :
             /* 删除链表 */
             break;
+        case WM_KEY:
+            LISTBOX_ItemDown(pMsg->hWin);
+            break;
         case WM_TP_CHECKED :
-            WM_SetActiveMainWindow(pMsg->hWin);
+            WM_SetForegroundWindow(pMsg->hWin);
             break;
         case WM_TP_PRESS :
             dY += ((GUI_POINT*)pMsg->Param)[1].y;
@@ -52,6 +55,8 @@ static void __Callback(WM_MESSAGE *pMsg)
         case WM_TIME_UPDATA :
             LISTBOX__TextScroll(pMsg->hWin);
             break;
+        default :
+            WM_DefaultProc(pMsg);
     }
 }
 
@@ -184,7 +189,7 @@ static PNode Get__NextItemName(LISTBOX_Obj *pObj, PNode pNode)
 //idxpos要绘制条目的偏移
 static void LISTBOX__DrawList(LISTBOX_Obj *pObj, u_16 ItemPos, char *Str)
 {
-    GUI_FontType Font;
+    GUI_FONT Font;
     i_16 x0, y0, xSize, ySize, xPixPos;
     GUI_COLOR FontColor, BkColor;
     GUI_RECT *pRect;

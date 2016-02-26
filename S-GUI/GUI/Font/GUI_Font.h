@@ -17,6 +17,7 @@ typedef struct {
     const unsigned char* Data;
 } GUI_CHARINFO;
 
+/* 字体节点 */
 typedef struct GUI_FONT_PROP {
     u_16 FirstChar;
     u_16 LastChar;
@@ -28,18 +29,18 @@ typedef struct GUI_FONT_PROP {
 typedef const struct {
     u_8  FontType;
     u_16 CharHeight;
-    u_16 (*CharWidget)(const char *ch);
-    u_8  (*CharWidgetBytes)(const char *ch);
+    u_16(*CharWidget)(const char *ch);
+    u_8(*CharWidgetBytes)(const char *ch);
     unsigned const char* (*GetChar)(const char *ch);
 } GUI_FontStruct;
 
-typedef GUI_FontStruct* GUI_FontType;
+typedef GUI_FontStruct * GUI_FONT;
 
 /* 字体列表 */
-extern const GUI_FontType Font_ASCII_8X16;
-extern const GUI_FontType Font_ASCII_1;
-extern const GUI_FontType Font_ASCII_4PP;
-extern const GUI_FontType Font_ASCII_2PP;
+extern const GUI_FONT Font_ASCII_8X16;
+extern const GUI_FONT Font_ASCII_1;
+extern const GUI_FONT Font_ASCII_4PP;
+extern const GUI_FONT Font_ASCII_2PP;
 
 #define    ________    0x0
 #define    _______X    0x1
@@ -196,9 +197,9 @@ extern const GUI_FontType Font_ASCII_2PP;
 #define    X__XX___    0x98
 #define    X__XX__X    0x99
 #define    X__XX_X_    0x9a
-#define X__XX_XX    0x9b
-#define X__XXX__    0x9c
-#define X__XXX_X    0x9d
+#define    X__XX_XX    0x9b
+#define    X__XXX__    0x9c
+#define    X__XXX_X    0x9d
 #define    X__XXXX_    0x9e
 #define    X__XXXXX    0x9f
 #define    X_X_____    0xa0
@@ -218,7 +219,7 @@ extern const GUI_FontType Font_ASCII_2PP;
 #define    X_X_XXX_    0xae
 #define    X_X_XXXX    0xaf
 #define    X_XX____    0xb0
-#define X_XX___X    0xb1
+#define    X_XX___X    0xb1
 #define    X_XX__X_    0xb2
 #define    X_XX__XX    0xb3
 #define    X_XX_X__    0xb4
@@ -248,7 +249,7 @@ extern const GUI_FontType Font_ASCII_2PP;
 #define    XX__XX__    0xcc
 #define    XX__XX_X    0xcd
 #define    XX__XXX_    0xce
-#define XX__XXXX    0xcf
+#define    XX__XXXX    0xcf
 #define    XX_X____    0xd0
 #define    XX_X___X    0xd1
 #define    XX_X__X_    0xd2

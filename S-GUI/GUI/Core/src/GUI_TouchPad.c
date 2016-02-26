@@ -30,7 +30,7 @@ void GUI_TouchPadSendValue(i_16 x, i_16 y, u_16 State)
 }
 
 /* 触摸板消息处理 */
-GUI_RESULT GUI_TouchPadMessageHandle(GUI_MESSAGE *pMsg)
+GUI_RESULT GUI_TouchPadMessageProc(GUI_MESSAGE *pMsg)
 {
     static GUI_HWIN _CurWin = NULL;
     static GUI_POINT _CurPos;

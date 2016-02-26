@@ -12,20 +12,20 @@
 /* RGB888格式转换为RGB565格式 */
 u_16 GUI_RGB888To565(u_32 RGB)
 {
-    u_16 R,G,B;
-    B = (RGB >> 19) & 0x1F;
+    u_16 R, G, B;
+    R = (RGB >> 19) & 0x1F;
     G = (RGB >> 10) & 0x3F;
-    R = (RGB >>  3) & 0x1F;
-    return (R << 11) | (G << 5) | B;   
+    B = (RGB >> 3) & 0x1F;
+    return (R << 11) | (G << 5) | B;
 }
 
 /* RGB565格式转换为RGB888格式 */
 u_32 GUI_RGB565To888(u_16 RGB)
 {
     u_32 Color;
-    Color  = ((u_32)RGB & 0x001F) << 19;  /* B */
+    Color = ((u_32)RGB & 0xF800) << 8;   /* R */
     Color |= ((u_32)RGB & 0x07E0) << 5;   /* G */
-    Color |= ((u_32)RGB & 0xF800) >> 8;   /* R */
+    Color |= ((u_32)RGB & 0x001F) << 3;   /* B */
     return Color;
 }
 

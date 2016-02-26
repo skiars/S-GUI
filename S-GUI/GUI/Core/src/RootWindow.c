@@ -22,20 +22,15 @@ static void __Paint(WM_HWIN hWin)
 static void _RootWin_Callback(WM_MESSAGE *pMsg)
 {
     switch (pMsg->MsgId) {
-        case WM_PAINT : {
-            __Paint(pMsg->hWin);
-            break;
+    case WM_PAINT:
+        __Paint(pMsg->hWin);
+        break;
+    case WM_TIME_UPDATA:
+        /* 用户函数 */
+        if (RootWinTimer_Cb) {
+            RootWinTimer_Cb(pMsg->hWin);
         }
-        case WM_DELETE : {
-            GUI_fastfree(pMsg->hWin);
-            break;
-        }
-        case WM_TIME_UPDATA :
-            /* 用户函数 */
-            if (RootWinTimer_Cb) {
-                RootWinTimer_Cb(pMsg->hWin);
-            }
-            break;
+        break;
     }
 }
 

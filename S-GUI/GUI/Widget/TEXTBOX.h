@@ -16,7 +16,7 @@ WM_HWIN TEXTBOX_Create(i_16 x0,
                       u_16 Id,
                       u_8 Flag);
 GUI_RESULT TEXTBOX_SetText(WM_HWIN hWin, const char *str);
-GUI_RESULT TEXTBOX_SetFont(WM_HWIN hWin, GUI_FontType Font);
+GUI_RESULT TEXTBOX_SetFont(WM_HWIN hWin, GUI_FONT Font);
 GUI_RESULT TEXTBOX_SetAllAlpha(WM_HWIN hWin, u_8 Alpha);
 
 

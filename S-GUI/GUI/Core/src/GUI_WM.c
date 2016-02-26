@@ -29,7 +29,7 @@ GUI_RESULT WM_Init(void)
 * 向窗口管理器的指定窗口发送消息。
 * hWin:要指定窗口的句柄,为NULL时将直接返回。
 **/
-static void WM__SendMessage(WM_HWIN hWin, WM_MESSAGE *pMsg)
+void WM__SendMessage(WM_HWIN hWin, WM_MESSAGE *pMsg)
 {
     static u_8 __MseeageCount;
 
@@ -67,7 +67,7 @@ void WM_SendMessage(WM_HWIN hWin, u_16 MsgId, GUI_PARAM Param)
 void WM_SendMessageToParent(WM_HWIN hWin, GUI_MESSAGE *pMsg)
 {
     pMsg->hWinSrc = hWin;
-    WM__SendMessage(((WM_Obj*)hWin)->hParent, pMsg);
+    WM__SendMessage(((WM_Obj *)hWin)->hParent, pMsg);
 }
 
 /* 向消息队列发送消息 */
@@ -82,7 +82,7 @@ GUI_RESULT WM_PostMessage(WM_HWIN hWin, u_16 MsgId, GUI_PARAM Param)
 }
 
 /* 裁剪透明窗口的子窗口 */
-static RECT_LIST _ClipTransChildren(RECT_LIST L, WM_Obj *pWin)
+static GUI_AREA _ClipTransChildren(GUI_AREA L, WM_Obj *pWin)
 {
     for (pWin = pWin->hFirstChild; pWin && L; pWin = pWin->hNext) {
         if (pWin->Status & WM_WS_TRANS) {
@@ -95,49 +95,48 @@ static RECT_LIST _ClipTransChildren(RECT_LIST L, WM_Obj *pWin)
 }
 
 /* 为一个窗口计算裁剪矩形链表 */
-static RECT_LIST WM__ClipWindowArea(WM_HWIN hWin)
+static GUI_AREA WM__ClipWindowArea(WM_HWIN hWin)
 {
     WM_Obj *pWin = hWin, *pObj;
     GUI_RECT Rect1;
-    RECT_LIST RectList;
+    GUI_AREA Area;
 
     /* 在考虑遮挡之前,窗口就只有一个裁剪矩形 */
-    RectList = GUI_GetRectList(1);
-    if (RectList) {
+    Area = GUI_GetRectList(1);
+    if (Area) {
         Rect1 = WM_GetTaliorInvalidRect(pWin);
-        RectList->Rect = Rect1;
+        Area->Rect = Rect1;
     }
     /* 窗口会被它的儿子们或者右边的兄弟们(如果有的话)裁剪,也就是遮挡，遍历它的孩子和兄弟们，
-    逐个计算窗口的裁剪矩形链表，最后就能得到这个窗口被它们遮挡后的裁剪矩形链表.
-    */
+       逐个计算窗口的裁剪矩形链表，最后就能得到这个窗口被它们遮挡后的裁剪矩形链表. */
     if (pWin->hFirstChild) {
         /* 先遍历子窗口 */
         pObj = pWin->hFirstChild;
-        while (pObj && RectList) {
+        while (pObj && Area) {
             /* 如果是普通窗口就直接计算裁剪，如果是透明窗口就用它的孩子来计算裁剪 */
             if (pObj->Status & WM_WS_TRANS) {
-                RectList = _ClipTransChildren(RectList, pObj);
+                Area = _ClipTransChildren(Area, pObj);
             } else {
-                RectList = GUI_ReCalcRectList(RectList, &pObj->Rect);
+                Area = GUI_ReCalcRectList(Area, &pObj->Rect);
             }
             pObj = pObj->hNext; /* 向右遍历 */
         }
     }
     /* 再遍历它右边的同属窗口及祖先的同属窗口 */
     pObj = pWin;
-    while (pObj != _pRootWin && RectList) {
-        while (pObj->hNext && RectList) {
+    while (pObj != _pRootWin && Area) {
+        while (pObj->hNext && Area) {
             pObj = pObj->hNext; /* 向右遍历 */
-                                /* 如果是普通窗口就直接计算裁剪，如果是透明窗口就用它的孩子来计算裁剪 */
+            /* 如果是普通窗口就直接计算裁剪，如果是透明窗口就用它的孩子来计算裁剪 */
             if (pObj->Status & WM_WS_TRANS) {
-                RectList = _ClipTransChildren(RectList, pObj);
+                Area = _ClipTransChildren(Area, pObj);
             } else {
-                RectList = GUI_ReCalcRectList(RectList, &pObj->Rect);
+                Area = GUI_ReCalcRectList(Area, &pObj->Rect);
             }
         }
         pObj = pObj->hParent; /* 向上遍历 */
     }
-    return RectList;
+    return Area;
 }
 
 /*
@@ -170,15 +169,15 @@ static void _Invalidate1Abs(WM_Obj *pWin, GUI_RECT *pr)
 /* 重绘一个窗口 */
 static void _PaintOne(WM_Obj *pWin)
 {
-    RECT_LIST RectList;
+    GUI_AREA Area;
 
     /* 计算窗口裁剪矩形,并设置为当前的绘制链表 */
-    RectList = WM__ClipWindowArea(pWin);
-    if (RectList != NULL) {
+    Area = WM__ClipWindowArea(pWin);
+    if (Area != NULL) {
         /* 重绘窗口 */
-        GUI_SetNowRectList(RectList, &pWin->InvalidRect);
+        GUI_SetNowRectList(Area, &pWin->InvalidRect);
         WM_SendMessage(pWin, WM_PAINT, 0);
-        GUI_FreeRectList(RectList);
+        GUI_FreeRectList(Area);
 #if GUI_USE_MEMORY
         /* 需要刷新的矩形 */
         __PaintArea = GUI_RectOrCalc(&pWin->Rect, &__PaintArea);
@@ -233,8 +232,8 @@ static void _PaintAll(void)
                 _PaintTransChild(pWin);
                 _PaintTransTop(pWin);
             }
-            GUI_UNLOCK();
             pWin = pWin->hNextLine;
+            GUI_UNLOCK();
         }
     }
 }
@@ -242,10 +241,13 @@ static void _PaintAll(void)
 /* 派发消息 */
 static void WM__DispatchMessage(WM_MESSAGE *pMsg)
 {
-    if (pMsg->hWin) { /* 有目标窗口的消息 */
-        WM__SendMessage(pMsg->hWin, pMsg);
-    } else {
-        GUI_TouchPadMessageHandle(pMsg); /* 处理触摸事件 */
+    GUI_RESULT res = GUI_ERR;
+
+    /* GUI_ERR为1，只要下面出现GUI_OK res在与赋值之后就会变成0 */
+    res &= GUI_TouchPadMessageProc(pMsg); /* 处理触摸事件 */
+    res &= GUI_KeyMessageProc(pMsg);      /* 处理键盘事件 */
+    if (res == GUI_ERR) {
+        WM__SendMessage(pMsg->hWin, pMsg); /* 直接发送到窗口 */
     }
 }
 
@@ -254,6 +256,9 @@ void WM_Exec(void)
 {
     WM_MESSAGE Msg;
 
+    if (GUI_Data == NULL) {
+        return;
+    }
     /* WM消息环 */
     while (GUI_GetMessage(&Msg) == GUI_OK) {
         WM__DispatchMessage(&Msg); /* 派发消息 */
@@ -424,6 +429,10 @@ void WM_DeleteWindow(WM_HWIN hWin)
     while (pWin) {
         hWin = pWin;
         pWin = pWin->hNextLine;
+        /* 删除焦点 */
+        if (GUI_Context.hFocus == hWin) {
+            GUI_Context.hFocus = NULL;
+        }
         /* 删除窗口的定时器 */
         GUI_SetWindowTimer(hWin, 0);
         /* 调用回调函数删除节点 */
@@ -433,8 +442,47 @@ void WM_DeleteWindow(WM_HWIN hWin)
     GUI_UNLOCK();
 }
 
+/* 设置焦点窗口 */
+GUI_RESULT WM_SetFocusWindow(WM_HWIN hWin)
+{
+    if (hWin == NULL) {
+        return GUI_ERR;
+    }
+    WM_SendMessage(hWin, WM_SET_FOCUS, 0);
+    return GUI_OK;
+}
+
+/*
+ * 设置前景窗口
+ * hWin:要设置的窗口句柄
+ * 返回值:GUI_OK,正常;GUI_ERR,错误,没有该窗口或窗口为根窗口
+ **/
+GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin)
+{
+    WM_Obj *pObj = hWin;
+
+    if (hWin == NULL || hWin == _hRootWin) {
+        return GUI_ERR;
+    }
+    GUI_LOCK();
+    /* 先找到它位于根窗口下的祖先 */
+    while (pObj && pObj->hParent != _pRootWin) {
+        pObj = pObj->hParent;
+    }
+    if (WM_GetForegroundWindow() != pObj) {
+        WM_RemoveWindow(pObj); /* 先移除窗口 */
+        WM_AttachWindow(pObj, NULL); /* 插入窗口到最后 */
+        WM_InvalidTree(pObj); /* 窗口及其所有的子窗口无效化 */
+        WM_SetFocusWindow(hWin); /* 设置输入焦点 */
+    } else if (hWin != pObj) {
+        WM_SetFocusWindow(hWin); /* 设置输入焦点 */
+    }
+    GUI_UNLOCK();
+    return GUI_OK;
+}
+
 /* 获取当前活动窗口的句柄 */
-WM_HWIN WM_GetActiveMainWindow(void)
+WM_HWIN WM_GetForegroundWindow(void)
 {
     WM_Obj *pWin = _RootWin.hFirstChild;
 
@@ -444,31 +492,6 @@ WM_HWIN WM_GetActiveMainWindow(void)
     }
     GUI_UNLOCK();
     return pWin;
-}
-
-/*
- * 设置活动窗口(这个窗口会放在最前面显示)
- * hWin:要设置的窗口句柄
- * 返回值:GUI_OK,正常;GUI_ERR,错误,没有该窗口
- **/
-GUI_RESULT WM_SetActiveMainWindow(WM_HWIN hWin)
-{
-    WM_Obj *pObj = hWin;
-
-    if (hWin == NULL) {
-        return GUI_ERR;
-    }
-    GUI_LOCK();
-    while (pObj && pObj->hParent != _pRootWin) {
-        pObj = pObj->hParent;
-    }
-    if (WM_GetActiveMainWindow() != pObj) {
-        WM_RemoveWindow(pObj); /* 先移除窗口 */
-        WM_AttachWindow(pObj, NULL); /* 插入窗口到最后 */
-        WM_InvalidTree(pObj); /* 窗口及其所有的子窗口无效化 */
-    }
-    GUI_UNLOCK();
-    return GUI_OK;
 }
 
 /*
@@ -492,7 +515,7 @@ WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
     /* 检查窗口ID是否已经注册 */
     pObj = WM_GetWindowHandle(Id);
     if (pObj != NULL) {
-        WM_SetActiveMainWindow(pObj); /* 将已经注册的窗口放到最前 */
+        WM_SetForegroundWindow(pObj); /* 将已经注册的窗口放到最前 */
         GUI_UNLOCK();
         return NULL;
     }
@@ -712,7 +735,7 @@ u_16 WM_GetDialogId(WM_HWIN hWin)
 WM_HWIN WM_GetExposedWindow(u_16 x, u_16 y)
 {
     WM_Obj *p1 = _pRootWin, *p2 = NULL, *pWin = NULL;
-    GUI_RECT r, rParent = p1->Rect;
+    GUI_RECT r, rParent = p1->Rect; /* 根窗口的矩形 */
 
     GUI_LOCK();
     /* 找到同级别中Z序最高的选中窗口，然后检查它的是否有孩子或孩子中是否有选中窗口，
@@ -720,7 +743,7 @@ WM_HWIN WM_GetExposedWindow(u_16 x, u_16 y)
     do {
         while (p1) { /* 遍历同级窗口 */
             /* 计算窗口在被祖先窗口裁剪之后的矩形（暴露矩形），
-               然后检查这个窗口是否被输入坐标选中 */
+               然后检查这个窗口是否被输入坐标选中. */
             if (GUI_RectOverlay(&r, &p1->Rect, &rParent)) {
                 if (GUI_CheckPointAtRect(x, y, &r)) {
                     p2 = p1; /* 记录选中窗口 */
@@ -817,13 +840,12 @@ GUI_RECT * WM_GetClientRect(WM_HWIN hWin)
 /* 默认消息处理函数 */
 void WM_DefaultProc(GUI_MESSAGE *pMsg)
 {
-    WM_Obj *pWin = pMsg->hWin;
     /* Exec message */
     switch (pMsg->MsgId) {
     case WM_DELETE:
         return;
     case WM_TP_CHECKED:
-        WM_SetActiveMainWindow(pMsg->hWin);
+        WM_SetForegroundWindow(pMsg->hWin);
         return;
     case WM_TP_PRESS: /* 移动窗口 */
         WM_MoveWindow(pMsg->hWin,
@@ -834,6 +856,10 @@ void WM_DefaultProc(GUI_MESSAGE *pMsg)
         WM_MoveWindow(pMsg->hWin,
             ((GUI_POINT*)pMsg->Param)[1].x,
             ((GUI_POINT*)pMsg->Param)[1].y);
+        return;
+    case WM_SET_FOCUS:
+        pMsg->Param = 1;
+        WM_SendMessageToParent(pMsg->hWin, pMsg);
         return;
     }
     /* 设置默认参数 */

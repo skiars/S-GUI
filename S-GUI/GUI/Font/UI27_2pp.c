@@ -3055,5 +3055,5 @@ static GUI_FontStruct __Font_ASCII_2PP = {
     __GetChar,
 };
 
-const GUI_FontType Font_ASCII_2PP = &__Font_ASCII_2PP;
+const GUI_FONT Font_ASCII_2PP = &__Font_ASCII_2PP;
 

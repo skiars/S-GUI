@@ -124,15 +124,15 @@ void GUI_MoveRect(GUI_RECT *Rect, i_16 dX, i_16 dY)
 /* 窗口裁剪矩形区域私有堆初始化 */
 GUI_RESULT GUI_RectListInit(u_16 num)
 {
-    RECT_NODE *pNode;
+    GUI_AREA pNode;
 
     /* 申请内存(包括一个表头) */
     ++num;
-    GUI_Data->RectList = GUI_fastmalloc(sizeof(RECT_NODE) * (u_32)num);
-    if (GUI_Data->RectList == NULL) {
+    GUI_Data->AreaHeap = GUI_fastmalloc(sizeof(AREA_NODE) * (u_32)num);
+    if (GUI_Data->AreaHeap == NULL) {
         return GUI_ERR; /* 申请失败 */
     }
-    pNode = GUI_Data->RectList;
+    pNode = GUI_Data->AreaHeap;
     while (--num) { /* 关联链表pNext */
         pNode->pNext = pNode + 1;
         ++pNode;
@@ -142,15 +142,15 @@ GUI_RESULT GUI_RectListInit(u_16 num)
 }
 
 /* 申请一个裁剪矩形链表 */
-RECT_LIST GUI_GetRectList(u_16 num)
+GUI_AREA GUI_GetRectList(u_16 num)
 {
-    RECT_NODE *pNode;
-    RECT_LIST List = GUI_Data->RectList;
+    GUI_AREA pNode;
+    GUI_AREA Area = GUI_Data->AreaHeap;
 
     if (!num) {
         return NULL;
     }
-    pNode = List;
+    pNode = Area;
     while (pNode && num--) {
         pNode = pNode->pNext;
     }
@@ -160,46 +160,47 @@ RECT_LIST GUI_GetRectList(u_16 num)
 #endif
         return NULL;
     }
-    List = List->pNext;
-    GUI_Data->RectList->pNext = pNode->pNext;
+    Area = Area->pNext;
+    GUI_Data->AreaHeap->pNext = pNode->pNext;
     pNode->pNext = NULL;
-    return List;
+    return Area;
 }
 
 /* 释放一个裁剪矩形链表 */
-GUI_RESULT GUI_FreeRectList(RECT_NODE *pNode)
+GUI_RESULT GUI_FreeRectList(GUI_AREA Area)
 {
-    RECT_NODE *p;
+    GUI_AREA p;
     
-    if (pNode == NULL) {
+    if (Area == NULL) {
         return GUI_ERR;
     }
-    p = GUI_Data->RectList->pNext;
-    GUI_Data->RectList->pNext = pNode; /* 插入到链表的最前面 */
-    while (pNode->pNext) {
-        pNode = pNode->pNext;
+    p = GUI_Data->AreaHeap->pNext;
+    GUI_Data->AreaHeap->pNext = Area; /* 插入到链表的最前面 */
+    while (Area->pNext) {
+        Area = Area->pNext;
     }
-    pNode->pNext = p;
+    Area->pNext = p;
     return GUI_OK;
 }
 
 /* 将矩形Src用矩形Dst去裁剪
  * -Src与Dst必须是有效地矩形.
  */
-RECT_LIST GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst)
+GUI_AREA GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst)
 {
     u_8 n = 0;
     GUI_RECT r;
-    RECT_NODE *p;
-    RECT_LIST List;
+    GUI_AREA p;
+
+    GUI_AREA Area;
 
     if (GUI_RectOverlay(&r, Src, Dst) == FALSE) { /* 判断是否相交 */
         /* 不相交，裁剪区域就是Src矩形自己 */
-        List = GUI_GetRectList(1); /* 申请链表 */
-        if (List) {
-            List->Rect = *Src;
+        Area = GUI_GetRectList(1); /* 申请链表 */
+        if (Area) {
+            Area->Rect = *Src;
         }
-        return List;
+        return Area;
     }
     /* Src完全被Src与Dst的相交部分遮挡,将不会有裁剪区域 */
     if (Src->x0 >= r.x0 && Src->x1 <= r.x1
@@ -207,11 +208,11 @@ RECT_LIST GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst)
         return NULL;
     }
     /* 每一个矩形最多可以被另外一个矩形分割为4个 */
-    List = GUI_GetRectList(4); /* 申请链表 */
-    if (List == NULL) { /* 申请失败 */
+    Area = GUI_GetRectList(4); /* 申请链表 */
+    if (Area == NULL) { /* 申请失败 */
         return NULL;
     }
-    p = List;
+    p = Area;
     /* 逐个计算裁剪区域 */
     if (Src->y0 < r.y0) {
         p->Rect.x0 = Src->x0;
@@ -247,9 +248,9 @@ RECT_LIST GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst)
     }
     GUI_FreeRectList(p); /* 释放多余的链表 */
     if (n) { /* 当裁剪次数不为0时设置链表尾 */
-        for (p = List; --n; p = p->pNext);
+        for (p = Area; --n; p = p->pNext);
         p->pNext = NULL;
-        return List;
+        return Area;
     }
     /* 如果裁剪次数为0，说明两Src被遮挡，则返回值为NULL */
     /* bug标记.此处不应该被执行到，因为前面已经判定了遮挡 */
@@ -257,13 +258,13 @@ RECT_LIST GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst)
 }
 
 /* 为一个裁剪矩形链表重新计算裁剪矩形链表 */
-RECT_LIST GUI_ReCalcRectList(RECT_LIST List, GUI_RECT *Rect)
+GUI_AREA GUI_ReCalcRectList(GUI_AREA Area, GUI_RECT *Rect)
 {
-    RECT_NODE *pNode;
-    RECT_LIST p = NULL, q;
+    GUI_AREA pNode;
+    GUI_AREA p = NULL, q;
 
     /* 获得链表头,直到获得非空的指针(链表头) */
-    for (q = List; !p && q; q = q->pNext) {
+    for (q = Area; !p && q; q = q->pNext) {
         p = GUI_RectCut(&q->Rect, Rect);
     }
     if (p != NULL) {
@@ -275,6 +276,6 @@ RECT_LIST GUI_ReCalcRectList(RECT_LIST List, GUI_RECT *Rect)
             pNode->pNext = GUI_RectCut(&q->Rect, Rect); /* 连接链表 */
         }
     }
-    GUI_FreeRectList(List); /* 释放原来的链表 */
+    GUI_FreeRectList(Area); /* 释放原来的链表 */
     return p;
 }

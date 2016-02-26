@@ -7,6 +7,6 @@
 #define GUI_TP_REMOVED   0
 
 void GUI_TouchPadSendValue(i_16 x, i_16 y, u_16 State);
-GUI_RESULT GUI_TouchPadMessageHandle(GUI_MESSAGE *pMsg);
+GUI_RESULT GUI_TouchPadMessageProc(GUI_MESSAGE *pMsg);
 
 #endif /* __GUI_TOUCHPAD_H */

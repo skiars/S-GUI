@@ -11,6 +11,7 @@
 #define WM_CREATED           0x0103    /* 窗口已经创建 */
 #define WM_TIME_UPDATA       0x0104    /* 窗口定时器更新 */
 #define WM_GET_CLIENT        0x0105    /* 获取客户区句柄 */
+#define WM_SET_FOCUS         0x0106    /* 设置焦点窗口 */
 #define WM_TP_CHECKED        0x0120    /* 触摸板按下 */
 #define WM_TP_REMOVED        0x0121    /* 触摸板松开 */
 #define WM_TP_PRESS          0x0122    /* 触摸坐标一直在当前窗口 */
@@ -19,7 +20,7 @@
 #define WM_BUTTON_RELEASED   0x0201    /* BUTTON控件已经释放 */
 #define WM_NUTTON_MOVED_OUT  0x0202    /* BUTTON被点击然后指针移开 */
 #define WM_WIONDOW_CHECKED   0x0203    /* 窗口被点击 */
-#define WM_KEY_CHECKED       0x0210    /* 按键事件 */
+#define WM_KEY               0x0210    /* 按键事件 */
 /* 0x0400以后为扩展消息(用户自定义) */
 
 /* 窗口状态定义(Window status define) */
@@ -62,6 +63,7 @@ typedef struct {
 
 GUI_RESULT WM_Init(void);
 void WM_Exec(void);
+void WM__SendMessage(WM_HWIN hWin, WM_MESSAGE *pMsg);
 void WM_SendMessage(WM_HWIN hWin, u_16 MsgId, GUI_PARAM Param);
 void WM_SendMessageToParent(WM_HWIN hWin, GUI_MESSAGE *pMsg);
 GUI_RESULT WM_PostMessage(WM_HWIN hWin, u_16 MsgId, GUI_PARAM Param);
@@ -70,8 +72,9 @@ GUI_RECT WM_GetTaliorInvalidRect(WM_HWIN hWin);
 WM_HWIN WM_GetFrontWindow(WM_HWIN hWin);
 WM_HWIN WM_GetTopChildWindow(WM_HWIN hWin);
 void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent);
-WM_HWIN WM_GetActiveMainWindow(void);
-GUI_RESULT WM_SetActiveMainWindow(WM_HWIN hWin);
+GUI_RESULT WM_SetFocusWindow(WM_HWIN hWin);
+GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin);
+WM_HWIN WM_GetForegroundWindow(void);
 WM_HWIN WM_CreateWindowAsChild(i_16 x0, i_16 y0, u_16 xSize,
                                u_16 ySize, WM_HWIN hParent,
                                u_16 Style, u_8 Sign, u_16 Id,

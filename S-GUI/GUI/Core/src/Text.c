@@ -4,7 +4,7 @@
 #include "GUI_Font.h"
 
 /* 获取一个字符串在当前字体下所占的像素数 */
-u_16 GetStringPixel(const char *str, GUI_FontType Font)
+u_16 GetStringPixel(const char *str, GUI_FONT Font)
 {
     u_16 len = 0;
     
@@ -15,7 +15,7 @@ u_16 GetStringPixel(const char *str, GUI_FontType Font)
 }
 
 /* 跳过一个单词 */
-u_16 GUI_SkipWord(const char *str, GUI_FontType Font, u_16 x_pix, u_16 *len)
+u_16 GUI_SkipWord(const char *str, GUI_FONT Font, u_16 x_pix, u_16 *len)
 {
     u_16 pix = 0, t_pix;
     
@@ -41,7 +41,7 @@ u_16 GUI_SkipWord(const char *str, GUI_FontType Font, u_16 x_pix, u_16 *len)
 }
 
 /* 显示一个ASCII字符，2pp的抗锯齿 */
-static void _CharASCII_2PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
+static void _CharASCII_2PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FONT Font)
 {
     u_8 btx, yCnt, xCnt, bl, d1, d2, i;
     u_16 chh, chw, bCnt;
@@ -76,7 +76,7 @@ static void _CharASCII_2PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontTyp
 }
 
 /* 显示一个ASCII字符，4pp的抗锯齿 */
-static void _CharASCII_4PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
+static void _CharASCII_4PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FONT Font)
 {
     u_8 btx, yCnt, xCnt, bl, d1, d2, i;
     u_16 chh, chw, bCnt;
@@ -111,7 +111,7 @@ static void _CharASCII_4PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontTyp
 }
 
 /* 显示一个ASCII字符 */
-static void _CharASCII(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Font)
+static void _CharASCII(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FONT Font)
 {
     u_8 temp, t, pos, bytes, a;
     u_16 ch_h, ch_w, b;
@@ -144,7 +144,7 @@ static void _CharASCII(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FontType Fo
     }
 }
 
-u_16 GUI_DispChar(i_16 x, i_16 y, const char *ch, GUI_COLOR Color, GUI_FontType Font)
+u_16 GUI_DispChar(i_16 x, i_16 y, const char *ch, GUI_COLOR Color, GUI_FONT Font)
 {
     u_16 ch_w;
     
@@ -168,7 +168,7 @@ void GUI_DispStringCurRect(i_16 x0,
                            i_16 y0,
                            const char *str,
                            GUI_COLOR Color,
-                           GUI_FontType Font)
+                           GUI_FONT Font)
 {
     u_16 i, slen, pos = 0;
 
@@ -183,7 +183,7 @@ void GUI_DispStringCurRectN(i_16 x0,
                            i_16 y0,
                            const char *str,
                            GUI_COLOR Color,
-                           GUI_FontType Font,
+                           GUI_FONT Font,
                            u_16 n)
 {
     u_16 i, slen, pos = 0;
@@ -201,7 +201,7 @@ void GUI_DspStringCurRectMiddle(i_16 x0,
                                 i_16 ySize,
                                 const char *str,
                                 GUI_COLOR Color,
-                                GUI_FontType Font)
+                                GUI_FONT Font)
 {
     u_16 xpos, ypos;
     
@@ -227,7 +227,7 @@ void GUI_DispStringAt(i_16 x0,
                       u_16 ySize,
                       const char *str,
                       GUI_COLOR Color,
-                      GUI_FontType Font)
+                      GUI_FONT Font)
 {
 
 }

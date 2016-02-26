@@ -4,7 +4,7 @@
 #define TEXTBOX_DEF_BKC             0x00292323  /* 背景颜色 */
 #define TEXTBOX_TEXT_COLOR          0x00FFFFFF  /* 字体颜色 */
 
-static void TEXTBOX_LineFeedDisp( const char *str, GUI_COLOR Color, GUI_FontType Font, GUI_RECT *Rect);
+static void TEXTBOX_LineFeedDisp( const char *str, GUI_COLOR Color, GUI_FONT Font, GUI_RECT *Rect);
 
 /* 自绘函数 */
 static void __Paint(WM_HWIN hWin)
@@ -39,7 +39,7 @@ static void __Callback(WM_MESSAGE *pMsg)
             break;
 
         case WM_TP_CHECKED :
-            WM_SetActiveMainWindow(pMsg->hWin);
+            WM_SetForegroundWindow(pMsg->hWin);
             break;
         case WM_TP_PRESS:
             break;
@@ -99,7 +99,7 @@ GUI_RESULT TEXTBOX_SetText(WM_HWIN hWin, const char *str)
 }
 
 /* TEXTBOX设置字体 */
-GUI_RESULT TEXTBOX_SetFont(WM_HWIN hWin, GUI_FontType Font)
+GUI_RESULT TEXTBOX_SetFont(WM_HWIN hWin, GUI_FONT Font)
 {
     /* 检测是否为TEXTBOX控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
@@ -122,7 +122,7 @@ GUI_RESULT TEXTBOX_SetAllAlpha(WM_HWIN hWin, u_8 Alpha)
 }
 
 /* 自动换行显示 */
-static void TEXTBOX_LineFeedDisp( const char *str, GUI_COLOR Color, GUI_FontType Font, GUI_RECT *Rect)
+static void TEXTBOX_LineFeedDisp( const char *str, GUI_COLOR Color, GUI_FONT Font, GUI_RECT *Rect)
 {
     u_16 pix, ch_num, x_pix;
     i_16 x0, x1, y0;

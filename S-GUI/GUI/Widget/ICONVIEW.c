@@ -20,7 +20,7 @@ static void __Callback(WM_MESSAGE *pMsg)
         __Paint(pMsg->hWin);
         break;
     case WM_TP_CHECKED :
-        WM_SetActiveMainWindow(pMsg->hWin);
+        WM_SetForegroundWindow(pMsg->hWin);
         break;
     case WM_TP_PRESS :
         

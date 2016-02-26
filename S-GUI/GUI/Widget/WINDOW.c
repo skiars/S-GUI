@@ -66,11 +66,25 @@ static void __Paint(WM_HWIN hWin)
                                WIDGET_GetFont(pObj));
 }
 
+/* WINDOW设置焦点函数 */
+static void WINDOW_SetFocus(GUI_MESSAGE *pMsg)
+{
+    WINDOW_Obj *pObj = pMsg->hWin;
+    
+    if (!pMsg->Param) { /* 设置下一个焦点 */
+        GUI_HWIN hFocus = pObj->hFocus;
+
+        if (hFocus == NULL) {
+            hFocus = ((WM_Obj *)pObj->hClient)->hFirstChild;
+        }
+        pMsg->hWinSrc = hFocus;
+    }
+    pObj->hFocus = WIDGET_SetFocus(pMsg);
+}
+
 /* WINDOW控件自动回调函数 */
 static void __Callback(WM_MESSAGE *pMsg)
 {
-    WM_CALLBACK *cb = ((WINDOW_Obj*)pMsg->hWin)->UserCb;
-
     switch (pMsg->MsgId) {
     case WM_PAINT:
         __Paint(pMsg->hWin);
@@ -79,6 +93,9 @@ static void __Callback(WM_MESSAGE *pMsg)
         return;
     case WM_GET_CLIENT:
         pMsg->Param = (GUI_PARAM)__GetClient(pMsg->hWin);
+        break;
+    case WM_SET_FOCUS:
+        WINDOW_SetFocus(pMsg); /* 设置焦点 */
         break;
     default:
         WM_DefaultProc(pMsg);
@@ -107,6 +124,10 @@ static void __ClientCallback(WM_MESSAGE *pMsg)
         break;
     case WM_DELETE:
         return;
+    case WM_SET_FOCUS:
+        pMsg->hWin = WM_GetParentHandle(pMsg->hWin);
+        WINDOW_SetFocus(pMsg); /* 设置焦点 */
+        break;
     default:
         WM_DefaultProc(pMsg);
         hParent = WM_GetParentHandle(pMsg->hWin);
@@ -176,10 +197,11 @@ WM_HWIN WINDOW_Create(i_16 x0,
     pObj->Widget.Skin.FontColor[0] = WINDOW_TITLE_COLOR;
     pObj->Widget.Skin.FontColor[1] = WINDOW_FONT_COLOR;
     pObj->UserCb = cb;
+    pObj->hFocus = NULL;
     WINDOW_SetTitle(pObj, ""); /* 设置初始字符串 */
     WINDOW_SetFont(pObj, GUI_DEF_FONT);
     __CreateClient(pObj); /* 建立客户区 */
-    WM_PostMessage(pObj->hClient, WM_CREATED, (GUI_PARAM)NULL);
+    WM_SendMessage(pObj->hClient, WM_CREATED, (GUI_PARAM)NULL);
     GUI_UNLOCK();
     return pObj;
 }
@@ -194,7 +216,7 @@ GUI_RESULT WINDOW_SetTitle(WM_HWIN hWin, const char *str)
 }
 
 /* WINDOW设置字体 */
-GUI_RESULT WINDOW_SetFont(WM_HWIN hWin, GUI_FontType Font)
+GUI_RESULT WINDOW_SetFont(WM_HWIN hWin, GUI_FONT Font)
 {
     /* 检测是否为WINDOW控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);

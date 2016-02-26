@@ -42,7 +42,7 @@ static void _BUTTON_Callback(WM_MESSAGE *pMsg)
             break;
         case WM_TP_CHECKED :
             BUTTON_Check(pMsg->hWin, 1);
-            WM_SetActiveMainWindow(pMsg->hWin); /* 设置祖先为活动窗口 */
+            WM_SetForegroundWindow(pMsg->hWin); /* 设置祖先为活动窗口 */
             pMsg->MsgId = WM_BUTTON_CLICKED;
             WM_SendMessageToParent(pMsg->hWin, pMsg);
             break;
@@ -99,7 +99,7 @@ GUI_RESULT BUTTON_SetTitle(WM_HWIN hWin, const char *str)
     return GUI_OK;
 }
 
-GUI_RESULT BUTTON_SetFont(WM_HWIN hWin, GUI_FontType Font)
+GUI_RESULT BUTTON_SetFont(WM_HWIN hWin, GUI_FONT Font)
 {
     /* 检测是否为BUTTON控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_BUTTON);

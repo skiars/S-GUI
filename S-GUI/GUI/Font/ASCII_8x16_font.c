@@ -217,5 +217,5 @@ static GUI_FontStruct __Font_ASCII_8X16 = {
     __GetChar,
 };
 
-const GUI_FontType Font_ASCII_8X16 = &__Font_ASCII_8X16;
+const GUI_FONT Font_ASCII_8X16 = &__Font_ASCII_8X16;
 

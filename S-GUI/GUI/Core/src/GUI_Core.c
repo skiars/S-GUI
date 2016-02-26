@@ -1,7 +1,8 @@
 #include "GUI_Core.h"
 #include "GUI.h"
 
-GUI_WORK_SPACE *GUI_Data;
+GUI_WORK_SPACE *GUI_Data;    /* GUI工作数据 */
+GUI_CONTEXT GUI_Context;     /* GUI上下文 */
 static u_32 __LockTaskId;
 static u_16 __TaskLockCnt;
 
@@ -15,8 +16,7 @@ GUI_RESULT GUI_Init(void)
     GUI_Phy_Init(&GUI_Data->phy_info);
     GUI_InitOS();
     GUI_RectListInit(GUI_RECT_HEAP_SIZE); /* 注意内存是否足够 */
-    GUI_Data->MsgQueue = GUI_QueueInit(GUI_MSG_QUEUE_SIZE);
-    if (GUI_Data->MsgQueue == NULL) {
+    if (GUI_MessageQueueInit() == GUI_ERR) {
         return GUI_ERR;
     }
     if (WM_Init() == GUI_ERR) {
@@ -34,8 +34,8 @@ GUI_RESULT GUI_Init(void)
 void GUI_Unload(void)
 {
     WM_DeleteWindow(_hRootWin); /* 删除所有窗口 */
-    GUI_QueueDelete(GUI_Data->MsgQueue); /* 删除消息队列 */
-    GUI_fastfree(GUI_Data); /* 删除GUI工作空间 */
+    GUI_MessageQueueDelete();   /* 删除消息队列 */
+    GUI_fastfree(GUI_Data);     /* 删除GUI工作空间 */
     GUI_Data = NULL;
 }
 
@@ -70,29 +70,6 @@ void GUI_Delay(GUI_TIME tms)
     }
 }
 
-/* -------------------- GUI消息处理 -------------------- */
-/* 从GUI消息队列中读取一个消息 */
-GUI_RESULT GUI_GetMessage(GUI_MESSAGE *pMsg)
-{
-    GUI_RESULT res;
-
-    GUI_LOCK();
-    res = GUI_GetMessageQueue(GUI_Data->MsgQueue, pMsg);
-    GUI_UNLOCK();
-    return res;
-}
-
-/* 向GUI消息队列发送一条消息 */
-GUI_RESULT GUI_PostMessage(GUI_MESSAGE *pMsg)
-{
-    GUI_RESULT res;
-
-    GUI_LOCK();
-    res = GUI_PostMessageQueue(GUI_Data->MsgQueue, pMsg);
-    GUI_UNLOCK();
-    return res;
-}
-
 /* -------------------- GUI任务锁 -------------------- */
 
 /* GUI上锁 */
@@ -116,35 +93,33 @@ void GUI_UNLOCK(void)
 
 /* -------------------- GUI矩形绘制 -------------------- */
 /* 设置现在绘制区域的裁剪矩形链表 */
-void GUI_SetNowRectList(RECT_LIST l, GUI_RECT *p)
+void GUI_SetNowRectList(GUI_AREA l, GUI_RECT *p)
 {
-    GUI_Data->NowRectList = l;
-    GUI_Data->PaintArea = p;
+    GUI_Context.Area = l;
+    GUI_Context.ClipRect = p;
 }
 
 /* 返回现在绘制区域的裁剪矩形链表 */
-RECT_LIST GUI_GetNowRectList(void)
+GUI_AREA GUI_GetNowRectList(void)
 {
-    return GUI_Data->NowRectList;
+    return GUI_Context.Area;
 }
-
-static RECT_NODE *__NowRectNode = NULL;
 
 /* 初始化绘制区域 */
 void GUI_DrawAreaInit(GUI_RECT *p)
 {
-    if (GUI_CheckRectIntersect(GUI_Data->PaintArea, p)) {
-        __NowRectNode = GUI_Data->NowRectList;
+    if (GUI_CheckRectIntersect(GUI_Context.ClipRect, p)) {
+        GUI_Context.pAreaNode = GUI_Context.Area;
     } else {
-        __NowRectNode = NULL; /* 绘图区域与当前的有效绘制区域不相交 */
+        GUI_Context.pAreaNode = NULL; /* 绘图区域与当前的有效绘制区域不相交 */
     }
 }
 
 /* 返回当前的裁剪矩形 */
 GUI_RECT *GUI_GetNowArea(void)
 {
-    if (__NowRectNode) {
-        return &__NowRectNode->Rect;
+    if (GUI_Context.pAreaNode) {
+        return &GUI_Context.pAreaNode->Rect;
     }
     return NULL;
 }
@@ -158,11 +133,11 @@ GUI_RECT *GUI_GetNowArea(void)
  **/
 u_8 GUI_GetNextArea(GUI_RECT *pRect)
 {
-    if (__NowRectNode == NULL) {
+    if (GUI_Context.pAreaNode == NULL) {
         return 0;
     }
-    *pRect = __NowRectNode->Rect;
-    __NowRectNode = __NowRectNode->pNext;
+    *pRect = GUI_Context.pAreaNode->Rect;
+    GUI_Context.pAreaNode = GUI_Context.pAreaNode->pNext;
     return 1;
 }
 

@@ -27,5 +27,9 @@ GUI_QUEUE * GUI_QueueInit(u_16 Capacity);
 void GUI_QueueDelete(GUI_QUEUE *pQue);
 GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg);
 GUI_RESULT GUI_PostMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg);
+GUI_RESULT GUI_MessageQueueInit(void);
+void GUI_MessageQueueDelete(void);
+GUI_RESULT GUI_GetMessage(GUI_MESSAGE *pMsg);
+GUI_RESULT GUI_PostMessage(GUI_MESSAGE *pMsg);
 
 #endif /* __GUI_QUEUE_H */

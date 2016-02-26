@@ -1,6 +1,8 @@
 #include "GUI_Queue.h"
 #include "GUI.h"
 
+GUI_QUEUE *__MsgQueue;
+
 /*
  * 消息队列初始化
  * Capacity:队列容量
@@ -32,6 +34,9 @@ void GUI_QueueDelete(GUI_QUEUE *pQue)
  **/
 GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
 {
+    if (!pQue) {
+        return GUI_ERR;
+    }
     GUI_LOCK();
     if (!pQue->size) {   /* 队列为空 */
         GUI_UNLOCK();
@@ -53,6 +58,9 @@ GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
  **/
 GUI_RESULT GUI_PostMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
 {
+    if (!pQue) {
+        return GUI_ERR;
+    }
     if (pQue->size == pQue->Capacity - 1) { /* 队列已满 */
 #if GUI_DEBUG_MODE
         GUI_DEBUG_OUT("GUI message queue is full.");
@@ -65,4 +73,47 @@ GUI_RESULT GUI_PostMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
     }
     pQue->pArray[pQue->rear] = *pMsg;
     return GUI_OK;
+}
+
+/* -------------------- GUI消息处理 -------------------- */
+/* GUI消息队列初始化 */
+GUI_RESULT GUI_MessageQueueInit(void)
+{
+    __MsgQueue = GUI_QueueInit(GUI_MSG_QUEUE_SIZE);
+    if (__MsgQueue == NULL) {
+#if GUI_DEBUG_MODE
+        GUI_DEBUG_OUT("Failure to create message queue.");
+#endif
+        return GUI_ERR;
+    }
+    return GUI_OK;
+}
+
+/* 删除GUI消息队列 */
+void GUI_MessageQueueDelete(void)
+{
+    GUI_QueueDelete(__MsgQueue);
+    __MsgQueue = NULL;
+}
+
+/* 从GUI消息队列中读取一个消息 */
+GUI_RESULT GUI_GetMessage(GUI_MESSAGE *pMsg)
+{
+    GUI_RESULT res;
+
+    GUI_LOCK();
+    res = GUI_GetMessageQueue(__MsgQueue, pMsg);
+    GUI_UNLOCK();
+    return res;
+}
+
+/* 向GUI消息队列发送一条消息 */
+GUI_RESULT GUI_PostMessage(GUI_MESSAGE *pMsg)
+{
+    GUI_RESULT res;
+
+    GUI_LOCK();
+    res = GUI_PostMessageQueue(__MsgQueue, pMsg);
+    GUI_UNLOCK();
+    return res;
 }
