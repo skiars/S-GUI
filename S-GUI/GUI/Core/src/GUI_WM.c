@@ -445,10 +445,16 @@ void WM_DeleteWindow(WM_HWIN hWin)
 /* 设置焦点窗口 */
 GUI_RESULT WM_SetFocusWindow(WM_HWIN hWin)
 {
+    WM_MESSAGE Msg;
+
     if (hWin == NULL) {
         return GUI_ERR;
     }
-    WM_SendMessage(hWin, WM_SET_FOCUS, 0);
+    /* 设置当前窗口为输入焦点 */
+    Msg.hWinSrc = NULL;
+    Msg.MsgId = WM_SET_FOCUS;
+    Msg.Param = 1;
+    WM__SendMessage(hWin, &Msg);
     return GUI_OK;
 }
 
@@ -465,6 +471,7 @@ GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin)
         return GUI_ERR;
     }
     GUI_LOCK();
+    WM_SetFocusWindow(hWin); /* 设置输入焦点 */
     /* 先找到它位于根窗口下的祖先 */
     while (pObj && pObj->hParent != _pRootWin) {
         pObj = pObj->hParent;
@@ -473,9 +480,6 @@ GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin)
         WM_RemoveWindow(pObj); /* 先移除窗口 */
         WM_AttachWindow(pObj, NULL); /* 插入窗口到最后 */
         WM_InvalidTree(pObj); /* 窗口及其所有的子窗口无效化 */
-        WM_SetFocusWindow(hWin); /* 设置输入焦点 */
-    } else if (hWin != pObj) {
-        WM_SetFocusWindow(hWin); /* 设置输入焦点 */
     }
     GUI_UNLOCK();
     return GUI_OK;
@@ -837,15 +841,33 @@ GUI_RECT * WM_GetClientRect(WM_HWIN hWin)
     return &pClient->Rect;
 }
 
+/* GUI按键默认处理函数 */
+GUI_BOOL WM_DefaultKeyProc(GUI_MESSAGE *pMsg)
+{
+    if (pMsg->MsgId == WM_KEYDOWN) {
+        switch (pMsg->Param) {
+        case KEY_TAB: /* TAB键切换焦点 */
+            pMsg->MsgId = WM_SET_FOCUS;
+            pMsg->Param = 0;
+            WM_SendMessage(pMsg->hWin, WM_SET_FOCUS, 0);
+            break;
+        default:
+            return FALSE;
+        }
+        return TRUE;
+    }
+    return FALSE;
+}
+
 /* 默认消息处理函数 */
 void WM_DefaultProc(GUI_MESSAGE *pMsg)
 {
-    /* Exec message */
+    /* 处理消息 */
     switch (pMsg->MsgId) {
     case WM_DELETE:
         return;
     case WM_TP_CHECKED:
-        WM_SetForegroundWindow(pMsg->hWin);
+        WM_SetForegroundWindow(pMsg->hWin); /* 设置为前景窗口 */
         return;
     case WM_TP_PRESS: /* 移动窗口 */
         WM_MoveWindow(pMsg->hWin,
@@ -857,12 +879,17 @@ void WM_DefaultProc(GUI_MESSAGE *pMsg)
             ((GUI_POINT*)pMsg->Param)[1].x,
             ((GUI_POINT*)pMsg->Param)[1].y);
         return;
-    case WM_SET_FOCUS:
-        pMsg->Param = 1;
+    case WM_SET_FOCUS: /* 设置窗口焦点 */
         WM_SendMessageToParent(pMsg->hWin, pMsg);
+        return;
+    case WM_KEYDOWN:
+        if (pMsg->Param == KEY_TAB) { /* TAB键切换焦点 */
+            pMsg->MsgId = WM_SET_FOCUS;
+            pMsg->Param = 0;
+            WM__SendMessage(pMsg->hWin, pMsg);
+        }
         return;
     }
     /* 设置默认参数 */
-    pMsg->Param = 0;
     pMsg->Param = 0;
 }

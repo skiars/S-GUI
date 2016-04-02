@@ -15,7 +15,11 @@ static void _BUTTON_Paint(WM_HWIN hWin)
     y0 = Rect.y0;
     xSize = Rect.x1 - x0 + 1;
     ySize = Rect.y1 - y0 + 1;
-    Color = pObj->Widget.Skin.EdgeColor[0];
+    if (GUI_Context.hFocus == pObj) { /* 是焦点窗口 */
+        Color = 0x00D9D9D9;
+    } else {
+        Color = pObj->Widget.Skin.EdgeColor[0];
+    }
     /* 绘制边框 */
     GUI_DrawRect(x0, y0, xSize, ySize, Color);
     if (pObj->Check) {
@@ -42,7 +46,7 @@ static void _BUTTON_Callback(WM_MESSAGE *pMsg)
             break;
         case WM_TP_CHECKED :
             BUTTON_Check(pMsg->hWin, 1);
-            WM_SetForegroundWindow(pMsg->hWin); /* 设置祖先为活动窗口 */
+            WM_SetForegroundWindow(pMsg->hWin); /* 设为前景窗口 */
             pMsg->MsgId = WM_BUTTON_CLICKED;
             WM_SendMessageToParent(pMsg->hWin, pMsg);
             break;
@@ -55,6 +59,29 @@ static void _BUTTON_Callback(WM_MESSAGE *pMsg)
             pMsg->MsgId = WM_NUTTON_MOVED_OUT;
             WM_SendMessageToParent(pMsg->hWin, pMsg);
             break;
+        case WM_KEYDOWN:
+            if (WM_DefaultKeyProc(pMsg) == TRUE) {
+                break;
+            }
+            if (pMsg->Param == KEY_SPACE) {
+                BUTTON_Check(pMsg->hWin, 1);
+                pMsg->MsgId = WM_BUTTON_CLICKED;
+                WM_SendMessageToParent(pMsg->hWin, pMsg);
+            }
+            break;
+        case WM_KEYUP:
+            if (WM_DefaultKeyProc(pMsg) == TRUE) {
+                break;
+            }
+            if (pMsg->Param == KEY_SPACE) {
+                BUTTON_Check(pMsg->hWin, 0);
+                pMsg->MsgId = WM_BUTTON_RELEASED;
+                WM_SendMessageToParent(pMsg->hWin, pMsg);
+            }
+            break;
+        case WM_SET_FOCUS: /* 设置窗口焦点 */
+            WM_SendMessageToParent(pMsg->hWin, pMsg);
+            return;
         default:
             WM_DefaultProc(pMsg);
     }
@@ -78,11 +105,11 @@ WM_HWIN BUTTON_Create(i_16 x0,
         return NULL;
     }
     /* 配色 */
-    pObj->Widget.Skin.EdgeColor[0] = 0x00FFFFFF;  /* 边线未按下 */
+    pObj->Widget.Skin.EdgeColor[0] = 0x00708090;  /* 边线未按下 */
     pObj->Widget.Skin.EdgeColor[1] = 0x00FFFFFF;  /* 边线按下 */
-    pObj->Widget.Skin.BackColor[0] = 0X0099FF66;
-    pObj->Widget.Skin.BackColor[1] = 0X00C67171;
-    pObj->Widget.Skin.FontColor[0] = 0X00007236;
+    pObj->Widget.Skin.BackColor[0] = 0X003D3D3D;
+    pObj->Widget.Skin.BackColor[1] = 0X004682B4;
+    pObj->Widget.Skin.FontColor[0] = 0X00E3E3E3;
     pObj->Widget.Skin.FontColor[1] = 0X00FFFFFF;
     pObj->Check = 0;                /* 没有按下 */
     BUTTON_SetTitle(pObj, "");      /* 设置初始字符串 */

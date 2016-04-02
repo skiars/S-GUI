@@ -45,6 +45,8 @@ static void __Callback(WM_MESSAGE *pMsg)
             break;
         case WM_TP_LEAVE:
             break;
+        default:
+            WM_DefaultProc(pMsg);
     }
 }
 

@@ -165,6 +165,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONUP: /* 鼠标左键松开 */
         sim_pad_removed();
         break;
+    case WM_KEYDOWN: /* 按键按下 */
+        sim_key_send(wParam, WM_KEYDOWN);
+        break;
+    case WM_KEYUP: /* 按键松开 */
+            sim_key_send(wParam, WM_KEYUP);
+            break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

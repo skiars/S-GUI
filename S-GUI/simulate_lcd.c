@@ -147,3 +147,34 @@ void sim_pad_removed(void)
         (u_16)sim_lcd.tPad.y, GUI_TP_REMOVED);
     sim_lcd.padStatus = GUI_TP_REMOVED;
 }
+
+/* 键盘值传递，作用：将Win32键盘输入键值传递到S-GUI */
+void sim_key_send(WPARAM KeyVal, UINT Status)
+{
+    u_8 Key;
+
+    /* 键值转换 */
+    switch (KeyVal) {
+    case VK_UP:
+        Key = KEY_UP;
+        break;
+    case VK_DOWN:
+        Key = KEY_DOWN;
+        break;
+    case VK_LEFT:
+        Key = KEY_LEFT;
+    case VK_RIGHT:
+        Key = KEY_RIGHT;
+        break;
+    case VK_SHIFT:
+        /* 第二功能键处理 */
+        break;
+    default:
+        Key = (u_8)KeyVal; /* 其他键直接赋值 */
+    }
+    if (Status == WM_KEYDOWN) {
+        GUI_SendKey(Key, GUI_KEYDOWN);
+    } else if (Status == WM_KEYUP) {
+        GUI_SendKey(Key, GUI_KEYUP);
+    }
+}

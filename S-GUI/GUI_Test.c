@@ -65,7 +65,6 @@ void GUI_Test(void)
     Create_Window2();
     while (1) {
         GUI_Delay(20);
-        GUI_SendKey(GUI_KEY_DOWN);
         ++_FpsVal; /* Í³¼ÆÖ¡ÂÊ */
     }
 }
@@ -99,7 +98,7 @@ void Window1_Cb(WM_MESSAGE *pMsg)
             if (Alpha >= 10) Alpha -= 10;
         }
         break;
-    case WM_KEY:
+    case WM_KEYUP:
         WM_DeleteWindow(pMsg->hWin);
         Alpha = 0;
         break;
@@ -130,7 +129,7 @@ void Window3_Cb(WM_MESSAGE *pMsg)
             TEXTBOX_SetAllAlpha(hItem, 200);
         }
         break;
-    case WM_KEY:
+    case WM_KEYUP:
         WINDOW_SetAllAlpha(pMsg->hWin, 30);
         break;
     }
@@ -151,10 +150,10 @@ void Create_Window3(void)
     TEXTBOX_SetText(hWin2, "This is a Small Graphical User Interface.\n"
         "It\'s author is Guan Wenliang.\n"
         "This is a demonstration...");
-    hWin3 = BUTTON_Create(100, 220, 60, 30, hWin, WIN3_BTN1, 0);
-    BUTTON_SetTitle(hWin3, "Exit");
     hWin3 = BUTTON_Create(30, 220, 60, 30, hWin, WIN3_BTN2, 0);
     BUTTON_SetTitle(hWin3, "Alpha");
+    hWin3 = BUTTON_Create(100, 220, 60, 30, hWin, WIN3_BTN1, 0);
+    BUTTON_SetTitle(hWin3, "Exit");
 }
 
 void Window4_Cb(WM_MESSAGE *pMsg)
@@ -166,7 +165,7 @@ void Window4_Cb(WM_MESSAGE *pMsg)
             WM_DeleteWindow(pMsg->hWin);
         }
         break;
-    case WM_KEY:
+    case WM_KEYUP:
         hItem = WM_GetDialogItem(pMsg->hWin, WIN4_LBX1);
         LISTBOX_ItemDown(hItem);
         break;
@@ -212,7 +211,7 @@ void Window5_Cb(WM_MESSAGE *pMsg)
             WM_DeleteWindow(pMsg->hWin);
         }
         break;
-    case WM_KEY:
+    case WM_KEYUP:
         break;
     }
 }
@@ -270,7 +269,7 @@ void Window2_Cb(WM_MESSAGE *pMsg)
             break;
         }
         break;
-    case WM_KEY:
+    case WM_KEYUP:
         Create_Window1();
         break;
     }

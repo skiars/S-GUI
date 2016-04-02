@@ -1,7 +1,7 @@
 #include "WINDOW.h"
 #include "GUI.h"
 
-#define WINDOW_DEF_CAPHEIGHT   32
+#define WINDOW_DEF_CAPHEIGHT   26
 /* 默认的窗体caption背景色caption的颜色. */
 /* 以及窗体背景色. */
 #define WINDOW_CAPTION_UPC          0x003C4C52  /* 窗口CAPTION上部分填充色 */
@@ -70,14 +70,19 @@ static void __Paint(WM_HWIN hWin)
 static void WINDOW_SetFocus(GUI_MESSAGE *pMsg)
 {
     WINDOW_Obj *pObj = pMsg->hWin;
-    
-    if (!pMsg->Param) { /* 设置下一个焦点 */
-        GUI_HWIN hFocus = pObj->hFocus;
 
-        if (hFocus == NULL) {
-            hFocus = ((WM_Obj *)pObj->hClient)->hFirstChild;
+    if (!pMsg->Param) { /* 设置下一个输入焦点 */
+        if (pObj->hFocus == NULL || !((WM_Obj *)pObj->hFocus)->hNext) {
+            pMsg->hWinSrc = ((WM_Obj *)pObj->hClient)->hFirstChild;
+        } else {
+            pMsg->hWinSrc = ((WM_Obj *)pObj->hFocus)->hNext;
         }
-        pMsg->hWinSrc = hFocus;
+    } else if (pMsg->hWinSrc == NULL) { /* 直接设置输入焦点 */
+        if (pObj->hFocus) {
+            pMsg->hWinSrc = pObj->hFocus;
+        } else {
+            pMsg->hWinSrc = ((WM_Obj *)pObj->hClient)->hFirstChild;
+        }
     }
     pObj->hFocus = WIDGET_SetFocus(pMsg);
 }
@@ -198,6 +203,7 @@ WM_HWIN WINDOW_Create(i_16 x0,
     pObj->Widget.Skin.FontColor[1] = WINDOW_FONT_COLOR;
     pObj->UserCb = cb;
     pObj->hFocus = NULL;
+    pObj->hClient = NULL;
     WINDOW_SetTitle(pObj, ""); /* 设置初始字符串 */
     WINDOW_SetFont(pObj, GUI_DEF_FONT);
     __CreateClient(pObj); /* 建立客户区 */

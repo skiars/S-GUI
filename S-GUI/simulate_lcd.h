@@ -25,5 +25,6 @@ void sim_dispArea(int x, int y, int Width, int Height, COLORREF *Buffer, int row
 void sim_updata(void);
 void sim_pad_cleck(void);
 void sim_pad_removed(void);
+void sim_key_send(WPARAM KeyVal, UINT Status);
 
 #endif

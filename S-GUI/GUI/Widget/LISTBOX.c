@@ -33,8 +33,18 @@ static void __Callback(WM_MESSAGE *pMsg)
         case WM_DELETE :
             /* É¾³ýÁ´±í */
             break;
-        case WM_KEY:
-            LISTBOX_ItemDown(pMsg->hWin);
+        case WM_KEYDOWN:
+            if (WM_DefaultKeyProc(pMsg) == TRUE) {
+                break;
+            }
+            switch (pMsg->Param) {
+            case KEY_UP:
+                LISTBOX_ItemUp(pMsg->hWin);
+                break;
+            case KEY_DOWN:
+                LISTBOX_ItemDown(pMsg->hWin);
+                break;
+            }
             break;
         case WM_TP_CHECKED :
             WM_SetForegroundWindow(pMsg->hWin);

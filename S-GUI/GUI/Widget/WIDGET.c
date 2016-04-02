@@ -102,15 +102,8 @@ GUI_COLOR WIDGET_GetFontColor(GUI_HWIN hWin, u_8 n)
 /* WIDGET设置焦点 */
 GUI_HWIN WIDGET_SetFocus(GUI_MESSAGE *pMsg)
 {
-    WM_Obj *pFocus = pMsg->hWinSrc;
-
-    if (!pMsg->Param && pFocus) { /* 寻找下一个焦点 */
-        /* 如果pMsg->Param为1说明当前窗口可以设置焦点 */
-        while (!pMsg->Param && pFocus->hNext) {
-            pFocus = pFocus->hNext;
-            WM__SendMessage(pFocus, pMsg);
-        }
-    }
-    GUI_Context.hFocus = pFocus;
-    return pFocus;
+    WM_Invalidate(GUI_Context.hFocus);
+    GUI_Context.hFocus = pMsg->hWinSrc;
+    WM_Invalidate(GUI_Context.hFocus);
+    return pMsg->hWinSrc;
 }

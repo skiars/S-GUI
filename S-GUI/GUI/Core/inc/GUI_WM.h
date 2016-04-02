@@ -20,7 +20,8 @@
 #define WM_BUTTON_RELEASED   0x0201    /* BUTTON控件已经释放 */
 #define WM_NUTTON_MOVED_OUT  0x0202    /* BUTTON被点击然后指针移开 */
 #define WM_WIONDOW_CHECKED   0x0203    /* 窗口被点击 */
-#define WM_KEY               0x0210    /* 按键事件 */
+#define WM_KEYDOWN           0x0210    /* 按键按下 */
+#define WM_KEYUP             0x0211    /* 按键松开 */
 /* 0x0400以后为扩展消息(用户自定义) */
 
 /* 窗口状态定义(Window status define) */
@@ -96,6 +97,7 @@ void WM_MoveWindow(WM_HWIN hWin, i_16 dX, i_16 dY);
 void WM_InvalidCoverWindow(WM_HWIN hWin, GUI_RECT *pRect);
 WM_HWIN WM_GetClientWindow(WM_HWIN hWin);
 GUI_RECT * WM_GetClientRect(WM_HWIN hWin);
+GUI_BOOL WM_DefaultKeyProc(GUI_MESSAGE *pMsg);
 void WM_DefaultProc(GUI_MESSAGE *pMsg);
 
 #endif /* __GUI_WM_H */

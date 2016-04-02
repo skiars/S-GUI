@@ -2,17 +2,22 @@
 #include "GUI.h"
 
 /*
-*把键值存储到键盘缓冲器
+*把键值发送到消息队列
 */
-void GUI_SendKey(u_8 Key)
+void GUI_SendKey(u_8 Key, u_8 Status)
 {
-    WM_PostMessage(GUI_Context.hFocus, WM_KEY, Key);
+    if (Status == GUI_KEYDOWN) { /* 按键按下 */
+        WM_PostMessage(GUI_Context.hFocus, WM_KEYDOWN, Key);
+    } else if (Status == GUI_KEYUP){ /* 按键松开 */
+        WM_PostMessage(GUI_Context.hFocus, WM_KEYUP, Key);
+    }
+    
 }
 
 /* 按键处理 */
 GUI_RESULT GUI_KeyMessageProc(GUI_MESSAGE *pMsg)
 {
-    if (pMsg->MsgId == WM_KEY) {
+    if (pMsg->MsgId == WM_KEYUP) {
         GUI_LOCK();
         if (pMsg->hWin == GUI_Context.hFocus) {
             WM__SendMessage(pMsg->hWin, pMsg);
