@@ -208,6 +208,7 @@ WM_HWIN WINDOW_Create(i_16 x0,
     WINDOW_SetFont(pObj, GUI_DEF_FONT);
     __CreateClient(pObj); /* 建立客户区 */
     WM_SendMessage(pObj->hClient, WM_CREATED, (GUI_PARAM)NULL);
+    WM_SetFocusWindow(pObj);
     GUI_UNLOCK();
     return pObj;
 }

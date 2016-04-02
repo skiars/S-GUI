@@ -118,7 +118,19 @@ void Window3_Cb(WM_MESSAGE *pMsg)
     u_16 Id;
     WM_HWIN hWin = pMsg->hWin, hItem;
 
+    
     switch (pMsg->MsgId) {
+    case WM_CREATED:
+        hWin = WM_GetClientWindow(pMsg->hWin);
+        hItem = TEXTBOX_Create(0, 0, 214, 210, hWin, WIN3_TBX1, 0);
+        TEXTBOX_SetText(hItem, "This is a Small Graphical User Interface.\n"
+            "It\'s author is Guan Wenliang.\n"
+            "This is a demonstration...");
+        hItem = BUTTON_Create(30, 220, 60, 30, hWin, WIN3_BTN2, 0);
+        BUTTON_SetTitle(hItem, "Alpha");
+        hItem = BUTTON_Create(100, 220, 60, 30, hWin, WIN3_BTN1, 0);
+        BUTTON_SetTitle(hItem, "Exit");
+        break;
     case WM_BUTTON_RELEASED:
         Id = WM_GetDialogId(pMsg->hWinSrc);
         if (Id == WIN3_BTN1) {
@@ -137,29 +149,41 @@ void Window3_Cb(WM_MESSAGE *pMsg)
 
 void Create_Window3(void)
 {
-    GUI_HWIN hWin, hWin2, hWin3;
+    GUI_HWIN hWin;
 
     hWin = WINDOW_Create(10, 10, 220, 300, NULL, WINDOW3, WM_WS_MOVE, Window3_Cb);
-    if (hWin == NULL) {
-        return;
-    }
     WINDOW_SetTitle(hWin, "Infomation");
-    hWin = WM_GetClientWindow(hWin);
-    hWin2 = TEXTBOX_Create(0, 0, 214, 210, hWin, WIN3_TBX1, 0);
-    //WIDGET_SetFont(hWin2, Font_ASCII_8X16);
-    TEXTBOX_SetText(hWin2, "This is a Small Graphical User Interface.\n"
-        "It\'s author is Guan Wenliang.\n"
-        "This is a demonstration...");
-    hWin3 = BUTTON_Create(30, 220, 60, 30, hWin, WIN3_BTN2, 0);
-    BUTTON_SetTitle(hWin3, "Alpha");
-    hWin3 = BUTTON_Create(100, 220, 60, 30, hWin, WIN3_BTN1, 0);
-    BUTTON_SetTitle(hWin3, "Exit");
 }
 
 void Window4_Cb(WM_MESSAGE *pMsg)
 {
-    WM_HWIN hItem;
+    WM_HWIN hWin, hItem;
+
     switch (pMsg->MsgId) {
+    case WM_CREATED:
+        hWin = WM_GetClientWindow(pMsg->hWin);
+        hItem = LISTBOX_Create(0, 0, 214, 210, hWin, WIN4_LBX1, 0, 100);
+        LISTBOX_ScrollDisplay(hItem);
+        //WIDGET_SetFont(hWin2, Font_ASCII_8X16);
+        LISTBOX_AddList(hItem, "This is a Listbox test...Scroll...asdfg-ASDFGqwertyuiopQWERTYUIOP");
+        LISTBOX_AddList(hItem, "Hello");
+        LISTBOX_AddList(hItem, "abcdefg");
+        LISTBOX_AddList(hItem, "ABCDEFG");
+        LISTBOX_AddList(hItem, "hijklmn");
+        LISTBOX_AddList(hItem, "HIJKLMN");
+        LISTBOX_AddList(hItem, "dgs");
+        LISTBOX_AddList(hItem, "saff");
+        LISTBOX_AddList(hItem, "csafe");
+        LISTBOX_AddList(hItem, "srwetw");
+        LISTBOX_AddList(hItem, "vfdgreg");
+        LISTBOX_AddList(hItem, "vfdgreg");
+        LISTBOX_AddList(hItem, "vfdgreg");
+        LISTBOX_AddList(hItem, "Alpha Test");
+        LISTBOX_AddList(hItem, "ListBox Test");
+        //LISTBOX_SetSelFromStr(hWin2, "saff");
+        hItem = BUTTON_Create(70, 220, 60, 30, hWin, Win4_BTN1, 0);
+        BUTTON_SetTitle(hItem, "Exit");
+        break;
     case WM_BUTTON_RELEASED:
         if (WM_GetDialogId(pMsg->hWinSrc) == Win4_BTN1) {
             WM_DeleteWindow(pMsg->hWin);
@@ -174,33 +198,10 @@ void Window4_Cb(WM_MESSAGE *pMsg)
 
 void Create_Window4(void)
 {
-    GUI_HWIN hWin, hWin2, hWin3;
+    GUI_HWIN hWin;
 
     hWin = WINDOW_Create(10, 10, 220, 300, NULL, WINDOW4, WM_WS_MOVE, Window4_Cb);
-    if (hWin == NULL) return;
     WINDOW_SetTitle(hWin, "LISTBOX Test");
-    hWin = WM_GetClientWindow(hWin);
-    hWin2 = LISTBOX_Create(0, 0, 214, 210, hWin, WIN4_LBX1, 0, 100);
-    LISTBOX_ScrollDisplay(hWin2);
-    //WIDGET_SetFont(hWin2, Font_ASCII_8X16);
-    LISTBOX_AddList(hWin2, "This is a Listbox test...Scroll...asdfg-ASDFGqwertyuiopQWERTYUIOP");
-    LISTBOX_AddList(hWin2, "Hello");
-    LISTBOX_AddList(hWin2, "abcdefg");
-    LISTBOX_AddList(hWin2, "ABCDEFG");
-    LISTBOX_AddList(hWin2, "hijklmn");
-    LISTBOX_AddList(hWin2, "HIJKLMN");
-    LISTBOX_AddList(hWin2, "dgs");
-    LISTBOX_AddList(hWin2, "saff");
-    LISTBOX_AddList(hWin2, "csafe");
-    LISTBOX_AddList(hWin2, "srwetw");
-    LISTBOX_AddList(hWin2, "vfdgreg");
-    LISTBOX_AddList(hWin2, "vfdgreg");
-    LISTBOX_AddList(hWin2, "vfdgreg");
-    LISTBOX_AddList(hWin2, "Alpha Test");
-    LISTBOX_AddList(hWin2, "ListBox Test");
-    //LISTBOX_SetSelFromStr(hWin2, "saff");
-    hWin3 = BUTTON_Create(70, 220, 60, 30, hWin, Win4_BTN1, 0);
-    BUTTON_SetTitle(hWin3, "Exit");
 }
 
 void Window5_Cb(WM_MESSAGE *pMsg)

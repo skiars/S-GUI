@@ -22,12 +22,13 @@ static void _BUTTON_Paint(WM_HWIN hWin)
     }
     /* 绘制边框 */
     GUI_DrawRect(x0, y0, xSize, ySize, Color);
-    if (pObj->Check) {
+    if (pObj->Check && GUI_Context.hFocus == pObj) {
         Color = pObj->Widget.Skin.BackColor[1];
         FontColor = pObj->Widget.Skin.FontColor[1];
     } else {
         Color = pObj->Widget.Skin.BackColor[0];
         FontColor = pObj->Widget.Skin.FontColor[0];
+        pObj->Check = 0;
     }
     /* 绘制按键内部 */
     GUI_FillRect(x0 + 1, y0 + 1, xSize - 2, ySize - 2, Color);
@@ -73,7 +74,7 @@ static void _BUTTON_Callback(WM_MESSAGE *pMsg)
             if (WM_DefaultKeyProc(pMsg) == TRUE) {
                 break;
             }
-            if (pMsg->Param == KEY_SPACE) {
+            if (pMsg->Param == KEY_SPACE && BUTTON_GetStatus(pMsg->hWin)) {
                 BUTTON_Check(pMsg->hWin, 0);
                 pMsg->MsgId = WM_BUTTON_RELEASED;
                 WM_SendMessageToParent(pMsg->hWin, pMsg);
@@ -144,4 +145,10 @@ GUI_RESULT BUTTON_Check(WM_HWIN hWin, u_8 NewStatus)
     pObj->Check = NewStatus;
     WM_Invalidate(hWin);
     return GUI_OK;
+}
+
+/* 获取按键状态 */
+u_8 BUTTON_GetStatus(WM_HWIN hWin)
+{
+    return ((BUTTON_Obj *)hWin)->Check;
 }

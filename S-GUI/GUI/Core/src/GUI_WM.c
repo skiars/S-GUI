@@ -741,7 +741,7 @@ WM_HWIN WM_GetExposedWindow(u_16 x, u_16 y)
     WM_Obj *p1 = _pRootWin, *p2 = NULL, *pWin = NULL;
     GUI_RECT r, rParent = p1->Rect; /* 根窗口的矩形 */
 
-    GUI_LOCK();
+    GUI_LOCK(); 
     /* 找到同级别中Z序最高的选中窗口，然后检查它的是否有孩子或孩子中是否有选中窗口，
        如果它没有孩子或孩子中没有选中窗口则返回这个窗口，有则继续向窗口树深处寻找. */
     do {

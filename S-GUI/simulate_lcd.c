@@ -126,8 +126,6 @@ void sim_updata(void)
         /* 如果sim_lcd.Update为1则表示是帧更新，否者需要一直刷新 */
         if (sim_lcd.Update == 1) {
             sim_lcd.Update = 0; /* 复位更新标志 */
-        } else {
-            Sleep(10);
         }
     }
 }
@@ -168,6 +166,7 @@ void sim_key_send(WPARAM KeyVal, UINT Status)
         break;
     case VK_SHIFT:
         /* 第二功能键处理 */
+        Key = KEY_SHIFT;
         break;
     default:
         Key = (u_8)KeyVal; /* 其他键直接赋值 */

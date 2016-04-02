@@ -31,6 +31,14 @@ static void _RootWin_Callback(WM_MESSAGE *pMsg)
             RootWinTimer_Cb(pMsg->hWin);
         }
         break;
+    case WM_SET_FOCUS: /* 设置输入焦点 */
+        pMsg->hWinSrc = pMsg->hWin;
+        WIDGET_SetFocus(pMsg);
+        break;
+    case WM_TP_CHECKED: /* 直接设置输入焦点 */
+        pMsg->hWinSrc = pMsg->hWin;
+        WIDGET_SetFocus(pMsg);
+        break;
     }
 }
 
