@@ -38,9 +38,7 @@ typedef GUI_FontStruct * GUI_FONT;
 
 /* ×ÖÌåÁÐ±í */
 extern const GUI_FONT Font_ASCII_8X16;
-extern const GUI_FONT Font_ASCII_1;
-extern const GUI_FONT Font_ASCII_4PP;
-extern const GUI_FONT Font_ASCII_2PP;
+extern const GUI_FONT Font_UI17_4PP;
 
 #define    ________    0x0
 #define    _______X    0x1

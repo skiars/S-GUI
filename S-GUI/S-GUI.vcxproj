@@ -174,7 +174,7 @@
     <ClInclude Include="GUI\Core\inc\GUI_Timer.h" />
     <ClInclude Include="GUI\Core\inc\GUI_TouchPad.h" />
     <ClInclude Include="GUI\Core\inc\GUI_WM.h" />
-    <ClInclude Include="GUI\Core\inc\Linked_List.h" />
+    <ClInclude Include="GUI\Core\inc\linked_list.h" />
     <ClInclude Include="GUI\Core\inc\mystring.h" />
     <ClInclude Include="GUI\Core\inc\Text.h" />
     <ClInclude Include="GUI\Font\GUI_Font.h" />
@@ -204,14 +204,12 @@
     <ClCompile Include="GUI\Core\src\GUI_Timer.c" />
     <ClCompile Include="GUI\Core\src\GUI_TouchPad.c" />
     <ClCompile Include="GUI\Core\src\GUI_WM.c" />
-    <ClCompile Include="GUI\Core\src\Linked_List.c" />
+    <ClCompile Include="GUI\Core\src\linked_list.c" />
     <ClCompile Include="GUI\Core\src\mystring.c" />
     <ClCompile Include="GUI\Core\src\RootWindow.c" />
     <ClCompile Include="GUI\Core\src\Text.c" />
     <ClCompile Include="GUI\Font\ASCII_8x16_font.c" />
-    <ClCompile Include="GUI\Font\GUI_Font.c" />
-    <ClCompile Include="GUI\Font\UI27-4pp.c" />
-    <ClCompile Include="GUI\Font\UI27_2pp.c" />
+    <ClCompile Include="GUI\Font\UI17_4pp.c" />
     <ClCompile Include="GUI\Widget\BUTTON.c" />
     <ClCompile Include="GUI\Widget\DialogBox.c" />
     <ClCompile Include="GUI\Widget\GRAPH.c" />

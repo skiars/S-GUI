@@ -2,15 +2,38 @@
 #define __GRAPH_H
 
 #include "WIDGET.h"
+#include "linked_list.h"
 
-typedef struct
-{
+#define GRAPH_XY_DATA  0
+
+typedef struct {
+    void *pData;
+    u_8 Status;
+    char *Title;
+    GUI_COLOR Color;
+    u_8 Style;
+} GRAPH_DATA;
+
+typedef struct {
+    int *xData;           /* x轴数据 */
+    int *yData;           /* y轴数据 */
+    int ItemNum;          /* 数据数量 */
+    int MaxItemNum;       /* 最大的数据数量 */
+} GRAPH_XYDATA;
+
+typedef struct {
+    int x0, y0;            /* 起始坐标 */
+    u_16 xScale, yScale;   /* x轴和y轴缩放比例 */
+    u_16 xDist, yDist;     /* x轴和y轴网格线距离 */
+} GRAPH_SCALE;
+
+typedef struct {
     WIDGET Widget;
+    GRAPH_SCALE Scale;
     u_16 xDist;
     u_16 yDist;
-    i_16 *xData;
-    i_16 *yData;
     i_16 Len;
+    LIST List;
 } GRAPH_Obj;
 
 GUI_HWIN GRAPH_Create(i_16 x0,
@@ -20,6 +43,12 @@ GUI_HWIN GRAPH_Create(i_16 x0,
     WM_HWIN hParent,
     u_16 Id,
     u_8 Flag);
-GUI_RESULT GRAPH_SetData(GUI_HWIN hWin, i_16 *x, i_16 *y, u_16 len);
+GUI_RESULT GRAPH_SetScale(GUI_HWIN hWin, i_16 x0,
+    i_16 y0, u_16 xScale, u_16 yScale, u_16 xDist, u_16 yDist);
+GUI_HWIN GRAPH_XY_DataCreate(int *xData, int *yData,
+    int ItemNum, int MaxItemNum, GUI_COLOR Color, u_8 Style);
+GUI_HWIN GRAPH_GethData(GUI_HWIN hWin, int Num);
+void GRAPH_XY_DataEdit(GUI_HWIN hData, int *pX, int *pY, int Num);
+void GRAPH_AttachData(GUI_HWIN hGraph, GUI_HWIN hData);
 
 #endif

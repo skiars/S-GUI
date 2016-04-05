@@ -2,7 +2,7 @@
 #define __LISTBOX_H
 
 #include "Widget.h"
-#include "Linked_List.h"
+#include "linked_list.h"
 
 typedef struct {
     WIDGET Widget;
@@ -14,8 +14,8 @@ typedef struct {
     u_16 SelPixs;       /* 选中条目的像素长度 */
     u_16 SelIndex;      /* 选中的索引 */
     char *SelItem;      /* 选中的条目 */
-    List pList;         /* 链表 */
-    PNode LastNode;     /* 尾部节点 */
+    LIST pList;         /* 链表 */
+    LIST LastNode;      /* 尾部节点 */
     const char *StrTab;
     WM_HWIN hScro;      /* 滚动条句柄 */
     u_16 ScbWidth;
@@ -27,8 +27,7 @@ WM_HWIN LISTBOX_Create(i_16 x0,
                       u_16 ySize,
                       WM_HWIN hParent,
                       u_16 Id,
-                      u_8 Flag,
-                      u_16 namepos);
+                      u_8 Flag);
 GUI_RESULT LISTBOX_AddList(WM_HWIN hWin,char *name);
 void LISTBOX_ItemDown(WM_HWIN hWin);
 GUI_RESULT LISTBOX_ItemUp(WM_HWIN hWin);

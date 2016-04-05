@@ -1,269 +1,180 @@
-#include "Linked_List.h"
+#include "linked_list.h"
 #include "stdio.h"
 #include "string.h"
 #include "mystring.h"
 
 #include "GUI.h"
 
-#define ADT_TEST 0
-
 #define MALLOC(x)  GUI_malloc(x)
 #define FREE(x)    GUI_free(x);
 
-/* 将x指向的数据插入到pl指向的节点后 */
-void Insert(PData x, PNode pl)
-{
-    PNode tmp;
-    u_16 i, len;
-    len = pl->datalen;
-    tmp = MALLOC(sizeof(Node));
-    if (len) {
-        tmp->data = MALLOC(len);
-    } else {
-        tmp->data = x;
-    } /* 指针链表 */
-    if (tmp == NULL || tmp->data == NULL) {
-#if ADT_TEST == 1
-        printf("Out of space!\n");
-        return;
-#else
-        /* Error code */
-
-#endif
-    }
-    for (i = 0; i < len; i++) { /* 复制内容 */
-        ((char *)(tmp->data))[i] = ((char *)x)[i];
-    }
-    tmp->datalen = len;
-    tmp->next = pl->next;
-    pl->next = tmp;
-}
-
 /* 查找链表pl中节点pt的前驱 */
-static List FindPrecious(List pl, PNode pt)
+static LIST FindPrecious(LIST pl, LIST pt)
 {
-    PNode p;
+    LIST p;
     p = pl;
-    while (p->next != NULL && p->next != pt) {
-        p = p->next;
+
+    while (p->pNext != NULL && p->pNext != pt) {
+        p = p->pNext;
     }
     return p;
 }
 
-/* 删除pt指向的节点,返回新节点的地址 */
-static PNode Delete(List pl, PNode pt)
+/* 删除pt指向的节点 */
+void List_DeleteNode(LIST pl, LIST pt)
 {
-    PNode p;
-    p = FindPrecious(pl, pt);
-    if (pl != pt) {
-        p->next = pt->next;
-        if (pt->datalen) { /* 不是指针链表 */
-            FREE(pt->data);
+    LIST p;
+
+    if (pl && pt) {
+        p = FindPrecious(pl, pt);
+        if (pl != pt) {
+            p->pNext = pt->pNext;
+            if (pt->DataLen) { /* 不是指针链表 */
+                FREE(pt->pData);
+            }
+            FREE(pt);
         }
-        FREE(pt);
     }
-    return p->next;
+}
+
+/* 将x指向的数据插入到pl指向的节点后 */
+GUI_RESULT List_InsertNode(LIST pl, void * x, int len)
+{
+    LIST l;
+
+    if (pl == NULL) {
+        return GUI_ERR;
+    }
+    l = MALLOC(sizeof(NODE));
+    if (l == NULL) {
+        return GUI_ERR;
+    }
+    if (len) { /* 申请空间 */
+        l->pData = MALLOC(len);
+        if (l->pData == NULL) {
+            FREE(l);
+            return GUI_ERR;
+        }
+        while (len--) { /* 复制内容 */
+            ((char *)(l->pData))[len] = ((char *)x)[len];
+        }
+    } else { /* 指针链表 */
+        l->pData = x;
+    }
+    l->DataLen = len;
+    l->pNext = pl->pNext;
+    pl->pNext = l;
+    return GUI_OK;
+}
+
+/* 将一个节点插入到链表末尾 */
+GUI_RESULT List_InsertEnd(LIST pl, void * x, int len)
+{
+    if (pl == NULL) {
+        return GUI_ERR;
+    }
+    while (pl->pNext) {
+        pl = pl->pNext;
+    }
+    return List_InsertNode(pl, x, len);
 }
 
 /* 创建一个链表，这个链表有一个空表头 */
-List ListInit(u_16 len)
+LIST List_Init(void)
 {
-    PNode tmp;
-    u_16 i;
-    tmp = MALLOC(sizeof(List));
-    if (len) { /* 不是指针链表 */
-        tmp->data = MALLOC(len);
-    }
-    if (tmp == NULL || tmp->data == NULL) {
-#if ADT_TEST == 1
-        printf("Out of space!\n");
-        return;
-#else 
-        /* Error code */
+    LIST Front;
 
-#endif
+    Front = MALLOC(sizeof(NODE));
+    Front->pData = NULL;
+    if (Front == NULL) {
+        return NULL;
     }
-    for (i = 0; i < len; i++) {
-        ((char *)(tmp->data))[i] = 0;
+    Front->DataLen = 0;
+    Front->pNext = NULL;
+    return Front;
+}
+
+/* 删除链表 */
+void List_Delete(LIST L)
+{
+    LIST l;
+
+    while (L != NULL) {
+        l = L->pNext;
+        if (L->DataLen) { /* 不是指针链表 */
+            FREE(L->pData);
+        }
+        FREE(L);
+        L = l;
     }
-    tmp->datalen = len;
-    tmp->next = NULL;
-    return tmp;
 }
 
 /* 获取链表长度 */
-u_16 ListLen(List pl)
+int List_GetSize(LIST pl)
 {
-    u_16 i;
-    for (i = 0; pl->next != NULL; i++) {
-        pl = pl->next;
+    int i = 0;
+
+    if (pl) {
+        for (; pl->pNext != NULL; ++i) {
+            pl = pl->pNext;
+        }
     }
     return i;
 }
 
-/* 得到第node_num个链节的地址 */
-PNode GetNodePtr(List pl, u_16 node_num)
+/* 得到第n个链节的地址 */
+LIST List_GetNodePtr(LIST pl, int n)
 {
-    u_16 i;
-    if (node_num > ListLen(pl)) {
+    int i;
+
+    if (n > List_GetSize(pl)) {
         return NULL;
     }
-    for (i = 0; i < node_num; i++) {
-        pl = pl->next;
+    for (i = 0; i < n; ++i) {
+        pl = pl->pNext;
     }
     return pl;
 }
 
-/* 获取第node_num个链节的数据地址
- * 如果是指针链表则返回指针值
- **/
-PData List_GetNodeData(List pl, u_16 node_num)
+/* 获取第n个链节的数据指针 */
+void * List_GetNodeData(LIST pl, int n)
 {
-    PNode p;
-    p = GetNodePtr(pl, node_num);
+    LIST p;
+
+    p = List_GetNodePtr(pl, n);
     if (p != NULL) {
-        return p->data;
+        return p->pData;
     } else {
         return NULL;
     }
 }
 
-/* 获取链表pl中pt指向的链节数 */
-u_16 GetNodeNum(List pl, PNode pt)
+/* 获取链表pl中pt指向的链节索引 */
+int List_GetNodeIndex(LIST pl, LIST pt)
 {
-    u_16 i;
-    if (pl == pt) {
-        return 0;
-    }
-    for (i = 1; pl->next != pt; i++) {
-        pl = pl->next;
+    int i = 0;
+
+    if (pl) {
+        for (; pl->pNext != pt; ++i) {
+            pl = pl->pNext;
+        }
     }
     return i;
 }
 
-/* 插入到第num个节点后
- * num从1开始计数
- **/
-char InsertNum(PData x, List pl, u_16 num)
-{
-    PNode p;
-    if (num > ListLen(pl)) {
-        return ADT_ERR;
-    }
-    p = GetNodePtr(pl, num);
-    Insert(x, p);
-    return ADT_OK;
-}
-
-/* 删除第num个节点 */
-char DeleteNum(List pl, u_16 num)
-{
-    PNode p;
-    if (num > ListLen(pl) || num == 0) {
-        return ADT_ERR;
-    }
-    p = GetNodePtr(pl, num);
-    Delete(pl, p);
-    return ADT_OK;
-}
-
-/* 删除链表 */
-void DeleteList(List L)
-{
-    PNode tmp;
-    while (L != NULL) {
-        tmp = L->next;
-        if (L->datalen) { /* 不是指针链表 */
-            FREE(L->data);
-        }
-        FREE(L);
-        L = tmp;
-    }
-}
-
 /* 查找字符串节点，仅当链表节点为字符串时可以使用,不区分大小写 */
-u_16 FindNodeStr(List pl, char *pd)
+int List_FindStr(LIST pl, char *pd)
 {
-    u_16 num;
-    num = 1;
-    while (pl->next != NULL) {
-        pl = pl->next;
-        if (mystricmp(pd, pl->data) == 0) { /* 忽略大小写比较 */
-            return num;
+    int i = 1;
+
+    if (pl) {
+        while (pl->pNext != NULL) {
+            pl = pl->pNext;
+            if (mystricmp(pd, pl->pData) == 0) { /* 忽略大小写比较 */
+                return i;
+            }
+            ++i;
         }
-        num++;
     }
     return 0;
 }
-
-#if ADT_TEST==1
-typedef struct {
-    float a;
-    char b;
-} Data;
-
-static void PrintfList(List pl)
-{
-    while (pl != NULL) {
-        printf("%g\n", ((Data*)pl->data)->a);
-        pl = pl->next;
-    }
-}
-
-int main(void)
-{
-    List pl, pt;
-    u_16 i;
-    char status;
-    Data a;
-    Data *b;
-    a.a = 1.33;
-    a.b = 3;
-    pl = ListInit(sizeof(Data));//创建链表
-
-    for (i = 0; i < 20; i++) {
-        status = InsertNum(&a, pl, i);
-        if (status == ADT_ERR) {
-            printf("Insert Error!\n");
-        }
-        a.a = a.a + 1;
-    }
-    PrintfList(pl);
-    printf("ListLen=%d\n\n", ListLen(pl));
-
-    for (i = 0; i < 20; i++) {
-        status = DeleteNum(pl, 5);
-        if (status == ADT_ERR) {
-            printf("Delete Error!\n");
-        }
-        PrintfList(pl);
-        printf("ListLen=%d\n\n", ListLen(pl));
-    }
-
-    b = List_GetNodeData(pl, 2);
-    if (b != NULL) {
-        printf("\nList Node2=%g\n", b->a);
-        printf("\nNode 5 Num=%d\n", GetNodeNum(pl, GetNodePtr(pl, 5)));
-        printf("sizeof(Node)=%d\n", sizeof(Node));
-    } else {
-        printf("Error:PData==NULL");
-    }
-
-    DeleteList(pl);
-
-    pl = ListInit(100);//创建一个字符串链表，字符串长度最大为100字节
-
-    InsertNum("Item0", pl, 0);
-    InsertNum("Item1", pl, 0);
-    InsertNum("Item2", pl, 1);
-    printf((void*)List_GetNodeData(pl, 1));
-    printf("\n");
-    printf((void*)List_GetNodeData(pl, 2));
-    printf("\n");
-    printf((void*)List_GetNodeData(pl, 3));
-    printf("\nItem2 is %d node.\n", FindNodeStr(pl, "Item2"));
-    DeleteList(pl);
-}
-#endif
-
-

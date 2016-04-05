@@ -251,7 +251,170 @@ void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Color)
     }
 }
 
+/* 画任意抗锯齿线 */
+void GUI_DrawLineNoSaw(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color)
+{
+    signed char sgn = 1;
+    i_16 err = 0, dx = x1 - x0, dy = y1 - y0, d;
+    GUI_COLOR Alpha = 0;
+
+    if (dx == 0) { /* 垂直线 */
+        if (dy < 0) {
+            dy = -dy;
+            y0 = y1;
+        }
+        GUI_VertLine(x0, y0, dy + 1, Color);
+        return;
+    } else if (dy == 0) { /* 水平线 */
+        if (dx < 0) {
+            dx = -dx;
+            x0 = x1;
+        }
+        GUI_HoriLine(x0, y0, dx + 1, Color);
+        return;
+    }
+    if (GUI_ABS(dx) >= GUI_ABS(dy)) { /* 斜率小于1 */
+        if (dx < 0) { /* 交换坐标 */
+            dx = -dx;
+            dy = -dy;
+            d = x0;
+            x0 = x1;
+            x1 = d;
+            d = y0;
+            y0 = y1;
+            y1 = d;
+        }
+        if (dy < 0) {
+            dy = -dy;
+            sgn = -1;
+        }
+        d = dx << 1;
+        while (x0 <= x1) {
+            if (err < 0) {
+                y1 = y0 - sgn;
+                Alpha = (-err << 8) / d;
+            } else {
+                y1 = y0 + sgn;
+                Alpha = (err << 8) / d;
+            }
+            GUI_DrawPoint(x0, y0, Color | Alpha << 24);
+            GUI_DrawPoint(x0, y1, Color | (255 - Alpha) << 24);
+            ++x0;
+            err += dy << 1;
+            if (err > dx) {
+                err -= dx << 1;
+                y0 += sgn;
+            }
+        }
+    } else {
+        if (dy < 0) { /* 交换坐标 */
+            dx = -dx;
+            dy = -dy;
+            d = x0;
+            x0 = x1;
+            x1 = d;
+            d = y0;
+            y0 = y1;
+            y1 = d;
+        }
+        if (dx < 0) {
+            dx = -dx;
+            sgn = -1;
+        }
+        d = dy << 1;
+        while (y0 <= y1) {
+            if (err < 0) {
+                x1 = x0 - sgn;
+                Alpha = (-err << 8) / d;
+            } else {
+                x1 = x0 + sgn;
+                Alpha = (err << 8) / d;
+            }
+            GUI_DrawPoint(x0, y0, Color | Alpha << 24);
+            GUI_DrawPoint(x1, y0, Color | (255 - Alpha) << 24);
+            ++y0;
+            err += dx << 1;
+            if (err > dy) {
+                err -= dy << 1;
+                x0 += sgn;
+            }
+        }
+    }
+}
+
 /* 画任意线 */
+void GUI_DrawLine(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color)
+{
+    signed char sgn = 1;
+    i_16 err = 0, dx = x1 - x0, dy = y1 - y0, d;
+
+    if (dx == 0) { /* 垂直线 */
+        if (dy < 0) {
+            dy = -dy;
+            y0 = y1;
+        }
+        GUI_VertLine(x0, y0, dy + 1, Color);
+        return;
+    } else if (dy == 0) { /* 水平线 */
+        if (dx < 0) {
+            dx = -dx;
+            x0 = x1;
+        }
+        GUI_HoriLine(x0, y0, dx + 1, Color);
+        return;
+    }
+    if (GUI_ABS(dx) >= GUI_ABS(dy)) { /* 斜率小于1 */
+        if (dx < 0) { /* 交换坐标 */
+            dx = -dx;
+            dy = -dy;
+            d = x0;
+            x0 = x1;
+            x1 = d;
+            d = y0;
+            y0 = y1;
+            y1 = d;
+        }
+        if (dy < 0) {
+            dy = -dy;
+            sgn = -1;
+        }
+        d = dx << 1;
+        while (x0 <= x1) {
+            GUI_DrawPoint(x0, y0, Color);
+            ++x0;
+            err += dy << 1;
+            if (err > dx) {
+                err -= dx << 1;
+                y0 += sgn;
+            }
+        }
+    } else {
+        if (dy < 0) { /* 交换坐标 */
+            dx = -dx;
+            dy = -dy;
+            d = x0;
+            x0 = x1;
+            x1 = d;
+            d = y0;
+            y0 = y1;
+            y1 = d;
+        }
+        if (dx < 0) {
+            dx = -dx;
+            sgn = -1;
+        }
+        d = dy << 1;
+        while (y0 <= y1) {
+            GUI_DrawPoint(x0, y0, Color);
+            ++y0;
+            err += dx << 1;
+            if (err > dy) {
+                err -= dy << 1;
+                x0 += sgn;
+            }
+        }
+    }
+}
 
 /* 画圆 */
 

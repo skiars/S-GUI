@@ -1,6 +1,7 @@
 #include "LISTBOX.h"
 #include "GUI.h"
 #include "SCROLLBAR.h"
+#include <string.h>
 
 #define LBOX_DFT_LBKCOLOR       0x003C4C52        /* 内部背景色 */
 #define LBOX_DFT_LSELCOLOR      0x00FFFFFF        /* 选中list后的字体颜色 */
@@ -9,7 +10,7 @@
 #define LBOX_DFT_RIMCOLOR       0x00000000        /* 边框颜色 */
 #define LBOX_DFT_LINECOLOR      0x002A3033        /* 分隔线颜色 */
 
-#define LBOX_DFT_HEIGHT         28      /* 条目高度 */
+#define LBOX_DFT_HEIGHT         20      /* 条目高度 */
 #define LBOX_DFT_SCROENDWID     48      /* 滚动显示末尾空白宽度 */
 #define LBOX_DFT_UNSCRO_TIME    600     /* 选中项开始不滚动的ms数 */
 #define LBOX_DFT_SCRO_TIME      50      /* 选中项显示滚动一个像素间隔时间(ms) */
@@ -24,14 +25,13 @@ static void LISTBOX__SetSelInfo(LISTBOX_Obj *pObj);
 static void __Callback(WM_MESSAGE *pMsg)
 {
     static i_16 dY; /* 这儿，不可重入！！！ */
-    /* 检测是否为LISTBOX控件 */
-    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_LISTBOX);
     switch (pMsg->MsgId) {
         case WM_PAINT :
             LISTBOX__DrawPage(pMsg->hWin);
             break;
         case WM_DELETE :
             /* 删除链表 */
+            List_Delete(((LISTBOX_Obj *)pMsg->hWin)->pList);
             break;
         case WM_KEYDOWN:
             if (WM_DefaultKeyProc(pMsg) == TRUE) {
@@ -79,7 +79,6 @@ static void __Callback(WM_MESSAGE *pMsg)
  * hParent:父窗口句柄
  * Id:窗口ID
  * Flag:窗口状态
- * namepos:每个列表栏的字节数
  **/
 WM_HWIN LISTBOX_Create(i_16 x0,
     i_16 y0,
@@ -87,8 +86,7 @@ WM_HWIN LISTBOX_Create(i_16 x0,
     u_16 ySize,
     WM_HWIN hParent,
     u_16 Id,
-    u_8 Flag,
-    u_16 namepos)
+    u_8 Flag)
 {
     LISTBOX_Obj *pObj;
     
@@ -106,16 +104,16 @@ WM_HWIN LISTBOX_Create(i_16 x0,
     pObj->Widget.Skin.EdgeColor[0] = LBOX_DFT_RIMCOLOR;   /* 边框颜色 */
     pObj->Widget.Skin.EdgeColor[0] = LBOX_DFT_LINECOLOR;  /* 分隔线颜色 */
     WIDGET_SetFont(pObj, GUI_DEF_FONT);
-    pObj->ItemHei=LBOX_DFT_HEIGHT;             /* 条目高度+分隔线高度 */
+    pObj->ItemHei = LBOX_DFT_HEIGHT;             /* 条目高度+分隔线高度 */
     pObj->TopIndex = 0;
     pObj->SelIndex = 0;                           /* 选中的索引 */
     pObj->SelPixs = 0;
     pObj->PageItems = ySize / (pObj->ItemHei + 1); /* 每页可显示的条目数 */
-    pObj->ItemNum=0;                /* 总条目数清零 */
-     pObj->pList=ListInit(namepos);    /* 空链表,链表数据长度为namepos */
-    pObj->LastNode=pObj->pList;
+    pObj->ItemNum = 0;                /* 总条目数清零 */
+    pObj->pList = List_Init();    /* 空链表,链表数据长度为namepos */
+    pObj->LastNode = pObj->pList;
     pObj->StrTab = NULL;
-    pObj->hScro  = NULL;
+    pObj->hScro = NULL;
     pObj->ScbWidth = LBOX_SCB_WIDTH;
     pObj->DispPosPix = 0;
     return pObj;
@@ -142,22 +140,21 @@ static u_8 __CreateScro(GUI_HWIN hWin)
 //增加一条pObj的条目
 //GUI_OK,增加成功;
 //GUI_ERR,增加失败
-GUI_RESULT LISTBOX_AddList(WM_HWIN hWin,char *name)
+GUI_RESULT LISTBOX_AddList(WM_HWIN hWin, char *name)
 {
     LISTBOX_Obj *pObj = hWin;
-    
+
     /* 检测是否为LISTBOX控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_LISTBOX);
-    //if(pObj->StrTab) return GUI_ERR;  //已经锁定使用一次性添加模式
-    Insert(name,pObj->LastNode); //插入到链表结尾
-    pObj->LastNode=pObj->LastNode->next;   //仅有本函数使用
-    pObj->ItemNum++;//总条目数增加1条
+    List_InsertNode(pObj->LastNode, name, strlen(name) + 1); /* 插入到链表结尾 */
+    pObj->LastNode = pObj->LastNode->pNext;   /* 仅有本函数使用 */
+    pObj->ItemNum++; /* 总条目数增加1条 */
     if (pObj->ItemNum > pObj->PageItems) {
         __CreateScro(pObj);
         SCROLLBAR_SetTotality(pObj->hScro, pObj->ItemNum);
         SCROLLBAR_SetLoation(pObj->hScro, pObj->SelIndex);
     }
-    LISTBOX__SetSelInfo(pObj);  //选中项
+    LISTBOX__SetSelInfo(pObj);  /* 选中项 */
     return GUI_OK;
 }
 
@@ -176,20 +173,20 @@ u_8 LISTBOX_addall(WM_HWIN hWin,const char *pTab,u_16 num)
 //获取指定条目的名字
 //pObj目标列表框
 //idxpos要获取名字的条目数
-static PNode Get__ItemName(WM_HWIN hWin,u_16 Item)
+static LIST Get__ItemName(WM_HWIN hWin,u_16 Item)
 {
     LISTBOX_Obj *pObj = hWin;
 
     if(pObj->StrTab == NULL) {
-        return GetNodePtr(pObj->pList,Item + 1);
+        return List_GetNodePtr(pObj->pList, Item + 1);
     }
     return NULL;
 }
 
-static PNode Get__NextItemName(LISTBOX_Obj *pObj, PNode pNode)
+static LIST Get__NextItemName(LISTBOX_Obj *pObj, LIST pNode)
 {
     if(!pObj->StrTab) {
-        return pNode->next;
+        return pNode->pNext;
     }
     return NULL;
 }
@@ -237,7 +234,7 @@ static void LISTBOX__DrawList(LISTBOX_Obj *pObj, u_16 ItemPos, char *Str)
 /* 绘制一页pObj,从pObj->TopIndex开始绘制 */
 static void LISTBOX__DrawPage(LISTBOX_Obj *pObj)
 {
-    PNode pNode;
+    LIST pNode;
     GUI_RECT Rect;
     u_16 i, PageItems;
     i_16 x0, y0, xSize, ySize;
@@ -246,7 +243,7 @@ static void LISTBOX__DrawPage(LISTBOX_Obj *pObj)
     pNode = Get__ItemName(pObj, pObj->TopIndex);
     for(i = 0; i <= PageItems; ++i) /* 显示条目 */
     {
-        LISTBOX__DrawList(pObj, i, pNode->data);
+        LISTBOX__DrawList(pObj, i, pNode->pData);
         pNode = Get__NextItemName(pObj, pNode);
         /* 已经到了最后一条,但i依然要自加1 */
         if(i + pObj->TopIndex + 1 == pObj->ItemNum) {
@@ -300,7 +297,7 @@ static void LISTBOX__SetSelInfo(LISTBOX_Obj *pObj)
     char *Str;
 
     pObj->DispPosPix = 0;
-    Str = Get__ItemName(pObj, pObj->SelIndex)->data;
+    Str = Get__ItemName(pObj, pObj->SelIndex)->pData;
     pObj->SelItem = Str;
     pObj->SelPixs = GetStringPixel(Str, WIDGET_GetFont(pObj));
 }
@@ -432,7 +429,7 @@ GUI_RESULT LISTBOX_SetSelFromStr(WM_HWIN hWin, const char *Str)
     
     /* 检测是否为LISTBOX控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_LISTBOX);
-    Index = FindNodeStr(pObj->pList, (char*)Str);
+    Index = (u_16)List_FindStr(pObj->pList, (char*)Str);
     if (Index) {
         return LISTBOX_SetSel(pObj, Index - 1);
     }

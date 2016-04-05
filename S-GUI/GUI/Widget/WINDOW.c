@@ -1,7 +1,7 @@
 #include "WINDOW.h"
 #include "GUI.h"
 
-#define WINDOW_DEF_CAPHEIGHT   26
+#define WINDOW_DEF_CAPHEIGHT   20
 /* 默认的窗体caption背景色caption的颜色. */
 /* 以及窗体背景色. */
 #define WINDOW_CAPTION_UPC          0x003C4C52  /* 窗口CAPTION上部分填充色 */
@@ -90,6 +90,8 @@ static void WINDOW_SetFocus(GUI_MESSAGE *pMsg)
 /* WINDOW控件自动回调函数 */
 static void __Callback(WM_MESSAGE *pMsg)
 {
+    WM_CALLBACK *cb;
+
     switch (pMsg->MsgId) {
     case WM_PAINT:
         __Paint(pMsg->hWin);
@@ -104,6 +106,11 @@ static void __Callback(WM_MESSAGE *pMsg)
         break;
     default:
         WM_DefaultProc(pMsg);
+        cb = ((WINDOW_Obj*)pMsg->hWin)->UserCb;
+        if (cb) {
+            pMsg->hWin = pMsg->hWin;
+            cb(pMsg);
+        }
     }
 }
 

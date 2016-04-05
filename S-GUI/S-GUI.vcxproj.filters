@@ -70,9 +70,6 @@
     <ClInclude Include="GUI\Core\inc\GUI_WM.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Core\inc\Linked_List.h">
-      <Filter>头文件\S-GUI\Core</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\Core\inc\mystring.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
@@ -145,6 +142,9 @@
     <ClInclude Include="GUI\Core\inc\GUI_Rect.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
+    <ClInclude Include="GUI\Core\inc\linked_list.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUI\Core\src\GUI_2D.c">
@@ -165,9 +165,6 @@
     <ClCompile Include="GUI\Core\src\GUI_WM.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Core\src\Linked_List.c">
-      <Filter>源文件\S-GUI\Core</Filter>
-    </ClCompile>
     <ClCompile Include="GUI\Core\src\mystring.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
@@ -181,12 +178,6 @@
       <Filter>源文件\S-GUI\Config</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Font\ASCII_8x16_font.c">
-      <Filter>源文件\S-GUI\Font</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Font\UI27_2pp.c">
-      <Filter>源文件\S-GUI\Font</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Font\UI27-4pp.c">
       <Filter>源文件\S-GUI\Font</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Widget\BUTTON.c">
@@ -240,7 +231,10 @@
     <ClCompile Include="GUI\Core\src\GUI_Rect.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Font\GUI_Font.c">
+    <ClCompile Include="GUI\Core\src\linked_list.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Font\UI17_4pp.c">
       <Filter>源文件\S-GUI\Font</Filter>
     </ClCompile>
   </ItemGroup>
