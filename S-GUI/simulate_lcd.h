@@ -12,7 +12,7 @@ typedef struct {
     int win_w, win_h, BufSize;
     POINT tPad;
     char padStatus;
-    char Update; /* 缓冲区更新标志 */
+    char updata;
 } SIM_DEVICE;
 
 void simulate_lcd_start(HWND hWnd);
@@ -22,9 +22,9 @@ int sim_getHeight(void);
 void sim_drawPix(int x, int y, COLORREF Color);
 COLORREF sim_readPix(int x, int y);
 void sim_dispArea(int x, int y, int Width, int Height, COLORREF *Buffer, int rowlen);
-void sim_updata(void);
 void sim_pad_cleck(void);
 void sim_pad_removed(void);
 void sim_key_send(WPARAM KeyVal, UINT Status);
+void sim_setmouse(short x, short y);
 
 #endif

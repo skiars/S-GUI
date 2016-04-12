@@ -52,17 +52,17 @@ GUI_COLOR GUI_AlphaBlend(GUI_COLOR Color, GUI_COLOR BkColor, u_16 Alpha)
     return R | G | B;
 }
 
-
+u_8 GUI_GetNextAreaP(GUI_RECT ** p);
 /* 画点 */
 void GUI_DrawPoint(i_16 x,i_16 y,GUI_COLOR Color)
 {
-    GUI_RECT r1, r2;
+    GUI_RECT r1, *r2;
 
     RETURN_TRANSPARENT();
     GUI_Val2Rect(&r1, x, y, 1, 1);
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
-        if (GUI_RectOverlay(&r2, &r2, &r1)) {
+    while (GUI_GetNextAreaP(&r2)) { /* 遍历所有的显示区域 */
+        if (x >= r2->x0 && x <= r2->x1 && y >= r2->y0 && y <= r2->y1) {
             if (Color >> 24) {
                 Color = GUI_AlphaBlend(Color, GUI_ReadPixel(x, y), Color >> 24);
             }
@@ -101,7 +101,7 @@ static void __VertLine(i_16 x0, i_16 y0, u_16 len, GUI_COLOR Color)
 {
     while (len--) {
         GUI_DrawPixel(x0, y0 + len, Color);
-    }    
+    }
 }
 
 /* 画垂直线
@@ -195,35 +195,48 @@ void GUI_DrawRect(i_16 x0,i_16 y0,u_16 xSize,u_16 ySize,GUI_COLOR Color)
 }
 
 /* 填充透明矩形 */
-static void __FillRectAlpha(i_16 x0, i_16 y0,u_16 xSize,u_16 ySize,GUI_COLOR Color)
+#if GUI_USE_GRAPHPHY == 0 || GUI_USE_MEMORY == 0
+static void __FillRectAlpha(i_16 x0, i_16 y0,u_16 x1,u_16 y1,GUI_COLOR Color)
 {
     i_16 x, y;
     u_16 Alpha = Color >> 24;
     GUI_COLOR tColor; 
     
-    xSize += x0;
-    ySize += y0;
-    for (y = y0; y < ySize; y++) {
-        for (x = x0; x < xSize; x++) {
+    for (y = y0; y <= y1; y++) {
+        for (x = x0; x <= x1; x++) {
             tColor = GUI_AlphaBlend(Color, GUI_ReadPixel(x, y), Alpha);
             GUI_DrawPixel(x, y, tColor);
         }
     }
 }
+#endif
 
 /* 填充非透明矩形 */
-static void __FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Color)
+#if GUI_USE_GRAPHPHY == 0 || GUI_USE_MEMORY == 0
+static void __FillRect(i_16 x0, i_16 y0, u_16 x1, u_16 y1, GUI_COLOR Color)
 {                                     
     i_16 x, y;
-    
-    xSize += x0;
-    ySize += y0;
-    for (y = y0; y < ySize; y++) {
-        for (x = x0; x < xSize; x++) {
+#if GUI_USE_MEMORY
+    int Width = GUI_GetScreenWidth();
+    GUI_COLOR *p;
+    GUI_COLOR *pBuff = GUI_Data->lcdbuf + y0 * Width + x0;
+#endif
+
+    for (y = y0; y <= y1; y++) {
+#if GUI_USE_MEMORY == 0
+        for (x = x0; x <= x1; ++x) {
             GUI_DrawPixel(x, y, Color);
         }
+#else
+        p = pBuff;
+        for (x = x0; x <= x1; ++x) {
+            *p++ = Color;
+        }
+        pBuff += Width;
+#endif
     }
 }
+#endif
 
 /* 填充矩形 */
 void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Color)
@@ -240,13 +253,17 @@ void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Color)
         if (GUI_RectOverlay(&r2, &r2, &r1)) {
             x0 = r2.x0;
             y0 = r2.y0;
-            xSize = r2.x1 + 1 - x0;
-            ySize = r2.y1 + 1 - y0;
+            xSize = r2.x1;
+            ySize = r2.y1;
+            #if GUI_USE_GRAPHPHY && GUI_USE_MEMORY
+            LCD_FillRect(x0, y0, xSize, ySize, Color);
+            #else
             if (Color >> 24) {
                 __FillRectAlpha(x0, y0, xSize, ySize, Color);
             } else {
                 __FillRect(x0, y0, xSize, ySize, Color);
             }
+            #endif
         }
     }
 }

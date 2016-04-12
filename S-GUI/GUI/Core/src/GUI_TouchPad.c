@@ -51,7 +51,7 @@ GUI_RESULT GUI_TouchPadMessageProc(GUI_MESSAGE *pMsg)
 
                 /* 当前坐标 */
                 Pos[0].x = Point.x;
-                Pos[0].y = Point.x;
+                Pos[0].y = Point.y;
                 /* 坐标偏移 */
                 Pos[1].x = Point.x - _CurPos.x;
                 Pos[1].y = Point.y - _CurPos.y;
@@ -68,7 +68,7 @@ GUI_RESULT GUI_TouchPadMessageProc(GUI_MESSAGE *pMsg)
             }
         } else {  /* 触摸松开 */
             if (WM_FindWindow(_CurWin) == GUI_OK) {  /* 窗口还存在 */
-                WM_SendMessage(_CurWin, WM_TP_REMOVED, (GUI_PARAM)NULL);
+                WM_SendMessage(_CurWin, WM_TP_REMOVED, (GUI_PARAM)&_CurPos);
             }
             _CurWin = NULL;
         }

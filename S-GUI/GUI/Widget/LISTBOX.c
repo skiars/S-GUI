@@ -3,67 +3,51 @@
 #include "SCROLLBAR.h"
 #include <string.h>
 
-#define LBOX_DFT_LBKCOLOR       0x003C4C52        /* 内部背景色 */
-#define LBOX_DFT_LSELCOLOR      0x00FFFFFF        /* 选中list后的字体颜色 */
-#define LBOX_DFT_LSELBKCOLOR    0x0096CDCD        /* 选中list后的背景色 */
-#define LBOX_DFT_LNCOLOR        0x00000000        /* 未选中的list字体颜色 */
+#define LBOX_DFT_LBKCOLOR       0x00111F1F        /* 内部背景色 */
+#define LBOX_DFT_LSELCOLOR      0x000A0A0A        /* 选中list后的字体颜色 */
+#define LBOX_DFT_LSELBKCOLOR    0x004876FF        /* 选中list后的背景色 */
+#define LBOX_DFT_LNCOLOR        0X00E3E3E3        /* 未选中的list字体颜色 */
 #define LBOX_DFT_RIMCOLOR       0x00000000        /* 边框颜色 */
 #define LBOX_DFT_LINECOLOR      0x002A3033        /* 分隔线颜色 */
 
 #define LBOX_DFT_HEIGHT         20      /* 条目高度 */
 #define LBOX_DFT_SCROENDWID     48      /* 滚动显示末尾空白宽度 */
 #define LBOX_DFT_UNSCRO_TIME    600     /* 选中项开始不滚动的ms数 */
-#define LBOX_DFT_SCRO_TIME      50      /* 选中项显示滚动一个像素间隔时间(ms) */
+#define LBOX_DFT_TIMER          50      /* 选中项显示滚动一个像素间隔时间(ms) */
 #define LBOX_DFT_SCRO_PIX       2       /* 每次滚动的像素数 */
 #define LBOX_SCB_WIDTH          5       /* 滚动条宽度为5个像素 */
 
-static void LISTBOX__DrawPage(LISTBOX_Obj *pObj);
-static void LISTBOX__TextScroll(LISTBOX_Obj *pObj);
+static void _DrawPage(LISTBOX_Obj *pObj);
+static void _ItemMove(LISTBOX_Obj *pObj, GUI_POINT *p);
+static void _CheckSetItem(LISTBOX_Obj *pObj, GUI_POINT *p);
+static void _TimerHandle(LISTBOX_Obj *pObj);
+static void _SetSpeed(LISTBOX_Obj *pObj, GUI_POINT *p);
 static void LISTBOX__SetSelInfo(LISTBOX_Obj *pObj);
 
 /* LISTBOX控件自动回调函数 */
 static void __Callback(WM_MESSAGE *pMsg)
 {
-    static i_16 dY; /* 这儿，不可重入！！！ */
     switch (pMsg->MsgId) {
         case WM_PAINT :
-            LISTBOX__DrawPage(pMsg->hWin);
+            _DrawPage(pMsg->hWin);
             break;
         case WM_DELETE :
             /* 删除链表 */
             List_Delete(((LISTBOX_Obj *)pMsg->hWin)->pList);
             break;
-        case WM_KEYDOWN:
-            if (WM_DefaultKeyProc(pMsg) == TRUE) {
-                break;
-            }
-            switch (pMsg->Param) {
-            case KEY_UP:
-                LISTBOX_ItemUp(pMsg->hWin);
-                break;
-            case KEY_DOWN:
-                LISTBOX_ItemDown(pMsg->hWin);
-                break;
-            }
-            break;
         case WM_TP_CHECKED :
             WM_SetForegroundWindow(pMsg->hWin);
+            ((LISTBOX_Obj *)pMsg->hWin)->lTime = GUI_GetTime();
             break;
         case WM_TP_PRESS :
-            dY += ((GUI_POINT*)pMsg->Param)[1].y;
-            if (dY > 20) {
-                dY = 0;
-                LISTBOX_ItemDown(pMsg->hWin);
-            } else if (dY < -20) {
-                dY = 0;
-                LISTBOX_ItemUp(pMsg->hWin);
-            }
+            _ItemMove(pMsg->hWin, (GUI_POINT *)pMsg->Param);
+            _SetSpeed(pMsg->hWin, (GUI_POINT *)pMsg->Param);
             break;
-        case WM_TP_LEAVE :
-            dY = 0;
+        case WM_TP_REMOVED:
+            _CheckSetItem(pMsg->hWin, (GUI_POINT *)pMsg->Param);
             break;
-        case WM_TIME_UPDATA :
-            LISTBOX__TextScroll(pMsg->hWin);
+        case WM_TIME_UPDATA:
+            _TimerHandle(pMsg->hWin);
             break;
         default :
             WM_DefaultProc(pMsg);
@@ -112,10 +96,11 @@ WM_HWIN LISTBOX_Create(i_16 x0,
     pObj->ItemNum = 0;                /* 总条目数清零 */
     pObj->pList = List_Init();    /* 空链表,链表数据长度为namepos */
     pObj->LastNode = pObj->pList;
-    pObj->StrTab = NULL;
     pObj->hScro = NULL;
-    pObj->ScbWidth = LBOX_SCB_WIDTH;
     pObj->DispPosPix = 0;
+    pObj->yPos = 0;
+    pObj->MoveFlag = 0;
+    pObj->ScroSpeed = 0;
     return pObj;
 }
 
@@ -128,8 +113,8 @@ static u_8 __CreateScro(GUI_HWIN hWin)
         GUI_RECT Rect;
         
         Rect = WM_GetWindowRect(pObj);
-        x0 = Rect.x1 - Rect.x0 - pObj->ScbWidth + 1;
-        pObj->hScro = SCROLLBAR_Create(x0, 0, pObj->ScbWidth,
+        x0 = Rect.x1 - Rect.x0 - LBOX_SCB_WIDTH + 1;
+        pObj->hScro = SCROLLBAR_Create(x0, 0, LBOX_SCB_WIDTH,
                                        Rect.y1 - Rect.y0 + 1,
                                        pObj, WM_NULL_ID, 0);
         return GUI_OK;
@@ -151,23 +136,11 @@ GUI_RESULT LISTBOX_AddList(WM_HWIN hWin, char *name)
     pObj->ItemNum++; /* 总条目数增加1条 */
     if (pObj->ItemNum > pObj->PageItems) {
         __CreateScro(pObj);
-        SCROLLBAR_SetTotality(pObj->hScro, pObj->ItemNum);
-        SCROLLBAR_SetLoation(pObj->hScro, pObj->SelIndex);
+        SCROLLBAR_SetTotality(pObj->hScro, pObj->ItemNum * pObj->ItemHei);
+        SCROLLBAR_SetLoation(pObj->hScro, pObj->SelIndex * pObj->ItemHei);
     }
     LISTBOX__SetSelInfo(pObj);  /* 选中项 */
     return GUI_OK;
-}
-
-/************************************************************
-* 一次性添加pObj的所有条目，这种方式添加条目后无法再做更改
-* *name的长度必须等于pObj->list->datalen！
-* 0,增加成功
-* 1,增加失败
-*************************************************************/
-u_8 LISTBOX_addall(WM_HWIN hWin,const char *pTab,u_16 num)
-{
-    
-    return 0;
 }
 
 //获取指定条目的名字
@@ -177,38 +150,29 @@ static LIST Get__ItemName(WM_HWIN hWin,u_16 Item)
 {
     LISTBOX_Obj *pObj = hWin;
 
-    if(pObj->StrTab == NULL) {
-        return List_GetNodePtr(pObj->pList, Item + 1);
-    }
-    return NULL;
+    return List_GetNodePtr(pObj->pList, Item + 1);
 }
 
 static LIST Get__NextItemName(LISTBOX_Obj *pObj, LIST pNode)
 {
-    if(!pObj->StrTab) {
-        return pNode->pNext;
-    }
-    return NULL;
+    return pNode->pNext;
 }
 
-//绘制一个条目
-//pObj要绘制的列表框
-//idxpos要绘制条目的偏移
-static void LISTBOX__DrawList(LISTBOX_Obj *pObj, u_16 ItemPos, char *Str)
+static void _DrawItem(LISTBOX_Obj *pObj, i_16 yPos, char *Str, char Sel)
 {
     GUI_FONT Font;
     i_16 x0, y0, xSize, ySize, xPixPos;
     GUI_COLOR FontColor, BkColor;
     GUI_RECT *pRect;
-    
+
     /* 获取窗口用户区 */
-    pRect = &pObj->Widget.Win.Rect; 
+    pRect = &pObj->Widget.Win.Rect;
     /* 计算条目位置 */
     x0 = pRect->x0;
-    y0 = pRect->y0 + (pObj->ItemHei + 1) * ItemPos;
+    y0 = pRect->y0 + yPos;
     xSize = pRect->x1 - x0 + 1;
-    ySize = pObj->ItemHei + 1;
-    if(ItemPos + pObj->TopIndex == pObj->SelIndex) /* 选中的条目 */
+    ySize = pObj->ItemHei;
+    if (Sel) /* 选中的条目 */
     {
         BkColor = WIDGET_GetBackColor(pObj, 1);
         FontColor = WIDGET_GetFontColor(pObj, 1);
@@ -221,74 +185,150 @@ static void LISTBOX__DrawList(LISTBOX_Obj *pObj, u_16 ItemPos, char *Str)
     GUI_FillRect(x0, y0, xSize, ySize - 1, BkColor);
     /* 分隔线 */
     BkColor = WIDGET_GetEdgeColor(pObj, 0);
-    GUI_HoriLine(x0 + 1, y0 + ySize - 1, xSize - 2, BkColor);
+    GUI_HoriLine(x0, y0 + ySize - 1, xSize, BkColor);
     /* 显示条目内容,文字不能覆盖分隔线 */
     Font = WIDGET_GetFont(pObj);
-    if (pObj->ItemHei > Font->CharHeight) { /* 字体高度居中显示 */
-        y0 += (pObj->ItemHei - Font->CharHeight) / 2;
+    if (pObj->ItemHei - 1 > Font->CharHeight) { /* 字体高度居中显示 */
+        y0 += (pObj->ItemHei - 1 - Font->CharHeight) / 2;
     }
     x0 -= xPixPos;   /* 显示偏移 */
     GUI_DispStringCurRect(x0, y0, Str, FontColor, Font);
 }
 
 /* 绘制一页pObj,从pObj->TopIndex开始绘制 */
-static void LISTBOX__DrawPage(LISTBOX_Obj *pObj)
+static void _DrawPage(LISTBOX_Obj *pObj)
 {
     LIST pNode;
     GUI_RECT Rect;
     u_16 i, PageItems;
     i_16 x0, y0, xSize, ySize;
 
+    y0 = pObj->yPos;
     PageItems = pObj->PageItems; /* 一页可以显示的条数 */
     pNode = Get__ItemName(pObj, pObj->TopIndex);
-    for(i = 0; i <= PageItems; ++i) /* 显示条目 */
+    for (i = 0; i <= PageItems && pNode; ++i) /* 显示条目 */
     {
-        LISTBOX__DrawList(pObj, i, pNode->pData);
+        _DrawItem(pObj, i * pObj->ItemHei + y0,
+            pNode->pData, pObj->TopIndex + i == pObj->SelIndex);
         pNode = Get__NextItemName(pObj, pNode);
         /* 已经到了最后一条,但i依然要自加1 */
-        if(i + pObj->TopIndex + 1 == pObj->ItemNum) {
+        if (i + pObj->TopIndex + 1 == pObj->ItemNum) {
             ++i;
             break;
         }
     }
     Rect = WM_GetWindowRect(pObj);
-    i *= (pObj->ItemHei + 1);  /* 要清空的y方向偏移 */
+    i *= (pObj->ItemHei);  /* 要清空的y方向偏移 */
     x0 = Rect.x0;
-    y0 = Rect.y0 + i;
+    y0 += Rect.y0 + i;
     xSize = Rect.x1 - Rect.x0 + 1;
     ySize = Rect.y1 - Rect.y0 + 1;
     /* 清空为底色 */
     GUI_FillRect(x0, y0, xSize, ySize, WIDGET_GetBackColor(pObj, 0));
 }
 
-/* LISTBOX滚动显示 */
-static void LISTBOX__TextScroll(LISTBOX_Obj *pObj)
+/* 滚动列表框 */
+static void _ItemMove(LISTBOX_Obj *pObj, GUI_POINT *p)
 {
-    u_16 ItemPos;
-    u_16 ListWidth;
-    GUI_RECT Rect;
+    i_16 Top, y, yPos;
 
-    Rect = WM_GetWindowRect(pObj);
-    ListWidth = Rect.x1 - Rect.x0 + 1;
-    if (ListWidth >= pObj->SelPixs) {
-        return;   //不需要滚动显示
+    /* 鼠标移动太少 */
+    if (!pObj->MoveFlag && GUI_ABS(p[1].y) < 2) {
+        return;
     }
-    if (pObj->DispPosPix == 0) {
-        if (GUI_GetWindowTimer(pObj) == LBOX_DFT_SCRO_TIME) {
-            GUI_SetWindowTimer(pObj, LBOX_DFT_UNSCRO_TIME);
-            return;
+    if (GUI_ABS(p[1].y) > 0) {
+        y = pObj->yPos + p[1].y;
+        Top = pObj->TopIndex - y / pObj->ItemHei;
+        yPos = y % pObj->ItemHei;
+        if (y > 0) {
+            Top -= 1;
+            yPos = -(pObj->ItemHei - yPos);
         }
-        GUI_SetWindowTimer(pObj, LBOX_DFT_SCRO_TIME);
+        if (Top < 0) {
+            Top = 0;
+            yPos = 0;
+            pObj->ScroSpeed = 0;
+        } else if (Top >= pObj->ItemNum) {
+            Top = pObj->ItemNum - 1;
+            yPos = 0;
+            pObj->ScroSpeed = 0;
+        }
+        pObj->yPos = yPos;
+        pObj->TopIndex = Top;
+        if (pObj->hScro) {  /* 设置滚动条 */
+            SCROLLBAR_SetLoation(pObj->hScro,
+                pObj->TopIndex * pObj->ItemHei - yPos);
+        }
+        WM_Invalidate(pObj);
+        pObj->MoveFlag = 1;
     }
-    ItemPos = pObj->SelIndex - pObj->TopIndex;
-    if (ListWidth + pObj->DispPosPix == pObj->SelPixs + LBOX_DFT_SCROENDWID) {
-        pObj->DispPosPix = 0;
+}
+
+/* 设置被点击的选中项 */
+static void _CheckSetItem(LISTBOX_Obj *pObj, GUI_POINT *p)
+{
+    int i;
+
+    if (!pObj->MoveFlag) {
+        if (GUI_CheckPointAtRect(p[0].x, p[0].y,
+            &pObj->Widget.Win.Rect) == TRUE) {
+            i = pObj->TopIndex + (-pObj->yPos
+                + p[0].y - pObj->Widget.Win.Rect.y0) / pObj->ItemHei;
+            if (i >= 0 && i < pObj->ItemNum) {
+                WM_MESSAGE Msg;
+
+                pObj->SelIndex = (u_16)i;
+                /* 设置选中项目的信息 */
+                LISTBOX__SetSelInfo(pObj);
+                WM_Invalidate(pObj);  /* 无效化窗口 */
+                Msg.MsgId = WM_LISTBOX_CHECK;
+                WM_SendMessageToParent(pObj, &Msg);
+            }
+        }
     } else {
-        pObj->DispPosPix += LBOX_DFT_SCRO_PIX;
+        if (GUI_ABS(pObj->ScroSpeed) > 20) {
+            GUI_SetWindowTimer(pObj, LBOX_DFT_TIMER);
+        } else {
+            pObj->MoveFlag = 0;
+        }
     }
-    Rect.y0 += ItemPos * (pObj->ItemHei + 1);
-    Rect.y1 = Rect.y0 + pObj->ItemHei - 1;
-    WM_InvalidateRect(pObj, &Rect);
+}
+
+/* 设置滚动速度 */
+static void _SetSpeed(LISTBOX_Obj *pObj, GUI_POINT *p)
+{
+    GUI_TIME t = GUI_GetTime();
+
+    pObj->ScroSpeed = (p[1].y * LBOX_DFT_TIMER / (int)(t - pObj->lTime + 1));
+    pObj->ScroSpeed *= 4;
+    pObj->lTime = t;
+}
+
+/* 减速滚动 */
+static void _TimerHandle(LISTBOX_Obj *pObj)
+{
+    if (pObj->MoveFlag) {
+        if (GUI_ABS(pObj->ScroSpeed)) {
+            i_16 d;
+            GUI_POINT Point[2];
+
+            Point[1].y = pObj->ScroSpeed;
+            _ItemMove(pObj, Point);
+            d = -pObj->ScroSpeed / 8;
+            if (GUI_ABS(d) == 0 && pObj->ScroSpeed) {
+                d = pObj->ScroSpeed > 0 ? -1 : 1;
+            }
+            pObj->ScroSpeed += d;
+            if (!pObj->ScroSpeed) {
+                pObj->ScroSpeed = 0;
+                pObj->MoveFlag = 0;
+                GUI_SetWindowTimer(pObj, 0);
+            }
+        } else {
+            pObj->ScroSpeed = 0;
+            GUI_SetWindowTimer(pObj, 0);
+        }
+    }
 }
 
 /* 设置选中项目的信息 */
@@ -300,74 +340,6 @@ static void LISTBOX__SetSelInfo(LISTBOX_Obj *pObj)
     Str = Get__ItemName(pObj, pObj->SelIndex)->pData;
     pObj->SelItem = Str;
     pObj->SelPixs = GetStringPixel(Str, WIDGET_GetFont(pObj));
-}
-
-//将列表框的选中项下移一栏
-void LISTBOX_ItemDown(WM_HWIN hWin)
-{
-    LISTBOX_Obj *pObj = hWin;
-    GUI_RECT Rect;
-    u_16 PageItems, ItemPos;
-
-    /* 检测是否为LISTBOX控件 */
-    WIDGET_SignErrorReturnVoid(hWin, WIDGET_LISTBOX);
-    Rect = WM_GetWindowRect(pObj);
-    ItemPos = pObj->SelIndex - pObj->TopIndex;
-    PageItems = pObj->PageItems;
-    if(pObj->SelIndex + 1 < pObj->ItemNum) { /* 还没有显示到最后一条 */
-        pObj->SelIndex++;
-        if(ItemPos + 1 == PageItems) {        /* 到了本页的最后一条 */
-            pObj->TopIndex += PageItems;
-        } else {
-            Rect.y0 += ItemPos * (pObj->ItemHei + 1);
-            Rect.y1 =  Rect.y0 + 2 * pObj->ItemHei + 1;
-        }
-    } else {               /* 到了最后一条 */
-        pObj->SelIndex = 0;
-        pObj->TopIndex = 0;
-    }
-    /* 设置选中项目的信息 */
-    LISTBOX__SetSelInfo(pObj);
-    if (pObj->hScro) {  /* 设置滚动条 */
-        SCROLLBAR_SetLoation(pObj->hScro, pObj->SelIndex);
-    }
-    WM_InvalidateRect(pObj, &Rect);  /* 无效化窗口 */
-}
-
-//将列表框的选中项上移移一栏
-GUI_RESULT LISTBOX_ItemUp(WM_HWIN hWin)
-{
-    LISTBOX_Obj *pObj = hWin;
-    GUI_RECT Rect;
-    u_16 PageItems, ItemPos, Temp;
-
-    /* 检测是否为LISTBOX控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_LISTBOX);
-    Rect = WM_GetWindowRect(pObj);
-    ItemPos = pObj->SelIndex - pObj->TopIndex;
-    PageItems = pObj->PageItems;
-    if(pObj->SelIndex) {        /* 还没有显示到第一条 */
-        pObj->SelIndex--;
-        if(ItemPos == 0) {      /* 到了本页的第一条 */
-            pObj->TopIndex -= PageItems;
-        } else {
-            Rect.y0 += (ItemPos - 1) * (pObj->ItemHei + 1);
-            Rect.y1 =  Rect.y0 + 2 * pObj->ItemHei + 1;
-        }
-    } else {                    /* 到了第一条 */
-        pObj->SelIndex = pObj->ItemNum - 1;
-        /*   计算最后一页的TopIndex值 */
-        Temp = pObj->ItemNum % PageItems;
-        Temp = Temp ? Temp : PageItems;
-        pObj->TopIndex = pObj->ItemNum - Temp;
-    }
-    /* 设置选中项目的信息 */
-    LISTBOX__SetSelInfo(pObj);
-    if (pObj->hScro) {  /* 设置滚动条 */
-        SCROLLBAR_SetLoation(pObj->hScro, pObj->SelIndex);
-    }
-    WM_InvalidateRect(pObj, &Rect);  /* 无效化窗口 */
-    return GUI_OK;
 }
 
 /* 返回选中项目数 */
@@ -439,5 +411,5 @@ GUI_RESULT LISTBOX_SetSelFromStr(WM_HWIN hWin, const char *Str)
 /* 列表框使用滚动显示功能 */
 void LISTBOX_ScrollDisplay(GUI_HWIN hWin)
 {
-    GUI_SetWindowTimer(hWin, LBOX_DFT_SCRO_TIME);
+    GUI_SetWindowTimer(hWin, LBOX_DFT_TIMER);
 }

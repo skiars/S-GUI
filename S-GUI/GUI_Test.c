@@ -44,10 +44,10 @@ static void _RootWinPaint(WM_HWIN hWin)
 {
     static i_16 y1 = 300;
     /* 绘制背景 */
-    GUI_FillRect(0, 0, 480, 320, 0x00ffffff);
+    //GUI_FillRect(0, 0, 480, 320, 0x00ffffff);
     GUI_DrawBitmap(0, 0, 640, 320, &bmpic_rootwin);
-    GUI_DispStringCurRect(10, 300, _Str, 0x00000000, Font_ASCII_8X16);
-    GUI_DrawLine(100, 100, 200, 5, 0);
+    //GUI_DispStringCurRect(10, 300, _Str, 0x00000000, Font_ASCII_8X16);
+    //GUI_DrawLine(100, 100, 200, 5, 0);
 }
 
 static void _RootWinTimer(WM_HWIN hWin)
@@ -65,7 +65,7 @@ void GUI_Test(void)
     GUI_Init();
     /* 设置根窗口回调函数 */
     RootWinPaint_Cb = _RootWinPaint;
-    RootWinTimer_Cb = _RootWinTimer;
+    //RootWinTimer_Cb = _RootWinTimer;
     GUI_SetRootWindowTimer(1000);
     Create_Window2();
     while (1) {
@@ -146,9 +146,6 @@ void Window3_Cb(WM_MESSAGE *pMsg)
             TEXTBOX_SetAllAlpha(hItem, 200);
         }
         break;
-    case WM_KEYUP:
-        WINDOW_SetAllAlpha(pMsg->hWin, 30);
-        break;
     }
 }
 
@@ -162,30 +159,19 @@ void Create_Window3(void)
 
 void Window4_Cb(WM_MESSAGE *pMsg)
 {
+    int i;
+    char s[25], *ps;
     WM_HWIN hWin, hItem;
 
     switch (pMsg->MsgId) {
     case WM_CREATED:
         hWin = WM_GetClientWindow(pMsg->hWin);
         hItem = LISTBOX_Create(0, 0, 214, 210, hWin, WIN4_LBX1, 0);
-        LISTBOX_ScrollDisplay(hItem);
-        //WIDGET_SetFont(hWin2, Font_ASCII_8X16);
-        LISTBOX_AddList(hItem, "This is a Listbox test...Scroll...asdfg-ASDFGqwertyuiopQWERTYUIOP");
-        LISTBOX_AddList(hItem, "Hello");
-        LISTBOX_AddList(hItem, "abcdefg");
-        LISTBOX_AddList(hItem, "ABCDEFG");
-        LISTBOX_AddList(hItem, "hijklmn");
-        LISTBOX_AddList(hItem, "HIJKLMN");
-        LISTBOX_AddList(hItem, "dgs");
-        LISTBOX_AddList(hItem, "saff");
-        LISTBOX_AddList(hItem, "csafe");
-        LISTBOX_AddList(hItem, "srwetw");
-        LISTBOX_AddList(hItem, "vfdgreg");
-        LISTBOX_AddList(hItem, "vfdgreg");
-        LISTBOX_AddList(hItem, "vfdgreg");
-        LISTBOX_AddList(hItem, "Alpha Test");
-        LISTBOX_AddList(hItem, "ListBox Test");
-        //LISTBOX_SetSelFromStr(hWin2, "saff");
+        for (i = 0; i < 2000; ++i) {
+            sprintf(s, "Item%d", i + 1);
+            LISTBOX_AddList(hItem, s);
+        }
+        LISTBOX_AddList(hItem, "Check to return...");
         hItem = BUTTON_Create(70, 250, 60, 20, hWin, Win4_BTN1, 0);
         BUTTON_SetTitle(hItem, "Exit");
         break;
@@ -194,9 +180,11 @@ void Window4_Cb(WM_MESSAGE *pMsg)
             WM_DeleteWindow(pMsg->hWin);
         }
         break;
-    case WM_KEYUP:
-        hItem = WM_GetDialogItem(pMsg->hWin, WIN4_LBX1);
-        LISTBOX_ItemDown(hItem);
+    case WM_LISTBOX_CHECK:
+        ps = LISTBOX_GetSelText(pMsg->hWinSrc);
+        if (!strcmp(ps, "Check to return...")) {
+            WM_DeleteWindow(pMsg->hWin);
+        }
         break;
     }
 }
@@ -232,7 +220,7 @@ void Window5_Cb(WM_MESSAGE *pMsg)
         }
         hData = GRAPH_XY_DataCreate(x, y1, 300, 300, 0x0000ff00, 0);
         GRAPH_AttachData(hItem, hData);
-        hData = GRAPH_XY_DataCreate(x, y2, 300, 300, 0x00ff0000, 0);
+        hData = GRAPH_TY_DataCreate(y2, 0, 300, 300, 0x00ff0000, 0);
         GRAPH_AttachData(hItem, hData);
         hItem = BUTTON_Create(30, 250, 60, 20, hWin, WIN5_BTN1, 0);
         BUTTON_SetTitle(hItem, "Stop");
@@ -275,7 +263,7 @@ void Window5_Cb(WM_MESSAGE *pMsg)
         hData = GRAPH_GethData(hItem, 1);
         GRAPH_XY_DataEdit(hData, x, y1, 300);
         hData = GRAPH_GethData(hItem, 2);
-        GRAPH_XY_DataEdit(hData, x, y2, 300);
+        GRAPH_TY_DataEdit(hData, y2, 20, 300);
         WM_Invalidate(hItem);
     }
 }
@@ -333,6 +321,6 @@ void Create_Window2(void)
 {
     GUI_HWIN hWin;
 
-    hWin = WINDOW_Create(30, 80, 180, 220, NULL, WINDOW2, WM_WS_MOVE, Window2_Cb);
+    hWin = WINDOW_Create(30, 80, 120, 150, NULL, WINDOW2, WM_WS_MOVE, Window2_Cb);
     WINDOW_SetTitle(hWin, "S-GUI Demo");
 }

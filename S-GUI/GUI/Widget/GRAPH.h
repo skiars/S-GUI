@@ -5,6 +5,7 @@
 #include "linked_list.h"
 
 #define GRAPH_XY_DATA  0
+#define GRAPH_TY_DATA  1
 
 typedef struct {
     void *pData;
@@ -22,6 +23,13 @@ typedef struct {
 } GRAPH_XYDATA;
 
 typedef struct {
+    int *yData;           /* x轴数据 */
+    int tStart;           /* 开始时间值 */
+    int ItemNum;          /* 数据数量 */
+    int MaxItemNum;       /* 最大的数据数量 */
+} GRAPH_TYDATA;
+
+typedef struct {
     int x0, y0;            /* 起始坐标 */
     u_16 xScale, yScale;   /* x轴和y轴缩放比例 */
     u_16 xDist, yDist;     /* x轴和y轴网格线距离 */
@@ -30,9 +38,6 @@ typedef struct {
 typedef struct {
     WIDGET Widget;
     GRAPH_SCALE Scale;
-    u_16 xDist;
-    u_16 yDist;
-    i_16 Len;
     LIST List;
 } GRAPH_Obj;
 
@@ -49,6 +54,9 @@ GUI_HWIN GRAPH_XY_DataCreate(int *xData, int *yData,
     int ItemNum, int MaxItemNum, GUI_COLOR Color, u_8 Style);
 GUI_HWIN GRAPH_GethData(GUI_HWIN hWin, int Num);
 void GRAPH_XY_DataEdit(GUI_HWIN hData, int *pX, int *pY, int Num);
+GUI_HWIN GRAPH_TY_DataCreate(int *yData, int tStart, int ItemNum,
+    int MaxItemNum, GUI_COLOR Color, u_8 Style);
+void GRAPH_TY_DataEdit(GUI_HWIN hData, int *pY, int tStart, int Num);
 void GRAPH_AttachData(GUI_HWIN hGraph, GUI_HWIN hData);
 
 #endif

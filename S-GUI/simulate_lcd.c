@@ -10,6 +10,16 @@ static SIM_DEVICE sim_lcd;
 GUI_RESULT GUI_Init(void);
 void GUI_Delay(GUI_TIME tms);
 
+/* 更新缓冲区内容 */
+static void sim_updata(void)
+{
+    SetBitmapBits(sim_lcd.hBmp, sim_lcd.BufSize, sim_lcd.PixBuf);
+    BitBlt(sim_lcd.hdc, 0, 0,
+        sim_lcd.win_w, sim_lcd.win_h,
+        sim_lcd.hFrame, 0, 0,
+        SRCCOPY);
+}
+
 /* GUI测试线程 */
 static DWORD WINAPI ThreadGUI(LPVOID pM)
 {
@@ -28,7 +38,10 @@ static DWORD WINAPI ThreadDisp(LPVOID pM)
             GUI_TouchPadSendValue((u_16)sim_lcd.tPad.x,
                 (u_16)sim_lcd.tPad.y, GUI_TP_CHECKED);
         }
-        sim_updata();
+        if (sim_lcd.updata) {
+            sim_updata();
+            sim_lcd.updata = 0;
+        }
         Sleep(20);
     }
     return 0;
@@ -37,6 +50,8 @@ static DWORD WINAPI ThreadDisp(LPVOID pM)
 /* 模拟器开始运行 */
 void simulate_lcd_start(HWND hWnd)
 {
+    //SetClassLong(hWnd, GCL_HCURSOR, (LONG)LoadCursor(NULL, IDC_HAND));
+    //ShowCursor(TRUE);
     /* 获取窗口句柄 */
     sim_lcd.hwnd = hWnd;
     CreateThread(NULL, 0, ThreadGUI, "ThreadGUI", 0, NULL); /* 新建线程 */
@@ -48,8 +63,8 @@ void sim_lcd_init(void)
 {
     sim_lcd.win_w = GetSystemMetrics(SM_CXSCREEN);
     sim_lcd.win_h = GetSystemMetrics(SM_CYSCREEN);
-    sim_lcd.Update = 0;
     sim_lcd.BufSize = sizeof(COLORREF) * sim_lcd.win_w * sim_lcd.win_h;
+    sim_lcd.updata = 0;
     /* 分配内存，储存像素数据 */
     sim_lcd.PixBuf = malloc(sim_lcd.BufSize);
     memset(sim_lcd.PixBuf, 0x00, sim_lcd.BufSize);
@@ -80,7 +95,7 @@ int sim_getHeight(void)
 void sim_drawPix(int x, int y, COLORREF Color)
 {
     sim_lcd.PixBuf[y * sim_lcd.win_w + x] = Color;
-    sim_lcd.Update = 2;
+    sim_lcd.updata = 1;
 }
 
 /* 屏幕模拟器读取像素 */
@@ -111,23 +126,7 @@ void sim_dispArea(int x,
         Buffer += rowlen;
         pLCD += win_w;
     }
-    sim_lcd.Update = 1;
-}
-
-/* 屏幕模拟器刷新显示,并更新状态 */
-void sim_updata(void)
-{
-    if (sim_lcd.Update) {
-        SetBitmapBits(sim_lcd.hBmp, sim_lcd.BufSize, sim_lcd.PixBuf);
-        BitBlt(sim_lcd.hdc, 0, 0,
-            sim_lcd.win_w, sim_lcd.win_h,
-            sim_lcd.hFrame, 0, 0,
-            SRCCOPY);
-        /* 如果sim_lcd.Update为1则表示是帧更新，否者需要一直刷新 */
-        if (sim_lcd.Update == 1) {
-            sim_lcd.Update = 0; /* 复位更新标志 */
-        }
-    }
+    sim_updata();
 }
 
 /* 触摸设备按下 */
@@ -175,5 +174,16 @@ void sim_key_send(WPARAM KeyVal, UINT Status)
         GUI_SendKey(Key, GUI_KEYDOWN);
     } else if (Status == WM_KEYUP) {
         GUI_SendKey(Key, GUI_KEYUP);
+    }
+}
+
+void sim_setmouse(short x, short y)
+{
+    sim_lcd.tPad.x = x;
+    sim_lcd.tPad.y = y;
+    if (x > 0 && x < SIM_LCD_WIDTH && y > 0 && y < SIM_LCD_HEIGHT) {
+        //ShowCursor(FALSE);
+    } else {
+        //ShowCursor(TRUE);
     }
 }

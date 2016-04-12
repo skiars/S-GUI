@@ -21,6 +21,9 @@
  **/
 #define GUI_RECT_HEAP_SIZE    50
 
+/* 使用图形加速器 */
+#define GUI_USE_GRAPHPHY      0
+
 /* 调试模式开关 */
 #define GUI_DEBUG_MODE        1
 

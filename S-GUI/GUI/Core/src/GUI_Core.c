@@ -141,6 +141,16 @@ u_8 GUI_GetNextArea(GUI_RECT *pRect)
     return 1;
 }
 
+u_8 GUI_GetNextAreaP(GUI_RECT ** p)
+{
+    if (GUI_Context.pAreaNode == NULL) {
+        return 0;
+    }
+    *p = &GUI_Context.pAreaNode->Rect;
+    GUI_Context.pAreaNode = GUI_Context.pAreaNode->pNext;
+    return 1;
+}
+
 /* GUIµ÷ÊÔÊä³ö */
 #if GUI_DEBUG_MODE
 void GUI_DebugOut(const char *s)

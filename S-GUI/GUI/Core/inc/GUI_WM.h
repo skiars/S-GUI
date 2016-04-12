@@ -20,6 +20,7 @@
 #define WM_BUTTON_RELEASED   0x0201    /* BUTTON控件已经释放 */
 #define WM_NUTTON_MOVED_OUT  0x0202    /* BUTTON被点击然后指针移开 */
 #define WM_WIONDOW_CHECKED   0x0203    /* 窗口被点击 */
+#define WM_LISTBOX_CHECK     0x0204    /* LISTBOX被点击(新的选中项) */
 #define WM_KEYDOWN           0x0210    /* 按键按下 */
 #define WM_KEYUP             0x0211    /* 按键松开 */
 /* 0x0400以后为扩展消息(用户自定义) */

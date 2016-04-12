@@ -42,7 +42,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance,
     }
     
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SGUI));
-    
+
     /* GUI模拟测试开始运行 */
     simulate_lcd_start(hMainWin);
     
@@ -102,10 +102,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 将实例句柄存储在全局变量中
 
+   RECT rect;
+
+   SetRect(&rect, 0, 0, sim_getWidth(), sim_getHeight());
+   AdjustWindowRect(&rect,
+       WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX& ~WS_THICKFRAME,
+       TRUE);
+
    HWND hWnd = CreateWindow(szWindowClass, szTitle, 
       WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX& ~WS_THICKFRAME,
-      CW_USEDEFAULT, CW_USEDEFAULT,
-      sim_getWidth() + 20, sim_getHeight() + 80, /* 屏幕宽度和高度 */
+      CW_USEDEFAULT, CW_USEDEFAULT, /* 屏幕左边和右边 */
+      rect.right - rect.left, rect.bottom - rect.top, /* 屏幕宽度和高度 */
       NULL, NULL, hInstance, NULL);
 
    if (!hWnd)
@@ -151,13 +158,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
-    case WM_PAINT:
-        {
-           PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 在此处添加使用 hdc 的任何绘图代码...
-            EndPaint(hWnd, &ps);
-        }
+    case WM_NCMOUSELEAVE:
+        sim_setmouse(lParam & 0xffff, lParam >> 16);
+        break;
+    case WM_MOUSEMOVE:
+        sim_setmouse(lParam & 0xffff, lParam >> 16);
         break;
     case WM_LBUTTONDOWN: /* 鼠标左键按下 */
         sim_pad_cleck();

@@ -9,7 +9,7 @@ GUI_BOOL GUI_RectOverlay(GUI_RECT *pDst, GUI_RECT *a, GUI_RECT *b);
 void GUI_RectSum(GUI_RECT *pDst, GUI_RECT *a, GUI_RECT *b);
 GUI_RECT GUI_RectAndCalc(GUI_RECT *pRect1, GUI_RECT *pRect2);
 GUI_RECT GUI_RectOrCalc(GUI_RECT *pRect1, GUI_RECT *pRect2);
-GUI_BOOL GUI_CheckPointAtRect(u_16 x, u_16 y, GUI_RECT *Rect);
+GUI_BOOL GUI_CheckPointAtRect(i_16 x, i_16 y, GUI_RECT *Rect);
 GUI_BOOL GUI_CheckRectNull(GUI_RECT *Rect);
 GUI_BOOL GUI_CheckRectIntersect(GUI_RECT *pRect1, GUI_RECT *pRect2);
 GUI_BOOL GUI_RectInclude(GUI_RECT *pSrc, GUI_RECT *pDst);

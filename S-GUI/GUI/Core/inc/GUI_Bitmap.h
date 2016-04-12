@@ -3,7 +3,11 @@
 
 #include "GUI_Typedef.h"
 
-#define GUI_DRAW_BMP24 &GUI_DrawBitmap24b
+#define GUI_RGB888     1
+#define GUI_RGB565     2
+
+#define GUI_DRAW_BMP24    &GUI_DrawBitmap24b
+#define GUI_DRAW_BMPM565  &GUI_DrawBitmap16b
 
 /* µ÷É«°å */
 typedef struct {
@@ -30,6 +34,9 @@ typedef struct {
 } GUI_BITMAP;
 
 void GUI_DrawBitmap24b(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize,
+    const unsigned char *pPixel, const LCD_LOGPALETTE *pLogPal,
+    int xMag, int yMag);
+void GUI_DrawBitmap16b(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize,
     const unsigned char *pPixel, const LCD_LOGPALETTE *pLogPal,
     int xMag, int yMag);
 void GUI_DrawBitmap(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize,

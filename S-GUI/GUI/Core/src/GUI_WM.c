@@ -109,19 +109,6 @@ static GUI_AREA WM__ClipWindowArea(WM_HWIN hWin)
     }
     /* 窗口会被它的儿子们或者右边的兄弟们(如果有的话)裁剪,也就是遮挡，遍历它的孩子和兄弟们，
        逐个计算窗口的裁剪矩形链表，最后就能得到这个窗口被它们遮挡后的裁剪矩形链表. */
-    if (pWin->hFirstChild) {
-        /* 先遍历子窗口 */
-        pObj = pWin->hFirstChild;
-        while (pObj && Area) {
-            /* 如果是普通窗口就直接计算裁剪，如果是透明窗口就用它的孩子来计算裁剪 */
-            if (pObj->Status & WM_WS_TRANS) {
-                Area = _ClipTransChildren(Area, pObj);
-            } else {
-                Area = GUI_ReCalcRectList(Area, &pObj->Rect);
-            }
-            pObj = pObj->hNext; /* 向右遍历 */
-        }
-    }
     /* 再遍历它右边的同属窗口及祖先的同属窗口 */
     pObj = pWin;
     while (pObj != _pRootWin && Area) {
@@ -135,6 +122,19 @@ static GUI_AREA WM__ClipWindowArea(WM_HWIN hWin)
             }
         }
         pObj = pObj->hParent; /* 向上遍历 */
+    }
+    if (pWin->hFirstChild && Area) {
+        /* 先遍历子窗口 */
+        pObj = pWin->hFirstChild;
+        while (pObj && Area) {
+            /* 如果是普通窗口就直接计算裁剪，如果是透明窗口就用它的孩子来计算裁剪 */
+            if (pObj->Status & WM_WS_TRANS) {
+                Area = _ClipTransChildren(Area, pObj);
+            } else {
+                Area = GUI_ReCalcRectList(Area, &pObj->Rect);
+            }
+            pObj = pObj->hNext; /* 向右遍历 */
+        }
     }
     return Area;
 }
@@ -273,8 +273,8 @@ void WM_Exec(void)
         GUI_DrawFromMem(__PaintArea.x0, __PaintArea.y0,
             __PaintArea.x1 - __PaintArea.x0 + 1,
             __PaintArea.y1 - __PaintArea.y0 + 1);
-        __PaintArea.x0 = 0;
-        __PaintArea.y0 = 0;
+        __PaintArea.x0 = 240;
+        __PaintArea.y0 = 320;
         __PaintArea.x1 = 0;
         __PaintArea.y1 = 0;
     }

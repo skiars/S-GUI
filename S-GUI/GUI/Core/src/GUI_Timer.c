@@ -34,7 +34,6 @@ static void _DeleteWindowInList(GUI_HWIN hWin)
                 pNode = __TimerList;
                 __TimerList = pNode->pNext;
                 GUI_fastfree(pNode);
-                
             }
         }
     }
@@ -47,9 +46,13 @@ void GUI_TimerHandle(void)
 {
     GUI_LOCK();
     if (__TimerList) {
-        GUI_TIMER *pNode;
+        GUI_TIMER *pNode, *pNext;
 
-        for (pNode = __TimerList; pNode; pNode = pNode->pNext) {
+        for (pNode = __TimerList; pNode; pNode = pNext) {
+            /* 在这儿保存pNext的值是为了防止
+               在窗口定时器回调函数中删除定时器时出现错误
+             */
+            pNext = pNode->pNext;
             if (GUI_GetTime() >= pNode->LastTime + pNode->Interval) {
                 WM_SendMessage(pNode->hWin, WM_TIME_UPDATA, 0);
                 pNode->LastTime = GUI_GetTime(); /* 重新获取时间 */
