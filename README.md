@@ -8,8 +8,15 @@ S-GUI基于事件驱动，消息机制支持队列式消息和非队列式消息
 
 Demos:
 
-  Simulator:
-  ![](https://github.com/Le-Seul/S-GUI/tree/master/Demos/4.png)
+  STM32F429I DISCO board photos:
+  ![](https://github.com/Le-Seul/S-GUI/raw/master/Demos/1.jpg)
+  ![](https://github.com/Le-Seul/S-GUI/raw/master/Demos/2.jpg)
+  ![](https://github.com/Le-Seul/S-GUI/raw/master/Demos/3.jpg)
+  
+  Simulator screenshot:
+  ![](https://github.com/Le-Seul/S-GUI/raw/master/Demos/4.png)
+  
+  Video:()
 
 详情请参看S-GUI文件夹下的[ReadMe.txt](https://github.com/Le-Seul/S-GUI/blob/master/S-GUI/ReadMe.txt)文件.
 
