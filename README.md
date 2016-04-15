@@ -10,14 +10,15 @@ Demos:
 
   STM32F429I DISCO board photos:
   
-  ![](https://github.com/Le-Seul/S-GUI/raw/master/Demos/1.jpg width = 240)
-  ![](https://github.com/Le-Seul/S-GUI/raw/master/Demos/2.jpg width = 240)
-  ![](https://github.com/Le-Seul/S-GUI/raw/master/Demos/3.jpg width = 240)
+  <img src="https://github.com/Le-Seul/S-GUI/raw/master/Demos/1.jpg" width = "200" />
+  <img src="https://github.com/Le-Seul/S-GUI/raw/master/Demos/2.jpg" width = "200" />
+  <img src="https://github.com/Le-Seul/S-GUI/raw/master/Demos/3.jpg" width = "200" />
   
   Simulator screenshot:
-  ![](https://github.com/Le-Seul/S-GUI/raw/master/Demos/4.png)
   
-  Video:()
+  <img src="https://github.com/Le-Seul/S-GUI/raw/master/Demos/4.png" />
+  
+  Video: http://v.youku.com/v_show/id_XMTUzNTc5MDk1Mg==.html
 
 详情请参看S-GUI文件夹下的[ReadMe.txt](https://github.com/Le-Seul/S-GUI/blob/master/S-GUI/ReadMe.txt)文件.
 
