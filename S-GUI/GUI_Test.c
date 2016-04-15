@@ -32,8 +32,6 @@
 #define WIN5_BTN1    (WINDOW5 + 0x0002)
 #define WIN5_BTN2    (WINDOW5 + 0x0003)
 
-#define RWIN_TBX1    WM_USER_ID + 0x0060
-
 void GUI_2D_Test(void);
 void Create_Window2(void);
 
