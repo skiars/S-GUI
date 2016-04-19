@@ -436,7 +436,7 @@ void WM_DeleteWindow(WM_HWIN hWin)
         /* 删除窗口的定时器 */
         GUI_SetWindowTimer(hWin, 0);
         /* 调用回调函数删除节点 */
-        WM_SendMessage(hWin, WM_DELETE, (GUI_PARAM)NULL);
+        WM_SendMessage(hWin, WM_DELETE, 0);
         GUI_fastfree(hWin); /* 释放空间 */
     }
     GUI_UNLOCK();
@@ -508,7 +508,6 @@ WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
                                u_16 ySize,          /* 高度 */
                                WM_HWIN hParent,     /* 父窗口句柄 */
                                u_16 Style,          /* 窗口风格 */
-                               u_8 Sign,            /* 窗口标识符 */
                                u_16 Id,             /* 窗口ID */
                                WM_CALLBACK *WinCb,  /* 窗口功能回调函数 */
                                u_32 bytes)          /* 窗口结构体多出的字节 */
@@ -532,7 +531,6 @@ WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
     pObj->hNextLine = NULL;
     WM_AttachWindow(pObj, pParent); /* 注册到父窗口 */
     pObj->Status = Style;
-    pObj->Sign = Sign;
     pObj->Id = Id;
     pObj->WinCb = WinCb;
     if (pParent) {
@@ -543,21 +541,9 @@ WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
     pObj->Rect.y0 = y0;
     pObj->Rect.x1 = x0 + xSize - 1;
     pObj->Rect.y1 = y0 + ySize - 1;
-    WM_Invalidate(pObj); /* 整个窗口失效 */
+    WM_Invalidate(pObj); /* 整个窗口无效化 */
     GUI_UNLOCK();
     return pObj;
-}
-
-/* 
- * 检查窗口标识符 
- * 返回值:0,标识符匹配;1,标识符不匹配
- **/
-GUI_RESULT WM_CheckWindowSign(WM_HWIN hWin, u_16 Sign)
-{
-    if (hWin && ((WM_Obj*)hWin)->Sign == Sign) {
-        return GUI_OK;
-    }
-    return GUI_ERR;
 }
 
 /* 透明窗口无效化 */

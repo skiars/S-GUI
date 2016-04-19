@@ -11,10 +11,6 @@ static void __Paint(GUI_HWIN hWin)
 /* ICONVIEW控件消息处理函数 */
 static void __Callback(WM_MESSAGE *pMsg)
 {
-    /* 检测是否为ICONVIEW控件 */
-    if (WM_CheckWindowSign(pMsg->hWin, WIDGET_ICONVIEW)) {
-        return;
-    }
     switch (pMsg->MsgId) {
     case WM_PAINT :
         __Paint(pMsg->hWin);
@@ -48,14 +44,13 @@ GUI_HWIN ICONVIEW_Create(i_16 x0,
     u_16 ySize,
     WM_HWIN hParent,
     u_16 Id,
-    u_8 Flag,
+    u_8 Style,
     u_16 namepos)
 {
     ICONVIEW_Obj *pObj;
 
-    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
-        WIDGET_LISTBOX, Id, __Callback,
-        sizeof(ICONVIEW_Obj) - sizeof(WM_Obj));
+    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Style,
+        Id, __Callback, sizeof(ICONVIEW_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         return NULL;
     }

@@ -23,13 +23,8 @@ typedef struct {
     GUI_TIME lTime;      /* 上次更新时间 */
 }LISTBOX_Obj;
 
-WM_HWIN LISTBOX_Create(i_16 x0,
-                      i_16 y0,
-                      u_16 xSize,
-                      u_16 ySize,
-                      WM_HWIN hParent,
-                      u_16 Id,
-                      u_8 Flag);
+WM_HWIN LISTBOX_Create(i_16 x0, i_16 y0,
+    u_16 xSize, u_16 ySize, WM_HWIN hParent, u_16 Id, u_8 Style);
 GUI_RESULT LISTBOX_AddList(WM_HWIN hWin,char *name);
 u_16 LISTBOX_GetSel(WM_HWIN hWin);
 char *LISTBOX_GetSelText(WM_HWIN hWin);

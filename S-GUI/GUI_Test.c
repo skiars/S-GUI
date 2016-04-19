@@ -2,6 +2,7 @@
 #include "GUI.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include "Bitmap.h"
@@ -11,11 +12,14 @@
 #define WINDOW3      (WM_USER_ID + 0x0030)
 #define WINDOW4      (WM_USER_ID + 0x0040)
 #define WINDOW5      (WM_USER_ID + 0x0050)
+#define WINDOW6      (WM_USER_ID + 0x0060)
+#define WINDOW7      (WM_USER_ID + 0x0070)
 
 #define WIN2_BTN1    (WINDOW2 + 0x0001)
 #define WIN2_BTN2    (WINDOW2 + 0x0002)
 #define WIN2_BTN3    (WINDOW2 + 0x0003)
 #define WIN2_BTN4    (WINDOW2 + 0x0004)
+#define WIN2_BTN5    (WINDOW2 + 0x0005)
 
 #define WIN1_BTN1    (WINDOW1 + 0x0001)
 #define WIN1_BTN2    (WINDOW1 + 0x0002)
@@ -26,11 +30,14 @@
 #define WIN3_BTN2    (WINDOW3 + 0x0003)
 
 #define WIN4_LBX1    (WINDOW4 + 0x0001)
-#define Win4_BTN1    (WINDOW4 + 0x0002)
+#define WIN4_BTN1    (WINDOW4 + 0x0002)
 
 #define WIN5_GPH1    (WINDOW5 + 0x0001)
 #define WIN5_BTN1    (WINDOW5 + 0x0002)
 #define WIN5_BTN2    (WINDOW5 + 0x0003)
+
+#define WIN6_TBX1    (WINDOW6 + 0x0001)
+#define WIN6_BTN1    (WINDOW6 + 0x0002)
 
 void GUI_2D_Test(void);
 void Create_Window2(void);
@@ -101,10 +108,6 @@ void Window1_Cb(WM_MESSAGE *pMsg)
             if (Alpha >= 10) Alpha -= 10;
         }
         break;
-    case WM_KEYUP:
-        WM_DeleteWindow(pMsg->hWin);
-        Alpha = 0;
-        break;
     }
 }
 
@@ -170,11 +173,11 @@ void Window4_Cb(WM_MESSAGE *pMsg)
             LISTBOX_AddList(hItem, s);
         }
         LISTBOX_AddList(hItem, "Check to return...");
-        hItem = BUTTON_Create(70, 250, 60, 20, hWin, Win4_BTN1, 0);
+        hItem = BUTTON_Create(70, 250, 60, 20, hWin, WIN4_BTN1, 0);
         BUTTON_SetTitle(hItem, "Exit");
         break;
     case WM_BUTTON_RELEASED:
-        if (WM_GetDialogId(pMsg->hWinSrc) == Win4_BTN1) {
+        if (WM_GetDialogId(pMsg->hWinSrc) == WIN4_BTN1) {
             WM_DeleteWindow(pMsg->hWin);
         }
         break;
@@ -268,12 +271,75 @@ void Window5_Cb(WM_MESSAGE *pMsg)
 
 void Create_Window5(void)
 {
-    GUI_HWIN hWin;
+    WINDOW_Create(10, 10, 220, 300, NULL, WINDOW5, WM_WS_MOVE, Window5_Cb);
+}
 
-    hWin = WINDOW_Create(10, 10, 220, 300, NULL, WINDOW5, WM_WS_MOVE, Window5_Cb);
-    if (hWin == NULL) {
-        return;
+void Window6_Cb(WM_MESSAGE *pMsg)
+{
+    char Str[50];
+    WM_HWIN hWin, hItem;
+
+    switch (pMsg->MsgId) {
+    case WM_CREATED:
+        hWin = WM_GetClientWindow(pMsg->hWin);
+        TEXTBOX_Create(0, 0, 140, 60, hWin, WIN6_TBX1, 0);
+        hItem = BUTTON_Create(42, 65, 60, 20, hWin, WIN6_BTN1, 0);
+        BUTTON_SetTitle(hItem, "OK!");
+        break;
+    case WM_BUTTON_RELEASED:
+        if (WM_GetDialogId(pMsg->hWinSrc) == WIN6_BTN1) {
+            WM_DeleteWindow(pMsg->hWin);
+        }
+        break;
+    case WM_USER_MESSAGE:
+        sprintf(Str, "%d Pixels/s\n%d fps/s",
+            (int)pMsg->Param, (int)pMsg->Param / 320 / 240);
+        hItem = WM_GetDialogItem(pMsg->hWin, WIN6_TBX1);
+        TEXTBOX_SetText(hItem, Str);
+        break;
     }
+}
+
+void Window7_Cb(WM_MESSAGE *pMsg)
+{
+    i_16 x0, y0;
+    u_16 xSize, ySize;
+    static u_32 PixelSum;
+    static GUI_TIME dt, t0;
+    GUI_COLOR Color;
+    WM_HWIN hWin = pMsg->hWin;
+
+    switch (pMsg->MsgId) {
+    case WM_PAINT:
+        PixelSum = 0;
+        t0 = GUI_GetTime();
+        do {
+            Color = (rand() * rand()) & 0x00ffffff;
+            x0 = rand() % 240;
+            y0 = rand() % 320;
+            xSize = rand() % (240 - x0);
+            ySize = rand() % (320 - y0);
+            GUI_FillRect(x0, y0, xSize, ySize, Color);
+            GUI_DrawDevice(x0, y0, x0 + xSize + 1, y0 + ySize + 1);
+            PixelSum += (u_32)xSize * (u_32)ySize;
+            dt = GUI_GetTime() - t0;
+        } while (dt < 5000);
+        WM_PostMessage(hWin, WM_USER_MESSAGE, 0);
+        break;
+    case WM_USER_MESSAGE:
+        WM_DeleteWindow(hWin);
+        hWin = WINDOW_Create(10, 10, 150, 120,
+            NULL, WINDOW7, WM_WS_MOVE, Window6_Cb);
+        WM_SendMessage(hWin, WM_USER_MESSAGE,
+            (GUI_PARAM)((long long)PixelSum * 1000 / dt));
+        break;
+    }
+}
+
+void Create_Window6(void)
+{
+    WM_CreateWindowAsChild(0, 0, 240, 320,
+        NULL, 0, WINDOW6, Window7_Cb, 0);
 }
 
 void Window2_Cb(WM_MESSAGE *pMsg)
@@ -291,6 +357,8 @@ void Window2_Cb(WM_MESSAGE *pMsg)
         BUTTON_SetTitle(hItem, "LISTBOX Test");
         hItem = BUTTON_Create(5, 80, 100, 20, hClient, WIN2_BTN4, 0);
         BUTTON_SetTitle(hItem, "GRAPH Test");
+        hItem = BUTTON_Create(5, 105, 100, 20, hClient, WIN2_BTN5, 0);
+        BUTTON_SetTitle(hItem, "Benchmark");
         break;
     case WM_BUTTON_RELEASED:
         /* 根据点击的按键创建窗口 */
@@ -307,10 +375,10 @@ void Window2_Cb(WM_MESSAGE *pMsg)
         case WIN2_BTN4:
             Create_Window5();
             break;
+        case WIN2_BTN5:
+            Create_Window6();
+            break;
         }
-        break;
-    case WM_KEYUP:
-        Create_Window1();
         break;
     }
 }
@@ -319,6 +387,6 @@ void Create_Window2(void)
 {
     GUI_HWIN hWin;
 
-    hWin = WINDOW_Create(30, 80, 120, 150, NULL, WINDOW2, WM_WS_MOVE, Window2_Cb);
+    hWin = WINDOW_Create(30, 80, 120, 160, NULL, WINDOW2, WM_WS_MOVE, Window2_Cb);
     WINDOW_SetTitle(hWin, "S-GUI Demo");
 }

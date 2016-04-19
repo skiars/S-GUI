@@ -38,8 +38,6 @@ static void __Paint(WM_HWIN hWin)
 
 static void __Callback(WM_MESSAGE *pMsg)
 {
-    /* 检测是否为SCROLLBAR控件 */
-    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_SCROLLBAR);
     switch (pMsg->MsgId) {
         case WM_PAINT :
             __Paint(pMsg->hWin);
@@ -54,13 +52,12 @@ WM_HWIN SCROLLBAR_Create(i_16 x0,
                       u_16 ySize,
                       WM_HWIN hParent,
                       u_16 Id,
-                      u_8 Flag)
+                      u_8 Style)
 {
     SCROLLBAR_Obj *pObj;
     
-    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
-                                  WIDGET_SCROLLBAR, Id, __Callback,
-                                  sizeof(SCROLLBAR_Obj) - sizeof(WM_Obj));
+    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Style,
+        Id, __Callback, sizeof(SCROLLBAR_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         return NULL;
     }
@@ -77,8 +74,6 @@ GUI_RESULT SCROLLBAR_SetTotality(GUI_HWIN hWin, u_16 Totality)
 {
     SCROLLBAR_Obj *pObj = hWin;
     
-    /* 检测是否为SCROLLBAR控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_SCROLLBAR);
     pObj->Totality = Totality;
     WM_Invalidate(hWin);
     return GUI_OK;
@@ -88,8 +83,6 @@ GUI_RESULT SCROLLBAR_SetLoation(GUI_HWIN hWin, u_16 Loation)
 {
     SCROLLBAR_Obj *pObj = hWin;
     
-    /* 检测是否为SCROLLBAR控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_SCROLLBAR);
     pObj->Loation = Loation;
     WM_Invalidate(hWin);
     return GUI_OK;

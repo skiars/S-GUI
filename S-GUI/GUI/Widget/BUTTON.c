@@ -95,13 +95,12 @@ WM_HWIN BUTTON_Create(i_16 x0,
                       u_16 ySize,
                       WM_HWIN hParent,
                       u_16 Id,
-                      u_8 Flag)
+                      u_8 Style)
 {
     BUTTON_Obj *pObj;
     
-    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize,
-        hParent, Flag, WIDGET_BUTTON, Id, _BUTTON_Callback,
-        sizeof(BUTTON_Obj) - sizeof(WM_Obj));
+    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent,
+        Style, Id, _BUTTON_Callback, sizeof(BUTTON_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         return NULL;
     }
@@ -121,16 +120,12 @@ WM_HWIN BUTTON_Create(i_16 x0,
 
 GUI_RESULT BUTTON_SetTitle(WM_HWIN hWin, const char *str)
 {
-    /* 检测是否为BUTTON控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_BUTTON);
     ((BUTTON_Obj*)hWin)->Title = (char*)str;
     return GUI_OK;
 }
 
 GUI_RESULT BUTTON_SetFont(WM_HWIN hWin, GUI_FONT Font)
 {
-    /* 检测是否为BUTTON控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_BUTTON);
     WIDGET_SetFont(hWin, Font);
     return GUI_OK;
 }
@@ -140,8 +135,6 @@ GUI_RESULT BUTTON_Check(WM_HWIN hWin, u_8 NewStatus)
 {
     BUTTON_Obj *pObj = hWin;
     
-    /* 检测是否为BUTTON控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_BUTTON);
     pObj->Check = NewStatus;
     WM_Invalidate(hWin);
     return GUI_OK;

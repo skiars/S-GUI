@@ -20,6 +20,7 @@ void GUI_DrawFromMem(u_16 x,u_16 y,u_16 len,u_16 wid);
 void GUI_ReadBack(u_16 x,u_16 y,u_16 len,u_16 wid,GUI_COLOR *pb);
 void GUI_RecoverBack(u_16 x,u_16 y,u_16 len,u_16 wid,GUI_COLOR *pb);
 void GUI_MemToMem(u_16 x,u_16 y,u_16 len,u_16 wid,GUI_COLOR *pb);
+void GUI_DrawDevice(i_16 x0, i_16 y0, i_16 x1, i_16 y1);
 
 #endif /* __GUI_MEMORY_H */
 

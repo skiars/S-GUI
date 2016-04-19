@@ -1,5 +1,6 @@
 #include "TEXTBOX.h"
 #include "GUI.h"
+#include <string.h>
 
 #define TEXTBOX_DEF_BKC             0x00292323  /* 背景颜色 */
 #define TEXTBOX_TEXT_COLOR          0x00FFFFFF  /* 字体颜色 */
@@ -31,8 +32,6 @@ static void __Paint(WM_HWIN hWin)
 /* TEXTBOX控件自动回调函数 */
 static void __Callback(WM_MESSAGE *pMsg)
 {
-    /* 检测是否为TEXTBOX控件 */
-    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_TEXTBOX);
     switch (pMsg->MsgId) {
         case WM_PAINT :
             __Paint(pMsg->hWin);
@@ -67,20 +66,19 @@ WM_HWIN TEXTBOX_Create(i_16 x0,
                       u_16 ySize,
                       WM_HWIN hParent,
                       u_16 Id,
-                      u_8 Flag)
+                      u_8 Style)
 {
     TEXTBOX_Obj *pObj;
     
-    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
-                                  WIDGET_TEXTBOX, Id, __Callback,
-                                  sizeof(TEXTBOX_Obj) - sizeof(WM_Obj));
+    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Style,
+        Id, __Callback, sizeof(TEXTBOX_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         return NULL;
     }
     /* 配色 */
     pObj->Widget.Skin.BackColor[0] = TEXTBOX_DEF_BKC;
     pObj->Widget.Skin.FontColor[0] = TEXTBOX_TEXT_COLOR;
-    TEXTBOX_SetText(pObj, "");      /* 设置初始字符串 */
+    pObj->Text = NULL;
     TEXTBOX_SetFont(pObj, GUI_DEF_FONT);
     
     return pObj;
@@ -91,9 +89,9 @@ GUI_RESULT TEXTBOX_SetText(WM_HWIN hWin, const char *str)
 {
     GUI_RECT Rect;
 
-    /* 检测是否为TEXTBOX控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
-    ((TEXTBOX_Obj*)hWin)->Text = (char*)str;
+    GUI_fastfree(((TEXTBOX_Obj*)hWin)->Text);
+    ((TEXTBOX_Obj*)hWin)->Text = GUI_fastmalloc(strlen(str));
+    strcpy(((TEXTBOX_Obj*)hWin)->Text, str);
     Rect = WM_GetWindowAreaRect(hWin);
     hWin = WM_GetParentHandle(hWin);
     WM_InvalidateRect(hWin, &Rect);  /* 整个窗口失效 */
@@ -103,8 +101,6 @@ GUI_RESULT TEXTBOX_SetText(WM_HWIN hWin, const char *str)
 /* TEXTBOX设置字体 */
 GUI_RESULT TEXTBOX_SetFont(WM_HWIN hWin, GUI_FONT Font)
 {
-    /* 检测是否为TEXTBOX控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
     WIDGET_SetFont(hWin, Font);
     return GUI_OK;
 }
@@ -114,8 +110,6 @@ GUI_RESULT TEXTBOX_SetAllAlpha(WM_HWIN hWin, u_8 Alpha)
 {
     GUI_RECT Rect;
     
-    /* 检测是否为TEXTBOX控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
     WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
     Rect = WM_GetWindowAreaRect(hWin);
     hWin = WM_GetParentHandle(hWin);
@@ -133,7 +127,7 @@ static void TEXTBOX_LineFeedDisp( const char *str, GUI_COLOR Color, GUI_FONT Fon
     y0 = Rect->y0;
     x1 = Rect->x1;
     x_pix = x1 - x0 + 1;
-    while (*str) {
+    while (str && *str) {
         pix = GUI_SkipWord(str, Font, x_pix, &ch_num);
         if (x0 + pix > x1 || *str == '\n') {
             x0 = Rect->x0;

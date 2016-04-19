@@ -84,3 +84,9 @@ void GUI_MemToMem(u_16 x, u_16 y, u_16 len, u_16 wid, GUI_COLOR *pb)
     }
 #endif
 }
+
+/* GUIœ‘ æ */
+void GUI_DrawDevice(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
+{
+    GUI_DrawFromMem(x0, y0, x1 - x0 + 1, y1 - y0 + 1);
+}

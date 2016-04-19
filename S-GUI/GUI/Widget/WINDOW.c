@@ -90,14 +90,13 @@ static void WINDOW_SetFocus(GUI_MESSAGE *pMsg)
 /* WINDOW控件自动回调函数 */
 static void __Callback(WM_MESSAGE *pMsg)
 {
-    WM_CALLBACK *cb;
+    WM_CALLBACK *Cb;
 
+    Cb = ((WINDOW_Obj*)pMsg->hWin)->UserCb;
     switch (pMsg->MsgId) {
     case WM_PAINT:
         __Paint(pMsg->hWin);
         break;
-    case WM_DELETE:
-        return;
     case WM_GET_CLIENT:
         pMsg->Param = (GUI_PARAM)__GetClient(pMsg->hWin);
         break;
@@ -105,12 +104,10 @@ static void __Callback(WM_MESSAGE *pMsg)
         WINDOW_SetFocus(pMsg); /* 设置焦点 */
         break;
     default:
-        WM_DefaultProc(pMsg);
-        cb = ((WINDOW_Obj*)pMsg->hWin)->UserCb;
-        if (cb) {
-            pMsg->hWin = pMsg->hWin;
-            cb(pMsg);
+        if (Cb) {
+            Cb(pMsg);
         }
+        WM_DefaultProc(pMsg);
     }
 }
 
@@ -128,26 +125,26 @@ static void __PaintClient(WM_HWIN hWin)
 static void __ClientCallback(WM_MESSAGE *pMsg)
 {
     WM_HWIN hParent;
-    WM_CALLBACK *cb;
+    WM_CALLBACK *Cb;
 
+    hParent = WM_GetParentHandle(pMsg->hWin);
     switch (pMsg->MsgId) {
     case WM_PAINT:
         __PaintClient(pMsg->hWin);
         break;
     case WM_DELETE:
-        return;
+        break;
     case WM_SET_FOCUS:
-        pMsg->hWin = WM_GetParentHandle(pMsg->hWin);
+        pMsg->hWin = hParent;
         WINDOW_SetFocus(pMsg); /* 设置焦点 */
         break;
     default:
-        WM_DefaultProc(pMsg);
-        hParent = WM_GetParentHandle(pMsg->hWin);
-        cb = ((WINDOW_Obj*)hParent)->UserCb;
-        if (cb) {
-            pMsg->hWin = ((WM_Obj *)pMsg->hWin)->hParent;
-            cb(pMsg);
+        Cb = ((WINDOW_Obj*)hParent)->UserCb;
+        if (Cb) {
+            pMsg->hWin = hParent;
+            Cb(pMsg);
         }
+        WM_DefaultProc(pMsg);
     }
 }
 
@@ -165,8 +162,7 @@ static void __CreateClient(WINDOW_Obj *pObj)
         ySize = 0;
     }
     pObj->hClient = WM_CreateWindowAsChild(3, pObj->CaptionHeight + 2,
-        (u_16)xSize, (u_16)ySize, pObj, 0, WIDGET_CLIENT, WM_NULL_ID,
-        __ClientCallback, 0);
+        (u_16)xSize, (u_16)ySize, pObj, 0, WM_NULL_ID, __ClientCallback, 0);
 }
 
 /*
@@ -177,7 +173,7 @@ static void __CreateClient(WINDOW_Obj *pObj)
  * ySize:WINDOW控件的竖直高度
  * hParent:父窗口句柄
  * Id:窗口ID
- * Flag:窗口状态
+ * Style:窗口状态
  * cb:用户回调历程指针
  **/
 WM_HWIN WINDOW_Create(i_16 x0,
@@ -186,14 +182,14 @@ WM_HWIN WINDOW_Create(i_16 x0,
                       u_16 ySize,
                       WM_HWIN hParent,
                       u_16 Id,
-                      u_8 Flag,
+                      u_8 Style,
                       WM_CALLBACK *cb)
 {
     WINDOW_Obj *pObj;
     
     GUI_LOCK();
-    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
-        WIDGET_WINDOW, Id, __Callback, sizeof(WINDOW_Obj) - sizeof(WM_Obj));
+    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Style,
+        Id, __Callback, sizeof(WINDOW_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         GUI_UNLOCK();
         return NULL;
@@ -214,7 +210,7 @@ WM_HWIN WINDOW_Create(i_16 x0,
     WINDOW_SetTitle(pObj, ""); /* 设置初始字符串 */
     WINDOW_SetFont(pObj, GUI_DEF_FONT);
     __CreateClient(pObj); /* 建立客户区 */
-    WM_SendMessage(pObj->hClient, WM_CREATED, (GUI_PARAM)NULL);
+    WM_SendMessage(pObj, WM_CREATED, (GUI_PARAM)NULL);
     WM_SetFocusWindow(pObj);
     GUI_UNLOCK();
     return pObj;
@@ -223,8 +219,6 @@ WM_HWIN WINDOW_Create(i_16 x0,
 /* WINDOW设置标题 */
 GUI_RESULT WINDOW_SetTitle(WM_HWIN hWin, const char *str)
 {
-    /* 检测是否为WINDOW控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
     ((WINDOW_Obj*)hWin)->Title = (char*)str;
     return GUI_OK;
 }
@@ -232,8 +226,6 @@ GUI_RESULT WINDOW_SetTitle(WM_HWIN hWin, const char *str)
 /* WINDOW设置字体 */
 GUI_RESULT WINDOW_SetFont(WM_HWIN hWin, GUI_FONT Font)
 {
-    /* 检测是否为WINDOW控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
     WIDGET_SetFont(hWin, Font);
     return GUI_OK;
 }
@@ -243,8 +235,6 @@ GUI_RESULT WINDOW_SetAllAlpha(WM_HWIN hWin, u_8 Alpha)
 {
     WINDOW_Obj *pObj = hWin;
     
-    /* 检测是否为WINDOW控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
     /* 设置Alpha */
     WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
     WIDGET_SetTransWindow(pObj->hClient);
