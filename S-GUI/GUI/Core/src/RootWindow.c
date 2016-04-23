@@ -58,6 +58,7 @@ void WM_RootWindowInit(WM_Obj *pObj)
     pObj->hFirstChild = NULL;
     pObj->Status = 0x0000;
     pObj->Id = WM_ROOTWIN_ID;
+    pObj->Sign = WIDGET_ROOTWIN;
     WM_Invalidate(pObj);  /* 根窗口无效化 */
 }
 

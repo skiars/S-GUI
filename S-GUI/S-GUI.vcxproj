@@ -190,6 +190,7 @@
     <ClInclude Include="GUI\Widget\WIDGET.h" />
     <ClInclude Include="GUI\Widget\WINDOW.h" />
     <ClInclude Include="GUI_Test.h" />
+    <ClInclude Include="memalloc.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="simulate_lcd.h" />
   </ItemGroup>
@@ -222,6 +223,7 @@
     <ClCompile Include="GUI\Widget\WINDOW.c" />
     <ClCompile Include="GUI_Test.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="memalloc.c" />
     <ClCompile Include="pic_rootwin.c" />
     <ClCompile Include="simulate_lcd.c" />
   </ItemGroup>

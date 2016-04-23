@@ -145,6 +145,9 @@
     <ClInclude Include="GUI\Core\inc\linked_list.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
+    <ClInclude Include="memalloc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUI\Core\src\GUI_2D.c">
@@ -236,6 +239,9 @@
     </ClCompile>
     <ClCompile Include="GUI\Font\UI17_4pp.c">
       <Filter>源文件\S-GUI\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="memalloc.c">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

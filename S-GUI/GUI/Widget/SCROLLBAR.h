@@ -16,7 +16,7 @@ WM_HWIN SCROLLBAR_Create(i_16 x0,
                       u_16 ySize,
                       WM_HWIN hParent,
                       u_16 Id,
-                      u_8 Style);
+                      u_8 Flag);
 GUI_RESULT SCROLLBAR_SetTotality(GUI_HWIN hWin, u_16 Totality);
 GUI_RESULT SCROLLBAR_SetLoation(GUI_HWIN hWin, u_16 Loation);
 

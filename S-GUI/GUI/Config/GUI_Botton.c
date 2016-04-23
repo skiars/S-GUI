@@ -8,6 +8,7 @@
 /* 用户自己添加的头文件 */
 #include <stdio.h>
 #include "..\..\simulate_lcd.h"
+#include "..\..\memalloc.h"
 
 /* 用于Windows的互斥信号量 */
 HANDLE GUI_hMutex;
@@ -51,22 +52,22 @@ void _GUI_Delay_ms(GUI_TIME tms)
 /* GUI动态内存支持 */
 void *GUI_malloc(u_32 size)
 {
-    return malloc(size);
+    return memalloc(size, sim_mem2);
 }
 
 void GUI_free(void *ptr)
 {
-    free(ptr);
+    memfree(ptr, sim_mem2);
 }
 
 void *GUI_fastmalloc(u_32 size)
 {
-    return malloc(size);
+    return memalloc(size, sim_mem1);
 }
 
 void GUI_fastfree(void *ptr)
 {
-    free(ptr);
+    memfree(ptr, sim_mem1);
 }
 
 /* GUI图形硬件物理层接口 */

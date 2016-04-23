@@ -51,7 +51,7 @@ static void _RootWinPaint(WM_HWIN hWin)
     /* 绘制背景 */
     //GUI_FillRect(0, 0, 480, 320, 0x00ffffff);
     GUI_DrawBitmap(0, 0, 640, 320, &bmpic_rootwin);
-    //GUI_DispStringCurRect(10, 300, _Str, 0x00000000, Font_ASCII_8X16);
+    GUI_DispStringCurRect(10, 300, _Str, 0x00000000, Font_ASCII_8X16);
     //GUI_DrawLine(100, 100, 200, 5, 0);
 }
 
@@ -70,7 +70,7 @@ void GUI_Test(void)
     GUI_Init();
     /* 设置根窗口回调函数 */
     RootWinPaint_Cb = _RootWinPaint;
-    //RootWinTimer_Cb = _RootWinTimer;
+    RootWinTimer_Cb = _RootWinTimer;
     GUI_SetRootWindowTimer(1000);
     Create_Window2();
     while (1) {
@@ -281,6 +281,7 @@ void Window6_Cb(WM_MESSAGE *pMsg)
 
     switch (pMsg->MsgId) {
     case WM_CREATED:
+        WINDOW_SetTitle(pMsg->hWin, "Benchmark Result");
         hWin = WM_GetClientWindow(pMsg->hWin);
         TEXTBOX_Create(0, 0, 140, 60, hWin, WIN6_TBX1, 0);
         hItem = BUTTON_Create(42, 65, 60, 20, hWin, WIN6_BTN1, 0);
@@ -292,7 +293,7 @@ void Window6_Cb(WM_MESSAGE *pMsg)
         }
         break;
     case WM_USER_MESSAGE:
-        sprintf(Str, "%d Pixels/s\n%d fps/s",
+        sprintf(Str, "%d Pixels/s\n%d FPS",
             (int)pMsg->Param, (int)pMsg->Param / 320 / 240);
         hItem = WM_GetDialogItem(pMsg->hWin, WIN6_TBX1);
         TEXTBOX_SetText(hItem, Str);
@@ -339,7 +340,8 @@ void Window7_Cb(WM_MESSAGE *pMsg)
 void Create_Window6(void)
 {
     WM_CreateWindowAsChild(0, 0, 240, 320,
-        NULL, 0, WINDOW6, Window7_Cb, 0);
+        NULL, 0, 0, WINDOW6, Window7_Cb, 0);
+    //WM_SetForegroundWindow(_pRootWin->hFirstChild);
 }
 
 void Window2_Cb(WM_MESSAGE *pMsg)

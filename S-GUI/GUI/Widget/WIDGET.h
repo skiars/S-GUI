@@ -4,6 +4,17 @@
 #include "GUI_WM.h"
 #include "GUI_Font.h"
 
+/* 窗口标志定义 */
+#define WIDGET_CLIENT          0x00
+#define WIDGET_ROOTWIN         0x01
+#define WIDGET_BUTTON          0x02
+#define WIDGET_LISTBOX         0x03
+#define WIDGET_WINDOW          0x04
+#define WIDGET_TEXTBOX         0x05
+#define WIDGET_SCROLLBAR       0x06
+#define WIDGET_ICONVIEW        0x07
+#define WIDGET_GRAPH           0x08
+
 #define WIDGET_DRAW_EDGE1      0x0000
 #define WIDGET_DRAW_EDGE2      0x0001
 #define WIDGET_DRAW_EDGE3      0x0002
@@ -20,6 +31,12 @@
 #define WIDGET_BACK            0x02
 #define WIDGET_CAPTION         0x03
 #define WIDGET_FONT            0x04
+
+/* 检查控件标识符是否正确 */
+#define WIDGET_SignErrorReturn(h, s) \
+    { if (WM_CheckWindowSign(h, s) == GUI_ERR) return GUI_ERR; }
+#define WIDGET_SignErrorReturnVoid(h, s) \
+    { if (WM_CheckWindowSign(h, s) == GUI_ERR) return; }
 
 typedef struct {
     GUI_COLOR      EdgeColor[3];    /* 边框颜色 */

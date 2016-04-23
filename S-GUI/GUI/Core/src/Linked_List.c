@@ -5,8 +5,8 @@
 
 #include "GUI.h"
 
-#define MALLOC(x)  GUI_malloc(x)
-#define FREE(x)    GUI_free(x);
+#define MALLOC(x)  GUI_fastmalloc(x)
+#define FREE(x)    GUI_fastfree(x);
 
 /* 查找链表pl中节点pt的前驱 */
 static LIST FindPrecious(LIST pl, LIST pt)

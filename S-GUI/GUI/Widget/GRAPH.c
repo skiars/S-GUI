@@ -72,12 +72,13 @@ GUI_HWIN GRAPH_Create(i_16 x0,
     u_16 ySize,
     WM_HWIN hParent,
     u_16 Id,
-    u_8 Style)
+    u_8 Flag)
 {
     GRAPH_Obj *pObj;
 
-    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Style,
-        Id, __Callback, sizeof(GRAPH_Obj) - sizeof(WM_Obj));
+    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
+        WIDGET_GRAPH, Id, __Callback,
+        sizeof(GRAPH_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         return NULL;
     }
@@ -103,6 +104,8 @@ GUI_RESULT GRAPH_SetScale(GUI_HWIN hWin,
 {
     GRAPH_Obj *pObj = hWin;
 
+    /* ¼ì²âÊÇ·ñÎªGRAPH¿Ø¼þ */
+    WIDGET_SignErrorReturn(hWin, WIDGET_GRAPH);
     pObj->Scale.x0 = x0;
     pObj->Scale.y0 = y0;
     pObj->Scale.xScale = xScale;
@@ -242,6 +245,7 @@ static void _DeleteData(GRAPH_Obj *pWin)
             }
             GUI_fastfree(l->pData);
         }
+        GUI_fastfree(l); /* É¾³ýÁ´½Ú */
         l = i;
     }
 }
@@ -301,7 +305,7 @@ GUI_HWIN GRAPH_TY_DataCreate(int *yData,
     GRAPH_TYDATA *pData;
 
     pObj = GUI_fastmalloc(sizeof(GRAPH_DATA));
-    pData = GUI_fastmalloc(sizeof(GRAPH_XYDATA));
+    pData = GUI_fastmalloc(sizeof(GRAPH_TYDATA));
     iData = GUI_fastmalloc(MaxItemNum * sizeof(int));
     if (!pObj || !pData || !iData) {
         GUI_fastfree(pObj);
@@ -377,6 +381,10 @@ GUI_HWIN GRAPH_GethData(GUI_HWIN hWin, int Num)
     LIST List;
     GRAPH_Obj *pWin = hWin;
 
+    /* ¼ì²âÊÇ·ñÎªGRAPH¿Ø¼þ */
+    if (WM_CheckWindowSign(hWin, WIDGET_GRAPH) == GUI_ERR) {
+        return NULL;
+    }
     if (Num && pWin->List) {
         List = pWin->List;
         while (Num-- && List) {

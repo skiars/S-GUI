@@ -1,8 +1,12 @@
 #include "simulate_lcd.h"
+#include "memalloc.h"
 #include "GUI_Test.h"
 
 #define SIM_LCD_WIDTH   480  /* 模拟屏幕宽度 */
 #define SIM_LCD_HEIGHT  320  /* 模拟屏幕高度 */
+
+char sim_mem1[1024 * 10];
+char sim_mem2[1024 * 1000];
 
 static SIM_DEVICE sim_lcd;
 
@@ -50,8 +54,8 @@ static DWORD WINAPI ThreadDisp(LPVOID pM)
 /* 模拟器开始运行 */
 void simulate_lcd_start(HWND hWnd)
 {
-    //SetClassLong(hWnd, GCL_HCURSOR, (LONG)LoadCursor(NULL, IDC_HAND));
-    //ShowCursor(TRUE);
+    Mem_PoolInit(sim_mem1, sizeof(sim_mem1));
+    Mem_PoolInit(sim_mem2, sizeof(sim_mem2));
     /* 获取窗口句柄 */
     sim_lcd.hwnd = hWnd;
     CreateThread(NULL, 0, ThreadGUI, "ThreadGUI", 0, NULL); /* 新建线程 */

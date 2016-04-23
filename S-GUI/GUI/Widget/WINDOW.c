@@ -162,7 +162,8 @@ static void __CreateClient(WINDOW_Obj *pObj)
         ySize = 0;
     }
     pObj->hClient = WM_CreateWindowAsChild(3, pObj->CaptionHeight + 2,
-        (u_16)xSize, (u_16)ySize, pObj, 0, WM_NULL_ID, __ClientCallback, 0);
+        (u_16)xSize, (u_16)ySize, pObj, 0, WIDGET_CLIENT, WM_NULL_ID,
+        __ClientCallback, 0);
 }
 
 /*
@@ -173,7 +174,7 @@ static void __CreateClient(WINDOW_Obj *pObj)
  * ySize:WINDOW控件的竖直高度
  * hParent:父窗口句柄
  * Id:窗口ID
- * Style:窗口状态
+ * Flag:窗口状态
  * cb:用户回调历程指针
  **/
 WM_HWIN WINDOW_Create(i_16 x0,
@@ -182,14 +183,14 @@ WM_HWIN WINDOW_Create(i_16 x0,
                       u_16 ySize,
                       WM_HWIN hParent,
                       u_16 Id,
-                      u_8 Style,
+                      u_8 Flag,
                       WM_CALLBACK *cb)
 {
     WINDOW_Obj *pObj;
     
     GUI_LOCK();
-    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Style,
-        Id, __Callback, sizeof(WINDOW_Obj) - sizeof(WM_Obj));
+    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
+        WIDGET_WINDOW, Id, __Callback, sizeof(WINDOW_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         GUI_UNLOCK();
         return NULL;
@@ -219,6 +220,8 @@ WM_HWIN WINDOW_Create(i_16 x0,
 /* WINDOW设置标题 */
 GUI_RESULT WINDOW_SetTitle(WM_HWIN hWin, const char *str)
 {
+    /* 检测是否为WINDOW控件 */
+    WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
     ((WINDOW_Obj*)hWin)->Title = (char*)str;
     return GUI_OK;
 }
@@ -226,6 +229,8 @@ GUI_RESULT WINDOW_SetTitle(WM_HWIN hWin, const char *str)
 /* WINDOW设置字体 */
 GUI_RESULT WINDOW_SetFont(WM_HWIN hWin, GUI_FONT Font)
 {
+    /* 检测是否为WINDOW控件 */
+    WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
     WIDGET_SetFont(hWin, Font);
     return GUI_OK;
 }
@@ -235,6 +240,8 @@ GUI_RESULT WINDOW_SetAllAlpha(WM_HWIN hWin, u_8 Alpha)
 {
     WINDOW_Obj *pObj = hWin;
     
+    /* 检测是否为WINDOW控件 */
+    WIDGET_SignErrorReturn(hWin, WIDGET_WINDOW);
     /* 设置Alpha */
     WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
     WIDGET_SetTransWindow(pObj->hClient);

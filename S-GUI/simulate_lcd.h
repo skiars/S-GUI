@@ -3,6 +3,9 @@
 
 #include "Windows.h"
 
+extern char sim_mem1[1024 * 10];
+extern char sim_mem2[1024 * 1000];
+
 /* 模拟设备结构体 */
 typedef struct {
     HWND hwnd;
