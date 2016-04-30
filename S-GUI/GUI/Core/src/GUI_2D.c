@@ -195,7 +195,7 @@ void GUI_DrawRect(i_16 x0,i_16 y0,u_16 xSize,u_16 ySize,GUI_COLOR Color)
 }
 
 /* Ìî³äÍ¸Ã÷¾ØÐÎ */
-#if GUI_USE_GRAPHPHY == 0 || GUI_USE_MEMORY == 0
+#if GUI_USE_GRAPHPHY == 0
 static void __FillRectAlpha(i_16 x0, i_16 y0,u_16 x1,u_16 y1,GUI_COLOR Color)
 {
     i_16 x, y;
@@ -212,28 +212,15 @@ static void __FillRectAlpha(i_16 x0, i_16 y0,u_16 x1,u_16 y1,GUI_COLOR Color)
 #endif
 
 /* Ìî³ä·ÇÍ¸Ã÷¾ØÐÎ */
-#if GUI_USE_GRAPHPHY == 0 || GUI_USE_MEMORY == 0
+#if GUI_USE_GRAPHPHY == 0
 static void __FillRect(i_16 x0, i_16 y0, u_16 x1, u_16 y1, GUI_COLOR Color)
 {                                     
     i_16 x, y;
-#if GUI_USE_MEMORY
-    int Width = GUI_GetScreenWidth();
-    GUI_COLOR *p;
-    GUI_COLOR *pBuff = GUI_Data->lcdbuf + y0 * Width + x0;
-#endif
 
     for (y = y0; y <= y1; y++) {
-#if GUI_USE_MEMORY == 0
         for (x = x0; x <= x1; ++x) {
             GUI_DrawPixel(x, y, Color);
         }
-#else
-        p = pBuff;
-        for (x = x0; x <= x1; ++x) {
-            *p++ = Color;
-        }
-        pBuff += Width;
-#endif
     }
 }
 #endif
@@ -255,7 +242,7 @@ void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Color)
             y0 = r2.y0;
             xSize = r2.x1;
             ySize = r2.y1;
-            #if GUI_USE_GRAPHPHY && GUI_USE_MEMORY
+            #if GUI_USE_GRAPHPHY
             LCD_FillRect(x0, y0, xSize, ySize, Color);
             #else
             if (Color >> 24) {

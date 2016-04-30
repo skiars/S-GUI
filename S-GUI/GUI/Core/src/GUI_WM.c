@@ -6,10 +6,6 @@
 #define WM__FindChildEnd(h) \
     (((WM_Obj *)WM_GetTopChildWindow(h))->hNextLine)
 
-#if GUI_USE_MEMORY
-static GUI_RECT __PaintArea;
-#endif
-
 static int __InvalidWindowNum = 0;
 
 /* 窗口管理器初始化 */
@@ -178,10 +174,6 @@ static void _PaintOne(WM_Obj *pWin)
         GUI_SetNowRectList(Area, &pWin->InvalidRect);
         WM_SendMessage(pWin, WM_PAINT, 0);
         GUI_FreeRectList(Area);
-#if GUI_USE_MEMORY
-        /* 需要刷新的矩形 */
-        __PaintArea = GUI_RectOrCalc(&pWin->Rect, &__PaintArea);
-#endif
     }
 }
 
@@ -265,21 +257,6 @@ void WM_Exec(void)
     }
     GUI_TimerHandle();
     _PaintAll(); /* 重绘所有窗口 */
-#if GUI_USE_MEMORY
-    GUI_LOCK();
-    /* 将内存数据更新到LCD上 */
-    if (__PaintArea.x1 || __PaintArea.y1) {
-        __PaintArea = GUI_RectAndCalc(&_pRootWin->Rect, &__PaintArea);
-        GUI_DrawFromMem(__PaintArea.x0, __PaintArea.y0,
-            __PaintArea.x1 - __PaintArea.x0 + 1,
-            __PaintArea.y1 - __PaintArea.y0 + 1);
-        __PaintArea.x0 = 240;
-        __PaintArea.y0 = 320;
-        __PaintArea.x1 = 0;
-        __PaintArea.y1 = 0;
-    }
-    GUI_UNLOCK();
-#endif
 }
 
 /*

@@ -19,37 +19,38 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{058E52FB-F701-4330-B53B-6C8176DDF856}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SGUI</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{F9877586-BB10-40F3-AEE1-74DB4CE3A561}</ProjectGuid>
+    <RootNamespace>SDLSGUI</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>S-GUI</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -69,96 +70,59 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <Optimization>Custom</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>GUI\Config;GUI\Core\inc;GUI\Font;GUI\Widget;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <EnforceTypeConversionRules>false</EnforceTypeConversionRules>
-      <DisableSpecificWarnings>4464;4820;4100;4189;4668;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <CompileAs>CompileAsC</CompileAs>
-      <SmallerTypeCheck>true</SmallerTypeCheck>
-      <StructMemberAlignment>1Byte</StructMemberAlignment>
+      <AdditionalIncludeDirectories>GUI\Config;GUI\Core\inc;GUI\Fonts;GUI\Widget;sdl\include\vendor\win32\SDL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <MinimumRequiredVersion>
-      </MinimumRequiredVersion>
+      <AdditionalDependencies>sdl\win32\SDL.lib;sdl\win32\SDL_image.lib;sdl\win32\SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>GUI\Config;GUI\Core\inc;GUI\Font;GUI\Widget;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>GUI\Config;GUI\Core\inc;GUI\Fonts;GUI\Widget;sdl\include\vendor\win32\SDL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>sdl\win32\SDL.lib;sdl\win32\SDL_image.lib;sdl\win32\SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <Text Include="..\LICENSE.txt" />
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="GUI\Config\GUI_Botton.h" />
@@ -172,13 +136,13 @@
     <ClInclude Include="GUI\Core\inc\GUI_Memory.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Queue.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Rect.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_String.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Timer.h" />
     <ClInclude Include="GUI\Core\inc\GUI_TouchPad.h" />
     <ClInclude Include="GUI\Core\inc\GUI_WM.h" />
     <ClInclude Include="GUI\Core\inc\linked_list.h" />
-    <ClInclude Include="GUI\Core\inc\mystring.h" />
     <ClInclude Include="GUI\Core\inc\Text.h" />
-    <ClInclude Include="GUI\Font\GUI_Font.h" />
+    <ClInclude Include="GUI\Fonts\GUI_Font.h" />
     <ClInclude Include="GUI\Widget\BUTTON.h" />
     <ClInclude Include="GUI\Widget\DialogBox.h" />
     <ClInclude Include="GUI\Widget\GRAPH.h" />
@@ -189,29 +153,27 @@
     <ClInclude Include="GUI\Widget\TEXTBOX.h" />
     <ClInclude Include="GUI\Widget\WIDGET.h" />
     <ClInclude Include="GUI\Widget\WINDOW.h" />
-    <ClInclude Include="GUI_Test.h" />
-    <ClInclude Include="memalloc.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="simulate_lcd.h" />
+    <ClInclude Include="sdlscreen.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUI\Config\GUI_Botton.c" />
-    <ClCompile Include="GUI\Core\src\GUI_Bitmap.c" />
     <ClCompile Include="GUI\Core\src\GUI_2D.c" />
+    <ClCompile Include="GUI\Core\src\GUI_Bitmap.c" />
     <ClCompile Include="GUI\Core\src\GUI_Core.c" />
     <ClCompile Include="GUI\Core\src\GUI_KeyBoard.c" />
+    <ClCompile Include="GUI\Core\src\GUI_Malloc.c" />
     <ClCompile Include="GUI\Core\src\GUI_Memory.c" />
     <ClCompile Include="GUI\Core\src\GUI_Queue.c" />
     <ClCompile Include="GUI\Core\src\GUI_Rect.c" />
+    <ClCompile Include="GUI\Core\src\GUI_String.c" />
     <ClCompile Include="GUI\Core\src\GUI_Timer.c" />
     <ClCompile Include="GUI\Core\src\GUI_TouchPad.c" />
     <ClCompile Include="GUI\Core\src\GUI_WM.c" />
     <ClCompile Include="GUI\Core\src\linked_list.c" />
-    <ClCompile Include="GUI\Core\src\mystring.c" />
     <ClCompile Include="GUI\Core\src\RootWindow.c" />
     <ClCompile Include="GUI\Core\src\Text.c" />
-    <ClCompile Include="GUI\Font\ASCII_8x16_font.c" />
-    <ClCompile Include="GUI\Font\UI17_4pp.c" />
+    <ClCompile Include="GUI\Fonts\ASCII_8x16_font.c" />
+    <ClCompile Include="GUI\Fonts\UI17_4pp.c" />
     <ClCompile Include="GUI\Widget\BUTTON.c" />
     <ClCompile Include="GUI\Widget\DialogBox.c" />
     <ClCompile Include="GUI\Widget\GRAPH.c" />
@@ -223,16 +185,12 @@
     <ClCompile Include="GUI\Widget\WINDOW.c" />
     <ClCompile Include="GUI_Test.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="memalloc.c" />
     <ClCompile Include="pic_rootwin.c" />
-    <ClCompile Include="simulate_lcd.c" />
+    <ClCompile Include="sdlscreen.c" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="S-GUI.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="S-GUI.ico" />
-    <Image Include="small.ico" />
+    <Text Include="..\LICENSE.txt" />
+    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />

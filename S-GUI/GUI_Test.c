@@ -59,7 +59,12 @@ static void _RootWinTimer(WM_HWIN hWin)
 {
     GUI_RECT Rect = { 10, 300, 100, 320 };
 
+#ifdef _WIN32
     sprintf_s(_Str, sizeof(_Str), "FPS: %d", _FpsVal);
+#else
+    sprintf(_Str "FPS: %d", _FpsVal);
+#endif // _WIN32
+    
     WM_InvalidateRect(_hRootWin, &Rect);
     _FpsVal = 0; /* Ö¡ÂÊÇåÁã */
 }
@@ -169,7 +174,11 @@ void Window4_Cb(WM_MESSAGE *pMsg)
         hWin = WM_GetClientWindow(pMsg->hWin);
         hItem = LISTBOX_Create(0, 0, 214, 210, hWin, WIN4_LBX1, 0);
         for (i = 0; i < 2000; ++i) {
+#ifdef _WIN32
+            sprintf_s(s, sizeof(s), "Item%d", i + 1);
+#else
             sprintf(s, "Item%d", i + 1);
+#endif // _WIN32
             LISTBOX_AddList(hItem, s);
         }
         LISTBOX_AddList(hItem, "Check to return...");
@@ -293,8 +302,13 @@ void Window6_Cb(WM_MESSAGE *pMsg)
         }
         break;
     case WM_USER_MESSAGE:
+#ifdef _WIN32
+        sprintf_s(Str, sizeof(Str), "%d Pixels/s\n%d FPS",
+            (int)pMsg->Param, (int)(pMsg->Param / 320 / 240));
+#else
         sprintf(Str, "%d Pixels/s\n%d FPS",
             (int)pMsg->Param, (int)pMsg->Param / 320 / 240);
+#endif // _WIN32
         hItem = WM_GetDialogItem(pMsg->hWin, WIN6_TBX1);
         TEXTBOX_SetText(hItem, Str);
         break;

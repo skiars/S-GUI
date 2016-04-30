@@ -1,6 +1,7 @@
 #include "GUI_Core.h"
 #include "GUI.h"
 
+void *GUI_Heap[2];           /* 内存堆指针 */
 GUI_WORK_SPACE *GUI_Data;    /* GUI工作数据 */
 GUI_CONTEXT GUI_Context;     /* GUI上下文 */
 static u_32 __LockTaskId;
@@ -8,7 +9,17 @@ static u_16 __TaskLockCnt;
 
 /* GUI初始化 */
 GUI_RESULT GUI_Init(void)
-{    
+{
+    int res;
+    u_32 HeapSize;
+
+    GUI_Heap[GUI_HEAP_FAST] = _GUI_GetHeapBuffer(GUI_HEAP_FAST, &HeapSize);
+    res = GUI_HeapInit(GUI_Heap[GUI_HEAP_FAST], HeapSize);
+    GUI_Heap[GUI_HEAP_HCAP] = _GUI_GetHeapBuffer(GUI_HEAP_HCAP, &HeapSize);
+    res |= GUI_HeapInit(GUI_Heap[GUI_HEAP_HCAP], HeapSize);
+    if (res) {
+        return GUI_ERR;
+    }
     GUI_Data = GUI_fastmalloc(sizeof(GUI_WORK_SPACE));
     if (GUI_Data == NULL) {
         return GUI_ERR;
@@ -22,11 +33,6 @@ GUI_RESULT GUI_Init(void)
     if (WM_Init() == GUI_ERR) {
         return GUI_ERR;
     }
-#if GUI_USE_MEMORY
-    GUI_Data->lcdbuf = GUI_malloc(sizeof(GUI_COLOR)
-                                  * GUI_Data->phy_info.xSize
-                                  * GUI_Data->phy_info.ySize);
-#endif
     return GUI_OK;
 }
 

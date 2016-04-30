@@ -138,6 +138,10 @@ static void __ClientCallback(WM_MESSAGE *pMsg)
         pMsg->hWin = hParent;
         WINDOW_SetFocus(pMsg); /* 设置焦点 */
         break;
+    case WM_TP_PRESS: /* 不移动窗口 */
+        break;
+    case WM_TP_LEAVE: /* 不移动窗口 */
+        break;
     default:
         Cb = ((WINDOW_Obj*)hParent)->UserCb;
         if (Cb) {

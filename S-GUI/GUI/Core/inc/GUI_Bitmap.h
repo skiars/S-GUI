@@ -3,9 +3,6 @@
 
 #include "GUI_Typedef.h"
 
-#define GUI_RGB888     1
-#define GUI_RGB565     2
-
 #define GUI_DRAW_BMP24    &GUI_DrawBitmap24b
 #define GUI_DRAW_BMPM565  &GUI_DrawBitmap16b
 

@@ -17,6 +17,8 @@
 #include "GUI_Timer.h"
 #include "GUI_KeyBoard.h"
 #include "GUI_TouchPad.h"
+#include "GUI_String.h"
+#include "GUI_Malloc.h"
 
 #include "WIDGET.h"
 #include "BUTTON.h"

@@ -131,7 +131,8 @@ GUI_RESULT LISTBOX_AddList(WM_HWIN hWin, char *name)
 
     /* 检测是否为LISTBOX控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_LISTBOX);
-    List_InsertNode(pObj->LastNode, name, strlen(name) + 1); /* 插入到链表结尾 */
+    /* 插入到链表结尾 */
+    List_InsertNode(pObj->LastNode, name, GUI_Strlen(name) + 1);
     pObj->LastNode = pObj->LastNode->pNext;   /* 仅有本函数使用 */
     pObj->ItemNum++; /* 总条目数增加1条 */
     if (pObj->ItemNum > pObj->PageItems) {

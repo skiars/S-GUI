@@ -172,7 +172,7 @@ void GUI_DispStringCurRect(i_16 x0,
 {
     u_16 i, slen, pos = 0;
 
-    slen = (u_16)strlen(str);
+    slen = (u_16)GUI_Strlen(str);
     for (i = 0; i < slen; ++i) {
         pos += GUI_DispChar(x0 + pos, y0, str + i, Color, Font);
     }
@@ -188,7 +188,7 @@ void GUI_DispStringCurRectN(i_16 x0,
 {
     u_16 i, slen, pos = 0;
 
-    slen = (u_16)strlen(str);
+    slen = (u_16)GUI_Strlen(str);
     for (i = 0; i < slen && i < n; ++i) {
         pos += GUI_DispChar(x0 + pos, y0, str + i, Color, Font);
     }

@@ -1,8 +1,4 @@
 #include "linked_list.h"
-#include "stdio.h"
-#include "string.h"
-#include "mystring.h"
-
 #include "GUI.h"
 
 #define MALLOC(x)  GUI_fastmalloc(x)
@@ -170,7 +166,7 @@ int List_FindStr(LIST pl, char *pd)
     if (pl) {
         while (pl->pNext != NULL) {
             pl = pl->pNext;
-            if (mystricmp(pd, pl->pData) == 0) { /* 忽略大小写比较 */
+            if (GUI_Stricmp(pd, pl->pData) == 0) { /* 忽略大小写比较 */
                 return i;
             }
             ++i;

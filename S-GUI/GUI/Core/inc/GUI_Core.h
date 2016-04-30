@@ -7,10 +7,19 @@
 #include "GUI_Queue.h"
 #include "GUI_Font.h"
 
+
+#define GUI_HEAP_FAST     0 /* 快速的堆(MCU内部的SRAM)页面 */
+#define GUI_HEAP_HCAP     1 /* 大容量的堆(比如SDRAM)页面 */
+
 #define _hRootWin   (GUI_Data->RootWin)
 #define _PaintArea  (GUI_Context.ClipRect)
 
 #define GUI_DEBUG_OUT(s) GUI_DebugOut(s);
+
+#define GUI_malloc(S)     GUI_Malloc((S), GUI_Heap[GUI_HEAP_HCAP])
+#define GUI_free(P)       GUI_Free((P), GUI_Heap[GUI_HEAP_HCAP])
+#define GUI_fastmalloc(S) GUI_Malloc((S), GUI_Heap[GUI_HEAP_FAST])
+#define GUI_fastfree(P)   GUI_Free((P), GUI_Heap[GUI_HEAP_FAST])
 
 /* 矩形 */
 typedef struct { i_16 x0, y0, x1, y1; } GUI_RECT;
@@ -27,9 +36,6 @@ typedef struct{
     GUI_PHY_INFO phy_info; /* 硬件信息 */
     GUI_HWIN RootWin;      /* 根窗口 */
     GUI_AREA AreaHeap;     /* 裁剪区域堆 */
-#if GUI_USE_MEMORY
-    GUI_COLOR *lcdbuf;     /* LCD缓冲 */
-#endif
 }GUI_WORK_SPACE;
 
 /* GUI上下文结构体 */
@@ -43,6 +49,7 @@ typedef struct {
     GUI_COLOR BkColor;      /* 当前背景色 */
 }GUI_CONTEXT;
 
+extern void *GUI_Heap[2];
 extern GUI_WORK_SPACE *GUI_Data;
 extern GUI_CONTEXT GUI_Context;
 

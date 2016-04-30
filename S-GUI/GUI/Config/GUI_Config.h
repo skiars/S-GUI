@@ -4,12 +4,6 @@
 /* 定义消息队列最大消息数 */
 #define GUI_MSG_QUEUE_SIZE    10
 
-/* 是否使用存储器缓冲.
- * 0:不使用屏幕缓冲.
- * 1:使用屏幕缓冲.
- **/
-#define GUI_USE_MEMORY        1
-
 /* 默认字体 */
 #define GUI_DEF_FONT          Font_UI17_4PP
 
@@ -22,7 +16,7 @@
 #define GUI_RECT_HEAP_SIZE    50
 
 /* 使用图形加速器 */
-#define GUI_USE_GRAPHPHY      0
+#define GUI_USE_GRAPHPHY      1
 
 /* 调试模式开关 */
 #define GUI_DEBUG_MODE        1

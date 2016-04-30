@@ -7,24 +7,7 @@ static void _DrawBitmap24bp(const unsigned char *pPixel,
     u_16 xSize, u_16 ySize,
     u_16 Offset)
 {
-#if GUI_USE_MEMORY
-    u_16 x, y;
-    u_16 Width = GUI_GetScreenWidth();
-    GUI_COLOR tC, *pLCD = GUI_Data->lcdbuf + y0 * Width + x0;
 
-    Offset *= 3;
-    Width = Width - xSize;
-    for (y = 0; y < ySize; ++y) {
-        for (x = 0; x < xSize; ++x) {
-            tC = *pPixel++ << 16;
-            tC |= *pPixel++ << 8;
-            tC |= *pPixel++;
-            *pLCD++ = tC;
-        }
-        pPixel += Offset;
-        pLCD += Width;
-    }
-#endif
 }
 #endif
 

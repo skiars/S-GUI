@@ -12,6 +12,9 @@ typedef u_32 GUI_TIME;        /* GUIÊ±¼ä */
 typedef u_32 GUI_COLOR;
 typedef u_16 LCD_COLOR;
 
+#define GUI_RGB888     1
+#define GUI_RGB565     2
+
 typedef enum {
     GUI_OK = 0,
     GUI_ERR,

@@ -1,6 +1,5 @@
 #include "TEXTBOX.h"
 #include "GUI.h"
-#include <string.h>
 
 #define TEXTBOX_DEF_BKC             0x00292323  /* 背景颜色 */
 #define TEXTBOX_TEXT_COLOR          0x00FFFFFF  /* 字体颜色 */
@@ -89,7 +88,7 @@ WM_HWIN TEXTBOX_Create(i_16 x0,
     return pObj;
 }
 
-/* TEXTBOX设置标题 */
+/* TEXTBOX设置内容 */
 GUI_RESULT TEXTBOX_SetText(WM_HWIN hWin, const char *str)
 {
     GUI_RECT Rect;
@@ -97,8 +96,8 @@ GUI_RESULT TEXTBOX_SetText(WM_HWIN hWin, const char *str)
     /* 检测是否为TEXTBOX控件 */
     WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
     GUI_fastfree(((TEXTBOX_Obj*)hWin)->Text);
-    ((TEXTBOX_Obj*)hWin)->Text = GUI_fastmalloc(strlen(str));
-    strcpy(((TEXTBOX_Obj*)hWin)->Text, str);
+    ((TEXTBOX_Obj*)hWin)->Text = GUI_fastmalloc(GUI_Strlen(str) + 1);
+    GUI_Strcpy(((TEXTBOX_Obj*)hWin)->Text, str);
     Rect = WM_GetWindowAreaRect(hWin);
     hWin = WM_GetParentHandle(hWin);
     WM_InvalidateRect(hWin, &Rect);  /* 整个窗口失效 */

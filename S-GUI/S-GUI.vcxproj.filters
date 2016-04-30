@@ -13,46 +13,54 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\S-GUI">
-      <UniqueIdentifier>{3cbff630-9593-4978-91bd-ca5f5c320d1e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="头文件\S-GUI\Core">
-      <UniqueIdentifier>{4708c3b6-668b-4231-83ba-c319ca00c9b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="头文件\S-GUI\Config">
-      <UniqueIdentifier>{293ff4b6-896e-4063-92bd-155c390eb1e4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="头文件\S-GUI\Font">
-      <UniqueIdentifier>{76473b88-6ec7-434a-acc7-a31f1315740b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="头文件\S-GUI\Widget">
-      <UniqueIdentifier>{01323eb3-7310-4961-ac9d-0f29b20d4865}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\S-GUI">
-      <UniqueIdentifier>{d1bc83eb-1e93-4cee-ba79-ea6df583f337}</UniqueIdentifier>
+      <UniqueIdentifier>{7e717a84-0a30-4d84-a1cd-0ba400bd746a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\S-GUI">
+      <UniqueIdentifier>{762f90dc-ac44-40ee-b913-91285423e107}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\S-GUI\Config">
-      <UniqueIdentifier>{1814bdfb-ab00-4161-abc5-c2ec37519bf4}</UniqueIdentifier>
+      <UniqueIdentifier>{89136ba1-266c-4fad-9a48-a7b7cab4f7fa}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\S-GUI\Core">
-      <UniqueIdentifier>{0721cad2-2485-4b26-be72-2bde3b146c75}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\S-GUI\Font">
-      <UniqueIdentifier>{fae6201a-df72-4d59-99f6-23f7ebdef3ff}</UniqueIdentifier>
+      <UniqueIdentifier>{a3cc44a1-4d48-4779-b350-7b14f5fe0da6}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\S-GUI\Widget">
-      <UniqueIdentifier>{fbe30c73-6900-4ae5-942e-d534000ef20d}</UniqueIdentifier>
+      <UniqueIdentifier>{69c1625c-103b-4543-98b3-d4357d938488}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\S-GUI\Config">
+      <UniqueIdentifier>{d83552bf-a305-41d5-bcdb-3a0bfa87444b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\S-GUI\Core">
+      <UniqueIdentifier>{d688508e-c2a9-4a58-b9c1-a08acea5fea7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\S-GUI\Widget">
+      <UniqueIdentifier>{04e78e95-f86a-4675-959a-157ed0588d03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\S-GUI\Fonts">
+      <UniqueIdentifier>{b3c913d0-cdbd-4080-83b1-01b7ec5f1d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\S-GUI\Fonts">
+      <UniqueIdentifier>{169e0eb1-5c8a-4f84-bff2-6bbd67c66dcf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-    <Text Include="..\LICENSE.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="GUI\Config\GUI_Botton.h">
+      <Filter>头文件\S-GUI\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Config\GUI_Config.h">
+      <Filter>头文件\S-GUI\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Config\GUI_Typedef.h">
+      <Filter>头文件\S-GUI\Config</Filter>
+    </ClInclude>
     <ClInclude Include="GUI\Core\inc\GUI.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Core\inc\GUI_2D.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_Bitmap.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Core\inc\GUI_Core.h">
@@ -64,29 +72,26 @@
     <ClInclude Include="GUI\Core\inc\GUI_Memory.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_Queue.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_Rect.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_Timer.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
     <ClInclude Include="GUI\Core\inc\GUI_TouchPad.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Core\inc\GUI_WM.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Core\inc\mystring.h">
+    <ClInclude Include="GUI\Core\inc\linked_list.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Core\inc\Text.h">
       <Filter>头文件\S-GUI\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Config\GUI_Botton.h">
-      <Filter>头文件\S-GUI\Config</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Config\GUI_Config.h">
-      <Filter>头文件\S-GUI\Config</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Config\GUI_Typedef.h">
-      <Filter>头文件\S-GUI\Config</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Font\GUI_Font.h">
-      <Filter>头文件\S-GUI\Font</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Widget\BUTTON.h">
       <Filter>头文件\S-GUI\Widget</Filter>
@@ -94,10 +99,19 @@
     <ClInclude Include="GUI\Widget\DialogBox.h">
       <Filter>头文件\S-GUI\Widget</Filter>
     </ClInclude>
+    <ClInclude Include="GUI\Widget\GRAPH.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\ICONVIEW.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
     <ClInclude Include="GUI\Widget\LISTBOX.h">
       <Filter>头文件\S-GUI\Widget</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Widget\RootWindow.h">
+      <Filter>头文件\S-GUI\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget\SCROLLBAR.h">
       <Filter>头文件\S-GUI\Widget</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Widget\TEXTBOX.h">
@@ -109,48 +123,27 @@
     <ClInclude Include="GUI\Widget\WINDOW.h">
       <Filter>头文件\S-GUI\Widget</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Widget\SCROLLBAR.h">
-      <Filter>头文件\S-GUI\Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI_Test.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="simulate_lcd.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Widget\ICONVIEW.h">
-      <Filter>头文件\S-GUI\Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Widget\GRAPH.h">
-      <Filter>头文件\S-GUI\Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Core\inc\GUI_Queue.h">
+    <ClInclude Include="GUI\Core\inc\GUI_String.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Core\inc\GUI_Bitmap.h">
-      <Filter>头文件\S-GUI\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Core\inc\GUI_Timer.h">
-      <Filter>头文件\S-GUI\Core</Filter>
+    <ClInclude Include="sdlscreen.h">
+      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Bitmap.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Core\inc\GUI_Rect.h">
-      <Filter>头文件\S-GUI\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Core\inc\linked_list.h">
-      <Filter>头文件\S-GUI\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="memalloc.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="GUI\Fonts\GUI_Font.h">
+      <Filter>头文件\S-GUI\Fonts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GUI\Config\GUI_Botton.c">
+      <Filter>源文件\S-GUI\Config</Filter>
+    </ClCompile>
     <ClCompile Include="GUI\Core\src\GUI_2D.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_Bitmap.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Core\src\GUI_Core.c">
@@ -162,13 +155,22 @@
     <ClCompile Include="GUI\Core\src\GUI_Memory.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_Queue.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_Rect.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_Timer.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
     <ClCompile Include="GUI\Core\src\GUI_TouchPad.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Core\src\GUI_WM.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Core\src\mystring.c">
+    <ClCompile Include="GUI\Core\src\linked_list.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Core\src\RootWindow.c">
@@ -177,16 +179,16 @@
     <ClCompile Include="GUI\Core\src\Text.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Config\GUI_Botton.c">
-      <Filter>源文件\S-GUI\Config</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Font\ASCII_8x16_font.c">
-      <Filter>源文件\S-GUI\Font</Filter>
-    </ClCompile>
     <ClCompile Include="GUI\Widget\BUTTON.c">
       <Filter>源文件\S-GUI\Widget</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Widget\DialogBox.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget\GRAPH.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget\ICONVIEW.c">
       <Filter>源文件\S-GUI\Widget</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Widget\LISTBOX.c">
@@ -204,60 +206,42 @@
     <ClCompile Include="GUI\Widget\WINDOW.c">
       <Filter>源文件\S-GUI\Widget</Filter>
     </ClCompile>
-    <ClCompile Include="GUI_Test.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="simulate_lcd.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="main.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Widget\ICONVIEW.c">
-      <Filter>源文件\S-GUI\Widget</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Widget\GRAPH.c">
-      <Filter>源文件\S-GUI\Widget</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Core\src\GUI_Queue.c">
+    <ClCompile Include="GUI\Core\src\GUI_String.c">
       <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="sdlscreen.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI_Test.c">
+      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="pic_rootwin.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Core\src\GUI_Timer.c">
+    <ClCompile Include="GUI\Fonts\ASCII_8x16_font.c">
+      <Filter>源文件\S-GUI\Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Fonts\UI17_4pp.c">
+      <Filter>源文件\S-GUI\Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_Malloc.c">
       <Filter>源文件\S-GUI\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Core\src\GUI_Bitmap.c">
-      <Filter>源文件\S-GUI\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Core\src\GUI_Rect.c">
-      <Filter>源文件\S-GUI\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Core\src\linked_list.c">
-      <Filter>源文件\S-GUI\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Font\UI17_4pp.c">
-      <Filter>源文件\S-GUI\Font</Filter>
-    </ClCompile>
-    <ClCompile Include="memalloc.c">
-      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="S-GUI.rc">
+    <Text Include="ReadMe.txt">
       <Filter>资源文件</Filter>
-    </ResourceCompile>
+    </Text>
+    <Text Include="..\LICENSE.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="S-GUI.ico">
+    <None Include="..\README.md">
       <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="small.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\README.md" />
+    </None>
   </ItemGroup>
 </Project>
