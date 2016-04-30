@@ -11,13 +11,11 @@ static int __InvalidWindowNum = 0;
 /* 窗口管理器初始化 */
 GUI_RESULT WM_Init(void)
 {
-    GUI_HWIN *p = &_hRootWin;
-    
-    *p = GUI_fastmalloc(sizeof(WM_Obj));
-    if (*p == NULL) {
+    GUI_Data->RootWin = GUI_fastmalloc(sizeof(WM_Obj));
+    if (GUI_Data->RootWin == NULL) {
         return GUI_ERR;
     }
-    WM_RootWindowInit(*p);
+    WM_RootWindowInit(GUI_Data->RootWin);
     return GUI_OK;
 }
 

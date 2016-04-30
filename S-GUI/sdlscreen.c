@@ -13,15 +13,20 @@ void Key_Send(int KeyVal, char Status);
 /* ≥ı ºªØ */
 void sdl_init(void)
 {
+    SDL_Thread *guiThread;
+    SDL_TimerID TimerId;
+
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
         printf("Unable to init SDL: %s\n", SDL_GetError());
         return;
     }
     screen = SDL_SetVideoMode(HAL_SCREEN_W, HAL_SCREEN_H, 32, SDL_SWSURFACE);
-    SDL_AddTimer(0, TimerCb, NULL);
+    TimerId = SDL_AddTimer(0, TimerCb, NULL);
     SDL_WM_SetCaption("S-GUI Demo", NULL);
-    SDL_CreateThread(GUIThread, NULL);
+    guiThread = SDL_CreateThread(GUIThread, NULL);
     MessageLoop();
+    SDL_RemoveTimer(TimerId);
+    SDL_KillThread(guiThread);
     SDL_FreeSurface(screen);
     SDL_Quit();
 }

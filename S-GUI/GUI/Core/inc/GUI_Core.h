@@ -7,11 +7,10 @@
 #include "GUI_Queue.h"
 #include "GUI_Font.h"
 
-
 #define GUI_HEAP_FAST     0 /* 快速的堆(MCU内部的SRAM)页面 */
 #define GUI_HEAP_HCAP     1 /* 大容量的堆(比如SDRAM)页面 */
 
-#define _hRootWin   (GUI_Data->RootWin)
+#define _hRootWin   (GUI_Data ? GUI_Data->RootWin : NULL)
 #define _PaintArea  (GUI_Context.ClipRect)
 
 #define GUI_DEBUG_OUT(s) GUI_DebugOut(s);

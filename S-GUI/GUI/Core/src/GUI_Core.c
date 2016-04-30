@@ -39,10 +39,12 @@ GUI_RESULT GUI_Init(void)
 /* 从内存中卸载GUI */
 void GUI_Unload(void)
 {
+    GUI_LOCK();
     WM_DeleteWindow(_hRootWin); /* 删除所有窗口 */
     GUI_MessageQueueDelete();   /* 删除消息队列 */
     GUI_fastfree(GUI_Data);     /* 删除GUI工作空间 */
     GUI_Data = NULL;
+    GUI_UNLOCK();
 }
 
 /* 获取屏幕尺寸 */
