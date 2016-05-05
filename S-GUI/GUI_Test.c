@@ -45,6 +45,8 @@ void Create_Window2(void);
 static char _Str[15] = "";
 static u_16 _FpsVal; /* 帧率 */
 
+void GUI_2DTest(void);
+
 static void _RootWinPaint(WM_HWIN hWin)
 {
     static i_16 y1 = 300;
@@ -53,6 +55,7 @@ static void _RootWinPaint(WM_HWIN hWin)
     GUI_DrawBitmap(0, 0, 640, 320, &bmpic_rootwin);
     GUI_DispStringCurRect(10, 300, _Str, 0x00000000, Font_ASCII_8X16);
     //GUI_DrawLine(100, 100, 200, 5, 0);
+    GUI_2DTest();
 }
 
 static void _RootWinTimer(WM_HWIN hWin)
@@ -303,11 +306,11 @@ void Window6_Cb(WM_MESSAGE *pMsg)
         break;
     case WM_USER_MESSAGE:
 #ifdef _WIN32
-        sprintf_s(Str, sizeof(Str), "%d Pixels/s\n%d FPS",
-            (int)pMsg->Param, (int)(pMsg->Param / 320 / 240));
+        sprintf_s(Str, sizeof(Str), "%d0 Pixels/s\nFPS : %d",
+            (int)pMsg->Param, (int)(pMsg->Param / 320 / 24)); /* 放大10倍 */
 #else
-        sprintf(Str, "%d Pixels/s\n%d FPS",
-            (int)pMsg->Param, (int)pMsg->Param / 320 / 240);
+        sprintf(Str, "%d0 Pixels/s\n%d FPS",
+            (int)pMsg->Param, (int)pMsg->Param / 320 / 24); /* 放大10倍 */
 #endif // _WIN32
         hItem = WM_GetDialogItem(pMsg->hWin, WIN6_TBX1);
         TEXTBOX_SetText(hItem, Str);
@@ -319,7 +322,7 @@ void Window7_Cb(WM_MESSAGE *pMsg)
 {
     i_16 x0, y0;
     u_16 xSize, ySize;
-    static u_32 PixelSum;
+    static unsigned long long PixelSum;
     static GUI_TIME dt, t0;
     GUI_COLOR Color;
     WM_HWIN hWin = pMsg->hWin;
@@ -346,7 +349,7 @@ void Window7_Cb(WM_MESSAGE *pMsg)
         hWin = WINDOW_Create(10, 10, 150, 120,
             NULL, WINDOW7, WM_WS_MOVE, Window6_Cb);
         WM_SendMessage(hWin, WM_USER_MESSAGE,
-            (GUI_PARAM)((long long)PixelSum * 1000 / dt));
+            (GUI_PARAM)(PixelSum * 1000 / dt / 10));
         break;
     }
 }

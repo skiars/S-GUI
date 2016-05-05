@@ -1,6 +1,7 @@
 #ifndef __GUI_MALLOC_H
 #define __GUI_MALLOC_H
 
+#include "GUI_Typedef.h"
 #include <stdio.h>
 
 /* 内存池堆节点 */
@@ -18,7 +19,7 @@ typedef struct {
     MEM_NODE MemPool;       /* 内存池堆空间 */
 } MEM_HEAP;
 
-int GUI_HeapInit(void *Mem, size_t Size);
+GUI_RESULT GUI_HeapInit(void *Mem, size_t Size);
 void * GUI_Malloc(size_t Size, void *Mem);
 void GUI_Free(void *Ptr, void *Mem);
 size_t MemGetUsageBytes(void *Mem);

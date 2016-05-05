@@ -10,26 +10,35 @@ static u_16 __TaskLockCnt;
 /* GUI初始化 */
 GUI_RESULT GUI_Init(void)
 {
-    int res;
     u_32 HeapSize;
 
+    /* 内存管理初始化 */
     GUI_Heap[GUI_HEAP_FAST] = _GUI_GetHeapBuffer(GUI_HEAP_FAST, &HeapSize);
-    res = GUI_HeapInit(GUI_Heap[GUI_HEAP_FAST], HeapSize);
-    GUI_Heap[GUI_HEAP_HCAP] = _GUI_GetHeapBuffer(GUI_HEAP_HCAP, &HeapSize);
-    res |= GUI_HeapInit(GUI_Heap[GUI_HEAP_HCAP], HeapSize);
-    if (res) {
+    if (GUI_HeapInit(GUI_Heap[GUI_HEAP_FAST], HeapSize) == GUI_ERR) {
         return GUI_ERR;
     }
+    GUI_Heap[GUI_HEAP_HCAP] = _GUI_GetHeapBuffer(GUI_HEAP_HCAP, &HeapSize);
+    if (GUI_HeapInit(GUI_Heap[GUI_HEAP_HCAP], HeapSize) == GUI_ERR) {
+        return GUI_ERR;
+    }
+    /* 为GUI工作空间申请内存 */
     GUI_Data = GUI_fastmalloc(sizeof(GUI_WORK_SPACE));
     if (GUI_Data == NULL) {
         return GUI_ERR;
     }
-    GUI_Phy_Init(&GUI_Data->phy_info);
+    /* 初始化操作系统相关代码 */
     GUI_InitOS();
-    GUI_RectListInit(GUI_RECT_HEAP_SIZE); /* 注意内存是否足够 */
+    /* 初始化图形硬件 */
+    GUI_Phy_Init(&GUI_Data->phy_info);
+    /* 初始化窗口剪切域裁剪私有堆 */
+    if (GUI_RectListInit(GUI_RECT_HEAP_SIZE) == GUI_ERR) {
+        return GUI_ERR;
+    }
+    /* 初始化消息队列 */
     if (GUI_MessageQueueInit() == GUI_ERR) {
         return GUI_ERR;
     }
+    /* 初始化窗口管理器 */
     if (WM_Init() == GUI_ERR) {
         return GUI_ERR;
     }
@@ -104,7 +113,7 @@ void GUI_UNLOCK(void)
 void GUI_SetNowRectList(GUI_AREA l, GUI_RECT *p)
 {
     GUI_Context.Area = l;
-    GUI_Context.ClipRect = p;
+    GUI_Context.InvalidRect = p;
 }
 
 /* 返回现在绘制区域的裁剪矩形链表 */
@@ -116,47 +125,28 @@ GUI_AREA GUI_GetNowRectList(void)
 /* 初始化绘制区域 */
 void GUI_DrawAreaInit(GUI_RECT *p)
 {
-    if (GUI_CheckRectIntersect(GUI_Context.ClipRect, p)) {
+    if (GUI_RectOverlay(&GUI_Context.DrawRect, GUI_Context.InvalidRect, p)) {
         GUI_Context.pAreaNode = GUI_Context.Area;
+        GUI_Context.DrawRect = *p;
     } else {
         GUI_Context.pAreaNode = NULL; /* 绘图区域与当前的有效绘制区域不相交 */
     }
 }
 
-/* 返回当前的裁剪矩形 */
-GUI_RECT *GUI_GetNowArea(void)
+/* 获取下一个裁剪矩形 */
+GUI_BOOL GUI_GetNextArea(void)
 {
-    if (GUI_Context.pAreaNode) {
-        return &GUI_Context.pAreaNode->Rect;
-    }
-    return NULL;
-}
+    GUI_BOOL res = FALSE;
+    GUI_AREA Area;
+    GUI_RECT *ClipRect = &GUI_Context.ClipRect,
+             *DrawRect = &GUI_Context.DrawRect;
 
-/* 获取下一个裁剪矩形
- * pRect:用于保存返回的裁剪矩形
- * 返回值:0：当前绘制区域的裁剪矩形已经获取完，主调函数在GUI_GetNextArea
- *          返回0时应该结束当前图形在裁剪矩形链表里的绘制循环。
- *       1：当前绘制区域的还有没有绘制的裁剪矩形，主调函数在GUI_GetNextArea
- *          返回0时应该继续当前图形在裁剪矩形链表里的绘制循环。
- **/
-u_8 GUI_GetNextArea(GUI_RECT *pRect)
-{
-    if (GUI_Context.pAreaNode == NULL) {
-        return 0;
+    while (GUI_Context.pAreaNode && res == FALSE) { /* 直到找到下一个相交的矩形 */
+        Area = GUI_Context.pAreaNode;
+        GUI_Context.pAreaNode = Area->pNext;
+        res = GUI_RectOverlay(ClipRect, DrawRect, &Area->Rect);
     }
-    *pRect = GUI_Context.pAreaNode->Rect;
-    GUI_Context.pAreaNode = GUI_Context.pAreaNode->pNext;
-    return 1;
-}
-
-u_8 GUI_GetNextAreaP(GUI_RECT ** p)
-{
-    if (GUI_Context.pAreaNode == NULL) {
-        return 0;
-    }
-    *p = &GUI_Context.pAreaNode->Rect;
-    GUI_Context.pAreaNode = GUI_Context.pAreaNode->pNext;
-    return 1;
+    return res;
 }
 
 /* GUI调试输出 */

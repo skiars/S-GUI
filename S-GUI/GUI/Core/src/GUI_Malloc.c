@@ -4,14 +4,14 @@
  @ 内存池初始化.
  @ Mem: 内存池地址(建议这个地址是4字节对齐的, 以便能满足特殊需求).
  @ Size: 内存池大小(Byte).
- @ 返回值: 0: 内存池初始化成功, 1: 内存池初始化失败.
+ @ 返回值: GUI_OK: 内存池初始化成功, GUI_ERR: 内存池初始化失败.
  **/
-int GUI_HeapInit(void *Mem, size_t Size)
+GUI_RESULT GUI_HeapInit(void *Mem, size_t Size)
 {
     MEM_HEAP *mPool;
 
     if (Size < sizeof(MEM_HEAP)) {
-        return 1; /* 容量太小 */
+        return GUI_ERR; /* 容量太小 */
     }
     mPool = Mem;
     mPool->Size = Size;
@@ -20,7 +20,7 @@ int GUI_HeapInit(void *Mem, size_t Size)
     mPool->MemPool.pLast = NULL;
     mPool->MemPool.pNext = NULL;
     mPool->MemPool.Size = Size - (sizeof(MEM_HEAP) - sizeof(MEM_NODE));
-    return 0;
+    return GUI_OK;
 }
 
 /**

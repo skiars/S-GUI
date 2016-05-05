@@ -52,33 +52,30 @@ GUI_COLOR GUI_AlphaBlend(GUI_COLOR Color, GUI_COLOR BkColor, u_16 Alpha)
     return R | G | B;
 }
 
-u_8 GUI_GetNextAreaP(GUI_RECT ** p);
 /* 画点 */
 void GUI_DrawPoint(i_16 x,i_16 y,GUI_COLOR Color)
 {
-    GUI_RECT r1, *r2;
+    GUI_RECT r1;
 
     RETURN_TRANSPARENT();
     GUI_Val2Rect(&r1, x, y, 1, 1);
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextAreaP(&r2)) { /* 遍历所有的显示区域 */
-        if (x >= r2->x0 && x <= r2->x1 && y >= r2->y0 && y <= r2->y1) {
-            if (Color >> 24) {
-                Color = GUI_AlphaBlend(Color, GUI_ReadPixel(x, y), Color >> 24);
-            }
-            GUI_DrawPixel(x, y, Color);
+    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
+        CLIP_X(x, x);
+        CLIP_Y(y, y);
+        if (Color >> 24) {
+            Color = GUI_AlphaBlend(Color, GUI_ReadPixel(x, y), Color >> 24);
         }
+        GUI_DrawPixel(x, y, Color);
     }
 }
 
 /* 读取点 */
 GUI_COLOR GUI_ReadPoint(i_16 x, i_16 y)
 {
-    GUI_RECT *r;
+    u_16 w = GUI_GetScreenWidth(), h = GUI_GetScreenHeight();
     
-    r = GUI_GetNowArea();
-    if (r && x >= r->x0 && x <= r->x1 &&
-        y >= r->y0 && y <= r->y1) {
+    if (x > 0 && x < w && y > 0 && y < h) {
             return GUI_ReadPixel(x, y);
     }
     return 0x00000000;
@@ -111,23 +108,22 @@ static void __VertLine(i_16 x0, i_16 y0, u_16 len, GUI_COLOR Color)
  **/
 void GUI_VertLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
 {
-    GUI_RECT r1, r2;
+    i_16 x1, y1;
+    GUI_RECT r1;
 
     RETURN_TRANSPARENT();
     if (GUI_Val2Rect(&r1, x0, y0, 1, len) == FALSE) {
         return; /* 长度为0 */
     }
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
-        if (GUI_RectOverlay(&r2, &r2, &r1)) {
-            x0 = r2.x0;
-            y0 = r2.y0;
-            len = r2.y1 - r2.y0 + 1;
-            if (Color >> 24) {
-                __VertLineAlpha(x0, y0, len, Color);
-            } else {
-                __VertLine(x0, y0, len, Color);
-            }
+    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
+        CLIP_X(x0, x1);
+        CLIP_Y(y0, y1);
+        len = y1 - y0 + 1;
+        if (Color >> 24) {
+            __VertLineAlpha(x0, y0, len, Color);
+        } else {
+            __VertLine(x0, y0, len, Color);
         }
     }
 }
@@ -164,23 +160,22 @@ static void __HoriLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
  **/
 void GUI_HoriLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
 {
-    GUI_RECT r1, r2;
+    i_16 x1, y1;
+    GUI_RECT r1;
 
     RETURN_TRANSPARENT();
     if (GUI_Val2Rect(&r1, x0, y0, len, 1) == FALSE) {
         return; /* 长度为0 */
     }
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
-        if (GUI_RectOverlay(&r2, &r2, &r1)) {
-            x0 = r2.x0;
-            y0 = r2.y0;
-            len = r2.x1 - r2.x0 + 1;
-            if (Color >> 24) {
-                __HoriLineAlpha(x0, y0, len, Color);
-            } else {
-                __HoriLine(x0, y0, len, Color);
-            }
+    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
+        CLIP_X(x0, x1);
+        CLIP_Y(y0, y1);
+        len = x1 - x0 + 1;
+        if (Color >> 24) {
+            __HoriLineAlpha(x0, y0, len, Color);
+        } else {
+            __HoriLine(x0, y0, len, Color);
         }
     }
 }
@@ -227,8 +222,9 @@ static void __FillRect(i_16 x0, i_16 y0, u_16 x1, u_16 y1, GUI_COLOR Color)
 
 /* 填充矩形 */
 void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Color)
-{                                     
-    GUI_RECT r1, r2;
+{
+    i_16 x1, y1;
+    GUI_RECT r1;
     
     RETURN_TRANSPARENT();
     /* 将矩形坐标转换为结构体 */
@@ -236,22 +232,18 @@ void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, GUI_COLOR Color)
         return; /* 非法 */
     }
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea(&r2)) { /* 遍历所有的显示区域 */
-        if (GUI_RectOverlay(&r2, &r2, &r1)) {
-            x0 = r2.x0;
-            y0 = r2.y0;
-            xSize = r2.x1;
-            ySize = r2.y1;
-            #if GUI_USE_GRAPHPHY
-            LCD_FillRect(x0, y0, xSize, ySize, Color);
-            #else
-            if (Color >> 24) {
-                __FillRectAlpha(x0, y0, xSize, ySize, Color);
-            } else {
-                __FillRect(x0, y0, xSize, ySize, Color);
-            }
-            #endif
+    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
+        CLIP_X(x0, x1);
+        CLIP_Y(y0, y1);
+#if GUI_USE_GRAPHPHY
+        LCD_FillRect(x0, y0, x1, y1, Color);
+#else
+        if (Color >> 24) {
+            __FillRectAlpha(x0, y0, x1, y1, Color);
+        } else {
+            __FillRect(x0, y0, x1, y1, Color);
         }
+#endif
     }
 }
 
@@ -420,6 +412,62 @@ void GUI_DrawLine(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color)
     }
 }
 
+static void _SetPixel(i_16 x, i_16 y, GUI_COLOR Color)
+{
+    CHECK_X(x);
+    CHECK_Y(y);
+    GUI_DrawPixel(x, y, Color);
+}
+
+/* 画8点 */
+static void _Draw8Point(int x0, int y0, int x, int y, GUI_COLOR Color)
+{
+    _SetPixel(x0 + x, y0 + y, Color);
+    _SetPixel(x0 - x, y0 + y, Color);
+    _SetPixel(x0 + y, y0 + x, Color);
+    _SetPixel(x0 + y, y0 - x, Color);
+    if (y) {
+        _SetPixel(x0 + x, y0 - y, Color);
+        _SetPixel(x0 - x, y0 - y, Color);
+        _SetPixel(x0 - y, y0 + x, Color);
+        _SetPixel(x0 - y, y0 - x, Color);
+    }
+}
+
+static void _DrawCircle(int x0, int y0, int r, GUI_COLOR Color)
+{
+    int x, y = r, d = -(r >> 1);
+
+    for (x = 0; x <= y; ++x) {
+        if (d < 0) {
+            d += x;
+        } else {
+            d += x - y;
+            --y;
+        }
+        _Draw8Point(x0, y0, x, y, Color);
+    }
+}
+
 /* 画圆 */
+void GUI_DrawCircle(int x0, int y0, int r, GUI_COLOR Color)
+{
+    GUI_RECT Rect;
+
+    Rect.x0 = x0 - r;
+    Rect.x1 = x0 + r;
+    Rect.y0 = y0 - r;
+    Rect.y1 = y0 + r;
+    GUI_DrawAreaInit(&Rect);
+    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
+        _DrawCircle(x0, y0, r, Color);
+    }
+}
 
 /* 画圆弧 */
+
+void GUI_2DTest(void)
+{
+    GUI_DrawCircle(200, 200, 220, 0x00000000);
+    GUI_DrawCircle(200, 200, 40, 0x00FF0000);
+}

@@ -52,8 +52,6 @@ static void _CharASCII_2PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FONT Fo
     chw = Font->CharWidget(&ch);
     bl = Font->CharWidgetBytes(&ch);
     /* 不在裁剪区域就返回 */
-    CHECK_X(x, x + chw);
-    CHECK_Y(y, y + chh);
     bCnt = 0;   /* 字节计数 */
     for (yCnt = 0; yCnt < chh; ++yCnt) /* chh行高度 */
     {        
@@ -87,8 +85,6 @@ static void _CharASCII_4PP(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FONT Fo
     chw = Font->CharWidget(&ch);
     bl = Font->CharWidgetBytes(&ch);
     /* 不在裁剪区域就返回 */
-    CHECK_X(x, x + chw);
-    CHECK_Y(y, y + chh);
     bCnt = 0;   /* 字节计数 */
     for (yCnt = 0; yCnt < chh; ++yCnt) /* chh行高度 */
     {        
@@ -122,8 +118,6 @@ static void _CharASCII(i_16 x, i_16 y, char ch, GUI_COLOR Color, GUI_FONT Font)
     ch_w = Font->CharWidget(&ch);
     bytes = Font->CharWidgetBytes(&ch);
     /* 不在裁剪区域就返回 */
-    CHECK_X(x, x + ch_w);
-    CHECK_Y(y, y + ch_h);
     for (pos = 0; pos < ch_h; pos++)
     {        
         for (t = 0; t < bytes; t++) {

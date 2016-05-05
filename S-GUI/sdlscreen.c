@@ -22,7 +22,11 @@ void sdl_init(void)
     }
     screen = SDL_SetVideoMode(HAL_SCREEN_W, HAL_SCREEN_H, 32, SDL_SWSURFACE);
     TimerId = SDL_AddTimer(0, TimerCb, NULL);
-    SDL_WM_SetCaption("S-GUI Demo", NULL);
+#ifdef _DEBUG
+    SDL_WM_SetCaption("S-GUI Simulator Debug", NULL);
+#else
+    SDL_WM_SetCaption("S-GUI Simulator Release", NULL);
+#endif
     guiThread = SDL_CreateThread(GUIThread, NULL);
     MessageLoop();
     SDL_RemoveTimer(TimerId);
