@@ -1,4 +1,5 @@
 #include "GUI_Malloc.h"
+#include "GUI_Core.h"
 
 /**
  @ 内存池初始化.
@@ -11,6 +12,9 @@ GUI_RESULT GUI_HeapInit(void *Mem, size_t Size)
     MEM_HEAP *mPool;
 
     if (Size < sizeof(MEM_HEAP)) {
+#if GUI_DEBUG_MODE
+        GUI_DEBUG_OUT("GUI heap size is below the minimum.");
+#endif
         return GUI_ERR; /* 容量太小 */
     }
     mPool = Mem;
@@ -109,6 +113,9 @@ void * GUI_Malloc(size_t Size, void * Mem)
             return (char *)pn + sizeof(MEM_NODE);
         }
     }
+#if GUI_DEBUG_MODE
+    GUI_DEBUG_OUT("GUI alloc failed (heap overflow).");
+#endif
     return NULL;
 }
 

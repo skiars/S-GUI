@@ -70,13 +70,12 @@ WM_HWIN LISTBOX_Create(i_16 x0,
     u_16 ySize,
     WM_HWIN hParent,
     u_16 Id,
-    u_8 Flag)
+    u_8 Style)
 {
     LISTBOX_Obj *pObj;
     
-    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
-                                  WIDGET_LISTBOX, Id, __Callback,
-                                  sizeof(LISTBOX_Obj) - sizeof(WM_Obj));
+    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent,
+        Style, Id, __Callback, sizeof(LISTBOX_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         return NULL;
     }
@@ -129,8 +128,6 @@ GUI_RESULT LISTBOX_AddList(WM_HWIN hWin, char *name)
 {
     LISTBOX_Obj *pObj = hWin;
 
-    /* 检测是否为LISTBOX控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_LISTBOX);
     /* 插入到链表结尾 */
     List_InsertNode(pObj->LastNode, name, GUI_Strlen(name) + 1);
     pObj->LastNode = pObj->LastNode->pNext;   /* 仅有本函数使用 */
@@ -347,11 +344,7 @@ static void LISTBOX__SetSelInfo(LISTBOX_Obj *pObj)
 u_16 LISTBOX_GetSel(WM_HWIN hWin)
 {
     LISTBOX_Obj *pObj = hWin;
-    
-    /* 检测是否为LISTBOX控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_LISTBOX) == GUI_ERR) {
-        return 0xffff;
-    }
+
     return pObj->SelIndex;
 }
 
@@ -359,11 +352,7 @@ u_16 LISTBOX_GetSel(WM_HWIN hWin)
 char *LISTBOX_GetSelText(WM_HWIN hWin)
 {
     LISTBOX_Obj *pObj = hWin;
-    
-    /* 检测是否为LISTBOX控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_LISTBOX)) {
-        return NULL;
-    }
+
     return pObj->SelItem;
 }
 
@@ -373,8 +362,6 @@ GUI_RESULT LISTBOX_SetSel(WM_HWIN hWin, u_16 Index)
     u_16 Temp;
     LISTBOX_Obj *pObj = hWin;
     
-    /* 检测是否为LISTBOX控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_LISTBOX);
     if (Index < pObj->ItemNum) {
         pObj->SelIndex = Index;
         if (pObj->hScro) {  /* 设置滚动条 */
@@ -400,8 +387,6 @@ GUI_RESULT LISTBOX_SetSelFromStr(WM_HWIN hWin, const char *Str)
     u_16 Index;
     LISTBOX_Obj *pObj = hWin;
     
-    /* 检测是否为LISTBOX控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_LISTBOX);
     Index = (u_16)List_FindStr(pObj->pList, (char*)Str);
     if (Index) {
         return LISTBOX_SetSel(pObj, Index - 1);

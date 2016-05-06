@@ -54,7 +54,7 @@ Uint32 TimerCb(Uint32 interval, void *param)
     } else {
         GUI_TouchPadSendValue((u_16)x, (u_16)y, GUI_TP_REMOVED);
     }
-    return 10;
+    return 10; /* 定时器周期(ms) */
 }
 
 /* 消息循环 */

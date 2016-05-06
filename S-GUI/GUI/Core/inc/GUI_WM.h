@@ -60,7 +60,6 @@ typedef struct {
     GUI_RECT InvalidRect;   /* 窗口无效区域 */
     WM_CALLBACK *WinCb;     /* 窗口信息响应回调函数 */
     u_16 Status;            /* 窗口状态 */
-    u_8 Sign;               /* 窗口类型辨识符 */
     u_16 Id;                /* 窗口Id */
 } WM_Obj;
 
@@ -78,12 +77,9 @@ void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent);
 GUI_RESULT WM_SetFocusWindow(WM_HWIN hWin);
 GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin);
 WM_HWIN WM_GetForegroundWindow(void);
-WM_HWIN WM_CreateWindowAsChild(i_16 x0, i_16 y0, u_16 xSize,
-                               u_16 ySize, WM_HWIN hParent,
-                               u_16 Style, u_8 Sign, u_16 Id,
-                               WM_CALLBACK *WinCb, u_32 bytes);
+WM_HWIN WM_CreateWindowAsChild(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize,
+    WM_HWIN hParent, u_16 Style, u_16 Id, WM_CALLBACK *WinCb, u_32 bytes);
 void WM_DeleteWindow(WM_HWIN hWin);
-GUI_RESULT WM_CheckWindowSign(WM_HWIN hWin, u_16 Sign);
 void WM_InvalidateRect(WM_HWIN hWin, GUI_RECT *pRect);
 void WM_Invalidate(WM_HWIN hWin);
 GUI_RESULT WM_InvalidTree(WM_HWIN hWin);

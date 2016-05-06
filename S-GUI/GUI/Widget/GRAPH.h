@@ -41,13 +41,8 @@ typedef struct {
     LIST List;
 } GRAPH_Obj;
 
-GUI_HWIN GRAPH_Create(i_16 x0,
-    i_16 y0,
-    u_16 xSize,
-    u_16 ySize,
-    WM_HWIN hParent,
-    u_16 Id,
-    u_8 Flag);
+GUI_HWIN GRAPH_Create(i_16 x0, i_16 y0, u_16 xSize,
+    u_16 ySize, WM_HWIN hParent, u_16 Id, u_8 Style);
 GUI_RESULT GRAPH_SetScale(GUI_HWIN hWin, i_16 x0,
     i_16 y0, u_16 xScale, u_16 yScale, u_16 xDist, u_16 yDist);
 GUI_HWIN GRAPH_XY_DataCreate(int *xData, int *yData,

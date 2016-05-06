@@ -87,6 +87,13 @@
     <Link>
       <AdditionalDependencies>sdl\win32\SDL.lib;sdl\win32\SDL_image.lib;sdl\win32\SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>copy sdl\win32\SDL.dll $(OutDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -109,6 +116,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>sdl\win32\SDL.lib;sdl\win32\SDL_image.lib;sdl\win32\SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy sdl\win32\SDL.dll $(OutDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

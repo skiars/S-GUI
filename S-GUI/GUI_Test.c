@@ -357,7 +357,7 @@ void Window7_Cb(WM_MESSAGE *pMsg)
 void Create_Window6(void)
 {
     WM_CreateWindowAsChild(0, 0, 240, 320,
-        NULL, 0, 0, WINDOW6, Window7_Cb, 0);
+        NULL, 0, WINDOW6, Window7_Cb, 0);
     //WM_SetForegroundWindow(_pRootWin->hFirstChild);
 }
 

@@ -31,8 +31,6 @@ static void __Paint(WM_HWIN hWin)
 /* TEXTBOX控件自动回调函数 */
 static void __Callback(WM_MESSAGE *pMsg)
 {
-    /* 检测是否为TEXTBOX控件 */
-    WIDGET_SignErrorReturnVoid(pMsg->hWin, WIDGET_TEXTBOX);
     switch (pMsg->MsgId) {
         case WM_PAINT :
             __Paint(pMsg->hWin);
@@ -64,18 +62,17 @@ static void __Callback(WM_MESSAGE *pMsg)
  * cb:用户回调历程指针
  **/
 WM_HWIN TEXTBOX_Create(i_16 x0,
-                      i_16 y0,
-                      u_16 xSize,
-                      u_16 ySize,
-                      WM_HWIN hParent,
-                      u_16 Id,
-                      u_8 Flag)
+    i_16 y0,
+    u_16 xSize,
+    u_16 ySize,
+    WM_HWIN hParent,
+    u_16 Id,
+    u_8 Style)
 {
     TEXTBOX_Obj *pObj;
     
-    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
-                                  WIDGET_TEXTBOX, Id, __Callback,
-                                  sizeof(TEXTBOX_Obj) - sizeof(WM_Obj));
+    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent,
+        Style, Id, __Callback, sizeof(TEXTBOX_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         return NULL;
     }
@@ -93,8 +90,6 @@ GUI_RESULT TEXTBOX_SetText(WM_HWIN hWin, const char *str)
 {
     GUI_RECT Rect;
 
-    /* 检测是否为TEXTBOX控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
     GUI_fastfree(((TEXTBOX_Obj*)hWin)->Text);
     ((TEXTBOX_Obj*)hWin)->Text = GUI_fastmalloc(GUI_Strlen(str) + 1);
     GUI_Strcpy(((TEXTBOX_Obj*)hWin)->Text, str);
@@ -107,8 +102,6 @@ GUI_RESULT TEXTBOX_SetText(WM_HWIN hWin, const char *str)
 /* TEXTBOX设置字体 */
 GUI_RESULT TEXTBOX_SetFont(WM_HWIN hWin, GUI_FONT Font)
 {
-    /* 检测是否为TEXTBOX控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
     WIDGET_SetFont(hWin, Font);
     return GUI_OK;
 }
@@ -118,8 +111,6 @@ GUI_RESULT TEXTBOX_SetAllAlpha(WM_HWIN hWin, u_8 Alpha)
 {
     GUI_RECT Rect;
     
-    /* 检测是否为TEXTBOX控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_TEXTBOX);
     WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
     Rect = WM_GetWindowAreaRect(hWin);
     hWin = WM_GetParentHandle(hWin);

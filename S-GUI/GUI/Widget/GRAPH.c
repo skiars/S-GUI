@@ -72,13 +72,12 @@ GUI_HWIN GRAPH_Create(i_16 x0,
     u_16 ySize,
     WM_HWIN hParent,
     u_16 Id,
-    u_8 Flag)
+    u_8 Style)
 {
     GRAPH_Obj *pObj;
 
-    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent, Flag,
-        WIDGET_GRAPH, Id, __Callback,
-        sizeof(GRAPH_Obj) - sizeof(WM_Obj));
+    pObj = WM_CreateWindowAsChild(x0, y0, xSize, ySize, hParent,
+        Style, Id, __Callback, sizeof(GRAPH_Obj) - sizeof(WM_Obj));
     if (pObj == NULL) {
         return NULL;
     }
@@ -104,8 +103,6 @@ GUI_RESULT GRAPH_SetScale(GUI_HWIN hWin,
 {
     GRAPH_Obj *pObj = hWin;
 
-    /* 检测是否为GRAPH控件 */
-    WIDGET_SignErrorReturn(hWin, WIDGET_GRAPH);
     pObj->Scale.x0 = x0;
     pObj->Scale.y0 = y0;
     pObj->Scale.xScale = xScale;
@@ -381,10 +378,6 @@ GUI_HWIN GRAPH_GethData(GUI_HWIN hWin, int Num)
     LIST List;
     GRAPH_Obj *pWin = hWin;
 
-    /* 检测是否为GRAPH控件 */
-    if (WM_CheckWindowSign(hWin, WIDGET_GRAPH) == GUI_ERR) {
-        return NULL;
-    }
     if (Num && pWin->List) {
         List = pWin->List;
         while (Num-- && List) {

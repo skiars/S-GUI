@@ -1,6 +1,7 @@
 #ifndef __GUI_MALLOC_H
 #define __GUI_MALLOC_H
 
+#include "GUI_Config.h"
 #include "GUI_Typedef.h"
 #include <stdio.h>
 
