@@ -69,9 +69,6 @@
     <ClInclude Include="GUI\Core\inc\GUI_KeyBoard.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Core\inc\GUI_Memory.h">
-      <Filter>头文件\S-GUI\Core</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\Core\inc\GUI_Queue.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
@@ -135,6 +132,15 @@
     <ClInclude Include="GUI\Fonts\GUI_Font.h">
       <Filter>头文件\S-GUI\Fonts</Filter>
     </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_Device.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_Malloc.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUI\Config\GUI_Botton.c">
@@ -150,9 +156,6 @@
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Core\src\GUI_KeyBoard.c">
-      <Filter>源文件\S-GUI\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Core\src\GUI_Memory.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Core\src\GUI_Queue.c">
@@ -227,8 +230,14 @@
     <ClCompile Include="GUI\Fonts\UI17_4pp.c">
       <Filter>源文件\S-GUI\Fonts</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_Device.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
     <ClCompile Include="GUI\Core\src\GUI_Malloc.c">
       <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="game.c">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

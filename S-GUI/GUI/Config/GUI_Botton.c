@@ -70,12 +70,12 @@ static GUI_COLOR Phy_GetPixel(u_16 x, u_16 y);
 static void Phy_SetPixel(u_16 x, u_16 y, GUI_COLOR Color);
 
 /* 图形硬件初始化 */
-void GUI_Phy_Init(GUI_PHY_INFO *phys)
+void GUI_Phy_Init(GUI_DEVICE *phy)
 {
-    phys->xSize = HAL_SCREEN_W;
-    phys->ySize = HAL_SCREEN_H;
-    phys->GetPixel = Phy_GetPixel;
-    phys->SetPixel = Phy_SetPixel;
+    phy->xSize = HAL_SCREEN_W;
+    phy->ySize = HAL_SCREEN_H;
+    phy->GetPixel = Phy_GetPixel;
+    phy->SetPixel = Phy_SetPixel;
 }
 
 /* 读取屏幕上的点 */

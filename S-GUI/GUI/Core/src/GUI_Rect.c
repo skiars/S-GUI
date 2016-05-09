@@ -128,11 +128,11 @@ GUI_RESULT GUI_RectListInit(u_16 num)
 
     /* 申请内存(包括一个表头) */
     ++num;
-    GUI_Data->AreaHeap = GUI_fastmalloc(sizeof(AREA_NODE) * (u_32)num);
-    if (GUI_Data->AreaHeap == NULL) {
+    GUI_AreaHeap = GUI_fastmalloc(sizeof(AREA_NODE) * (u_32)num);
+    if (GUI_AreaHeap == NULL) {
         return GUI_ERR; /* 申请失败 */
     }
-    pNode = GUI_Data->AreaHeap;
+    pNode = GUI_AreaHeap;
     while (--num) { /* 关联链表pNext */
         pNode->pNext = pNode + 1;
         ++pNode;
@@ -145,7 +145,7 @@ GUI_RESULT GUI_RectListInit(u_16 num)
 GUI_AREA GUI_GetRectList(u_16 num)
 {
     GUI_AREA pNode;
-    GUI_AREA Area = GUI_Data->AreaHeap;
+    GUI_AREA Area = GUI_AreaHeap;
 
     if (!num) {
         return NULL;
@@ -161,7 +161,7 @@ GUI_AREA GUI_GetRectList(u_16 num)
         return NULL;
     }
     Area = Area->pNext;
-    GUI_Data->AreaHeap->pNext = pNode->pNext;
+    GUI_AreaHeap->pNext = pNode->pNext;
     pNode->pNext = NULL;
     return Area;
 }
@@ -174,8 +174,8 @@ GUI_RESULT GUI_FreeRectList(GUI_AREA Area)
     if (Area == NULL) {
         return GUI_ERR;
     }
-    p = GUI_Data->AreaHeap->pNext;
-    GUI_Data->AreaHeap->pNext = Area; /* 插入到链表的最前面 */
+    p = GUI_AreaHeap->pNext;
+    GUI_AreaHeap->pNext = Area; /* 插入到链表的最前面 */
     while (Area->pNext) {
         Area = Area->pNext;
     }

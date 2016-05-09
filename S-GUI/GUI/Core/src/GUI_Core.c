@@ -2,7 +2,8 @@
 #include "GUI.h"
 
 void *GUI_Heap[2];           /* 内存堆指针 */
-GUI_WORK_SPACE *GUI_Data;    /* GUI工作数据 */
+GUI_HWIN GUI_RootWin;        /* 根窗口 */
+GUI_AREA GUI_AreaHeap;       /* 裁剪区域堆 */
 GUI_CONTEXT GUI_Context;     /* GUI上下文 */
 static u_32 __LockTaskId;
 static u_16 __TaskLockCnt;
@@ -21,15 +22,10 @@ GUI_RESULT GUI_Init(void)
     if (GUI_HeapInit(GUI_Heap[GUI_HEAP_HCAP], HeapSize) == GUI_ERR) {
         return GUI_ERR;
     }
-    /* 为GUI工作空间申请内存 */
-    GUI_Data = GUI_fastmalloc(sizeof(GUI_WORK_SPACE));
-    if (GUI_Data == NULL) {
-        return GUI_ERR;
-    }
     /* 初始化操作系统相关代码 */
     GUI_InitOS();
     /* 初始化图形硬件 */
-    GUI_Phy_Init(&GUI_Data->phy_info);
+    GUI_DeviceInit();
     /* 初始化窗口剪切域裁剪私有堆 */
     if (GUI_RectListInit(GUI_RECT_HEAP_SIZE) == GUI_ERR) {
         return GUI_ERR;
@@ -51,28 +47,26 @@ void GUI_Unload(void)
     GUI_LOCK();
     WM_DeleteWindow(_hRootWin); /* 删除所有窗口 */
     GUI_MessageQueueDelete();   /* 删除消息队列 */
-    GUI_fastfree(GUI_Data);     /* 删除GUI工作空间 */
-    GUI_Data = NULL;
     GUI_UNLOCK();
 }
 
 /* 获取屏幕尺寸 */
 void GUI_ScreenSize(u_16 *xSize, u_16 *ySize)
 {
-    *xSize = GUI_Data->phy_info.xSize;
-    *ySize = GUI_Data->phy_info.ySize;
+    *xSize = GUI_LCD.xSize;
+    *ySize = GUI_LCD.ySize;
 }
 
 /* 获取屏幕宽度 */
 u_16 GUI_GetScreenWidth(void)
 {
-    return GUI_Data->phy_info.xSize;
+    return GUI_LCD.xSize;
 }
 
 /* 获取屏幕高度 */
 u_16 GUI_GetScreenHeight(void)
 {
-    return GUI_Data->phy_info.ySize;
+    return GUI_LCD.ySize;
 }
 
 /* GUI延时并更新 */

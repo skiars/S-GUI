@@ -11,11 +11,11 @@ static int __InvalidWindowNum = 0;
 /* 窗口管理器初始化 */
 GUI_RESULT WM_Init(void)
 {
-    GUI_Data->RootWin = GUI_fastmalloc(sizeof(WM_Obj));
-    if (GUI_Data->RootWin == NULL) {
+    _hRootWin = GUI_fastmalloc(sizeof(WM_Obj));
+    if (_hRootWin == NULL) {
         return GUI_ERR;
     }
-    WM_RootWindowInit(GUI_Data->RootWin);
+    WM_RootWindowInit(_hRootWin);
     return GUI_OK;
 }
 
@@ -246,9 +246,6 @@ void WM_Exec(void)
 {
     WM_MESSAGE Msg;
 
-    if (GUI_Data == NULL) {
-        return;
-    }
     /* WM消息环 */
     while (GUI_GetMessage(&Msg) == GUI_OK) {
         WM__DispatchMessage(&Msg); /* 派发消息 */
@@ -364,7 +361,7 @@ void WM_RemoveWindow(WM_HWIN hWin)
     WM_Obj *pWin = hWin, *pObj;
     
     /* 窗口不能为NULL,根窗口无需移除 */
-    if (hWin == NULL || hWin == _pRootWin) {
+    if (hWin == NULL || pWin->hParent == NULL) {
         return;
     }
     pObj = pWin->hParent;

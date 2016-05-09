@@ -10,7 +10,7 @@
 #define GUI_HEAP_FAST     0 /* 快速的堆(MCU内部的SRAM)页面 */
 #define GUI_HEAP_HCAP     1 /* 大容量的堆(比如SDRAM)页面 */
 
-#define _hRootWin   (GUI_Data ? GUI_Data->RootWin : NULL)
+#define _hRootWin   GUI_RootWin
 
 #define _ClipRect   (GUI_Context.ClipRect)
 
@@ -32,12 +32,6 @@ typedef struct AREA_NODE {
     struct AREA_NODE *pNext;
 } AREA_NODE, *GUI_AREA;
 
-typedef struct{
-    GUI_PHY_INFO phy_info; /* 硬件信息 */
-    GUI_HWIN RootWin;      /* 根窗口 */
-    GUI_AREA AreaHeap;     /* 裁剪区域堆 */
-}GUI_WORK_SPACE;
-
 /* GUI上下文结构体 */
 typedef struct {
     GUI_HWIN hFocus;        /* 当前的输入焦点 */
@@ -52,8 +46,9 @@ typedef struct {
 }GUI_CONTEXT;
 
 extern void *GUI_Heap[2];
-extern GUI_WORK_SPACE *GUI_Data;
 extern GUI_CONTEXT GUI_Context;
+extern GUI_HWIN GUI_RootWin;
+extern GUI_AREA GUI_AreaHeap;
 
 GUI_RESULT GUI_Init(void);
 void GUI_Unload(void);

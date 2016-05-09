@@ -4,7 +4,7 @@
 #include "GUI_Core.h"
 
 GUI_BOOL GUI_Val2Rect(GUI_RECT *pDst,
-                      i_16 x0, i_16 y0, u_16 xSize, u_16 ySize);
+    i_16 x0, i_16 y0, u_16 xSize, u_16 ySize);
 GUI_BOOL GUI_RectOverlay(GUI_RECT *pDst, GUI_RECT *a, GUI_RECT *b);
 void GUI_RectSum(GUI_RECT *pDst, GUI_RECT *a, GUI_RECT *b);
 GUI_RECT GUI_RectAndCalc(GUI_RECT *pRect1, GUI_RECT *pRect2);

@@ -1,15 +1,7 @@
 #ifndef __GUI_BOTTON_H
 #define __GUI_BOTTON_H
 
-#include "GUI_Config.h"
-#include "GUI_Typedef.h"
-
-typedef struct {
-    u_16 xSize; /* 显示设备的宽度 */
-    u_16 ySize; /* 显示设备的高度 */
-    void (*SetPixel)(u_16 x, u_16 y, GUI_COLOR Color); /* 显示某个像素 */
-    GUI_COLOR (*GetPixel)(u_16 x, u_16 y);             /* 读取某个像素 */
-} GUI_PHY_INFO;
+#include "GUI_Device.h"
 
 void GUI_InitOS(void);
 void GUI_TaskLock(void);
@@ -18,7 +10,7 @@ u_32 GUI_GetTaskId(void);
 GUI_TIME GUI_GetTime(void);
 void _GUI_Delay_ms(GUI_TIME tms);
 void * _GUI_GetHeapBuffer(int Page, u_32 *Size);
-void GUI_Phy_Init(GUI_PHY_INFO *phys);
+void GUI_Phy_Init(GUI_DEVICE *phy);
 void _GUI_DebugOut(const char *s);
 
 #if GUI_USE_GRAPHPHY

@@ -6,6 +6,7 @@
 #include <math.h>
 
 #include "Bitmap.h"
+#include "game.h"
 
 #define WINDOW2      (WM_USER_ID + 0x0010)
 #define WINDOW1      (WM_USER_ID + 0x0020)
@@ -14,12 +15,14 @@
 #define WINDOW5      (WM_USER_ID + 0x0050)
 #define WINDOW6      (WM_USER_ID + 0x0060)
 #define WINDOW7      (WM_USER_ID + 0x0070)
+#define WINDOW8      (WM_USER_ID + 0x0080)
 
 #define WIN2_BTN1    (WINDOW2 + 0x0001)
 #define WIN2_BTN2    (WINDOW2 + 0x0002)
 #define WIN2_BTN3    (WINDOW2 + 0x0003)
 #define WIN2_BTN4    (WINDOW2 + 0x0004)
 #define WIN2_BTN5    (WINDOW2 + 0x0005)
+#define WIN2_BTN6    (WINDOW2 + 0x0006)
 
 #define WIN1_BTN1    (WINDOW1 + 0x0001)
 #define WIN1_BTN2    (WINDOW1 + 0x0002)
@@ -338,7 +341,6 @@ void Window7_Cb(WM_MESSAGE *pMsg)
             xSize = rand() % (240 - x0);
             ySize = rand() % (320 - y0);
             GUI_FillRect(x0, y0, xSize, ySize, Color);
-            GUI_DrawDevice(x0, y0, x0 + xSize + 1, y0 + ySize + 1);
             PixelSum += (u_32)xSize * (u_32)ySize;
             dt = GUI_GetTime() - t0;
         } while (dt < 5000);
@@ -361,6 +363,12 @@ void Create_Window6(void)
     //WM_SetForegroundWindow(_pRootWin->hFirstChild);
 }
 
+void Create_Window8(void)
+{
+    WINDOW_Create(0, 0, GUI_GetScreenWidth(),
+        GUI_GetScreenHeight(), NULL, WINDOW8, WM_WS_MOVE, GameWin_Cb);
+}
+
 void Window2_Cb(WM_MESSAGE *pMsg)
 {
     WM_HWIN hItem, hWin = pMsg->hWin, hClient;
@@ -378,6 +386,8 @@ void Window2_Cb(WM_MESSAGE *pMsg)
         BUTTON_SetTitle(hItem, "GRAPH Test");
         hItem = BUTTON_Create(5, 105, 100, 20, hClient, WIN2_BTN5, 0);
         BUTTON_SetTitle(hItem, "Benchmark");
+        hItem = BUTTON_Create(5, 130, 100, 20, hClient, WIN2_BTN6, 0);
+        BUTTON_SetTitle(hItem, "Cube Field");
         break;
     case WM_BUTTON_RELEASED:
         /* 根据点击的按键创建窗口 */
@@ -397,6 +407,9 @@ void Window2_Cb(WM_MESSAGE *pMsg)
         case WIN2_BTN5:
             Create_Window6();
             break;
+        case WIN2_BTN6:
+            Create_Window8();
+            break;
         }
         break;
     }
@@ -406,6 +419,6 @@ void Create_Window2(void)
 {
     GUI_HWIN hWin;
 
-    hWin = WINDOW_Create(30, 80, 120, 160, NULL, WINDOW2, WM_WS_MOVE, Window2_Cb);
+    hWin = WINDOW_Create(20, 20, 120, 180, NULL, WINDOW2, WM_WS_MOVE, Window2_Cb);
     WINDOW_SetTitle(hWin, "S-GUI Demo");
 }

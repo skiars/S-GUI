@@ -12,6 +12,7 @@
 #define WM_TIME_UPDATA       0x0104    /* 窗口定时器更新 */
 #define WM_GET_CLIENT        0x0105    /* 获取客户区句柄 */
 #define WM_SET_FOCUS         0x0106    /* 设置焦点窗口 */
+#define WM_QUIT              0x0107    /* 退出 */
 #define WM_TP_CHECKED        0x0120    /* 触摸板按下 */
 #define WM_TP_REMOVED        0x0121    /* 触摸板松开 */
 #define WM_TP_PRESS          0x0122    /* 触摸坐标一直在当前窗口 */

@@ -9,14 +9,6 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F9877586-BB10-40F3-AEE1-74DB4CE3A561}</ProjectGuid>
@@ -39,19 +31,6 @@
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -61,12 +40,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -95,13 +68,6 @@
       <Command>copy sdl\win32\SDL.dll $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -120,21 +86,9 @@
       <Command>copy sdl\win32\SDL.dll $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-    </ClCompile>
-    <Link>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="GUI\Config\GUI_Botton.h" />
     <ClInclude Include="GUI\Config\GUI_Config.h" />
     <ClInclude Include="GUI\Config\GUI_Typedef.h" />
@@ -142,8 +96,9 @@
     <ClInclude Include="GUI\Core\inc\GUI_2D.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Bitmap.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Core.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_Device.h" />
     <ClInclude Include="GUI\Core\inc\GUI_KeyBoard.h" />
-    <ClInclude Include="GUI\Core\inc\GUI_Memory.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_Malloc.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Queue.h" />
     <ClInclude Include="GUI\Core\inc\GUI_Rect.h" />
     <ClInclude Include="GUI\Core\inc\GUI_String.h" />
@@ -166,13 +121,14 @@
     <ClInclude Include="sdlscreen.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="game.c" />
     <ClCompile Include="GUI\Config\GUI_Botton.c" />
     <ClCompile Include="GUI\Core\src\GUI_2D.c" />
     <ClCompile Include="GUI\Core\src\GUI_Bitmap.c" />
     <ClCompile Include="GUI\Core\src\GUI_Core.c" />
+    <ClCompile Include="GUI\Core\src\GUI_Device.c" />
     <ClCompile Include="GUI\Core\src\GUI_KeyBoard.c" />
     <ClCompile Include="GUI\Core\src\GUI_Malloc.c" />
-    <ClCompile Include="GUI\Core\src\GUI_Memory.c" />
     <ClCompile Include="GUI\Core\src\GUI_Queue.c" />
     <ClCompile Include="GUI\Core\src\GUI_Rect.c" />
     <ClCompile Include="GUI\Core\src\GUI_String.c" />

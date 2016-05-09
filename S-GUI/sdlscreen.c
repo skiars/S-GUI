@@ -123,6 +123,7 @@ void Key_Send(int KeyVal, char Status)
         break;
     case SDLK_LEFT:
         Key = KEY_LEFT;
+        break;
     case SDLK_RIGHT:
         Key = KEY_RIGHT;
         break;
@@ -133,6 +134,9 @@ void Key_Send(int KeyVal, char Status)
     case SDLK_RSHIFT:
         /* 第二功能键处理 */
         Key = KEY_SHIFT;
+        break;
+    case SDLK_ESCAPE:
+        Key = KEY_ESC;
         break;
     default:
         Key = (u_8)KeyVal; /* 其他键直接赋值 */
