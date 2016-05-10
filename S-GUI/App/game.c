@@ -1,9 +1,9 @@
 #include "game.h"
-#include <stdio.h>
+#include <stdlib.h>
 
 #define GAME_WIN (WM_USER_ID + 0x90)
 
-static GUI_COLOR FgColor;
+static GUI_COLOR FgColor = 0x00FF00FF;
 static i_16 CubeX[40], UserX = 0;
 static int CubeNum = 40, Star = 0, daid = 0;
 static char StarStr[50] = "";

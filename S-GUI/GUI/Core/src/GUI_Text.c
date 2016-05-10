@@ -1,4 +1,4 @@
-#include "Text.h"
+#include "GUI_Text.h"
 #include "GUI.h"
 #include "string.h"
 #include "GUI_Font.h"

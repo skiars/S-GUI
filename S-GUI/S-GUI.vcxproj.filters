@@ -43,6 +43,12 @@
     <Filter Include="头文件\S-GUI\Fonts">
       <UniqueIdentifier>{169e0eb1-5c8a-4f84-bff2-6bbd67c66dcf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\App">
+      <UniqueIdentifier>{5417f0da-f7ff-414a-a5b3-5dbea4944a71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\App">
+      <UniqueIdentifier>{e1bb6d7e-2072-4c57-a1c4-e5bc244a3f79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUI\Config\GUI_Botton.h">
@@ -87,31 +93,7 @@
     <ClInclude Include="GUI\Core\inc\linked_list.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Core\inc\Text.h">
-      <Filter>头文件\S-GUI\Core</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\Widget\BUTTON.h">
-      <Filter>头文件\S-GUI\Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Widget\DialogBox.h">
-      <Filter>头文件\S-GUI\Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Widget\GRAPH.h">
-      <Filter>头文件\S-GUI\Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Widget\ICONVIEW.h">
-      <Filter>头文件\S-GUI\Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Widget\LISTBOX.h">
-      <Filter>头文件\S-GUI\Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Widget\RootWindow.h">
-      <Filter>头文件\S-GUI\Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Widget\SCROLLBAR.h">
-      <Filter>头文件\S-GUI\Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Widget\TEXTBOX.h">
       <Filter>头文件\S-GUI\Widget</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Widget\WIDGET.h">
@@ -123,12 +105,6 @@
     <ClInclude Include="GUI\Core\inc\GUI_String.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
-    <ClInclude Include="sdlscreen.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Bitmap.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\Fonts\GUI_Font.h">
       <Filter>头文件\S-GUI\Fonts</Filter>
     </ClInclude>
@@ -138,8 +114,23 @@
     <ClInclude Include="GUI\Core\inc\GUI_Malloc.h">
       <Filter>头文件\S-GUI\Core</Filter>
     </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="GUI\Core\inc\RootWindow.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Core\inc\GUI_Text.h">
+      <Filter>头文件\S-GUI\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Bitmap.h">
+      <Filter>头文件\App</Filter>
+    </ClInclude>
+    <ClInclude Include="App\game.h">
+      <Filter>头文件\App</Filter>
+    </ClInclude>
+    <ClInclude Include="App\GUI_Test.h">
+      <Filter>头文件\App</Filter>
+    </ClInclude>
+    <ClInclude Include="App\sdlscreen.h">
+      <Filter>头文件\App</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -179,50 +170,14 @@
     <ClCompile Include="GUI\Core\src\RootWindow.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Core\src\Text.c">
-      <Filter>源文件\S-GUI\Core</Filter>
-    </ClCompile>
     <ClCompile Include="GUI\Widget\BUTTON.c">
-      <Filter>源文件\S-GUI\Widget</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Widget\DialogBox.c">
-      <Filter>源文件\S-GUI\Widget</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Widget\GRAPH.c">
-      <Filter>源文件\S-GUI\Widget</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Widget\ICONVIEW.c">
-      <Filter>源文件\S-GUI\Widget</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Widget\LISTBOX.c">
-      <Filter>源文件\S-GUI\Widget</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Widget\SCROLLBAR.c">
-      <Filter>源文件\S-GUI\Widget</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Widget\TEXTBOX.c">
-      <Filter>源文件\S-GUI\Widget</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Widget\WIDGET.c">
       <Filter>源文件\S-GUI\Widget</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Widget\WINDOW.c">
       <Filter>源文件\S-GUI\Widget</Filter>
     </ClCompile>
-    <ClCompile Include="main.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="GUI\Core\src\GUI_String.c">
       <Filter>源文件\S-GUI\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="sdlscreen.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI_Test.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="pic_rootwin.c">
-      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Fonts\ASCII_8x16_font.c">
       <Filter>源文件\S-GUI\Fonts</Filter>
@@ -236,15 +191,33 @@
     <ClCompile Include="GUI\Core\src\GUI_Malloc.c">
       <Filter>源文件\S-GUI\Core</Filter>
     </ClCompile>
-    <ClCompile Include="game.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="GUI\Widget\WIDGET.c">
+      <Filter>源文件\S-GUI\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Core\src\GUI_Text.c">
+      <Filter>源文件\S-GUI\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="App\game.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="App\GUI_Test.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="App\main.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="App\pic_rootwin.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="App\sdlscreen.c">
+      <Filter>源文件\App</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt">
       <Filter>资源文件</Filter>
     </Text>
-    <Text Include="..\LICENSE.txt">
+    <Text Include="LICENSE.txt">
       <Filter>资源文件</Filter>
     </Text>
   </ItemGroup>

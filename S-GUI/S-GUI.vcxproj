@@ -48,6 +48,12 @@
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
+    <OutDir>Output\$(Configuration)\Bin\</OutDir>
+    <IntDir>Output\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>Output\$(Configuration)\Bin\</OutDir>
+    <IntDir>Output\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -87,8 +93,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Bitmap.h" />
-    <ClInclude Include="game.h" />
+    <ClInclude Include="App\Bitmap.h" />
+    <ClInclude Include="App\game.h" />
+    <ClInclude Include="App\GUI_Test.h" />
+    <ClInclude Include="App\sdlscreen.h" />
     <ClInclude Include="GUI\Config\GUI_Botton.h" />
     <ClInclude Include="GUI\Config\GUI_Config.h" />
     <ClInclude Include="GUI\Config\GUI_Typedef.h" />
@@ -106,22 +114,19 @@
     <ClInclude Include="GUI\Core\inc\GUI_TouchPad.h" />
     <ClInclude Include="GUI\Core\inc\GUI_WM.h" />
     <ClInclude Include="GUI\Core\inc\linked_list.h" />
-    <ClInclude Include="GUI\Core\inc\Text.h" />
+    <ClInclude Include="GUI\Core\inc\RootWindow.h" />
+    <ClInclude Include="GUI\Core\inc\GUI_Text.h" />
     <ClInclude Include="GUI\Fonts\GUI_Font.h" />
     <ClInclude Include="GUI\Widget\BUTTON.h" />
-    <ClInclude Include="GUI\Widget\DialogBox.h" />
-    <ClInclude Include="GUI\Widget\GRAPH.h" />
-    <ClInclude Include="GUI\Widget\ICONVIEW.h" />
-    <ClInclude Include="GUI\Widget\LISTBOX.h" />
-    <ClInclude Include="GUI\Widget\RootWindow.h" />
-    <ClInclude Include="GUI\Widget\SCROLLBAR.h" />
-    <ClInclude Include="GUI\Widget\TEXTBOX.h" />
     <ClInclude Include="GUI\Widget\WIDGET.h" />
     <ClInclude Include="GUI\Widget\WINDOW.h" />
-    <ClInclude Include="sdlscreen.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="game.c" />
+    <ClCompile Include="App\game.c" />
+    <ClCompile Include="App\GUI_Test.c" />
+    <ClCompile Include="App\main.c" />
+    <ClCompile Include="App\pic_rootwin.c" />
+    <ClCompile Include="App\sdlscreen.c" />
     <ClCompile Include="GUI\Config\GUI_Botton.c" />
     <ClCompile Include="GUI\Core\src\GUI_2D.c" />
     <ClCompile Include="GUI\Core\src\GUI_Bitmap.c" />
@@ -137,25 +142,15 @@
     <ClCompile Include="GUI\Core\src\GUI_WM.c" />
     <ClCompile Include="GUI\Core\src\linked_list.c" />
     <ClCompile Include="GUI\Core\src\RootWindow.c" />
-    <ClCompile Include="GUI\Core\src\Text.c" />
+    <ClCompile Include="GUI\Core\src\GUI_Text.c" />
     <ClCompile Include="GUI\Fonts\ASCII_8x16_font.c" />
     <ClCompile Include="GUI\Fonts\UI17_4pp.c" />
     <ClCompile Include="GUI\Widget\BUTTON.c" />
-    <ClCompile Include="GUI\Widget\DialogBox.c" />
-    <ClCompile Include="GUI\Widget\GRAPH.c" />
-    <ClCompile Include="GUI\Widget\ICONVIEW.c" />
-    <ClCompile Include="GUI\Widget\LISTBOX.c" />
-    <ClCompile Include="GUI\Widget\SCROLLBAR.c" />
-    <ClCompile Include="GUI\Widget\TEXTBOX.c" />
     <ClCompile Include="GUI\Widget\WIDGET.c" />
     <ClCompile Include="GUI\Widget\WINDOW.c" />
-    <ClCompile Include="GUI_Test.c" />
-    <ClCompile Include="main.c" />
-    <ClCompile Include="pic_rootwin.c" />
-    <ClCompile Include="sdlscreen.c" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\LICENSE.txt" />
+    <Text Include="LICENSE.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>

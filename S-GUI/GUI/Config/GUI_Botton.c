@@ -7,7 +7,7 @@
 
 /* 用户自己添加的头文件 */
 #include <stdio.h>
-#include "..\..\sdlscreen.h"
+#include "../../App/sdlscreen.h"
 #include "SDL.h"
 
 /* 用于Windows的互斥信号量 */
