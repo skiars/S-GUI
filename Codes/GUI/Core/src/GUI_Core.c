@@ -102,7 +102,7 @@ void GUI_UNLOCK(void)
     }
 }
 
-/* -------------------- GUI矩形绘制 -------------------- */
+/* -------------------- GUI矩形计算 -------------------- */
 /* 设置现在绘制区域的裁剪矩形链表 */
 void GUI_SetNowRectList(GUI_AREA l, GUI_RECT *p)
 {
@@ -141,6 +141,25 @@ GUI_BOOL GUI_GetNextArea(void)
         res = GUI_RectOverlay(ClipRect, DrawRect, &Area->Rect);
     }
     return res;
+}
+
+/* -------------------- GUI上下文设置 -------------------- */
+/* 设置当前字体 */
+void GUI_SetFont(GUI_FONT *Font)
+{
+    GUI_Context.Font = Font;
+}
+
+/* 设置背景色 */
+void GUI_SetBackgroundColor(GUI_COLOR Color)
+{
+    GUI_Context.BGColor = Color;
+}
+
+/* 设置前景色 */
+void GUI_SetForegroundColor(GUI_COLOR Color)
+{
+    GUI_Context.FGColor = Color;
 }
 
 /* GUI调试输出 */

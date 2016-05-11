@@ -111,7 +111,7 @@ WM_HWIN BUTTON_Create(i_16 x0,
     pObj->Widget.Skin.FontColor[1] = 0X00FFFFFF;
     pObj->Check = 0;                /* 没有按下 */
     BUTTON_SetTitle(pObj, "");      /* 设置初始字符串 */
-    BUTTON_SetFont(pObj, GUI_DEF_FONT);
+    BUTTON_SetFont(pObj, &GUI_DEF_FONT);
     
     return pObj;
 }
@@ -122,7 +122,7 @@ GUI_RESULT BUTTON_SetTitle(WM_HWIN hWin, const char *str)
     return GUI_OK;
 }
 
-GUI_RESULT BUTTON_SetFont(WM_HWIN hWin, GUI_FONT Font)
+GUI_RESULT BUTTON_SetFont(WM_HWIN hWin, GUI_FONT *Font)
 {
     WIDGET_SetFont(hWin, Font);
     return GUI_OK;

@@ -25,7 +25,7 @@ typedef struct {
     GUI_COLOR      EdgeColor[3];    /* 边框颜色 */
     GUI_COLOR      BackColor[2];    /* 内部背景颜色 */
     GUI_COLOR      CaptionColor[2]; /* 标题颜色 */
-    GUI_FONT       Font;            /* 字体 */
+    GUI_FONT       *Font;           /* 字体 */
     GUI_COLOR      FontColor[2];    /* 字体颜色 */
 } WIDGET_SKIN;                      /* 窗口控件皮肤 */
 
@@ -36,8 +36,8 @@ typedef struct {
 
 void WIDGET_SetTransWindow(GUI_HWIN hWin);
 void WIDGET_Alpha(GUI_HWIN hWin, u_8 Part, u_8 Id, u_8 Alpha);
-GUI_FONT WIDGET_GetFont(GUI_HWIN hWin);
-void WIDGET_SetFont(GUI_HWIN hWin, GUI_FONT Font);
+GUI_FONT *WIDGET_GetFont(GUI_HWIN hWin);
+void WIDGET_SetFont(GUI_HWIN hWin, GUI_FONT *Font);
 GUI_COLOR WIDGET_GetBackColor(GUI_HWIN hWin, u_8 n);
 GUI_COLOR WIDGET_GetEdgeColor(GUI_HWIN hWin, u_8 n);
 GUI_COLOR WIDGET_GetCaptionColor(GUI_HWIN hWin, u_8 n);

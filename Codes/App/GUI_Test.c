@@ -33,7 +33,7 @@ static void _RootWinPaint(WM_HWIN hWin)
     /* ªÊ÷∆±≥æ∞ */
     //GUI_FillRect(0, 0, 480, 320, 0x00ffffff);
     GUI_DrawBitmap(0, 0, 640, 320, &bmpic_rootwin);
-    GUI_DispStringCurRect(10, 300, _Str, 0x00000000, Font_ASCII_8X16);
+    GUI_DispStringCurRect(10, 300, _Str, 0x00000000, &GUI_FontASCII_8x16);
     //GUI_DrawLine(100, 100, 200, 5, 0);
     GUI_2DTest();
 }

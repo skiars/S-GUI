@@ -6,7 +6,7 @@
 #include "GUI_Core.h"
 #include "GUI_2D.h"
 #include "GUI_Font.h"
-#include "GUI_Text.h"
+#include "GUI_DispChar.h"
 #include "GUI_Bitmap.h"
 #include "GUI_WM.h"
 #include "GUI_Rect.h"

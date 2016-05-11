@@ -10,35 +10,31 @@
 #define CHAR_VAILD(c, f) \
     if ((c) < (f).FirstChar || (c) > (f).LastChar) { return 0; }
 
-typedef struct {
-    u_16 X;
-    u_16 X1;
-    u_8 Bytes;
-    const unsigned char* Data;
+typedef const struct {
+    u_8 XSize;
+    u_8 XDist;
+    u_8 BytesPerLine;
+    const unsigned char *pData;
 } GUI_CHARINFO;
 
 /* 字体节点 */
-typedef struct GUI_FONT_PROP {
-    u_16 FirstChar;
-    u_16 LastChar;
-    const GUI_CHARINFO *CharInfo;
-    const struct GUI_FONT_PROP *pNext;
+typedef const struct GUI_FONT_PROP {
+    u_16 FirstChar;                    /* 第一个字符 */
+    u_16 LastChar;                     /* 最后一个字符 */
+    GUI_CHARINFO *pCharInfo;     /* 字符数据 */
+    const struct GUI_FONT_PROP *pNext; /* 下一个节点 */
 } GUI_FONT_PROP;
 
 /* 字体格式定义 */
-typedef const struct {
-    u_8  FontType;
-    u_16 CharHeight;
-    u_16(*CharWidget)(const char *ch);
-    u_8(*CharWidgetBytes)(const char *ch);
-    unsigned const char* (*GetChar)(const char *ch);
-} GUI_FontStruct;
-
-typedef GUI_FontStruct * GUI_FONT;
+typedef const struct GUI_FONT {
+    u_8  FontType;        /* 字体类型 */
+    u_16 CharHeight;      /* 字符高度 */
+    GUI_FONT_PROP *pProp; /* 指向点阵数据 */
+} GUI_FONT;
 
 /* 字体列表 */
-extern const GUI_FONT Font_ASCII_8X16;
-extern const GUI_FONT Font_UI17_4PP;
+extern GUI_FONT GUI_FontASCII_8x16;
+extern GUI_FONT GUI_FontUI17_4pp;
 
 #define    ________    0x0
 #define    _______X    0x1

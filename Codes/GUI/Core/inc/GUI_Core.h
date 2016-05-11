@@ -35,12 +35,12 @@ typedef struct AREA_NODE {
 /* GUI上下文结构体 */
 typedef struct {
     GUI_HWIN hFocus;        /* 当前的输入焦点 */
-    GUI_RECT *InvalidRect;  /* 当前的无效矩形 */
+    GUI_RECT *InvalidRect;  /* 当前窗口的的无效区域矩形 */
     GUI_RECT DrawRect;      /* 当前要绘制图形的外形矩形 */
     GUI_RECT ClipRect;      /* 当前实际输出到屏幕上的裁剪矩形 */
     GUI_AREA Area;          /* 当前绘制窗口的裁剪区域 */
     GUI_AREA pAreaNode;     /* 当前的裁剪区域节点 */
-    const GUI_FONT Font;    /* 当前字体 */
+    GUI_FONT *Font;         /* 当前字体 */
     GUI_COLOR FGColor;      /* 当前前景色 */
     GUI_COLOR BGColor;      /* 当前背景色 */
 }GUI_CONTEXT;

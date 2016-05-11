@@ -5,7 +5,7 @@
 #define GUI_MSG_QUEUE_SIZE    10
 
 /* 默认字体 */
-#define GUI_DEF_FONT          Font_UI17_4PP
+#define GUI_DEF_FONT          GUI_FontASCII_8x16
 
 /* 最大消息嵌套层数 */
 #define GUI_MAX_MSG_NEST      10

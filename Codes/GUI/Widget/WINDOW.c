@@ -212,7 +212,7 @@ WM_HWIN WINDOW_Create(i_16 x0,
     pObj->hFocus = NULL;
     pObj->hClient = NULL;
     WINDOW_SetTitle(pObj, ""); /* 设置初始字符串 */
-    WINDOW_SetFont(pObj, GUI_DEF_FONT);
+    WINDOW_SetFont(pObj, &GUI_DEF_FONT);
     __CreateClient(pObj); /* 建立客户区 */
     WM_SendMessage(pObj, WM_CREATED, (GUI_PARAM)NULL);
     WM_SetFocusWindow(pObj);
@@ -228,7 +228,7 @@ GUI_RESULT WINDOW_SetTitle(WM_HWIN hWin, const char *str)
 }
 
 /* WINDOW设置字体 */
-GUI_RESULT WINDOW_SetFont(WM_HWIN hWin, GUI_FONT Font)
+GUI_RESULT WINDOW_SetFont(WM_HWIN hWin, GUI_FONT *Font)
 {
     WIDGET_SetFont(hWin, Font);
     return GUI_OK;

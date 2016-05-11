@@ -739,7 +739,7 @@ void WM_InvalidCoverWindow(WM_HWIN hWin, GUI_RECT *pRect)
     WM_Obj *p = hWin;
 
     /* hWin不能为NULL,也不能是RootWindow */
-    if (hWin == NULL && p->hParent == NULL) { 
+    if (p == NULL && p->hParent == NULL) { 
         return;
     }
     /* 空矩形直接返回 */

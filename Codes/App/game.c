@@ -19,7 +19,7 @@ void Game_Paint(WM_HWIN hWin)
     xSize = pr->x1 - pr->x0 + 1;
     ySize = pr->y1 - pr->y0 + 1;
     GUI_FillRect(pr->x0, pr->y0, xSize, ySize, 0xFFFFFF);
-    GUI_DispStringCurRect(pr->x0, pr->y0, StarStr, 0x00000000, Font_ASCII_8X16);
+    GUI_DispStringCurRect(pr->x0, pr->y0, StarStr, 0x00000000, &GUI_FontASCII_8x16);
     for (i = 0; i < CubeNum; ++i) {
         len = i * 2 / 3 + 1;
         x0 = pr->x0 + xSize / 2 - len / 2 + (CubeX[i] + UserX) * (i + CubeNum / 2) / CubeNum;
@@ -65,7 +65,7 @@ void GameCb(WM_MESSAGE *pMsg)
         if (!daid) {
             ++Star;
         }
-        for (i = CubeNum; i > 0; --i) {
+        for (i = CubeNum - 1; i > 0; --i) {
             CubeX[i] = CubeX[i - 1];
         }
         CubeX[0] = rand() % 1000 - 500 - UserX;

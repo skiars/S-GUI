@@ -58,13 +58,13 @@ void WIDGET_Alpha(GUI_HWIN hWin, u_8 Part, u_8 Id, u_8 Alpha)
 }
 
 /* 获取窗口的字体 */
-GUI_FONT WIDGET_GetFont(GUI_HWIN hWin)
+GUI_FONT *WIDGET_GetFont(GUI_HWIN hWin)
 {
     return ((WIDGET*)hWin)->Skin.Font;
 }
 
 /* 设置窗口的字体 */
-void WIDGET_SetFont(GUI_HWIN hWin, GUI_FONT Font)
+void WIDGET_SetFont(GUI_HWIN hWin, GUI_FONT *Font)
 {
     if (hWin != NULL) {
         ((WIDGET*)hWin)->Skin.Font = Font;
