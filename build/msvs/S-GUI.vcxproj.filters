@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="App">
+      <UniqueIdentifier>{339740f2-a7f6-4823-be54-72a6431fc8a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="S-GUI">
+      <UniqueIdentifier>{833cd3b3-1d71-4467-8ed9-070f48b4ffe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="S-GUI\Core">
+      <UniqueIdentifier>{9cbaee54-3adf-4d2e-81e9-d42746194328}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="S-GUI\Fonts">
+      <UniqueIdentifier>{2fc135c4-89a7-4fe4-a8b8-00d4de54a6df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="S-GUI\Widget">
+      <UniqueIdentifier>{dc8d8b6f-9486-4a45-ad31-13480e3ae70a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="S-GUI\Core\src">
+      <UniqueIdentifier>{c465914b-8b59-4784-9ff8-9745b334d5a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="S-GUI\Core\inc">
+      <UniqueIdentifier>{122d1986-503a-472b-b25c-f06ab3301101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="S-GUI\Widget\inc">
+      <UniqueIdentifier>{4ae646fe-6493-46ee-9364-0f7feb7bfea2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="S-GUI\Widget\src">
+      <UniqueIdentifier>{8e889015-f350-4273-873c-31d04585bb65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="S-GUI\Config">
+      <UniqueIdentifier>{e8ed180f-30b9-48e7-b678-e306c18d6198}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\inc">
+      <UniqueIdentifier>{73f8697c-17ec-49de-a93a-d2309ab7f5d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\src">
+      <UniqueIdentifier>{777d1b75-a909-46ad-b963-cd1ba62c2aff}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_2D.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Bitmap.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Core.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Device.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_DispChar.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_KeyBoard.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Malloc.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Queue.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Rect.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_String.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Timer.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_TouchPad.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_WM.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\linked_list.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\RootWindow.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Fonts\ASCII_8x16.c">
+      <Filter>S-GUI\Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Fonts\UI17_4pp.c">
+      <Filter>S-GUI\Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Widget\BUTTON.c">
+      <Filter>S-GUI\Widget\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Widget\WIDGET.c">
+      <Filter>S-GUI\Widget\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Widget\WINDOW.c">
+      <Filter>S-GUI\Widget\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Config\GUI_Botton.c">
+      <Filter>S-GUI\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\App\game.c">
+      <Filter>App\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\App\GUI_Test.c">
+      <Filter>App\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\App\main.c">
+      <Filter>App\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\App\pic_rootwin.c">
+      <Filter>App\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\App\sdlscreen.c">
+      <Filter>App\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_2D.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Bitmap.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Core.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Device.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_DispChar.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_KeyBoard.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Malloc.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Queue.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Rect.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_String.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Timer.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_TouchPad.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_WM.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\linked_list.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\RootWindow.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Fonts\GUI_Font.h">
+      <Filter>S-GUI\Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Widget\BUTTON.h">
+      <Filter>S-GUI\Widget\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Widget\WIDGET.h">
+      <Filter>S-GUI\Widget\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Widget\WINDOW.h">
+      <Filter>S-GUI\Widget\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Config\GUI_Botton.h">
+      <Filter>S-GUI\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Config\GUI_Config.h">
+      <Filter>S-GUI\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Config\GUI_Typedef.h">
+      <Filter>S-GUI\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\App\Bitmap.h">
+      <Filter>App\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\App\game.h">
+      <Filter>App\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\App\GUI_Test.h">
+      <Filter>App\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\App\sdlscreen.h">
+      <Filter>App\inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

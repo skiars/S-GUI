@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Codes\App\game.c" />
+    <ClCompile Include="..\..\Codes\App\GUI_Test.c" />
+    <ClCompile Include="..\..\Codes\App\main.c" />
+    <ClCompile Include="..\..\Codes\App\pic_rootwin.c" />
+    <ClCompile Include="..\..\Codes\App\sdlscreen.c" />
+    <ClCompile Include="..\..\Codes\GUI\Config\GUI_Botton.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_2D.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Bitmap.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Core.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Device.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_DispChar.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_KeyBoard.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Malloc.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Queue.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Rect.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_String.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Timer.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_TouchPad.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_WM.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\linked_list.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\RootWindow.c" />
+    <ClCompile Include="..\..\Codes\GUI\Fonts\ASCII_8x16.c" />
+    <ClCompile Include="..\..\Codes\GUI\Fonts\UI17_4pp.c" />
+    <ClCompile Include="..\..\Codes\GUI\Widget\BUTTON.c" />
+    <ClCompile Include="..\..\Codes\GUI\Widget\WIDGET.c" />
+    <ClCompile Include="..\..\Codes\GUI\Widget\WINDOW.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Codes\App\Bitmap.h" />
+    <ClInclude Include="..\..\Codes\App\game.h" />
+    <ClInclude Include="..\..\Codes\App\GUI_Test.h" />
+    <ClInclude Include="..\..\Codes\App\sdlscreen.h" />
+    <ClInclude Include="..\..\Codes\GUI\Config\GUI_Botton.h" />
+    <ClInclude Include="..\..\Codes\GUI\Config\GUI_Config.h" />
+    <ClInclude Include="..\..\Codes\GUI\Config\GUI_Typedef.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_2D.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Bitmap.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Core.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Device.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_DispChar.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_KeyBoard.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Malloc.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Queue.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Rect.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_String.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Timer.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_TouchPad.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_WM.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\linked_list.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\RootWindow.h" />
+    <ClInclude Include="..\..\Codes\GUI\Fonts\GUI_Font.h" />
+    <ClInclude Include="..\..\Codes\GUI\Widget\BUTTON.h" />
+    <ClInclude Include="..\..\Codes\GUI\Widget\WIDGET.h" />
+    <ClInclude Include="..\..\Codes\GUI\Widget\WINDOW.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F9877586-BB10-40F3-AEE1-74DB4CE3A561}</ProjectGuid>
+    <RootNamespace>SDLSGUI</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>S-GUI</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(IncludePath)</IncludePath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <OutDir>Output\$(Configuration)\Bin\</OutDir>
+    <IntDir>Output\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>Output\$(Configuration)\Bin\</OutDir>
+    <IntDir>Output\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\Codes\GUI\Config;..\..\Codes\GUI\Core\inc;..\..\Codes\GUI\Fonts;..\..\Codes\GUI\Widget;..\..\Codes\sdl\include\vendor\win32\SDL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>..\..\Codes\sdl\win32\SDL.lib;..\..\Codes\sdl\win32\SDL_image.lib;..\..\Codes\sdl\win32\SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>copy ..\..\Codes\sdl\win32\SDL.dll $(OutDir)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\Codes\GUI\Config;..\..\Codes\GUI\Core\inc;..\..\Codes\GUI\Fonts;..\..\Codes\GUI\Widget;..\..\Codes\sdl\include\vendor\win32\SDL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>..\..\Codes\sdl\win32\SDL.lib;..\..\Codes\sdl\win32\SDL_image.lib;..\..\Codes\sdl\win32\SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy ..\..\Codes\sdl\win32\SDL.dll $(OutDir)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
