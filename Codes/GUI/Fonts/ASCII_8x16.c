@@ -1846,6 +1846,6 @@ GUI_CONST_STORAGE GUI_FONT_PROP GUI_FontASCII_8x16_Prop1 = {
 GUI_CONST_STORAGE GUI_FONT GUI_FontASCII_8x16 = {
     GUI_FONTTYPE_PROP, /* type of font    */
     16, /* height of font  */
-    { &GUI_FontASCII_8x16_Prop1 }
+    &GUI_FontASCII_8x16_Prop1
 };
 

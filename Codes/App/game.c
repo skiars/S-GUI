@@ -48,7 +48,7 @@ void GameCb(WM_MESSAGE *pMsg)
         Game_Paint(pMsg->hWin);
         break;
     case WM_TIME_UPDATA:
-#ifdef _WIN32
+#ifdef _MSC_VER
         sprintf_s(StarStr, sizeof(StarStr), "Star:%d", Star);
 #else
         sprintf(StarStr, "%d", Star);

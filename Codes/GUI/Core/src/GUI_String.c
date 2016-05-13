@@ -14,7 +14,7 @@ int GUI_Stricmp(const char *dst, const char *src)
     int ch1, ch2;
 
     do {
-        if (((ch1 = (unsigned char)(*dst++)) >= 'A') && (ch1 <= 'Z'))
+        if (((ch1 = (unsigned char)(*src++)) >= 'A') && (ch1 <= 'Z'))
             ch1 += 0x20;
         if (((ch2 = (unsigned char)(*dst++)) >= 'A') && (ch2 <= 'Z'))
             ch2 += 0x20;

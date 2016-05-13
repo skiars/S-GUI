@@ -19,7 +19,6 @@
 #define WIN2_BTN2    (WINDOW2 + 0x0002)
 #define WIN2_BTN3    (WINDOW3 + 0x0002)
 
-void GUI_2D_Test(void);
 void Create_Window1(void);
 
 static char _Str[15] = "";
@@ -42,10 +41,10 @@ static void _RootWinTimer(WM_HWIN hWin)
 {
     GUI_RECT Rect = { 10, 300, 100, 320 };
 
-#ifdef _WIN32
+#ifdef _MSC_VER
     sprintf_s(_Str, sizeof(_Str), "FPS: %d", _FpsVal);
 #else
-    sprintf(_Str "FPS: %d", _FpsVal);
+    sprintf(_Str, "FPS: %d", _FpsVal);
 #endif // _WIN32
     
     WM_InvalidateRect(_hRootWin, &Rect);

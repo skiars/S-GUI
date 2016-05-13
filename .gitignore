@@ -68,6 +68,8 @@ artifacts/
 *.scc
 *.opendb
 *.db
+*.o
+*.out
 
 # Chutzpah Test files
 _Chutzpah*
@@ -279,3 +281,13 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# dev c++ files
+build/dev-cpp/*.win
+build/dev-cpp/*.layout
+build/dev-cpp/*.exe
+build/dev-cpp/*.dll
+
+#mingw files
+build/mingw/*.exe
+build/mingw/*.dll
