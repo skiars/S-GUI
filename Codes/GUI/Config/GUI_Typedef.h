@@ -22,6 +22,16 @@ typedef enum {
 
 typedef u_8 GUI_BOOL;
 
+/* ¾ØÐÎ */
+typedef struct {
+    i_16 x0, y0, x1, y1;
+} GUI_RECT;
+
+/* µã */
+typedef struct {
+    i_16 x, y;
+} GUI_POINT;
+
 #ifndef TRUE
 #define TRUE 1
 #endif

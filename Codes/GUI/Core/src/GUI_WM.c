@@ -1,6 +1,5 @@
 #include "GUI_WM.h"
 #include "GUI.h"
-#include "RootWindow.h"
 
 /* 找到窗口Z序最大的子窗口（包括它自己）的下一个窗口，注意窗口h一定不能是NULL */
 #define WM__FindChildEnd(h) \
@@ -160,18 +159,30 @@ static void _Invalidate1Abs(WM_Obj *pWin, GUI_RECT *pr)
     }
 }
 
+/* 复制图形上下文 */
+static void _CopyContext(GUI_CONTEXT *pDst, GUI_CONTEXT *pSrc)
+{
+    pDst->Font = pSrc->Font;
+    pDst->BGColor = pSrc->BGColor;
+    pDst->FGColor = pSrc->FGColor;
+    pDst->FontColor = pSrc->FontColor;
+}
+
 /* 重绘一个窗口 */
 static void _PaintOne(WM_Obj *pWin)
 {
     GUI_AREA Area;
+    GUI_CONTEXT Context;
 
     /* 计算窗口裁剪矩形,并设置为当前的绘制链表 */
     Area = WM__ClipWindowArea(pWin);
     if (Area != NULL) {
+        _CopyContext(&Context, &GUI_Context); /* 备份图形上下文 */
         /* 重绘窗口 */
         GUI_SetNowRectList(Area, &pWin->InvalidRect);
         WM_SendMessage(pWin, WM_PAINT, 0);
         GUI_FreeRectList(Area);
+        _CopyContext(&GUI_Context, &Context); /* 还原图形上下文 */
     }
 }
 

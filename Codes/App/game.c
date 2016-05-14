@@ -19,7 +19,7 @@ void Game_Paint(WM_HWIN hWin)
     xSize = pr->x1 - pr->x0 + 1;
     ySize = pr->y1 - pr->y0 + 1;
     GUI_FillRect(pr->x0, pr->y0, xSize, ySize, 0xFFFFFF);
-    GUI_DispStringCurRect(pr->x0, pr->y0, StarStr, 0x00000000, &GUI_FontASCII_8x16);
+    GUI_DispString(pr->x0, pr->y0, StarStr);
     for (i = 0; i < CubeNum; ++i) {
         len = i * 2 / 3 + 1;
         x0 = pr->x0 + xSize / 2 - len / 2 + (CubeX[i] + UserX) * (i + CubeNum / 2) / CubeNum;

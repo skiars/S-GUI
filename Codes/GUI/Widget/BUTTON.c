@@ -33,8 +33,11 @@ static void _BUTTON_Paint(WM_HWIN hWin)
     /* 绘制按键内部 */
     GUI_FillRect(x0 + 1, y0 + 1, xSize - 2, ySize - 2, Color);
     /* 绘制标题 */
-    GUI_DspStringCurRectMiddle(x0 + 1, y0 + 1, xSize - 2, ySize - 2,
-        pObj->Title, FontColor, WIDGET_GetFont(pObj));
+    GUI_SetFont(WIDGET_GetFont(pObj));
+    GUI_SetFontColor(FontColor);
+    GUI_Val2Rect(&Rect, x0 + 1, y0 + 1, xSize - 2, ySize - 2);
+    GUI_DispStringInRect(&Rect, pObj->Title,
+        GUI_ALIGN_HCENTER | GUI_ALIGN_VCENTER);
 }
 
 static void _BUTTON_Callback(WM_MESSAGE *pMsg)

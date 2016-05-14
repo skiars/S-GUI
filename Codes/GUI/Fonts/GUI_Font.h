@@ -3,9 +3,9 @@
 
 #include "GUI_typedef.h"
 
-#define GUI_FONTTYPE_PROP        0x00
-#define GUI_FONTTYPE_PROP_AA2    0x01
-#define GUI_FONTTYPE_PROP_AA4    0x02
+#define GUI_FONTTYPE_PROP        0x01
+#define GUI_FONTTYPE_PROP_AA2    0x02
+#define GUI_FONTTYPE_PROP_AA4    0x04
 
 #define CHAR_VAILD(c, f) \
     if ((c) < (f).FirstChar || (c) > (f).LastChar) { return 0; }

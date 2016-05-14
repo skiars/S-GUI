@@ -32,9 +32,9 @@ static void _RootWinPaint(WM_HWIN hWin)
     /* 绘制背景 */
     //GUI_FillRect(0, 0, 480, 320, 0x00ffffff);
     GUI_DrawBitmap(0, 0, 640, 320, &bmpic_rootwin);
-    GUI_DispStringCurRect(10, 300, _Str, 0x00000000, &GUI_FontASCII_8x16);
+    GUI_DispString(10, 300, _Str);
     //GUI_DrawLine(100, 100, 200, 5, 0);
-    GUI_2DTest();
+    //GUI_2DTest();
 }
 
 static void _RootWinTimer(WM_HWIN hWin)
@@ -60,6 +60,7 @@ void GUI_Test(void)
     RootWinTimer_Cb = _RootWinTimer;
     GUI_SetRootWindowTimer(1000);
     Create_Window1();
+    GUI_SetFont(&GUI_FontUI17_4pp);
     while (1) {
         GUI_Delay(20);
         ++_FpsVal; /* 统计帧率 */
@@ -123,6 +124,7 @@ void Window1_Cb(WM_MESSAGE *pMsg)
         BUTTON_SetTitle(hItem, "Alpha Test");
         hItem = BUTTON_Create(5, 30, 100, 20, hClient, WIN1_BTN2, 0);
         BUTTON_SetTitle(hItem, "Cube Field");
+        BUTTON_SetFont(hItem, &GUI_FontUI17_4pp);
         break;
     case WM_BUTTON_RELEASED:
         /* 根据点击的按键创建窗口 */
@@ -144,4 +146,5 @@ void Create_Window1(void)
 
     hWin = WINDOW_Create(20, 20, 120, 80, NULL, WINDOW1, WM_WS_MOVE, Window1_Cb);
     WINDOW_SetTitle(hWin, "S-GUI Demo");
+    WINDOW_SetFont(hWin, &GUI_FontUI17_4pp);
 }

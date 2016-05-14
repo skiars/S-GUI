@@ -2061,7 +2061,7 @@ GUI_CONST_STORAGE GUI_FONT_PROP GUI_FontMicrosoftYaHeiUI17_Prop1 = {
 };
 
 GUI_CONST_STORAGE GUI_FONT GUI_FontUI17_4pp = {
-    GUI_FONTTYPE_PROP, /* type of font    */
-    16, /* height of font  */
+    GUI_FONTTYPE_PROP_AA4, /* type of font    */
+    17, /* height of font  */
     &GUI_FontMicrosoftYaHeiUI17_Prop1
 };

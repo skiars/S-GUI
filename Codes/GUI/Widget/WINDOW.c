@@ -57,13 +57,12 @@ static void __Paint(WM_HWIN hWin)
     Color = pObj->Widget.Skin.CaptionColor[1];
     GUI_FillRect(x0 + 1, y0 + pObj->CaptionHeight / 2 + 1,
                  xSize - 2, pObj->CaptionHeight / 2, Color);
-
     /* 绘制标题 */
     Color = pObj->Widget.Skin.FontColor[0];
-    GUI_DspStringCurRectMiddle(x0 + 1, y0 + 1, xSize - 2,
-                               pObj->CaptionHeight,
-                               pObj->Title, Color, 
-                               WIDGET_GetFont(pObj));
+    GUI_SetFont(WIDGET_GetFont(pObj));
+    GUI_SetFontColor(Color);
+    GUI_Val2Rect(&Rect, x0 + 2, y0 + 1, xSize - 4, pObj->CaptionHeight);
+    GUI_DispStringInRect(&Rect, pObj->Title, GUI_ALIGN_VCENTER); /* 垂直居中 */
 }
 
 /* WINDOW设置焦点函数 */

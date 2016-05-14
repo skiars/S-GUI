@@ -38,6 +38,7 @@ GUI_RESULT GUI_Init(void)
     if (WM_Init() == GUI_ERR) {
         return GUI_ERR;
     }
+    GUI_SetFont(&GUI_DEF_FONT);
     return GUI_OK;
 }
 
@@ -160,6 +161,12 @@ void GUI_SetBackgroundColor(GUI_COLOR Color)
 void GUI_SetForegroundColor(GUI_COLOR Color)
 {
     GUI_Context.FGColor = Color;
+}
+
+/* 设置字体颜色 */
+void GUI_SetFontColor(GUI_COLOR Color)
+{
+    GUI_Context.FontColor = Color;
 }
 
 /* GUI调试输出 */
