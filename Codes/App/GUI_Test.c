@@ -30,10 +30,10 @@ static void _RootWinPaint(WM_HWIN hWin)
 {
     static i_16 y1 = 300;
     /* ªÊ÷∆±≥æ∞ */
-    //GUI_FillRect(0, 0, 480, 320, 0x00ffffff);
-    GUI_DrawBitmap(0, 0, 640, 320, &bmpic_rootwin);
+    GUI_FillRect(0, 0, 480, 320, 0x00ffffff);
+    //GUI_DrawBitmap(0, 0, 480, 320, &bmpic_rootwin);
     GUI_DispString(10, 300, _Str);
-    //GUI_DrawLine(100, 100, 200, 5, 0);
+    GUI_FillRect(260, 122, 45, 32, 0x00705070);
     //GUI_2DTest();
 }
 

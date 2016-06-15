@@ -81,7 +81,7 @@ static GUI_AREA _ClipTransChildren(GUI_AREA L, WM_Obj *pWin)
         if (pWin->Status & WM_WS_TRANS) {
             L = _ClipTransChildren(L, pWin); /* 裁剪子窗口 */
         } else {
-            L = GUI_ReCalcRectList(L, &pWin->Rect);  /* 裁剪透明窗口的孩子 */
+            L = GUI_ClipExcludeRect(L, &pWin->Rect);  /* 裁剪透明窗口的孩子 */
         }
     }
     return L;
@@ -111,7 +111,7 @@ static GUI_AREA WM__ClipWindowArea(WM_HWIN hWin)
             if (pObj->Status & WM_WS_TRANS) {
                 Area = _ClipTransChildren(Area, pObj);
             } else {
-                Area = GUI_ReCalcRectList(Area, &pObj->Rect);
+                Area = GUI_ClipExcludeRect(Area, &pObj->Rect);
             }
         }
         pObj = pObj->hParent; /* 向上遍历 */
@@ -124,7 +124,7 @@ static GUI_AREA WM__ClipWindowArea(WM_HWIN hWin)
             if (pObj->Status & WM_WS_TRANS) {
                 Area = _ClipTransChildren(Area, pObj);
             } else {
-                Area = GUI_ReCalcRectList(Area, &pObj->Rect);
+                Area = GUI_ClipExcludeRect(Area, &pObj->Rect);
             }
             pObj = pObj->hNext; /* 向右遍历 */
         }
@@ -175,13 +175,14 @@ static void _PaintOne(WM_Obj *pWin)
     GUI_CONTEXT Context;
 
     /* 计算窗口裁剪矩形,并设置为当前的绘制链表 */
-    Area = WM__ClipWindowArea(pWin);
+    //Area = WM__ClipWindowArea(pWin);
+    Area = pWin->ClipArea;
     if (Area != NULL) {
         _CopyContext(&Context, &GUI_Context); /* 备份图形上下文 */
         /* 重绘窗口 */
         GUI_SetNowRectList(Area, &pWin->InvalidRect);
         WM_SendMessage(pWin, WM_PAINT, 0);
-        GUI_FreeRectList(Area);
+        //GUI_FreeRectList(Area);
         _CopyContext(&GUI_Context, &Context); /* 还原图形上下文 */
     }
 }
@@ -332,6 +333,12 @@ WM_HWIN WM_GetTopChildWindow(WM_HWIN hWin)
     return pWin;
 }
 
+/* 获取Z序最高的窗口的句柄 */
+WM_HWIN WM_GetTopWindow(void)
+{
+    return WM_GetTopChildWindow(_hRootWin);
+}
+
 /* 将一个窗口添加到父窗口下的最顶层 */
 void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent)
 {
@@ -378,7 +385,7 @@ void WM_RemoveWindow(WM_HWIN hWin)
     pObj = pWin->hParent;
     GUI_LOCK();
     if (pObj->hFirstChild == pWin) { /* 它是父窗口的第一个子窗口 */
-        pObj->hFirstChild = pWin->hNext;   
+        pObj->hFirstChild = pWin->hNext; 
     } else {
         pObj = pObj->hFirstChild;
         while (pObj->hNext != pWin) { /* 直到目标窗口的左兄弟 */
@@ -400,7 +407,7 @@ void WM_RemoveWindow(WM_HWIN hWin)
 /* 删除窗口 */
 void WM_DeleteWindow(WM_HWIN hWin)
 {
-    WM_Obj *pWin = hWin;
+    WM_Obj *pWin = hWin, *pFront;
 
     if (hWin == NULL) { /* hWin不能为NULL */
         return;
@@ -408,7 +415,9 @@ void WM_DeleteWindow(WM_HWIN hWin)
     GUI_LOCK();
     /* 被遮挡的窗口无效化 */
     WM_InvalidCoverWindow(pWin, &pWin->Rect);
+    pFront = WM_GetFrontHandle(pWin);
     WM_RemoveWindow(pWin); /* 先移除窗口 */
+    GUI_ClipWindows(pFront); /* 重新计算剪切域 */
     while (pWin) {
         hWin = pWin;
         pWin = pWin->hNextLine;
@@ -420,6 +429,7 @@ void WM_DeleteWindow(WM_HWIN hWin)
         GUI_SetWindowTimer(hWin, 0);
         /* 调用回调函数删除节点 */
         WM_SendMessage(hWin, WM_DELETE, 0);
+        GUI_DeleteWindowClipArea(hWin); /* 删除剪切域 */
         GUI_fastfree(hWin); /* 释放空间 */
     }
     GUI_UNLOCK();
@@ -462,6 +472,7 @@ GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin)
     if (WM_GetForegroundWindow() != pObj) {
         WM_RemoveWindow(pObj); /* 先移除窗口 */
         WM_AttachWindow(pObj, NULL); /* 插入窗口到最后 */
+        GUI_ClipWindows(pObj);
         WM_InvalidTree(pObj); /* 窗口及其所有的子窗口无效化 */
     }
     GUI_UNLOCK();
@@ -512,7 +523,6 @@ WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
     }
     pObj->hFirstChild = NULL;
     pObj->hNextLine = NULL;
-    WM_AttachWindow(pObj, pParent); /* 注册到父窗口 */
     pObj->Status = Style;
     pObj->Id = Id;
     pObj->WinCb = WinCb;
@@ -524,6 +534,8 @@ WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
     pObj->Rect.y0 = y0;
     pObj->Rect.x1 = x0 + xSize - 1;
     pObj->Rect.y1 = y0 + ySize - 1;
+    WM_AttachWindow(pObj, pParent); /* 注册到父窗口 */
+    GUI_ClipNewWindow(pObj); /* 更新剪切域 */
     WM_Invalidate(pObj); /* 整个窗口无效化 */
     GUI_UNLOCK();
     return pObj;
@@ -742,6 +754,23 @@ WM_HWIN WM_GetParentHandle(WM_HWIN hWin)
     return ((WM_Obj*)hWin)->hParent;
 }
 
+/* 获取窗口的前一个节点 */
+WM_HWIN WM_GetFrontHandle(WM_HWIN hWin)
+{
+    WM_Obj *pObj = hWin;
+
+    GUI_LOCK();
+    pObj = pObj->hParent;
+    if (pObj && pObj->hFirstChild != hWin) {
+        pObj = pObj->hFirstChild;
+        while (pObj->hNext != hWin) {
+            pObj = pObj->hNext;
+        }
+    }
+    GUI_UNLOCK();
+    return pObj;
+}
+
 /* 将被一个窗口遮盖的窗口及其子窗口无效化，
  * 例如在删除窗口时需要把将要被删除的窗口遮挡的窗口无效化 
  **/
@@ -766,21 +795,22 @@ void WM_InvalidCoverWindow(WM_HWIN hWin, GUI_RECT *pRect)
 }
 
 /* 移动窗口及它所有的子窗口 */
-void WM_MoveWindow(WM_HWIN hWin, i_16 dX, i_16 dY)
+void WM_MoveWindow(WM_HWIN hWin, i_16 dx, i_16 dy)
 {
-    WM_Obj *p = hWin;
+    WM_Obj *p = hWin, *pEnd;
     
     GUI_LOCK();
-    if (p && p->Status & WM_WS_MOVE && (dX || dY)) {
+    if (p && p->Status & WM_WS_MOVE && (dx || dy)) {
         /* 先将被遮挡的窗口无效化 */
         WM_InvalidCoverWindow(p, &p->Rect);
         /* 找到遍历子窗口的终点 */
-        hWin = WM__FindChildEnd(p);
-        for (; p != hWin; p = p->hNextLine) { /* 遍历子窗口 */
-            GUI_MoveRect(&p->Rect, dX, dY);
+        pEnd = WM__FindChildEnd(p);
+        for (; p != pEnd; p = p->hNextLine) { /* 遍历子窗口 */
+            GUI_MoveRect(&p->Rect, dx, dy);
             WM_Invalidate(p); /* 窗口无效化 */
         }
     }
+    GUI_ClipWindows(hWin);
     GUI_UNLOCK();
 }
 

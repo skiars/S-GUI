@@ -33,7 +33,7 @@ typedef struct {
 } GUI_POINT;
 
 #ifndef TRUE
-#define TRUE 1
+  #define TRUE 1
 #endif
 
 #ifndef FALSE
@@ -41,11 +41,11 @@ typedef struct {
 #endif
 
 #ifndef NULL
-#ifdef __cplusplus
-  #define NULL 0
-#else
-  #define NULL ((void *)0)
-#endif
+  #ifdef __cplusplus
+    #define NULL 0
+  #else
+    #define NULL ((void *)0)
+  #endif
 #endif
 
 #endif /* __GUI_TYPEDEF_H */

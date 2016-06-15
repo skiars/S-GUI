@@ -117,6 +117,12 @@
     <ClCompile Include="..\..\Codes\App\sdlscreen.c">
       <Filter>App\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_ClipArea.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Color.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI.h">
@@ -199,6 +205,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Codes\App\sdlscreen.h">
       <Filter>App\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_ClipArea.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Color.h">
+      <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -19,6 +19,7 @@
 #include "GUI_Malloc.h"
 #include "GUI_Device.h"
 #include "RootWindow.h"
+#include "GUI_ClipArea.h"
 
 #include "WIDGET.h"
 #include "BUTTON.h"

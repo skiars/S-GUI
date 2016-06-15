@@ -52,7 +52,7 @@ void _GUI_Delay_ms(GUI_TIME tms)
 /* ÄÚ´æ¶Ñ¿Õ¼ä·ÖÅä */
 void * _GUI_GetHeapBuffer(int Page, u_32 *Size)
 {
-    static char heap0[1024 * 256];
+    static char heap0[1024 * 32];
     static char heap1[1024 * 1024];
 
     if (Page == 0) {
@@ -95,7 +95,6 @@ void LCD_FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color)
 {
     HAL_FillRect(x0, y0, x1, y1, Color);
 }
-
 
 void LCD_DrawBitmap(u_32 ColorFormat, const unsigned char *pPixel,
     i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, u_16 Offset)

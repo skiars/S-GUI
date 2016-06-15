@@ -59,6 +59,7 @@ typedef struct {
     WM_HWIN hNextLine;      /* 指向下一链节 */
     GUI_RECT Rect;          /* 窗口尺寸 */
     GUI_RECT InvalidRect;   /* 窗口无效区域 */
+    GUI_AREA ClipArea;      /* 窗口剪切域 */
     WM_CALLBACK *WinCb;     /* 窗口信息响应回调函数 */
     u_16 Status;            /* 窗口状态 */
     u_16 Id;                /* 窗口Id */
@@ -74,6 +75,7 @@ GUI_RECT WM_GetWindowAreaRect(WM_HWIN hWin);
 GUI_RECT WM_GetTaliorInvalidRect(WM_HWIN hWin);
 WM_HWIN WM_GetFrontWindow(WM_HWIN hWin);
 WM_HWIN WM_GetTopChildWindow(WM_HWIN hWin);
+WM_HWIN WM_GetTopWindow(void);
 void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent);
 GUI_RESULT WM_SetFocusWindow(WM_HWIN hWin);
 GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin);
@@ -92,7 +94,8 @@ WM_HWIN WM_GetWindowHandle(u_16 Id);
 u_16 WM_GetDialogId(WM_HWIN hWin);
 WM_HWIN WM_GetExposedWindow(u_16 x, u_16 y);
 WM_HWIN WM_GetParentHandle(WM_HWIN hWin);
-void WM_MoveWindow(WM_HWIN hWin, i_16 dX, i_16 dY);
+WM_HWIN WM_GetFrontHandle(WM_HWIN hWin);
+void WM_MoveWindow(WM_HWIN hWin, i_16 dx, i_16 dy);
 void WM_InvalidCoverWindow(WM_HWIN hWin, GUI_RECT *pRect);
 WM_HWIN WM_GetClientWindow(WM_HWIN hWin);
 GUI_RECT * WM_GetClientRect(WM_HWIN hWin);

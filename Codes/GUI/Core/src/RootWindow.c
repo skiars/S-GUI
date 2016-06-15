@@ -59,6 +59,7 @@ void WM_RootWindowInit(WM_Obj *pObj)
     pObj->Status = 0x0000;
     pObj->Id = WM_ROOTWIN_ID;
     WM_Invalidate(pObj);  /* 根窗口无效化 */
+    GUI_ClipNewWindow(pObj); /* 更新剪切域 */
 }
 
 /* 设置根窗口的定时器 */

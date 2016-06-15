@@ -19,6 +19,8 @@
     <ClCompile Include="..\..\Codes\GUI\Config\GUI_Botton.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_2D.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Bitmap.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_ClipArea.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Color.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Core.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Device.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_DispChar.c" />
@@ -49,6 +51,8 @@
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_2D.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Bitmap.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_ClipArea.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Color.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Core.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Device.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_DispChar.h" />

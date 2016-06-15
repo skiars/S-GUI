@@ -122,7 +122,6 @@ void GUI_DrawAreaInit(GUI_RECT *p)
 {
     if (GUI_RectOverlay(&GUI_Context.DrawRect, GUI_Context.InvalidRect, p)) {
         GUI_Context.pAreaNode = GUI_Context.Area;
-        GUI_Context.DrawRect = *p;
     } else {
         GUI_Context.pAreaNode = NULL; /* 绘图区域与当前的有效绘制区域不相交 */
     }

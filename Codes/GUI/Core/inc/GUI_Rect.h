@@ -17,7 +17,7 @@ void GUI_MoveRect(GUI_RECT *Rect, i_16 dX, i_16 dY);
 GUI_RESULT GUI_RectListInit(u_16 num);
 GUI_AREA GUI_GetRectList(u_16 num);
 GUI_RESULT GUI_FreeRectList(GUI_AREA Area);
+void GUI_FreeRectListNode(GUI_AREA Area);
 GUI_AREA GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst);
-GUI_AREA GUI_ReCalcRectList(GUI_AREA Area, GUI_RECT *Rect);
 
 #endif /* __GUI_RECT_H */
