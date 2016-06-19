@@ -8,14 +8,14 @@ void (*RootWinTimer_Cb)(WM_HWIN hWin) = NULL;
 
 static void __Paint(WM_HWIN hWin)
 {
-    GUI_RECT Rect = WM_GetWindowRect(hWin);
+    GUI_RECT *r = WM_GetWindowRect(hWin);
 
     if (RootWinPaint_Cb) {
         RootWinPaint_Cb(hWin);
     } else {
         /* »æÖÆ±³¾° */
-        GUI_FillRect(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1,
-            Rect.y1 - Rect.y0 +1, ROOTWINDOW_BACK_COLOR);
+        GUI_FillRect(r->x0, r->y0, r->x1 - r->x0 + 1,
+            r->y1 - r->y0 +1, ROOTWINDOW_BACK_COLOR);
     }
 }
 

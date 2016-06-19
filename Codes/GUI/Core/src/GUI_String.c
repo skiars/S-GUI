@@ -23,9 +23,17 @@ int GUI_Stricmp(const char *dst, const char *src)
 }
 
 /* ×Ö·û´®¿½±´ */
-void GUI_Strcpy(char *dst, const char *src)
+char * GUI_Strcpy(char *dst, const char *src)
 {
-    while (*dst++ = *src++);
+    char c;  
+    char *s = (char *)src;  
+    const int off = dst - s - 1;
+    
+     do {  
+          c = *s++;
+          s[off] = c;  
+     } while (c != '\0');
+     return dst;  
 }
 
 /* ¼ÆËã×Ö·û´®³¤¶È */

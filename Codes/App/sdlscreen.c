@@ -47,14 +47,13 @@ Uint32 TimerCb(Uint32 interval, void *param)
 {
     static int x, y;
 
-    SDL_Flip(screen);
     if (MouseDownFlag) {
         SDL_GetMouseState(&x, &y);
         GUI_TouchPadSendValue((u_16)x, (u_16)y, GUI_TP_CHECKED);
     } else {
         GUI_TouchPadSendValue((u_16)x, (u_16)y, GUI_TP_REMOVED);
     }
-    return 10; /* 定时器周期(ms) */
+    return 20; /* 定时器周期(ms) */
 }
 
 /* 消息循环 */
@@ -253,4 +252,9 @@ void HAL_DrawBitmap(int ColorFormat, const unsigned char *pPixel,
     if (ColorFormat == HAL_RGB888) {
         _drawBitmap24b(pPixel, x0, y0, xSize, ySize, Offset);
     }
+}
+
+void _OutScreen(void)
+{
+    SDL_Flip(screen);
 }

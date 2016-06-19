@@ -45,34 +45,6 @@ void GUI_RectSum(GUI_RECT *pDst, GUI_RECT *a, GUI_RECT *b)
     pDst->y1 = MAX(a->y1, b->y1);
 }
 
-/* 矩形与运算 */
-GUI_RECT GUI_RectAndCalc(GUI_RECT *pRect1, GUI_RECT *pRect2)
-{
-    GUI_RECT Rect;
-    
-    /*  左上角的交点  */
-    Rect.x0 = pRect1->x0 > pRect2->x0 ? pRect1->x0 : pRect2->x0;
-    Rect.y0 = pRect1->y0 > pRect2->y0 ? pRect1->y0 : pRect2->y0;
-    /*  右下角的交点  */
-    Rect.x1 = pRect1->x1 < pRect2->x1 ? pRect1->x1 : pRect2->x1;
-    Rect.y1 = pRect1->y1 < pRect2->y1 ? pRect1->y1 : pRect2->y1;
-    return Rect;
-}
-
-/* 矩形或运算 */
-GUI_RECT GUI_RectOrCalc(GUI_RECT *pRect1, GUI_RECT *pRect2)
-{
-    GUI_RECT Rect;
-    
-    /*  左上角的开始点  */
-    Rect.x0 = pRect1->x0 < pRect2->x0 ? pRect1->x0 : pRect2->x0;
-    Rect.y0 = pRect1->y0 < pRect2->y0 ? pRect1->y0 : pRect2->y0;
-    /*  右下角的结束点  */
-    Rect.x1 = pRect1->x1 > pRect2->x1 ? pRect1->x1 : pRect2->x1;
-    Rect.y1 = pRect1->y1 > pRect2->y1 ? pRect1->y1 : pRect2->y1;
-    return Rect;
-}
-
 /* 检查一个点是否在一个矩形内 */
 GUI_BOOL GUI_CheckPointAtRect(i_16 x, i_16 y, GUI_RECT *Rect)
 {

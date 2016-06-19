@@ -68,14 +68,19 @@ void * _GUI_GetHeapBuffer(int Page, u_32 *Size)
 /* GUI图形硬件物理层接口 */
 static GUI_COLOR Phy_GetPixel(u_16 x, u_16 y);
 static void Phy_SetPixel(u_16 x, u_16 y, GUI_COLOR Color);
+void Phy_FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color);
+void Phy_DrawBitmap(u_8 ColorFormat, const unsigned char *pPixel,
+    i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, u_32 Offset);
 
 /* 图形硬件初始化 */
-void GUI_Phy_Init(GUI_DEVICE *phy)
+void GUI_UserConfig(GUI_DEVICE *phy)
 {
     phy->xSize = HAL_SCREEN_W;
     phy->ySize = HAL_SCREEN_H;
     phy->GetPixel = Phy_GetPixel;
     phy->SetPixel = Phy_SetPixel;
+    phy->FillRect = Phy_FillRect;
+    phy->DrawBitmap = Phy_DrawBitmap;
 }
 
 /* 读取屏幕上的点 */
@@ -90,14 +95,13 @@ static void Phy_SetPixel(u_16 x, u_16 y, GUI_COLOR Color)
     HAL_SetPixel(x, y, Color);
 }
 
-/* 填充矩形 */
-void LCD_FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color)
+void Phy_FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color)
 {
     HAL_FillRect(x0, y0, x1, y1, Color);
 }
 
-void LCD_DrawBitmap(u_32 ColorFormat, const unsigned char *pPixel,
-    i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, u_16 Offset)
+void Phy_DrawBitmap(u_8 ColorFormat, const unsigned char *pPixel,
+    i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, u_32 Offset)
 {
     if (ColorFormat == GUI_RGB888) {
         HAL_DrawBitmap(HAL_RGB888, pPixel, x0, y0, xSize, ySize, Offset);

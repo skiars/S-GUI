@@ -13,21 +13,21 @@ void Game_Paint(WM_HWIN hWin)
 {
     u_16 xSize, ySize, len, x0, y0;
     int i;
-    GUI_RECT *pr;
+    GUI_RECT r;
 
-    pr = &((WM_Obj *)hWin)->Rect;
-    xSize = pr->x1 - pr->x0 + 1;
-    ySize = pr->y1 - pr->y0 + 1;
-    GUI_FillRect(pr->x0, pr->y0, xSize, ySize, 0xFFFFFF);
-    GUI_DispString(pr->x0, pr->y0, StarStr);
+    GUI_GetClientRect(&r);
+    xSize = r.x1 + 1;
+    ySize = r.y1 + 1;
+    GUI_FillRect(r.x0, r.y0, xSize, ySize, 0xFFFFFF);
+    GUI_DispString(r.x0, r.y0, StarStr);
     for (i = 0; i < CubeNum; ++i) {
         len = i * 2 / 3 + 1;
-        x0 = pr->x0 + xSize / 2 - len / 2 + (CubeX[i] + UserX) * (i + CubeNum / 2) / CubeNum;
-        y0 = pr->y0 + 100 + i * (ySize - 100) / CubeNum;
+        x0 = xSize / 2 - len / 2 + (CubeX[i] + UserX) * (i + CubeNum / 2) / CubeNum;
+        y0 = 100 + i * (ySize - 100) / CubeNum;
         GUI_FillRect(x0, y0, len, len, FgColor);
         GUI_DrawRect(x0 - 1, y0 - 1, len + 2, len + 2, 0x00);
     }
-    GUI_FillRect(pr->x0 + xSize / 2 - 5, pr->y1 - 10, 10, 10, 0x00);
+    GUI_FillRect(xSize / 2 - 5, r.y1 - 10, 10, 10, 0x00);
 }
 
 void KeyPro(void)
@@ -92,6 +92,8 @@ void GameCb(WM_MESSAGE *pMsg)
     case WM_KEYUP:
         KeyVal = 0;
         break;
+    default:
+        WM_DefaultProc(pMsg); /* 默认消息处理 */
     }
 }
 

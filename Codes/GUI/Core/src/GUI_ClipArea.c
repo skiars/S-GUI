@@ -1,6 +1,8 @@
 #include "GUI_ClipArea.h"
 #include "GUI.h"
 
+/* 注意: 目前支持透明窗口的剪切域计算逻辑尚未实现. */
+
 /**
  @ 剪切域排除一个矩形.
  @ Area:要被修改的剪切域.
@@ -40,7 +42,7 @@ void GUI_ClipNewWindow(GUI_HWIN hWin)
     GUI_RECT Rect;
     GUI_AREA Area;
 
-    Rect = WM_GetWindowAreaRect(hWin);
+    WM_GetWindowAreaRect(hWin, &Rect);
     /* 在考虑遮挡之前,窗口就只有一个裁剪矩形 */
     Area = GUI_GetRectList(1);
     if (Area) { /* 当新建窗口的顶部还有窗口时存在Bug */
@@ -100,4 +102,15 @@ void GUI_ClipWindows(GUI_HWIN hWin)
         }
     }
     GUI_UNLOCK();
+}
+
+/* 获取窗口的剪切域 */
+GUI_AREA GUI_GetWindowClipArea(GUI_HWIN hWin)
+{
+    WM_Obj *pWin = hWin;
+
+    if (pWin) {
+        return pWin->ClipArea;
+    }
+    return NULL;
 }

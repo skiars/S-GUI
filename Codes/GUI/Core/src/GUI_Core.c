@@ -54,20 +54,20 @@ void GUI_Unload(void)
 /* 获取屏幕尺寸 */
 void GUI_ScreenSize(u_16 *xSize, u_16 *ySize)
 {
-    *xSize = GUI_LCD.xSize;
-    *ySize = GUI_LCD.ySize;
+    *xSize = GUI_GDev.xSize;
+    *ySize = GUI_GDev.ySize;
 }
 
 /* 获取屏幕宽度 */
 u_16 GUI_GetScreenWidth(void)
 {
-    return GUI_LCD.xSize;
+    return GUI_GDev.xSize;
 }
 
 /* 获取屏幕高度 */
 u_16 GUI_GetScreenHeight(void)
 {
-    return GUI_LCD.ySize;
+    return GUI_GDev.ySize;
 }
 
 /* GUI延时并更新 */
@@ -103,12 +103,39 @@ void GUI_UNLOCK(void)
     }
 }
 
-/* -------------------- GUI矩形计算 -------------------- */
-/* 设置现在绘制区域的裁剪矩形链表 */
-void GUI_SetNowRectList(GUI_AREA l, GUI_RECT *p)
+/* 复制图形上下文 */
+static void _CopyContext(GUI_CONTEXT *pDst, GUI_CONTEXT *pSrc)
 {
-    GUI_Context.Area = l;
-    GUI_Context.InvalidRect = p;
+    pDst->Font = pSrc->Font;
+    pDst->BGColor = pSrc->BGColor;
+    pDst->FGColor = pSrc->FGColor;
+    pDst->FontColor = pSrc->FontColor;
+}
+
+/* GUI开始绘制 */
+GUI_BOOL GUI_StartPaint(GUI_HWIN hWin, GUI_CONTEXT *Backup)
+{
+    GUI_RECT *r;
+    GUI_AREA Area;
+
+    Area = GUI_GetWindowClipArea(hWin); /* 获取窗口的剪切域 */
+    if (Area) {
+        _CopyContext(Backup, &GUI_Context); /* 备份图形上下文 */
+        r = WM_GetWindowRect(hWin);
+        GUI_Context.Area = Area;
+        GUI_Context.InvalidRect = WM_GetWindowInvalidRect(hWin);
+        GUI_Context.hWin = hWin;
+        GUI_Context.WinPos.x = r->x0;
+        GUI_Context.WinPos.y = r->y0;
+        return GUI_OK;
+    }
+    return GUI_ERR;
+}
+
+/* GUI绘制结束 */
+void GUI_EndPaint(GUI_CONTEXT *Backup)
+{
+    _CopyContext(&GUI_Context, Backup); /* 还原图形上下文 */
 }
 
 /* 返回现在绘制区域的裁剪矩形链表 */
@@ -143,7 +170,41 @@ GUI_BOOL GUI_GetNextArea(void)
     return res;
 }
 
-/* -------------------- GUI上下文设置 -------------------- */
+/* 转换到屏幕坐标 */
+void GUI_ClientToScreen(i_16 *x, i_16 *y)
+{
+    *x += GUI_Context.WinPos.x;
+    *y += GUI_Context.WinPos.y;
+}
+
+/* 矩形转换到屏幕坐标 */
+void GUI_ClientToScreenRect(GUI_RECT *pRect)
+{
+    pRect->x0 += GUI_Context.WinPos.x;
+    pRect->y0 += GUI_Context.WinPos.y;
+    pRect->x1 += GUI_Context.WinPos.x;
+    pRect->y1 += GUI_Context.WinPos.y;
+}
+
+/* 转换到窗口坐标 */
+void GUI_ScreenToClient(i_16 *x, i_16 *y)
+{
+    *x -= GUI_Context.WinPos.x;
+    *y -= GUI_Context.WinPos.y;
+}
+
+/* 获取当前窗口在窗口坐标系下的矩形 */
+void GUI_GetClientRect(GUI_RECT *pRect)
+{
+    GUI_RECT *p;
+
+    p = WM_GetWindowRect(GUI_Context.hWin);
+    pRect->x0 = 0;
+    pRect->y0 = 0;
+    pRect->x1 = p->x1 - p->x0;
+    pRect->y1 = p->y1 - p->y0;
+}
+
 /* 设置当前字体 */
 void GUI_SetFont(GUI_FONT *Font)
 {

@@ -10,5 +10,6 @@ void GUI_ClipNewWindow(GUI_HWIN hWin);
 void GUI_WindowsClipArea(GUI_HWIN hWin, GUI_HWIN hEnd);
 void GUI_DeleteWindowClipArea(GUI_HWIN hWin);
 void GUI_ClipWindows(GUI_HWIN hWin);
+GUI_AREA GUI_GetWindowClipArea(GUI_HWIN hWin);
 
 #endif

@@ -21,30 +21,30 @@
 
 void Create_Window1(void);
 
-static char _Str[15] = "";
+static char _Str[30];
 static u_16 _FpsVal; /* 帧率 */
+static u_8 _CPUUsage; /* CPU占用率 */
 
 void GUI_2DTest(void);
 
 static void _RootWinPaint(WM_HWIN hWin)
 {
-    static i_16 y1 = 300;
     /* 绘制背景 */
-    GUI_FillRect(0, 0, 480, 320, 0x00ffffff);
-    //GUI_DrawBitmap(0, 0, 480, 320, &bmpic_rootwin);
+    //GUI_FillRect(0, 0, 480, 320, 0x00ffffff);
+    GUI_DrawBitmap(0, 0, 480, 320, &bmpic_rootwin);
     GUI_DispString(10, 300, _Str);
-    GUI_FillRect(260, 122, 45, 32, 0x00705070);
-    //GUI_2DTest();
+    //GUI_FillRect(260, 122, 45, 32, 0x00705070);
+    GUI_2DTest();
 }
 
 static void _RootWinTimer(WM_HWIN hWin)
 {
-    GUI_RECT Rect = { 10, 300, 100, 320 };
+    GUI_RECT Rect = { 10, 300, 150, 320 };
 
 #ifdef _MSC_VER
-    sprintf_s(_Str, sizeof(_Str), "FPS: %d", _FpsVal);
+    sprintf_s(_Str, sizeof(_Str), "FPS: %d, CPU: %d%%", _FpsVal, _CPUUsage);
 #else
-    sprintf(_Str, "FPS: %d", _FpsVal);
+    sprintf(_Str, "FPS: %d, CPU: %d%%", _FpsVal, _CPUUsage);
 #endif // _WIN32
     
     WM_InvalidateRect(_hRootWin, &Rect);
@@ -62,7 +62,7 @@ void GUI_Test(void)
     Create_Window1();
     GUI_SetFont(&GUI_FontUI17_4pp);
     while (1) {
-        GUI_Delay(20);
+        GUI_Delay(2);
         ++_FpsVal; /* 统计帧率 */
     }
 }

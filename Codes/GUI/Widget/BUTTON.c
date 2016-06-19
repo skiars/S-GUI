@@ -4,24 +4,25 @@
 /* 按键控件自绘函数 */
 static void _BUTTON_Paint(WM_HWIN hWin)
 {
-    i_16 x0, y0;
     u_16 xSize, ySize;
     GUI_COLOR Color, FontColor;
     GUI_RECT Rect;
     BUTTON_Obj *pObj = hWin;
     
-    Rect = ((WM_Obj*)hWin)->Rect;
-    x0 = Rect.x0;
-    y0 = Rect.y0;
-    xSize = Rect.x1 - x0 + 1;
-    ySize = Rect.y1 - y0 + 1;
-    if (GUI_Context.hFocus == pObj) { /* 是焦点窗口 */
-        Color = 0x00D9D9D9;
+    GUI_GetClientRect(&Rect);
+    xSize = Rect.x1 + 1;
+    ySize = Rect.y1 + 1;
+    if (pObj->Check) {
+        Color = pObj->Widget.Skin.EdgeColor[1];
     } else {
         Color = pObj->Widget.Skin.EdgeColor[0];
     }
     /* 绘制边框 */
-    GUI_DrawRect(x0, y0, xSize, ySize, Color);
+    GUI_DrawRect(0, 0, xSize, ySize, Color);
+    if (!pObj->Check && GUI_Context.hFocus == pObj) {
+        Color = pObj->Widget.Skin.EdgeColor[1];
+        GUI_DrawRect(1, 1, xSize - 2, ySize - 2, Color);
+    }
     if (pObj->Check && GUI_Context.hFocus == pObj) {
         Color = pObj->Widget.Skin.BackColor[1];
         FontColor = pObj->Widget.Skin.FontColor[1];
@@ -31,11 +32,15 @@ static void _BUTTON_Paint(WM_HWIN hWin)
         pObj->Check = 0;
     }
     /* 绘制按键内部 */
-    GUI_FillRect(x0 + 1, y0 + 1, xSize - 2, ySize - 2, Color);
+    if (!pObj->Check && GUI_Context.hFocus == pObj) {
+        GUI_FillRect(2, 2, xSize - 4, ySize - 4, Color);
+    } else {
+        GUI_FillRect(1, 1, xSize - 2, ySize - 2, Color);
+    }
     /* 绘制标题 */
     GUI_SetFont(WIDGET_GetFont(pObj));
     GUI_SetFontColor(FontColor);
-    GUI_Val2Rect(&Rect, x0 + 1, y0 + 1, xSize - 2, ySize - 2);
+    GUI_Val2Rect(&Rect, 1, 1, xSize - 2, ySize - 2);
     GUI_DispStringInRect(&Rect, pObj->Title,
         GUI_ALIGN_HCENTER | GUI_ALIGN_VCENTER);
 }
@@ -107,11 +112,11 @@ WM_HWIN BUTTON_Create(i_16 x0,
     }
     /* 配色 */
     pObj->Widget.Skin.EdgeColor[0] = 0x00708090;  /* 边线未按下 */
-    pObj->Widget.Skin.EdgeColor[1] = 0x00FFFFFF;  /* 边线按下 */
-    pObj->Widget.Skin.BackColor[0] = 0X003D3D3D;
-    pObj->Widget.Skin.BackColor[1] = 0X004682B4;
-    pObj->Widget.Skin.FontColor[0] = 0X00E3E3E3;
-    pObj->Widget.Skin.FontColor[1] = 0X00FFFFFF;
+    pObj->Widget.Skin.EdgeColor[1] = 0x002060FF;  /* 边线按下 */
+    pObj->Widget.Skin.BackColor[0] = 0X00E5E5E5;  /* 背景未按下 */
+    pObj->Widget.Skin.BackColor[1] = 0X00B0E2FF;  /* 背景按下 */
+    pObj->Widget.Skin.FontColor[0] = 0X00000000;  /* 字体没按下 */
+    pObj->Widget.Skin.FontColor[1] = 0X00000000;  /* 字体按下 */
     pObj->Check = 0;                /* 没有按下 */
     BUTTON_SetTitle(pObj, "");      /* 设置初始字符串 */
     BUTTON_SetFont(pObj, &GUI_DEF_FONT);

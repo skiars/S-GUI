@@ -87,6 +87,7 @@ static GUI_AREA _ClipTransChildren(GUI_AREA L, WM_Obj *pWin)
     return L;
 }
 
+#if 0
 /* 为一个窗口计算裁剪矩形链表 */
 static GUI_AREA WM__ClipWindowArea(WM_HWIN hWin)
 {
@@ -131,6 +132,7 @@ static GUI_AREA WM__ClipWindowArea(WM_HWIN hWin)
     }
     return Area;
 }
+#endif
 
 /*
 * 将一个矩形裁剪到窗口的可见区域中。
@@ -159,31 +161,15 @@ static void _Invalidate1Abs(WM_Obj *pWin, GUI_RECT *pr)
     }
 }
 
-/* 复制图形上下文 */
-static void _CopyContext(GUI_CONTEXT *pDst, GUI_CONTEXT *pSrc)
-{
-    pDst->Font = pSrc->Font;
-    pDst->BGColor = pSrc->BGColor;
-    pDst->FGColor = pSrc->FGColor;
-    pDst->FontColor = pSrc->FontColor;
-}
-
 /* 重绘一个窗口 */
 static void _PaintOne(WM_Obj *pWin)
 {
-    GUI_AREA Area;
     GUI_CONTEXT Context;
 
-    /* 计算窗口裁剪矩形,并设置为当前的绘制链表 */
-    //Area = WM__ClipWindowArea(pWin);
-    Area = pWin->ClipArea;
-    if (Area != NULL) {
-        _CopyContext(&Context, &GUI_Context); /* 备份图形上下文 */
+    if (GUI_StartPaint(pWin, &Context) == GUI_OK) {
         /* 重绘窗口 */
-        GUI_SetNowRectList(Area, &pWin->InvalidRect);
         WM_SendMessage(pWin, WM_PAINT, 0);
-        //GUI_FreeRectList(Area);
-        _CopyContext(&GUI_Context, &Context); /* 还原图形上下文 */
+        GUI_EndPaint(&Context);
     }
 }
 
@@ -238,6 +224,11 @@ static void _PaintAll(void)
             GUI_UNLOCK();
         }
     }
+    {
+        void _OutScreen(void);
+        
+        _OutScreen();
+    }
 }
 
 /* 派发消息 */
@@ -271,30 +262,24 @@ void WM_Exec(void)
  * -该函数通过将目标窗口的与它所有的祖先窗口的用户区取并集得到有效区域
  * -hWin不能是NULL
  **/
-GUI_RECT WM_GetWindowAreaRect(WM_HWIN hWin)
+void WM_GetWindowAreaRect(WM_HWIN hWin, GUI_RECT *pRect)
 {
-    GUI_RECT Rect;
-
     GUI_LOCK();
-    Rect = ((WM_Obj*)hWin)->Rect;
+    *pRect = ((WM_Obj*)hWin)->Rect;
     while (((WM_Obj*)hWin) != _pRootWin) {
         hWin = ((WM_Obj*)hWin)->hParent;
-        GUI_RectOverlay(&Rect, &Rect, &((WM_Obj*)hWin)->Rect);
+        GUI_RectOverlay(pRect, pRect, &((WM_Obj*)hWin)->Rect);
     }
     GUI_UNLOCK();
-    return Rect;
 }
 
 /* 获得裁剪后的窗口无效区域大小，hWin不能是NULL */
-GUI_RECT WM_GetTaliorInvalidRect(WM_HWIN hWin)
+void WM_GetTaliorInvalidRect(WM_HWIN hWin, GUI_RECT *pRect)
 {
-    GUI_RECT Rect;
-
     GUI_LOCK();
-    Rect = WM_GetWindowAreaRect(hWin);
-    Rect = GUI_RectAndCalc(&Rect, &((WM_Obj*)hWin)->InvalidRect);
+    WM_GetWindowAreaRect(hWin, pRect);
+    GUI_RectOverlay(pRect, pRect, &((WM_Obj*)hWin)->InvalidRect);
     GUI_UNLOCK();
-    return Rect;
 }
 
 /* 获得比某个窗口Z序小1的窗口 */
@@ -348,6 +333,7 @@ void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent)
         return;
     }
     GUI_LOCK();
+    WM_Invalidate(WM_GetForegroundWindow()); /* 先将之前的前景窗口无效化 */
     if (hParent == NULL) { /* hParent为NULL时作为根窗口的子窗口 */
         pObj = _pRootWin;
     } else {
@@ -432,6 +418,7 @@ void WM_DeleteWindow(WM_HWIN hWin)
         GUI_DeleteWindowClipArea(hWin); /* 删除剪切域 */
         GUI_fastfree(hWin); /* 释放空间 */
     }
+    WM_Invalidate(WM_GetForegroundWindow()); /* 当前前景窗口无效化 */
     GUI_UNLOCK();
 }
 
@@ -484,11 +471,13 @@ WM_HWIN WM_GetForegroundWindow(void)
 {
     WM_Obj *pWin = _RootWin.hFirstChild;
 
-    GUI_LOCK();
-    while (pWin->hNext != NULL) { /* 遍历同属节点 */
-        pWin = pWin->hNext;
+    if (pWin) {
+        GUI_LOCK();
+        while (pWin->hNext != NULL) { /* 遍历同属节点 */
+            pWin = pWin->hNext;
+        }
+        GUI_UNLOCK();
     }
-    GUI_UNLOCK();
     return pWin;
 }
 
@@ -630,15 +619,15 @@ GUI_RESULT WM_InvalidTree(WM_HWIN hWin)
 }
 
 /* 获取窗口的尺寸 */
-GUI_RECT WM_GetWindowRect(WM_HWIN hWin)
+GUI_RECT * WM_GetWindowRect(WM_HWIN hWin)
 {
-    return ((WM_Obj*)hWin)->Rect;
+    return &((WM_Obj*)hWin)->Rect;
 }
 
 /* 获取窗口无效区域 */
-GUI_RECT WM_GetWindowInvalidRect(WM_HWIN hWin)
+GUI_RECT * WM_GetWindowInvalidRect(WM_HWIN hWin)
 {
-    return ((WM_Obj*)hWin)->InvalidRect;
+    return &((WM_Obj*)hWin)->InvalidRect;
 }
 
 /*

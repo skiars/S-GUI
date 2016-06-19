@@ -20,6 +20,7 @@
 #include "GUI_Device.h"
 #include "RootWindow.h"
 #include "GUI_ClipArea.h"
+#include "GUI_Color.h"
 
 #include "WIDGET.h"
 #include "BUTTON.h"

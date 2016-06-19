@@ -36,12 +36,14 @@ typedef struct AREA_NODE {
 
 /* GUI上下文结构体 */
 typedef struct {
+    GUI_HWIN hWin;          /* 当前绘制窗口 */
+    GUI_POINT WinPos;       /* 窗口原点绝对坐标 */
     GUI_HWIN hFocus;        /* 当前的输入焦点 */
-    GUI_RECT *InvalidRect;  /* 当前窗口的的无效区域矩形 */
-    GUI_RECT DrawRect;      /* 当前要绘制图形的外形矩形 */
-    GUI_RECT ClipRect;      /* 当前实际输出到屏幕上的裁剪矩形 */
-    GUI_AREA Area;          /* 当前绘制窗口的裁剪区域 */
-    GUI_AREA pAreaNode;     /* 当前的裁剪区域节点 */
+    GUI_RECT *InvalidRect;  /* 当前窗口的的无效矩形 */
+    GUI_RECT DrawRect;      /* 当前要绘制图形范围的矩形 */
+    GUI_RECT ClipRect;      /* 当前屏幕上的裁剪矩形 */
+    GUI_AREA Area;          /* 当前绘制窗口的剪切域 */
+    GUI_AREA pAreaNode;     /* 当前的剪切域节点 */
     GUI_FONT *Font;         /* 当前字体 */
     GUI_COLOR FGColor;      /* 当前前景色 */
     GUI_COLOR BGColor;      /* 当前背景色 */
@@ -62,12 +64,14 @@ void GUI_Delay(GUI_TIME tms);
 void GUI_LOCK(void);
 void GUI_UNLOCK(void);
 void GUI_DebugOut(const char *s);
-
-void GUI_SetNowRectList(GUI_AREA l, GUI_RECT *p);
+GUI_BOOL GUI_StartPaint(GUI_HWIN hWin, GUI_CONTEXT *Backup);
+void GUI_EndPaint(GUI_CONTEXT *Backup);
 void GUI_DrawAreaInit(GUI_RECT *p);
 GUI_BOOL GUI_GetNextArea(void);
-
-
+void GUI_ClientToScreen(i_16 *x, i_16 *y);
+void GUI_ScreenToClient(i_16 *x, i_16 *y);
+void GUI_ClientToScreenRect(GUI_RECT *pRect);
+void GUI_GetClientRect(GUI_RECT *pRect);
 void GUI_SetFont(GUI_FONT *Font);
 void GUI_SetBackgroundColor(GUI_COLOR Color);
 void GUI_SetForegroundColor(GUI_COLOR Color);

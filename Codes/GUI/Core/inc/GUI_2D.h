@@ -25,9 +25,6 @@
 #define CHECK_Y(Y) \
     { if ((Y) > _ClipRect.y1 || (Y) < _ClipRect.y0) return; }
 
-u_16 GUI_RGB888To565(u_32 rgb);
-u_32 GUI_RGB565To888(u_16 rgb);
-GUI_COLOR GUI_ReadPoint(i_16 x, i_16 y); /* 读取点 */
 void GUI_DrawPoint(i_16 x,i_16 y,GUI_COLOR Color); /* 绘制点 */
 void GUI_VertLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color); /* 画垂直线 */
 void GUI_HoriLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color); /* 画水平线 */
