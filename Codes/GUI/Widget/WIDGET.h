@@ -34,7 +34,6 @@ typedef struct {
     WIDGET_SKIN Skin;
 } WIDGET;
 
-void WIDGET_SetTransWindow(GUI_HWIN hWin);
 void WIDGET_Alpha(GUI_HWIN hWin, u_8 Part, u_8 Id, u_8 Alpha);
 GUI_FONT *WIDGET_GetFont(GUI_HWIN hWin);
 void WIDGET_SetFont(GUI_HWIN hWin, GUI_FONT *Font);

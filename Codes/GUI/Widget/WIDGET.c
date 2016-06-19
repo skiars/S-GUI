@@ -1,14 +1,6 @@
 #include "WIDGET.h"
 #include "GUI.h"
 
-/* 将一个窗口的属性设置为透明 */
-void WIDGET_SetTransWindow(GUI_HWIN hWin)
-{
-    if (hWin) {
-        ((WM_Obj*)hWin)->Status |= WM_WS_TRANS;
-    }
-}
-
 /* 设置窗口的透明度 */
 void WIDGET_Alpha(GUI_HWIN hWin, u_8 Part, u_8 Id, u_8 Alpha)
 {
@@ -20,7 +12,7 @@ void WIDGET_Alpha(GUI_HWIN hWin, u_8 Part, u_8 Id, u_8 Alpha)
         return;
     }
     GUI_LOCK();
-    WIDGET_SetTransWindow(hWin);
+    WM_SetTransWindow(hWin, 1);
     pSkin = &((WIDGET*)hWin)->Skin;
     switch (Part) {
         case WIDGET_EDGE :

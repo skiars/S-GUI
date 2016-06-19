@@ -229,9 +229,6 @@ GUI_RESULT WINDOW_SetAllAlpha(WM_HWIN hWin, u_8 Alpha)
     
     /* 设置Alpha */
     WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
-    WIDGET_SetTransWindow(pObj->hClient);
-    /* 窗口无效化 */
-    WM_Invalidate(hWin);
-    WM_Invalidate(pObj->hClient);
+    WM_SetTransWindow(pObj->hClient, 1);
     return GUI_OK;
 }

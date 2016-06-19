@@ -18,8 +18,20 @@ static GUI_COLOR _GetPixel(u_16 x, u_16 y)
 /* 在设备上画水平线 */
 static void _DrawHLine(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color)
 {
-    while (x0 <= x1) {
-        GL_SetPixel(x0++, y0, Color);
+    if (Color >> 24) {
+        while (x0 <= x1) {
+            u_16 Alpha = Color >> 24;
+            GUI_COLOR tColor;
+
+            GL_SetPixel(x0++, y0, Color);
+            tColor = GUI_AlphaBlend(Color, GL_GetPixel(x0, y0), Alpha);
+            GL_SetPixel(x0, y0, tColor);
+            ++x0;
+        }
+    } else {
+        while (x0 <= x1) {
+            GL_SetPixel(x0++, y0, Color);
+        }
     }
 }
 

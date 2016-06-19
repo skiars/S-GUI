@@ -101,5 +101,6 @@ WM_HWIN WM_GetClientWindow(WM_HWIN hWin);
 GUI_RECT * WM_GetClientRect(WM_HWIN hWin);
 GUI_BOOL WM_DefaultKeyProc(GUI_MESSAGE *pMsg);
 void WM_DefaultProc(GUI_MESSAGE *pMsg);
+void WM_SetTransWindow(WM_HWIN hWin, u_8 Status);
 
 #endif /* __GUI_WM_H */

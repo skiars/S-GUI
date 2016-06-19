@@ -271,7 +271,7 @@ void GUI_DispStringInRect(GUI_RECT *pRect, const char *Str, u_8 Align)
             break;
         }
     }
-    while (*Str && *Str != '\n' && *Str != '\r1') {
+    while (*Str && *Str != '\n' && *Str != '\r') {
         r.x0 += _DispCharInRectAbs(&r, *Str++);
     }
 }

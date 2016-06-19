@@ -66,6 +66,7 @@ void GUI_UNLOCK(void);
 void GUI_DebugOut(const char *s);
 GUI_BOOL GUI_StartPaint(GUI_HWIN hWin, GUI_CONTEXT *Backup);
 void GUI_EndPaint(GUI_CONTEXT *Backup);
+GUI_AREA GUI_CurrentClipArea(void);
 void GUI_DrawAreaInit(GUI_RECT *p);
 GUI_BOOL GUI_GetNextArea(void);
 void GUI_ClientToScreen(i_16 *x, i_16 *y);

@@ -138,8 +138,8 @@ void GUI_EndPaint(GUI_CONTEXT *Backup)
     _CopyContext(&GUI_Context, Backup); /* 还原图形上下文 */
 }
 
-/* 返回现在绘制区域的裁剪矩形链表 */
-GUI_AREA GUI_GetNowRectList(void)
+/* 返回当前的剪切域 */
+GUI_AREA GUI_CurrentClipArea(void)
 {
     return GUI_Context.Area;
 }

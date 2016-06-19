@@ -210,6 +210,12 @@ static void _PaintAll(void)
     WM_Obj *pWin = _pRootWin;
 
     if (__InvalidWindowNum) {
+        int _WaitScreen(void);
+        void _OutScreen(void);
+        
+        if (_WaitScreen()) {
+            return;
+        }
         /* 遍历并重绘窗口 */
         while (__InvalidWindowNum && pWin) {
             GUI_LOCK();
@@ -223,10 +229,6 @@ static void _PaintAll(void)
             pWin = pWin->hNextLine;
             GUI_UNLOCK();
         }
-    }
-    {
-        void _OutScreen(void);
-        
         _OutScreen();
     }
 }
@@ -880,4 +882,25 @@ void WM_DefaultProc(GUI_MESSAGE *pMsg)
     }
     /* 设置默认参数 */
     pMsg->Param = 0;
+}
+
+/* 将一个窗口的属性设置为透明 */
+void WM_SetTransWindow(WM_HWIN hWin, u_8 Status)
+{
+    WM_Obj *pWin = hWin;
+
+    if (hWin) {
+        if (Status) {
+            if (!(pWin->Status & WM_WS_TRANS)) {
+                pWin->Status |= WM_WS_TRANS;
+                GUI_WindowClipArea(pWin); /* 之前是非透明窗口的重新计算剪切域 */
+            }
+        } else {
+            if (pWin->Status & WM_WS_TRANS) {
+                pWin->Status &= ~WM_WS_TRANS;
+                GUI_WindowClipArea(pWin); /* 之前是透明窗口的重新计算剪切域 */
+            }
+        }
+        WM_Invalidate(hWin); /* 窗口无效化 */
+    }
 }

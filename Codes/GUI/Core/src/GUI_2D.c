@@ -86,24 +86,6 @@ void GUI_VertLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
     }
 }
 
-/*  
- * 画有透明效果的水平线
- **/
-static void __HoriLineAlpha(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color)
-{
-    i_16 x1 = x0 + len - 1;
-    u_16 Alpha = Color >> 24;
-    GUI_COLOR tColor;
-
-    CHECK_Y(y0);
-    CLIP_X(x0, x1);
-    len = x1 >= x0 ? x1 - x0 + 1 : 0;
-    while (len--) {
-        tColor = GUI_AlphaBlend(Color, GL_GetPixel(x0 + len, y0), Alpha);
-        GL_SetPixel(x0 + len, y0, tColor);
-    }
-}
-
 /* 画水平线
  * x0,y0:坐标
  * len:线长度
@@ -120,11 +102,7 @@ void GUI_HoriLine(i_16 x0, i_16 y0, u_16 len, GUI_COLOR Color)
     }
     GUI_DrawAreaInit(&r1);
     while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-        if (Color >> 24) {
-            __HoriLineAlpha(x0, y0, r1.x1, Color);
-        } else {
-            GL_DrawHLine(x0, y0, r1.x1, Color);
-        }
+        GL_DrawHLine(x0, y0, r1.x1, Color);
     }
 }
 

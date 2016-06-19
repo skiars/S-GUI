@@ -1,5 +1,6 @@
 #include "sdlscreen.h"
 #include "SDL.h"
+#include "GUI.h"
 #include "GUI_Test.h"
 
 static SDL_Surface *screen = NULL;
@@ -47,6 +48,7 @@ Uint32 TimerCb(Uint32 interval, void *param)
 {
     static int x, y;
 
+    //SDL_Flip(screen);
     if (MouseDownFlag) {
         SDL_GetMouseState(&x, &y);
         GUI_TouchPadSendValue((u_16)x, (u_16)y, GUI_TP_CHECKED);
@@ -212,7 +214,17 @@ void HAL_FillRect(int x0, int y0, int x1, int y1, UINT32 Color)
     r.y = y0;
     r.w = x1 - x0 + 1;
     r.h = y1 - y0 + 1;
-    SDL_FillRect(screen, &r, Color);
+    if (Color >> 24) {
+        int x, y, Alpha = Color >> 24;
+
+        for (y = y0; y <= y1; ++y) {
+            for (x = x0; x <= x1; ++x) {
+                HAL_SetPixel(x, y, GUI_AlphaBlend(Color, HAL_GetPixel(x, y), Alpha));
+            }
+        }
+    } else {
+        SDL_FillRect(screen, &r, Color);
+    }
 }
 
 /* »æÖÆRGB888Î»Í¼ */
@@ -258,3 +270,9 @@ void _OutScreen(void)
 {
     SDL_Flip(screen);
 }
+
+int _WaitScreen(void)
+{
+    return 0;
+}
+
