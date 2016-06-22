@@ -39,6 +39,7 @@ GUI_RESULT GUI_Init(void)
         return GUI_ERR;
     }
     GUI_SetFont(&GUI_DEF_FONT);
+    GUI_SetLineWidth(1); /* 默认线宽为1 */
     return GUI_OK;
 }
 
@@ -110,6 +111,7 @@ static void _CopyContext(GUI_CONTEXT *pDst, GUI_CONTEXT *pSrc)
     pDst->BGColor = pSrc->BGColor;
     pDst->FGColor = pSrc->FGColor;
     pDst->FontColor = pSrc->FontColor;
+    pDst->LineWidth = pSrc->LineWidth;
 }
 
 /* GUI开始绘制 */
@@ -212,13 +214,13 @@ void GUI_SetFont(GUI_FONT *Font)
 }
 
 /* 设置背景色 */
-void GUI_SetBackgroundColor(GUI_COLOR Color)
+void GUI_SetBGColor(GUI_COLOR Color)
 {
     GUI_Context.BGColor = Color;
 }
 
 /* 设置前景色 */
-void GUI_SetForegroundColor(GUI_COLOR Color)
+void GUI_SetFGColor(GUI_COLOR Color)
 {
     GUI_Context.FGColor = Color;
 }
@@ -227,6 +229,12 @@ void GUI_SetForegroundColor(GUI_COLOR Color)
 void GUI_SetFontColor(GUI_COLOR Color)
 {
     GUI_Context.FontColor = Color;
+}
+
+/* 设置绘制线宽 */
+void GUI_SetLineWidth(int Width)
+{
+    GUI_Context.LineWidth = Width;
 }
 
 /* GUI调试输出 */

@@ -91,11 +91,16 @@ GUI_COLOR WIDGET_GetFontColor(GUI_HWIN hWin, u_8 n)
     return pObj->Skin.FontColor[n];
 }
 
-/* WIDGETÉèÖÃ½¹µã */
-GUI_HWIN WIDGET_SetFocus(GUI_MESSAGE *pMsg)
+GUI_RESULT WIDGET_SetPaintFunction(GUI_HWIN hWin, WIDGET_PAINT *Paint)
 {
-    WM_Invalidate(GUI_Context.hFocus);
-    GUI_Context.hFocus = pMsg->hWinSrc;
-    WM_Invalidate(GUI_Context.hFocus);
-    return pMsg->hWinSrc;
+    if (Paint) {
+        ((WIDGET *)hWin)->Skin.Paint = Paint;
+        return GUI_OK;
+    }
+    return GUI_ERR;
+}
+
+void WIDGET_Paint(GUI_HWIN hWin)
+{
+    ((WIDGET *)hWin)->Skin.Paint(hWin);
 }

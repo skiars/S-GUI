@@ -22,7 +22,6 @@ static WM_HWIN __GetClient(WINDOW_Obj *pObj)
 static void __Paint(WM_HWIN hWin)
 {
     u_16 xSize, ySize;
-    GUI_COLOR Color;
     GUI_RECT Rect;
     WINDOW_Obj *pObj = hWin;
 
@@ -31,25 +30,25 @@ static void __Paint(WM_HWIN hWin)
     ySize = Rect.y1 + 1;
     
     /* 绘制标题栏 */
-    if (pObj->Widget.Win.hNext) {
-        Color = pObj->Widget.Skin.CaptionColor[1];
+    if (pObj != WM_GetActiveWindow()) {
+        GUI_SetFGColor(pObj->Widget.Skin.CaptionColor[1]);
         GUI_SetFontColor(pObj->Widget.Skin.FontColor[1]);
     } else {
-        Color = pObj->Widget.Skin.CaptionColor[0];
+        GUI_SetFGColor(pObj->Widget.Skin.CaptionColor[0]);
         GUI_SetFontColor(pObj->Widget.Skin.FontColor[0]);
     }
-    GUI_FillRect(1, 1, xSize - 2, pObj->CaptionHeight - 1, Color);
+    GUI_FillRect(1, 1, xSize - 2, pObj->CaptionHeight - 1);
     /* 绘制标题 */
     GUI_SetFont(WIDGET_GetFont(pObj));
     GUI_Val2Rect(&Rect, 2, 1, xSize - 4, pObj->CaptionHeight);
     GUI_DispStringInRect(&Rect, pObj->Title, GUI_ALIGN_VCENTER); /* 垂直居中 */
     /* 绘制边框 */
-    if (pObj->Widget.Win.hNext) {
-        Color = pObj->Widget.Skin.FontColor[1];
+    if (pObj != WM_GetActiveWindow()) {
+        GUI_SetFGColor(pObj->Widget.Skin.FontColor[1]);
     } else {
-        Color = pObj->Widget.Skin.CaptionColor[0];
+        GUI_SetFGColor(pObj->Widget.Skin.CaptionColor[0]);
     }
-    GUI_DrawRect(0, 0, xSize, ySize, Color);
+    GUI_DrawRect(0, 0, xSize, ySize);
 }
 
 /* WINDOW设置焦点函数 */
@@ -57,41 +56,68 @@ static void WINDOW_SetFocus(GUI_MESSAGE *pMsg)
 {
     WINDOW_Obj *pObj = pMsg->hWin;
 
-    if (!pMsg->Param) { /* 设置下一个输入焦点 */
-        if (pObj->hFocus == NULL || !((WM_Obj *)pObj->hFocus)->hNext) {
-            pMsg->hWinSrc = ((WM_Obj *)pObj->hClient)->hFirstChild;
-        } else {
-            pMsg->hWinSrc = ((WM_Obj *)pObj->hFocus)->hNext;
-        }
-    } else if (pMsg->hWinSrc == NULL) { /* 直接设置输入焦点 */
-        if (pObj->hFocus) {
-            pMsg->hWinSrc = pObj->hFocus;
-        } else {
-            pMsg->hWinSrc = ((WM_Obj *)pObj->hClient)->hFirstChild;
-        }
+    if (pMsg->hWinSrc != pObj && pMsg->hWinSrc != pObj->hClient) {
+        pObj->hFocus = pMsg->hWinSrc;
     }
-    pObj->hFocus = WIDGET_SetFocus(pMsg);
 }
 
 /* WINDOW控件自动回调函数 */
 static void __Callback(WM_MESSAGE *pMsg)
 {
-    WM_CALLBACK *Cb;
+    WM_CALLBACK *UserCb = ((WINDOW_Obj*)pMsg->hWin)->UserCb;
 
-    Cb = ((WINDOW_Obj*)pMsg->hWin)->UserCb;
     switch (pMsg->MsgId) {
     case WM_PAINT:
-        __Paint(pMsg->hWin);
+        WIDGET_Paint(pMsg->hWin);
         break;
     case WM_GET_CLIENT:
         pMsg->Param = (GUI_PARAM)__GetClient(pMsg->hWin);
         break;
     case WM_SET_FOCUS:
         WINDOW_SetFocus(pMsg); /* 设置焦点 */
+        WM_Invalidate(((WINDOW_Obj*)pMsg->hWin)->hBtn);
+        break;
+    case WM_GET_FOCUS:
+        pMsg->hWin = ((WINDOW_Obj*)pMsg->hWin)->hFocus;
+        break;
+    case WM_KILL_FOCUS:
+        WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hFocus, WM_KILL_FOCUS, 0);
+        WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hBtn, WM_KILL_FOCUS, 0);
+        WM_Invalidate(pMsg->hWin);
+        if (UserCb) {
+            UserCb(pMsg);
+        }
+        break;
+    case WM_KEYDOWN:
+        WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hFocus,
+            WM_KEYDOWN, pMsg->Param);
+        if (UserCb) {
+            UserCb(pMsg);
+        }
+        break;
+    case WM_KEYUP:
+        WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hFocus,
+            WM_KEYUP, pMsg->Param);
+        if (UserCb) {
+            UserCb(pMsg);
+        }
+        break;
+    case WM_BUTTON_CLICKED:
+        if (pMsg->hWinSrc != ((WINDOW_Obj*)pMsg->hWin)->hBtn && UserCb) {
+            UserCb(pMsg);
+        }
+        break;
+    case WM_BUTTON_RELEASED:
+        if (pMsg->hWinSrc == ((WINDOW_Obj*)pMsg->hWin)->hBtn) {
+            WM_DeleteWindow(pMsg->hWin);
+        } else if (UserCb) {
+            UserCb(pMsg);
+        }
         break;
     default:
-        if (Cb) {
-            Cb(pMsg);
+        UserCb = ((WINDOW_Obj*)pMsg->hWin)->UserCb;
+        if (UserCb) {
+            UserCb(pMsg);
         }
         WM_DefaultProc(pMsg);
     }
@@ -105,14 +131,14 @@ static void __PaintClient(WM_HWIN hWin)
 
     GUI_GetClientRect(&Rect);
     /* 绘制背景 */
-    GUI_FillRect(0, 0, Rect.x1 + 1, Rect.y1 + 1,
-        pObj->Widget.Skin.BackColor[0]);
+    GUI_SetFGColor(pObj->Widget.Skin.BackColor[0]);
+    GUI_FillRect(0, 0, Rect.x1 + 1, Rect.y1 + 1);
 }
 
 static void __ClientCallback(WM_MESSAGE *pMsg)
 {
     WM_HWIN hParent;
-    WM_CALLBACK *Cb;
+    WM_CALLBACK *UserCb;
 
     hParent = WM_GetParentHandle(pMsg->hWin);
     switch (pMsg->MsgId) {
@@ -130,18 +156,38 @@ static void __ClientCallback(WM_MESSAGE *pMsg)
     case WM_TP_LEAVE: /* 不移动窗口 */
         break;
     default:
-        Cb = ((WINDOW_Obj*)hParent)->UserCb;
-        if (Cb) {
+        UserCb = ((WINDOW_Obj*)hParent)->UserCb;
+        if (UserCb) {
             pMsg->hWin = hParent;
-            Cb(pMsg);
+            UserCb(pMsg);
         }
         WM_DefaultProc(pMsg);
     }
 }
 
+/* 关闭按钮自绘函数 */
+static void __BtnPaint(GUI_HWIN hWin)
+{
+    GUI_RECT Rect;
+
+    GUI_SetFontColor(((WIDGET *)hWin)->Skin.FontColor[0]);
+    if (WM_GetActiveWindow() != WM_GetDsektopWindow(hWin)) {
+        GUI_SetFGColor(((WIDGET *)hWin)->Skin.BackColor[1]);
+        GUI_SetFontColor(((WIDGET *)hWin)->Skin.FontColor[1]);
+    } else if (BUTTON_GetStatus(hWin)) { /* 按下 */
+        GUI_SetFGColor(((WIDGET *)hWin)->Skin.BackColor[2]);
+    } else {
+        GUI_SetFGColor(((WIDGET *)hWin)->Skin.BackColor[0]);
+    }
+    GUI_GetClientRect(&Rect);
+    /* 绘制背景 */
+    GUI_FillRect(0, 0, Rect.x1 + 1, Rect.y1 + 1);
+    GUI_DispStringInRect(&Rect, "X", GUI_ALIGN_VCENTER | GUI_ALIGN_HCENTER);
+}
+
 static void __CreateClient(WINDOW_Obj *pObj)
 {
-    int xSize, ySize;
+    u_16 xSize, ySize;
     GUI_RECT *pr = &pObj->Widget.Win.Rect;
 
     xSize = pr->x1 - pr->x0 - 1;
@@ -153,7 +199,25 @@ static void __CreateClient(WINDOW_Obj *pObj)
         ySize = 0;
     }
     pObj->hClient = WM_CreateWindowAsChild(1, pObj->CaptionHeight,
-        (u_16)xSize, (u_16)ySize, pObj, 0, WM_NULL_ID, __ClientCallback, 0);
+        xSize, ySize, pObj, 0, WM_NULL_ID, __ClientCallback, 0);
+}
+
+/* 关闭按钮 */
+void __CreateBtn(WINDOW_Obj *pObj)
+{
+    u_16 xSize, ySize;
+    GUI_RECT *r = &pObj->Widget.Win.Rect;
+
+    xSize = r->x1 - r->x0 + 1;
+    ySize = pObj->CaptionHeight - 2;
+    pObj->hBtn = BUTTON_Create(xSize - ySize * 4 / 3 - 1,
+        1, ySize * 4 / 3, ySize, pObj, 0, 0);
+    WIDGET_SetPaintFunction(pObj->hBtn, __BtnPaint);
+    ((WIDGET *)pObj->hBtn)->Skin.BackColor[0] = WINDOW_CAPTION_COLOR1;
+    ((WIDGET *)pObj->hBtn)->Skin.BackColor[1] = WINDOW_CAPTION_COLOR2;
+    ((WIDGET *)pObj->hBtn)->Skin.BackColor[2] = 0x00D04040;
+    ((WIDGET *)pObj->hBtn)->Skin.FontColor[0] = WINDOW_TITLE_COLOR1;
+    ((WIDGET *)pObj->hBtn)->Skin.FontColor[1] = WINDOW_TITLE_COLOR2;
 }
 
 /*
@@ -194,13 +258,14 @@ WM_HWIN WINDOW_Create(i_16 x0,
     pObj->Widget.Skin.FontColor[0] = WINDOW_TITLE_COLOR1;
     pObj->Widget.Skin.FontColor[1] = WINDOW_TITLE_COLOR2;
     pObj->UserCb = cb;
-    pObj->hFocus = NULL;
-    pObj->hClient = NULL;
+    WIDGET_SetPaintFunction(pObj, __Paint);
     WINDOW_SetTitle(pObj, ""); /* 设置初始字符串 */
     WINDOW_SetFont(pObj, &GUI_DEF_FONT);
     __CreateClient(pObj); /* 建立客户区 */
+    __CreateBtn(pObj);
     WM_SendMessage(pObj, WM_CREATED, (GUI_PARAM)NULL);
-    WM_SetFocusWindow(pObj);
+    /* 设置输入焦点 */
+    pObj->hFocus = ((WM_Obj *)pObj->hClient)->hFirstChild;
     GUI_UNLOCK();
     return pObj;
 }

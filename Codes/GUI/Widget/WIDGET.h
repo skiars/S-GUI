@@ -21,12 +21,15 @@
 #define WIDGET_CAPTION         0x03
 #define WIDGET_FONT            0x04
 
+typedef void WIDGET_PAINT(GUI_HWIN);
+
 typedef struct {
     GUI_COLOR      EdgeColor[3];    /* 边框颜色 */
     GUI_COLOR      BackColor[2];    /* 内部背景颜色 */
     GUI_COLOR      CaptionColor[2]; /* 标题颜色 */
     GUI_FONT       *Font;           /* 字体 */
     GUI_COLOR      FontColor[2];    /* 字体颜色 */
+    WIDGET_PAINT  *Paint;           /* 绘制回调函数 */
 } WIDGET_SKIN;                      /* 窗口控件皮肤 */
 
 typedef struct {
@@ -41,6 +44,7 @@ GUI_COLOR WIDGET_GetBackColor(GUI_HWIN hWin, u_8 n);
 GUI_COLOR WIDGET_GetEdgeColor(GUI_HWIN hWin, u_8 n);
 GUI_COLOR WIDGET_GetCaptionColor(GUI_HWIN hWin, u_8 n);
 GUI_COLOR WIDGET_GetFontColor(GUI_HWIN hWin, u_8 n);
-GUI_HWIN WIDGET_SetFocus(GUI_MESSAGE *pMsg);
+GUI_RESULT WIDGET_SetPaintFunction(GUI_HWIN hWin, WIDGET_PAINT *Paint);
+void WIDGET_Paint(GUI_HWIN hWin);
 
 #endif

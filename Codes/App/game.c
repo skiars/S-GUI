@@ -18,16 +18,20 @@ void Game_Paint(WM_HWIN hWin)
     GUI_GetClientRect(&r);
     xSize = r.x1 + 1;
     ySize = r.y1 + 1;
-    GUI_FillRect(r.x0, r.y0, xSize, ySize, 0xFFFFFF);
+    GUI_SetFGColor(0x00FFFFFF);
+    GUI_FillRect(r.x0, r.y0, xSize, ySize);
     GUI_DispString(r.x0, r.y0, StarStr);
     for (i = 0; i < CubeNum; ++i) {
         len = i * 2 / 3 + 1;
         x0 = xSize / 2 - len / 2 + (CubeX[i] + UserX) * (i + CubeNum / 2) / CubeNum;
         y0 = 100 + i * (ySize - 100) / CubeNum;
-        GUI_FillRect(x0, y0, len, len, FgColor);
-        GUI_DrawRect(x0 - 1, y0 - 1, len + 2, len + 2, 0x00);
+        GUI_SetFGColor(FgColor);
+        GUI_FillRect(x0, y0, len, len);
+        GUI_SetFGColor(0x00000000);
+        GUI_DrawRect(x0 - 1, y0 - 1, len + 2, len + 2);
     }
-    GUI_FillRect(xSize / 2 - 5, r.y1 - 10, 10, 10, 0x00);
+    GUI_SetFGColor(0x00000000);
+    GUI_FillRect(xSize / 2 - 5, r.y1 - 10, 10, 10);
 }
 
 void KeyPro(void)
@@ -77,10 +81,6 @@ void GameCb(WM_MESSAGE *pMsg)
         break;
     case WM_KEYDOWN:
         switch (pMsg->Param) {
-        case KEY_ESC:
-            pMsg->MsgId = WM_QUIT;
-            WM_SendMessageToParent(pMsg->hWin, pMsg);
-            break;
         case KEY_LEFT:
             KeyVal = KEY_LEFT;
             break;
@@ -119,8 +119,12 @@ void GameWin_Cb(WM_MESSAGE *pMsg)
         Star = 0;
         daid = 0;
         break;
-    case WM_QUIT:
-        WM_DeleteWindow(pMsg->hWin);
+    case WM_KEYDOWN:
+        switch (pMsg->Param) {
+        case KEY_ESC:
+            WM_DeleteWindow(pMsg->hWin);
+            break;
+        }
         break;
     }
 }

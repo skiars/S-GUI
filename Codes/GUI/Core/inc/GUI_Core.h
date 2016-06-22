@@ -38,7 +38,7 @@ typedef struct AREA_NODE {
 typedef struct {
     GUI_HWIN hWin;          /* 当前绘制窗口 */
     GUI_POINT WinPos;       /* 窗口原点绝对坐标 */
-    GUI_HWIN hFocus;        /* 当前的输入焦点 */
+    GUI_HWIN hActive;       /* 当前活动窗口 */
     GUI_RECT *InvalidRect;  /* 当前窗口的的无效矩形 */
     GUI_RECT DrawRect;      /* 当前要绘制图形范围的矩形 */
     GUI_RECT ClipRect;      /* 当前屏幕上的裁剪矩形 */
@@ -48,6 +48,7 @@ typedef struct {
     GUI_COLOR FGColor;      /* 当前前景色 */
     GUI_COLOR BGColor;      /* 当前背景色 */
     GUI_COLOR FontColor;    /* 当前字体颜色 */
+    int       LineWidth;    /* 绘制线宽 */
 }GUI_CONTEXT;
 
 extern void *GUI_Heap[2];
@@ -74,8 +75,9 @@ void GUI_ScreenToClient(i_16 *x, i_16 *y);
 void GUI_ClientToScreenRect(GUI_RECT *pRect);
 void GUI_GetClientRect(GUI_RECT *pRect);
 void GUI_SetFont(GUI_FONT *Font);
-void GUI_SetBackgroundColor(GUI_COLOR Color);
-void GUI_SetForegroundColor(GUI_COLOR Color);
+void GUI_SetBGColor(GUI_COLOR Color);
+void GUI_SetFGColor(GUI_COLOR Color);
 void GUI_SetFontColor(GUI_COLOR Color);
+void GUI_SetLineWidth(int Width);
 
 #endif /* __GUI_CORE_H */

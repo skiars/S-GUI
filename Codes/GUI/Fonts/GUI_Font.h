@@ -1,7 +1,7 @@
 #ifndef __GUI_FONT_H
 #define __GUI_FONT_H
 
-#include "GUI_typedef.h"
+#include "GUI_Typedef.h"
 
 #define GUI_FONTTYPE_PROP        0x01
 #define GUI_FONTTYPE_PROP_AA2    0x02

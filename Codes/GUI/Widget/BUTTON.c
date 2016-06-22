@@ -2,44 +2,43 @@
 #include "GUI.h"
 
 /* 按键控件自绘函数 */
-static void _BUTTON_Paint(WM_HWIN hWin)
+static void __Paint(WM_HWIN hWin)
 {
     u_16 xSize, ySize;
-    GUI_COLOR Color, FontColor;
     GUI_RECT Rect;
     BUTTON_Obj *pObj = hWin;
+    GUI_HWIN hFocus = WM_GetCurrentFocus();
     
     GUI_GetClientRect(&Rect);
     xSize = Rect.x1 + 1;
     ySize = Rect.y1 + 1;
     if (pObj->Check) {
-        Color = pObj->Widget.Skin.EdgeColor[1];
+        GUI_SetFGColor(pObj->Widget.Skin.EdgeColor[1]);
     } else {
-        Color = pObj->Widget.Skin.EdgeColor[0];
+        GUI_SetFGColor(pObj->Widget.Skin.EdgeColor[0]);
     }
     /* 绘制边框 */
-    GUI_DrawRect(0, 0, xSize, ySize, Color);
-    if (!pObj->Check && GUI_Context.hFocus == pObj) {
-        Color = pObj->Widget.Skin.EdgeColor[1];
-        GUI_DrawRect(1, 1, xSize - 2, ySize - 2, Color);
+    GUI_DrawRect(0, 0, xSize, ySize);
+    if (!pObj->Check && hFocus == pObj) {
+        GUI_SetFGColor(pObj->Widget.Skin.EdgeColor[1]);
+        GUI_DrawRect(1, 1, xSize - 2, ySize - 2);
     }
-    if (pObj->Check && GUI_Context.hFocus == pObj) {
-        Color = pObj->Widget.Skin.BackColor[1];
-        FontColor = pObj->Widget.Skin.FontColor[1];
+    if (pObj->Check && hFocus == pObj) {
+        GUI_SetFGColor(pObj->Widget.Skin.BackColor[1]);
+        GUI_SetFontColor(pObj->Widget.Skin.FontColor[1]);
     } else {
-        Color = pObj->Widget.Skin.BackColor[0];
-        FontColor = pObj->Widget.Skin.FontColor[0];
+        GUI_SetFGColor(pObj->Widget.Skin.BackColor[0]);
+        GUI_SetFontColor(pObj->Widget.Skin.FontColor[0]);
         pObj->Check = 0;
     }
     /* 绘制按键内部 */
-    if (!pObj->Check && GUI_Context.hFocus == pObj) {
-        GUI_FillRect(2, 2, xSize - 4, ySize - 4, Color);
+    if (!pObj->Check && hFocus == pObj) {
+        GUI_FillRect(2, 2, xSize - 4, ySize - 4);
     } else {
-        GUI_FillRect(1, 1, xSize - 2, ySize - 2, Color);
+        GUI_FillRect(1, 1, xSize - 2, ySize - 2);
     }
     /* 绘制标题 */
     GUI_SetFont(WIDGET_GetFont(pObj));
-    GUI_SetFontColor(FontColor);
     GUI_Val2Rect(&Rect, 1, 1, xSize - 2, ySize - 2);
     GUI_DispStringInRect(&Rect, pObj->Title,
         GUI_ALIGN_HCENTER | GUI_ALIGN_VCENTER);
@@ -49,11 +48,12 @@ static void _BUTTON_Callback(WM_MESSAGE *pMsg)
 {
     switch (pMsg->MsgId) {
         case WM_PAINT :
-            _BUTTON_Paint(pMsg->hWin);
+            WIDGET_Paint(pMsg->hWin);
             break;
         case WM_TP_CHECKED :
             BUTTON_Check(pMsg->hWin, 1);
-            WM_SetForegroundWindow(pMsg->hWin); /* 设为前景窗口 */
+            WM_SetForegroundWindow(pMsg->hWin);
+            WM_SetActiveWindow(pMsg->hWin);
             pMsg->MsgId = WM_BUTTON_CLICKED;
             WM_SendMessageToParent(pMsg->hWin, pMsg);
             break;
@@ -86,9 +86,9 @@ static void _BUTTON_Callback(WM_MESSAGE *pMsg)
                 WM_SendMessageToParent(pMsg->hWin, pMsg);
             }
             break;
-        case WM_SET_FOCUS: /* 设置窗口焦点 */
-            WM_SendMessageToParent(pMsg->hWin, pMsg);
-            return;
+        case WM_KILL_FOCUS:
+            WM_Invalidate(pMsg->hWin);
+            break;
         default:
             WM_DefaultProc(pMsg);
     }
@@ -118,9 +118,9 @@ WM_HWIN BUTTON_Create(i_16 x0,
     pObj->Widget.Skin.FontColor[0] = 0X00000000;  /* 字体没按下 */
     pObj->Widget.Skin.FontColor[1] = 0X00000000;  /* 字体按下 */
     pObj->Check = 0;                /* 没有按下 */
+    WIDGET_SetPaintFunction(pObj, __Paint);
     BUTTON_SetTitle(pObj, "");      /* 设置初始字符串 */
     BUTTON_SetFont(pObj, &GUI_DEF_FONT);
-    
     return pObj;
 }
 

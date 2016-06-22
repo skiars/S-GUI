@@ -409,35 +409,74 @@ void WM_DeleteWindow(WM_HWIN hWin)
     while (pWin) {
         hWin = pWin;
         pWin = pWin->hNextLine;
-        /* 删除焦点 */
-        if (GUI_Context.hFocus == hWin) {
-            GUI_Context.hFocus = NULL;
-        }
         /* 删除窗口的定时器 */
         GUI_SetWindowTimer(hWin, 0);
-        /* 调用回调函数删除节点 */
         WM_SendMessage(hWin, WM_DELETE, 0);
         GUI_DeleteWindowClipArea(hWin); /* 删除剪切域 */
         GUI_fastfree(hWin); /* 释放空间 */
     }
-    WM_Invalidate(WM_GetForegroundWindow()); /* 当前前景窗口无效化 */
+    WM_SetActiveWindow(pFront); /* 设置活动窗口 */
     GUI_UNLOCK();
 }
 
 /* 设置焦点窗口 */
 GUI_RESULT WM_SetFocusWindow(WM_HWIN hWin)
 {
+    WM_HWIN hFocus;
     WM_MESSAGE Msg;
 
     if (hWin == NULL) {
         return GUI_ERR;
     }
-    /* 设置当前窗口为输入焦点 */
-    Msg.hWinSrc = NULL;
-    Msg.MsgId = WM_SET_FOCUS;
-    Msg.Param = 1;
-    WM__SendMessage(hWin, &Msg);
+    hFocus = WM_GetCurrentFocus();
+    if (hWin != hFocus) {
+        WM_SendMessage(hFocus, WM_KILL_FOCUS, 0); /* 失去焦点事件 */
+        /* 设置当前窗口为输入焦点 */
+        Msg.hWinSrc = hWin;
+        Msg.MsgId = WM_SET_FOCUS;
+        Msg.Param = 1;
+        WM__SendMessage(hWin, &Msg);
+    }
     return GUI_OK;
+} 
+
+/* 获取当前的输入焦点 */
+WM_HWIN WM_GetCurrentFocus(void)
+{
+    WM_MESSAGE Msg;
+
+    Msg.hWin = NULL;
+    Msg.MsgId = WM_GET_FOCUS;
+    WM__SendMessage(GUI_Context.hActive, &Msg);
+    return Msg.hWin;
+}
+
+/* 设置活动窗口 */
+GUI_RESULT WM_SetActiveWindow(WM_HWIN hWin)
+{
+    WM_Obj *pWin = hWin;
+
+    if (hWin == NULL) {
+        return GUI_ERR;
+    }
+    if (GUI_Context.hActive != pWin) { /* 活动窗口切换 */
+        WM_SendMessage(GUI_Context.hActive, WM_KILL_FOCUS, 0); /* 失去焦点 */
+        if (pWin->hParent) { /* 根窗口或者根窗口的一级子窗口 */
+            while (pWin->hParent != _hRootWin) {
+                pWin = pWin->hParent;
+            }
+        }
+        GUI_Context.hActive = pWin;
+        WM_Invalidate(GUI_Context.hActive); /* 活动窗口无效化 */
+        WM_SetFocusWindow(hWin);
+    }
+    return GUI_OK;
+}
+
+/* 获取活动窗口句柄 */
+WM_HWIN WM_GetActiveWindow(void)
+{
+    return GUI_Context.hActive;
 }
 
 /*
@@ -453,7 +492,6 @@ GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin)
         return GUI_ERR;
     }
     GUI_LOCK();
-    WM_SetFocusWindow(hWin); /* 设置输入焦点 */
     /* 先找到它位于根窗口下的祖先 */
     while (pObj && pObj->hParent != _pRootWin) {
         pObj = pObj->hParent;
@@ -468,7 +506,7 @@ GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin)
     return GUI_OK;
 }
 
-/* 获取当前活动窗口的句柄 */
+/* 获取前景窗口的句柄 */
 WM_HWIN WM_GetForegroundWindow(void)
 {
     WM_Obj *pWin = _RootWin.hFirstChild;
@@ -527,7 +565,8 @@ WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
     pObj->Rect.y1 = y0 + ySize - 1;
     WM_AttachWindow(pObj, pParent); /* 注册到父窗口 */
     GUI_ClipNewWindow(pObj); /* 更新剪切域 */
-    WM_Invalidate(pObj); /* 整个窗口无效化 */
+    WM_SetActiveWindow(pObj);
+    WM_Invalidate(pObj);
     GUI_UNLOCK();
     return pObj;
 }
@@ -745,6 +784,20 @@ WM_HWIN WM_GetParentHandle(WM_HWIN hWin)
     return ((WM_Obj*)hWin)->hParent;
 }
 
+/* 获取某个窗口的桌面窗口 */
+WM_HWIN WM_GetDsektopWindow(WM_HWIN hWin)
+{
+    WM_Obj *pWin = hWin;
+
+    if (pWin == NULL || pWin->hParent == NULL || pWin->hParent == _hRootWin) {
+        return pWin;
+    }
+    while (pWin->hParent != _hRootWin) {
+        pWin = pWin->hParent;
+    }
+    return pWin;
+}
+
 /* 获取窗口的前一个节点 */
 WM_HWIN WM_GetFrontHandle(WM_HWIN hWin)
 {
@@ -858,6 +911,7 @@ void WM_DefaultProc(GUI_MESSAGE *pMsg)
         return;
     case WM_TP_CHECKED:
         WM_SetForegroundWindow(pMsg->hWin); /* 设置为前景窗口 */
+        WM_SetActiveWindow(pMsg->hWin); /* 设置为活动窗口 */
         return;
     case WM_TP_PRESS: /* 移动窗口 */
         WM_MoveWindow(pMsg->hWin,
@@ -869,7 +923,10 @@ void WM_DefaultProc(GUI_MESSAGE *pMsg)
             ((GUI_POINT*)pMsg->Param)[1].x,
             ((GUI_POINT*)pMsg->Param)[1].y);
         return;
-    case WM_SET_FOCUS: /* 设置窗口焦点 */
+    case WM_SET_FOCUS: /* 设置输入焦点 */
+        WM_SendMessageToParent(pMsg->hWin, pMsg);
+        return;
+    case WM_GET_FOCUS: /* 获取输入焦点 */
         WM_SendMessageToParent(pMsg->hWin, pMsg);
         return;
     case WM_KEYDOWN:

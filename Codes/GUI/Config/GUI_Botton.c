@@ -73,7 +73,7 @@ void Phy_DrawBitmap(u_8 ColorFormat, const unsigned char *pPixel,
     i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, u_32 Offset);
 
 /* 图形硬件初始化 */
-void GUI_UserConfig(GUI_DEVICE *phy)
+void GUI_UserConfig(GUI_DRIVER *phy)
 {
     phy->xSize = HAL_SCREEN_W;
     phy->ySize = HAL_SCREEN_H;

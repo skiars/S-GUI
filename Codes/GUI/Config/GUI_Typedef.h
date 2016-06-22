@@ -17,7 +17,6 @@ typedef u_16 LCD_COLOR;
 #define GUI_RGB565         2
 #define GUI_A8             3
 #define GUI_L8             4
-#define GUI_ARGB4444       5
 
 typedef enum {
     GUI_OK = 0,

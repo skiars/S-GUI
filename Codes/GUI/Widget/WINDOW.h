@@ -7,6 +7,7 @@ typedef struct {
     WIDGET Widget;
     WM_HWIN hClient;        /* 客户区句柄 */
     WM_HWIN hFocus;         /* 窗口当前焦点 */
+    WM_HWIN hBtn;           /* 关闭按钮 */
     char *Title;
     u_8  CaptionHeight;     /* 标题栏高度 */
     WM_CALLBACK *UserCb;    /* 用户功能回调函数 */
@@ -19,4 +20,3 @@ GUI_RESULT WINDOW_SetFont(WM_HWIN hWin, GUI_FONT *Font);
 GUI_RESULT WINDOW_SetAllAlpha(WM_HWIN hWin, u_8 Alpha);
 
 #endif
-

@@ -1,7 +1,10 @@
 #include "GUI_Device.h"
 #include "GUI.h"
 
-GUI_DEVICE GUI_GDev;
+GUI_DRIVER GUI_GDev;      /* 当前使用的驱动 */
+GUI_GDEV   GUI_Screen;    /* 屏幕设备 */
+GUI_GDEV   *GUI_CurDevice;  /* 当前的图形设备 */
+GUI_DRIVER *GUI_CurDriver;  /* 当前的图形设备的驱动库 */
 
 /* 默认画点函数 */
 static void _SetPixel(u_16 x, u_16 y, GUI_COLOR Color)
@@ -19,11 +22,10 @@ static GUI_COLOR _GetPixel(u_16 x, u_16 y)
 static void _DrawHLine(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color)
 {
     if (Color >> 24) {
-        while (x0 <= x1) {
-            u_16 Alpha = Color >> 24;
-            GUI_COLOR tColor;
+        u_16 Alpha = Color >> 24;
+        GUI_COLOR tColor;
 
-            GL_SetPixel(x0++, y0, Color);
+        while (x0 <= x1) {
             tColor = GUI_AlphaBlend(Color, GL_GetPixel(x0, y0), Alpha);
             GL_SetPixel(x0, y0, tColor);
             ++x0;
@@ -31,6 +33,25 @@ static void _DrawHLine(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color)
     } else {
         while (x0 <= x1) {
             GL_SetPixel(x0++, y0, Color);
+        }
+    }
+}
+
+/* 在设备上画垂直线 */
+static void _DrawVLine(i_16 x0, i_16 y0, i_16 y1, GUI_COLOR Color)
+{
+    if (Color >> 24) {
+        u_16 Alpha = Color >> 24;
+        GUI_COLOR tColor;
+
+        while (y0 <= y1) {
+            tColor = GUI_AlphaBlend(Color, GL_GetPixel(x0, y0), Alpha);
+            GL_SetPixel(x0, y0, tColor);
+            ++y0;
+        }
+    } else {
+        while (y0 <= y1) {
+            GL_SetPixel(x0, y0++, Color);
         }
     }
 }
@@ -99,17 +120,100 @@ void GUI_DeviceInit(void)
     GUI_GDev.SetPixel = _SetPixel;
     GUI_GDev.GetPixel = _GetPixel;
     GUI_GDev.DrawHLine = _DrawHLine;
+    GUI_GDev.DrawVLine = _DrawVLine;
     GUI_GDev.FillRect = _FillRect;
     GUI_GDev.DrawBitmap = __DrawBitmap;
     GUI_UserConfig(&GUI_GDev); /* 执行用户的初始化函数 */
 }
 
 /* 绘制水平线 */
-void GL_DrawHLine(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color)
+void GL_DrawHLine(i_16 x0, i_16 y0, i_16 x1)
 {
     CLIP_X(x0, x1);
     CHECK_Y(y0);
     if (x0 <= x1) {
-        GUI_GDev.DrawHLine(x0, y0, x1, Color);
+        GUI_GDev.DrawHLine(x0, y0, x1, GUI_Context.FGColor);
     }
+}
+
+/* 绘制垂直线 */
+void GL_DrawVLine(i_16 x0, i_16 y0, i_16 y1)
+{
+    CLIP_Y(y0, y1);
+    CHECK_X(x0);
+    if (y0 <= y1) {
+        GUI_GDev.DrawVLine(x0, y0, y1, GUI_Context.FGColor);
+    }
+}
+
+void GL_FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
+{
+    CLIP_X(x0, x1);
+    CLIP_Y(y0, y1);
+    GUI_GDev.FillRect(x0, y0, x1, y1, GUI_Context.FGColor);
+}
+
+/* 内存映射型图形设备的显示偏移位置设置 */
+void _SetPosition(u_16 x, u_16 y)
+{
+    GUI_CurDevice->Position = (void *)((int)GUI_CurDevice->FrameBuffer
+        + ((int)y * (int)GUI_CurDevice->Width + (int)x)
+        * GUI_CurDevice->BytesPerPixel);
+}
+
+/* 在当前位置下写入像素 */
+void _WriteCurPosition(GUI_COLOR ColorIndex)
+{
+    switch (GUI_CurDevice->BytesPerPixel) {
+    case 1: /* 8bpp */
+        *(u_8 *)GUI_CurDevice->Position = (u_8)ColorIndex;
+        break;
+    case 2: /* 16bpp */
+        *(u_16 *)GUI_CurDevice->Position = (u_16)ColorIndex;
+        break;
+    case 3: /* 24bpp */
+        *(u_8 *)GUI_CurDevice->Position
+            = (u_8)((ColorIndex >> 16) & 0xFF);
+        *(u_8 *)((u_32)GUI_CurDevice->Position + 1)
+            = (u_8)((ColorIndex >> 8) & 0xFF);
+        *(u_8 *)((u_32)GUI_CurDevice->Position + 2)
+            = (u_8)(ColorIndex & 0xFF);
+        break;
+    case 4: /* 32bpp */
+        *(u_32 *)GUI_CurDevice->Position = (u_32)ColorIndex;
+        break;
+    }
+    GUI_CurDevice->Position = (void *)((u_32)GUI_CurDevice->Position
+        + GUI_CurDevice->BytesPerPixel);
+}
+
+/* 显示像素偏移偏移 */
+void _DispOffset(int OffsetPixels)
+{
+    GUI_CurDevice->Position = (void *)((u_32)GUI_CurDevice->Position
+        + OffsetPixels * GUI_CurDevice->BytesPerPixel);
+}
+
+/* 设置帧缓冲地址 */
+void GUI_SetFrameBuffer(GUI_GDEV *gDevice, void *Ptr)
+{
+    gDevice->FrameBuffer = Ptr;
+}
+
+/* 设置像素颜色格式 */
+GUI_RESULT GUI_SetPixelFormat(GUI_GDEV *gDevice, int PixelFormat)
+{
+    if (PixelFormat == GUI_ARGB8888) {
+        gDevice->BytesPerPixel = 4;
+    } else if (PixelFormat == GUI_RGB888) {
+        gDevice->BytesPerPixel = 3;
+    } else if (PixelFormat == GUI_RGB565) {
+        gDevice->BytesPerPixel = 2;
+    } else if (PixelFormat == GUI_L8) {
+        gDevice->BytesPerPixel = 1;
+    } else {
+        return GUI_ERR;
+    }
+    gDevice->PixelFormat = PixelFormat;
+    return GUI_OK;
 }

@@ -25,11 +25,13 @@
 #define CHECK_Y(Y) \
     { if ((Y) > _ClipRect.y1 || (Y) < _ClipRect.y0) return; }
 
-void GUI_DrawPoint(i_16 x,i_16 y,GUI_COLOR Color); /* 绘制点 */
-void GUI_VertLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color); /* 画垂直线 */
-void GUI_HoriLine(i_16 x0,i_16 y0,u_16 len,GUI_COLOR Color); /* 画水平线 */
-void GUI_DrawRect(i_16 x0,i_16 y0,u_16 xSize,u_16 ySize,GUI_COLOR Color); /* 画矩形框 */
-void GUI_FillRect(i_16 x0,i_16 y0,u_16 xSize,u_16 ySize,GUI_COLOR Color); /* 填充矩形 */
-void GUI_DrawLine(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color);
+void GUI_DrawPoint(i_16 x, i_16 y);
+void GUI_VertLine(i_16 x0, i_16 y0, u_16 len);
+void GUI_HoriLine(i_16 x0, i_16 y0, u_16 len);
+void GUI_DrawRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize);
+void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize);
+void GUI_DrawLine(i_16 x0, i_16 y0, i_16 x1, i_16 y1);
+void GUI_DrawCircle(i_16 x0, i_16 y0, u_16 r);
+void GUI_FillCircle(i_16 x0, i_16 y0, i_16 r);
 
 #endif /* __GUI_2D_H */

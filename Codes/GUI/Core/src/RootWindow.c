@@ -14,8 +14,9 @@ static void __Paint(WM_HWIN hWin)
         RootWinPaint_Cb(hWin);
     } else {
         /* 绘制背景 */
+        GUI_SetFGColor(ROOTWINDOW_BACK_COLOR);
         GUI_FillRect(r->x0, r->y0, r->x1 - r->x0 + 1,
-            r->y1 - r->y0 +1, ROOTWINDOW_BACK_COLOR);
+            r->y1 - r->y0 +1);
     }
 }
 
@@ -32,12 +33,11 @@ static void _RootWin_Callback(WM_MESSAGE *pMsg)
         }
         break;
     case WM_SET_FOCUS: /* 设置输入焦点 */
-        pMsg->hWinSrc = pMsg->hWin;
-        WIDGET_SetFocus(pMsg);
         break;
-    case WM_TP_CHECKED: /* 直接设置输入焦点 */
-        pMsg->hWinSrc = pMsg->hWin;
-        WIDGET_SetFocus(pMsg);
+    case WM_GET_FOCUS:
+        break;
+    case WM_TP_CHECKED:
+        WM_SetActiveWindow(pMsg->hWin); /* 设置为活动窗口 */
         break;
     }
 }

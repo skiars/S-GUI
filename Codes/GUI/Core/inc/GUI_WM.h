@@ -11,8 +11,10 @@
 #define WM_CREATED           0x0103    /* 窗口已经创建 */
 #define WM_TIME_UPDATA       0x0104    /* 窗口定时器更新 */
 #define WM_GET_CLIENT        0x0105    /* 获取客户区句柄 */
-#define WM_SET_FOCUS         0x0106    /* 设置焦点窗口 */
-#define WM_QUIT              0x0107    /* 退出 */
+#define WM_SET_FOCUS         0x0106    /* 设置输入焦点 */
+#define WM_GET_FOCUS         0x0107    /* 获取输入焦点 */
+#define WM_KILL_FOCUS        0x0108     /* 窗口失去焦点 */
+#define WM_QUIT              0x0109    /* 退出 */
 #define WM_TP_CHECKED        0x0120    /* 触摸板按下 */
 #define WM_TP_REMOVED        0x0121    /* 触摸板松开 */
 #define WM_TP_PRESS          0x0122    /* 触摸坐标一直在当前窗口 */
@@ -78,6 +80,9 @@ WM_HWIN WM_GetTopChildWindow(WM_HWIN hWin);
 WM_HWIN WM_GetTopWindow(void);
 void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent);
 GUI_RESULT WM_SetFocusWindow(WM_HWIN hWin);
+WM_HWIN WM_GetCurrentFocus(void);
+GUI_RESULT WM_SetActiveWindow(WM_HWIN hWin);
+WM_HWIN WM_GetActiveWindow(void);
 GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin);
 WM_HWIN WM_GetForegroundWindow(void);
 WM_HWIN WM_CreateWindowAsChild(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize,
@@ -94,6 +99,7 @@ WM_HWIN WM_GetWindowHandle(u_16 Id);
 u_16 WM_GetDialogId(WM_HWIN hWin);
 WM_HWIN WM_GetExposedWindow(u_16 x, u_16 y);
 WM_HWIN WM_GetParentHandle(WM_HWIN hWin);
+WM_HWIN WM_GetDsektopWindow(WM_HWIN hWin);
 WM_HWIN WM_GetFrontHandle(WM_HWIN hWin);
 void WM_MoveWindow(WM_HWIN hWin, i_16 dx, i_16 dy);
 void WM_InvalidCoverWindow(WM_HWIN hWin, GUI_RECT *pRect);

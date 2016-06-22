@@ -30,16 +30,16 @@ void GUI_2DTest(void);
 static void _RootWinPaint(WM_HWIN hWin)
 {
     /* 绘制背景 */
-    //GUI_FillRect(0, 0, 480, 320, 0x00ffffff);
-    GUI_DrawBitmap(0, 0, 480, 320, &bmpic_rootwin);
-    GUI_DispString(10, 300, _Str);
-    //GUI_FillRect(260, 122, 45, 32, 0x00705070);
+    GUI_SetFGColor(0x00FFFFFF);
+    GUI_FillRect(0, 0, 480, 320);
+    //GUI_DrawBitmap(0, 0, 480, 320, &bmpic_rootwin);
     GUI_2DTest();
+    GUI_DispString(10, 300, _Str);
 }
 
 static void _RootWinTimer(WM_HWIN hWin)
 {
-    GUI_RECT Rect = { 10, 300, 150, 320 };
+    //GUI_RECT Rect = { 10, 300, 150, 320 };
 
 #ifdef _MSC_VER
     sprintf_s(_Str, sizeof(_Str), "FPS: %d, CPU: %d%%", _FpsVal, _CPUUsage);
@@ -47,7 +47,8 @@ static void _RootWinTimer(WM_HWIN hWin)
     sprintf(_Str, "FPS: %d, CPU: %d%%", _FpsVal, _CPUUsage);
 #endif // _WIN32
     
-    WM_InvalidateRect(_hRootWin, &Rect);
+    //WM_InvalidateRect(_hRootWin, &Rect);
+    WM_Invalidate(_hRootWin);
     _FpsVal = 0; /* 帧率清零 */
 }
 
@@ -62,7 +63,7 @@ void GUI_Test(void)
     Create_Window1();
     GUI_SetFont(&GUI_FontUI17_4pp);
     while (1) {
-        GUI_Delay(2);
+        GUI_Delay(20);
         ++_FpsVal; /* 统计帧率 */
     }
 }
@@ -94,6 +95,13 @@ void Window2_Cb(WM_MESSAGE *pMsg)
             hWin = pMsg->hWin;
             WINDOW_SetAllAlpha(hWin, Alpha);
             if (Alpha >= 10) Alpha -= 10;
+        }
+        break;
+    case WM_KEYDOWN:
+        switch (pMsg->Param) {
+        case KEY_ESC:
+            WM_DeleteWindow(pMsg->hWin);
+            break;
         }
         break;
     }

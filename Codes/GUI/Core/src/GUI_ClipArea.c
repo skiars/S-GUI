@@ -112,8 +112,11 @@ void GUI_ClipWindows(GUI_HWIN hWin)
     pEnd = WM_GetTopChildWindow(pWin);
     if (pEnd) {
         pEnd = pEnd->hNextLine;
+        if (pWin->hParent) {
+            pWin = pWin->hParent;
+        }
         /* 先计算到hWin之前的剪切域 */
-        for (pWin = pWin->hParent; pWin != pEnd; pWin = pWin->hNextLine) {
+        for (; pWin != pEnd; pWin = pWin->hNextLine) {
             GUI_FreeRectList(pWin->ClipArea);
             if (!(pWin->Status & WM_WS_TRANS)) {
                 GUI_ClipNewWindow(pWin);
