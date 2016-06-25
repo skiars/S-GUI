@@ -11,6 +11,7 @@
 #define WINDOW1      (WM_USER_ID + 0x0010)
 #define WINDOW2      (WM_USER_ID + 0x0020)
 #define WINDOW3      (WM_USER_ID + 0x0030)
+#define WINDOW4      (WM_USER_ID + 0x0040)
 
 #define WIN1_BTN1    (WINDOW1 + 0x0001)
 #define WIN1_BTN2    (WINDOW1 + 0x0002)
@@ -20,6 +21,7 @@
 #define WIN2_BTN3    (WINDOW3 + 0x0002)
 
 void Create_Window1(void);
+static void Create_GraphicTest(void);
 
 static char _Str[30];
 static u_16 _FpsVal; /* 帧率 */
@@ -31,7 +33,7 @@ static void _RootWinPaint(WM_HWIN hWin)
 {
     /* 绘制背景 */
     GUI_SetFGColor(0x00FFFFFF);
-    GUI_FillRect(0, 0, 480, 320);
+    GUI_FillRect(0, 0, GUI_GetScreenWidth(), GUI_GetScreenHeight());
     //GUI_DrawBitmap(0, 0, 480, 320, &bmpic_rootwin);
     GUI_2DTest();
     GUI_DispString(10, 300, _Str);
@@ -61,10 +63,12 @@ void GUI_Test(void)
     RootWinTimer_Cb = _RootWinTimer;
     GUI_SetRootWindowTimer(1000);
     Create_Window1();
+    Create_GraphicTest();
     GUI_SetFont(&GUI_FontUI17_4pp);
     while (1) {
         GUI_Delay(20);
         ++_FpsVal; /* 统计帧率 */
+        WM_Invalidate(_hRootWin);
     }
 }
 
@@ -155,4 +159,23 @@ void Create_Window1(void)
     hWin = WINDOW_Create(20, 20, 120, 80, NULL, WINDOW1, WM_WS_MOVE, Window1_Cb);
     WINDOW_SetTitle(hWin, "S-GUI Demo");
     WINDOW_SetFont(hWin, &GUI_FontUI17_4pp);
+}
+
+void Graphic_Cb(WM_MESSAGE *pMsg)
+{
+    switch (pMsg->MsgId) {
+    case WM_PAINT:
+        GUI_2DTest();
+        break;
+    }
+}
+
+static void Create_GraphicTest(void)
+{
+    GUI_HWIN hWin;
+
+    hWin = WINDOW_Create(GUI_GetScreenWidth() / 2, GUI_GetScreenHeight() / 2,
+        GUI_GetScreenWidth(), GUI_GetScreenHeight(),
+        NULL, WINDOW4, WM_WS_MOVE, Graphic_Cb);
+    WINDOW_SetTitle(hWin, "Graphics Library Test");
 }

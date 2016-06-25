@@ -4,9 +4,13 @@
 #include "GUI_Config.h"
 #include "GUI_Typedef.h"
 
-#define GL_SetPixel   GUI_GDev.SetPixel
-#define GL_GetPixel   GUI_GDev.GetPixel
-#define GL_DrawBitmap GUI_GDev.DrawBitmap
+#define GL_SetPixel       GUI_GDev.SetPixel
+#define GL_GetPixel       GUI_GDev.GetPixel
+#define GL_DrawBitmap     GUI_GDev.DrawBitmap
+#define GL_SetPixelClip   GUI_glAPI.SetPixel
+#define GL_DrawHLine      GUI_glAPI.DrawHLine
+#define GL_DrawVLine      GUI_glAPI.DrawVLine
+#define GL_FillRect	      GUI_glAPI.FillRect
 
 /* 图形设备驱动函数 */
 typedef struct {
@@ -34,11 +38,17 @@ typedef struct {
     GUI_DRIVER Phy;    /* 驱动程序 */
 } GUI_GDEV;
 
+/* 绘图API定义 */
+typedef struct {
+	void (*SetPixel)(i_16, i_16);
+	void (*DrawHLine)(i_16, i_16, i_16);
+	void (*DrawVLine)(i_16, i_16, i_16);
+	void (*FillRect)(i_16, i_16, i_16, i_16);
+} GUI_GLAPI;
+
 extern GUI_DRIVER GUI_GDev;
+extern GUI_GLAPI   GUI_glAPI;
 
 void GUI_DeviceInit(void);
-void GL_DrawHLine(i_16 x0, i_16 y0, i_16 x1);
-void GL_DrawVLine(i_16 x0, i_16 y0, i_16 y1);
-void GL_FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1);
 
 #endif /* __GUI_DRIVER_H */

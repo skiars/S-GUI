@@ -21,6 +21,9 @@
 /* 调试模式开关 */
 #define GUI_DEBUG_MODE        1
 
+/* 绘制多变形时支持的最大边数 */
+#define GUI_MAX_POLY_CORNERS  1000
+
 /**
  @ 字体显示模式
  @ 0:默认的模式.

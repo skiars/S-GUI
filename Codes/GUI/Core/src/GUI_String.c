@@ -46,3 +46,14 @@ int GUI_Strlen(const char *Str)
     }
     return i;
 }
+
+void *GUI_Memset(void *s, unsigned char c, int n)
+{
+    const unsigned char uc = c;
+    unsigned char *su;
+
+    for (su = s; 0 < n; ++su, --n) {
+        *su = uc;
+    }
+    return s;
+}

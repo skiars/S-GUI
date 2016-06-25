@@ -39,9 +39,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_2D.c">
-      <Filter>S-GUI\Core\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Bitmap.c">
       <Filter>S-GUI\Core\src</Filter>
     </ClCompile>
@@ -123,12 +120,18 @@
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Color.c">
       <Filter>S-GUI\Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_GL.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_GL_AA.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Math.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI.h">
-      <Filter>S-GUI\Core\inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_2D.h">
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Bitmap.h">
@@ -210,6 +213,15 @@
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Color.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_GL.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_GL_AA.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Math.h">
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
   </ItemGroup>

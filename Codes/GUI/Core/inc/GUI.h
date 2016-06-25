@@ -4,7 +4,7 @@
 #include "GUI_Config.h"
 #include "GUI_Typedef.h"
 #include "GUI_Core.h"
-#include "GUI_2D.h"
+#include "GUI_GL.h"
 #include "GUI_Font.h"
 #include "GUI_DispChar.h"
 #include "GUI_Bitmap.h"

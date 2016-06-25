@@ -1,5 +1,5 @@
-#ifndef __GUI_2D_H
-#define __GUI_2D_H
+#ifndef __GUI_GL_H
+#define __GUI_GL_H
 
 #include "GUI_Typedef.h"
 
@@ -33,5 +33,8 @@ void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize);
 void GUI_DrawLine(i_16 x0, i_16 y0, i_16 x1, i_16 y1);
 void GUI_DrawCircle(i_16 x0, i_16 y0, u_16 r);
 void GUI_FillCircle(i_16 x0, i_16 y0, i_16 r);
+void GUI_DrawPolygon(GUI_POINT *Points, int cnt);
+void GUI_FillPolygon(GUI_POINT *Points, int cnt);
+void GUI_GetPolyArea(GUI_RECT *r, GUI_POINT *Points, int cnt);
 
 #endif /* __GUI_2D_H */

@@ -39,7 +39,9 @@ GUI_RESULT GUI_Init(void)
         return GUI_ERR;
     }
     GUI_SetFont(&GUI_DEF_FONT);
-    GUI_SetLineWidth(1); /* 默认线宽为1 */
+    GUI_SetPenSize(1); /* 默认线宽为1 */
+	GUI_Context.AAEnable = 0;
+	GUI_Context.AAFactor = 3;
     return GUI_OK;
 }
 
@@ -111,7 +113,7 @@ static void _CopyContext(GUI_CONTEXT *pDst, GUI_CONTEXT *pSrc)
     pDst->BGColor = pSrc->BGColor;
     pDst->FGColor = pSrc->FGColor;
     pDst->FontColor = pSrc->FontColor;
-    pDst->LineWidth = pSrc->LineWidth;
+    pDst->PenSize = pSrc->PenSize;
 }
 
 /* GUI开始绘制 */
@@ -149,7 +151,20 @@ GUI_AREA GUI_CurrentClipArea(void)
 /* 初始化绘制区域 */
 void GUI_DrawAreaInit(GUI_RECT *p)
 {
-    if (GUI_RectOverlay(&GUI_Context.DrawRect, GUI_Context.InvalidRect, p)) {
+    GUI_RECT r;
+    GUI_RECT *pInvalid = GUI_Context.InvalidRect;
+
+	if (GUI_Context.AAEnable) {
+		int factor = GUI_Context.AAFactor;
+
+		r.x0 = pInvalid->x0 * (i_16)factor;
+		r.y0 = pInvalid->y0 * (i_16)factor;
+		r.x1 = (pInvalid->x1 + 1) * (i_16)factor - 1;
+		r.y1 = (pInvalid->y1 + 1) * (i_16)factor - 1;
+    } else {
+        r = *pInvalid;
+    }
+    if (GUI_RectOverlay(&GUI_Context.DrawRect, &r, p)) {
         GUI_Context.pAreaNode = GUI_Context.Area;
     } else {
         GUI_Context.pAreaNode = NULL; /* 绘图区域与当前的有效绘制区域不相交 */
@@ -161,13 +176,24 @@ GUI_BOOL GUI_GetNextArea(void)
 {
     GUI_BOOL res = FALSE;
     GUI_AREA Area;
-    GUI_RECT *ClipRect = &GUI_Context.ClipRect,
-             *DrawRect = &GUI_Context.DrawRect;
+	GUI_RECT r;
+	GUI_RECT *ClipRect = &GUI_Context.ClipRect;
+	GUI_RECT *DrawRect = &GUI_Context.DrawRect;
 
     while (GUI_Context.pAreaNode && res == FALSE) { /* 直到找到下一个相交的矩形 */
         Area = GUI_Context.pAreaNode;
         GUI_Context.pAreaNode = Area->pNext;
-        res = GUI_RectOverlay(ClipRect, DrawRect, &Area->Rect);
+		if (GUI_Context.AAEnable) {
+			int factor = GUI_Context.AAFactor;
+
+			r.x0 = Area->Rect.x0 * (i_16)factor;
+			r.y0 = Area->Rect.y0 * (i_16)factor;
+			r.x1 = (Area->Rect.x1 + 1) * (i_16)factor;
+			r.y1 = (Area->Rect.y1 + 1) * (i_16)factor - 1;
+		} else {
+			r = Area->Rect;
+		}
+        res = GUI_RectOverlay(ClipRect, DrawRect, &r);
     }
     return res;
 }
@@ -231,10 +257,10 @@ void GUI_SetFontColor(GUI_COLOR Color)
     GUI_Context.FontColor = Color;
 }
 
-/* 设置绘制线宽 */
-void GUI_SetLineWidth(int Width)
+/* 设置画笔大小 */
+void GUI_SetPenSize(int Width)
 {
-    GUI_Context.LineWidth = Width;
+    GUI_Context.PenSize = Width;
 }
 
 /* GUI调试输出 */

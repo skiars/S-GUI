@@ -48,7 +48,10 @@ typedef struct {
     GUI_COLOR FGColor;      /* 当前前景色 */
     GUI_COLOR BGColor;      /* 当前背景色 */
     GUI_COLOR FontColor;    /* 当前字体颜色 */
-    int       LineWidth;    /* 绘制线宽 */
+    int       PenSize;      /* 绘制线宽 */
+	int       AAFactor;     /* 抗锯齿因子 */
+	int       AAEnable;     /* 抗锯齿模式已经开启 */
+	int       AAHL;         /* 使用高分辨率坐标 */
 }GUI_CONTEXT;
 
 extern void *GUI_Heap[2];
@@ -78,6 +81,6 @@ void GUI_SetFont(GUI_FONT *Font);
 void GUI_SetBGColor(GUI_COLOR Color);
 void GUI_SetFGColor(GUI_COLOR Color);
 void GUI_SetFontColor(GUI_COLOR Color);
-void GUI_SetLineWidth(int Width);
+void GUI_SetPenSize(int Width);
 
 #endif /* __GUI_CORE_H */

@@ -17,7 +17,8 @@
     <ClCompile Include="..\..\Codes\App\pic_rootwin.c" />
     <ClCompile Include="..\..\Codes\App\sdlscreen.c" />
     <ClCompile Include="..\..\Codes\GUI\Config\GUI_Botton.c" />
-    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_2D.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_GL.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_GL_AA.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Bitmap.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_ClipArea.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Color.c" />
@@ -26,6 +27,7 @@
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_DispChar.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_KeyBoard.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Malloc.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Math.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Queue.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Rect.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_String.c" />
@@ -49,7 +51,8 @@
     <ClInclude Include="..\..\Codes\GUI\Config\GUI_Config.h" />
     <ClInclude Include="..\..\Codes\GUI\Config\GUI_Typedef.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI.h" />
-    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_2D.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_GL.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_GL_AA.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Bitmap.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_ClipArea.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Color.h" />
@@ -58,6 +61,7 @@
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_DispChar.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_KeyBoard.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Malloc.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Math.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Queue.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Rect.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_String.h" />
@@ -138,7 +142,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>

@@ -1848,4 +1848,3 @@ GUI_CONST_STORAGE GUI_FONT GUI_FontASCII_8x16 = {
     16, /* height of font  */
     &GUI_FontASCII_8x16_Prop1
 };
-
