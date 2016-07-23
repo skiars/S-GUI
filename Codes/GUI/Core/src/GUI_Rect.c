@@ -100,7 +100,7 @@ GUI_RESULT GUI_RectListInit(u_16 num)
 
     /* 申请内存(包括一个表头) */
     ++num;
-    GUI_AreaHeap = GUI_fastmalloc(sizeof(AREA_NODE) * (u_32)num);
+    GUI_AreaHeap = GUI_Malloc(sizeof(AREA_NODE) * (u_32)num);
     if (GUI_AreaHeap == NULL) {
         return GUI_ERR; /* 申请失败 */
     }

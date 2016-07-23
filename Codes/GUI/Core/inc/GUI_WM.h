@@ -9,7 +9,7 @@
 #define WM_PAINT             0x0101    /* 重绘 */
 #define WM_DELETE            0x0102    /* 删除窗口 */
 #define WM_CREATED           0x0103    /* 窗口已经创建 */
-#define WM_TIME_UPDATA       0x0104    /* 窗口定时器更新 */
+#define WM_TIMER             0x0104    /* 窗口定时器更新 */
 #define WM_GET_CLIENT        0x0105    /* 获取客户区句柄 */
 #define WM_SET_FOCUS         0x0106    /* 设置输入焦点 */
 #define WM_GET_FOCUS         0x0107    /* 获取输入焦点 */

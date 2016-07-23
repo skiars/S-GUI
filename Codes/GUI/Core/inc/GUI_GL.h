@@ -36,5 +36,6 @@ void GUI_FillCircle(i_16 x0, i_16 y0, i_16 r);
 void GUI_DrawPolygon(GUI_POINT *Points, int cnt);
 void GUI_FillPolygon(GUI_POINT *Points, int cnt);
 void GUI_GetPolyArea(GUI_RECT *r, GUI_POINT *Points, int cnt);
+void GUI_DrawLines(i_16 x, i_16 y, GUI_POINT *Points, int cnt);
 
 #endif /* __GUI_2D_H */

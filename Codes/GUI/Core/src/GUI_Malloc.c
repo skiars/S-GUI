@@ -1,6 +1,24 @@
 #include "GUI_Malloc.h"
 #include "GUI_Core.h"
 
+static MEM_HEAP *__HeapList;   /* 堆链表 */
+static size_t __SizeBytes;     /* 总容量 */
+static size_t __UsageBytes;    /* 总使用量 */
+
+static _ListInsert(MEM_HEAP *heap)
+{
+    MEM_HEAP *p = __HeapList;
+
+    if (p) {
+        while (p->pNext) {
+            p = p->pNext;
+        }
+        p->pNext = heap;
+    } else {
+        __HeapList = heap;
+    }
+}
+
 /**
  @ 内存池初始化.
  @ Mem: 内存池地址(建议这个地址是4字节对齐的, 以便能满足特殊需求).
@@ -11,19 +29,18 @@ GUI_RESULT GUI_HeapInit(void *Mem, size_t Size)
 {
     MEM_HEAP *mPool;
 
-    if (Size < sizeof(MEM_HEAP)) {
-#if GUI_DEBUG_MODE
-        GUI_DEBUG_OUT("GUI heap size is below the minimum.");
-#endif
-        return GUI_ERR; /* 容量太小 */
+    if (!Mem || Size < sizeof(MEM_HEAP)) {
+        return GUI_ERR;
     }
     mPool = Mem;
     mPool->Size = Size;
-    mPool->Usage = 0;
+    mPool->pNext = NULL;
     mPool->MemPool.Tag = 0;
     mPool->MemPool.pLast = NULL;
     mPool->MemPool.pNext = NULL;
     mPool->MemPool.Size = Size - (sizeof(MEM_HEAP) - sizeof(MEM_NODE));
+    _ListInsert(mPool); /* 添加到链表 */
+    __SizeBytes += Size - (sizeof(MEM_HEAP) - sizeof(MEM_NODE));
     return GUI_OK;
 }
 
@@ -99,23 +116,27 @@ static void __free(MEM_NODE *pl)
  @ Mem: 内存池地址.
  @ 返回值: 申请到空间的首地址.
  **/
-void * GUI_Malloc(size_t Size, void * Mem)
+void * GUI_Malloc(size_t Size)
 {
-    MEM_NODE *pn;
+    MEM_NODE *pn = NULL;
+    MEM_HEAP *ph;
+
     if (Size) {
         if (Size & 0x03) { /* 4字节对齐 */
             Size += 4 - Size & 0x03;
         }
-        pn = &((MEM_HEAP *)Mem)->MemPool;
-        pn = __alloc(pn, Size);
-        if (pn) {
-            ((MEM_HEAP *)Mem)->Usage += pn->Size;
-            return (char *)pn + sizeof(MEM_NODE);
+        /* 遍历所有的堆 */
+        for (ph = __HeapList; ph && !pn; ph = ph->pNext) {
+            pn = __alloc(&ph->MemPool, Size);
         }
-    }
+        if (pn) {
+            __UsageBytes += pn->Size;
+            return (void *)((u_32)pn + sizeof(MEM_NODE));
+        }
 #if GUI_DEBUG_MODE
-    GUI_DEBUG_OUT("GUI alloc failed (heap overflow).");
+        GUI_DEBUG_OUT("GUI alloc failed (heap overflow).");
 #endif
+    }
     return NULL;
 }
 
@@ -124,12 +145,23 @@ void * GUI_Malloc(size_t Size, void * Mem)
  @ pl: 需要释放的堆节点地址.
  @ Mem: 内存池指针.
  **/
-void GUI_Free(void *Ptr, void *Mem)
+void GUI_Free(void *Ptr)
 {
+    size_t addr1 = (size_t)Ptr - sizeof(MEM_NODE), addr2;
+    MEM_HEAP *ph;
+
     if (Ptr) {
-        Ptr = (char *)Ptr - sizeof(MEM_NODE);
-        ((MEM_HEAP *)Mem)->Usage -= ((MEM_NODE *)Ptr)->Size;
-        __free(Ptr);
+        for (ph = __HeapList; ph; ph = ph->pNext) {
+            addr2 = (size_t)ph;
+            if (addr1 > addr2 && addr1 < addr2 + ph->Size) {
+                __UsageBytes -= ((MEM_NODE *)addr1)->Size;
+                __free((MEM_NODE *)addr1);
+                return;
+            }
+        }
+#if GUI_DEBUG_MODE
+        GUI_DEBUG_OUT("GUI free filed (pointer is invalid).");
+#endif
     }
 }
 
@@ -138,9 +170,9 @@ void GUI_Free(void *Ptr, void *Mem)
  @ Mem: 内存池地址.
  @ 返回值: 内存池已使用字节数.
  **/
-size_t MemGetUsageBytes(void *Mem)
+size_t GUI_GetMemUsage(void)
 {
-    return ((MEM_HEAP*)Mem)->Usage;
+    return __UsageBytes;
 }
 
 /**
@@ -148,7 +180,7 @@ size_t MemGetUsageBytes(void *Mem)
  @ Mem: 内存池地址.
  @ 返回值: 内存池容量(单位为Byte).
  **/
-size_t MemGetSizeBytes(void *Mem)
+size_t GUI_GetMemSize(void)
 {
-    return ((MEM_HEAP*)Mem)->Size - (sizeof(MEM_HEAP) - sizeof(MEM_NODE));
+    return __SizeBytes;
 }

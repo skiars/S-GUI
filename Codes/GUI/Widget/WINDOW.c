@@ -69,7 +69,7 @@ static void __Callback(WM_MESSAGE *pMsg)
     switch (pMsg->MsgId) {
     case WM_PAINT:
         WIDGET_Paint(pMsg->hWin);
-        return;;
+        break;
     case WM_GET_CLIENT:
         pMsg->Param = (GUI_PARAM)__GetClient(pMsg->hWin);
         return;
@@ -84,18 +84,21 @@ static void __Callback(WM_MESSAGE *pMsg)
         WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hFocus, WM_KILL_FOCUS, 0);
         WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hBtn, WM_KILL_FOCUS, 0);
         WM_Invalidate(pMsg->hWin);
-        break;
+        return;
     case WM_KEYDOWN:
         WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hFocus,
             WM_KEYDOWN, pMsg->Param);
+        break;
     case WM_KEYUP:
         WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hFocus,
             WM_KEYUP, pMsg->Param);
+        break;
     case WM_BUTTON_RELEASED:
         if (pMsg->hWinSrc == ((WINDOW_Obj*)pMsg->hWin)->hBtn) {
             WM_DeleteWindow(pMsg->hWin);
             return;
         }
+        break;
     default:
         WM_DefaultProc(pMsg);
     }
@@ -117,6 +120,7 @@ static void __PaintClient(WM_HWIN hWin)
     GUI_FillRect(0, 0, Rect.x1 + 1, Rect.y1 + 1);
 }
 
+/* 客户区回调函数 */
 static void __ClientCallback(WM_MESSAGE *pMsg)
 {
     WM_HWIN hParent;

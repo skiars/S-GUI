@@ -584,7 +584,7 @@ static void _FillPolygon(GUI_POINT *Points, int cnt)
 {
     i_16 xPos = GUI_Context.WinPos.x;
     i_16 yPos = GUI_Context.WinPos.y;
-    int yMax = Points->x, yMin = Points->x;
+    int yMax = Points->y, yMin = yMax;
     int y, i, j, nodes;
     static int nodeX[GUI_MAX_POLY_CORNERS];
     GUI_POINT *pi, *pj;
@@ -605,17 +605,22 @@ static void _FillPolygon(GUI_POINT *Points, int cnt)
             yMin = y;
         }
     }
-    for (y = yMin; y < yMax; ++y) {
+    for (y = yMin; y <= yMax; ++y) {
         /* 计算多变形与扫描线的交点 */
         nodes = 0;
         j = cnt - 1;
         for (i = 0; i < cnt; ++i) {
-            pi = Points + i;
-            pj = Points + j;
-            if (pi->y < y && pj->y >= y || pj->y < y && pi->y >= y) {
-                /* 求交点 */
-                nodeX[nodes++] = pi->x + (y - pi->y)
-                    * (pj->x - pi->x) / (pj->y - pi->y);
+            pi = Points + i; /* 边的起点 */
+            pj = Points + j; /* 边的终点 */
+            if (pi->y == y && pj->y == y) { /* 水平边直接填充 */
+                if (pi->x < pj->x) {
+                    GL_DrawHLine(pi->x + xPos, y + yPos, pj->x + xPos);
+                } else {
+                    GL_DrawHLine(pj->x + xPos, y + yPos, pi->x + xPos);
+                }
+            } else if (pi->y < y && pj->y >= y || pj->y < y && pi->y >= y) {
+                nodeX[nodes++] = pi->x + ((y - pi->y)
+                    * (pj->x - pi->x)) / (pj->y - pi->y);
             }
             j = i;
         }
@@ -656,32 +661,92 @@ void GUI_FillPolygon(GUI_POINT *Points, int cnt)
     }
 }
 
-void GUI_2DTest(void)
+/* 绘制折线, 内部调用 */
+static void _DrawLines(i_16 x, i_16 y, GUI_POINT *Points, int cnt)
+{
+    int i;
+    i_16 xPos = GUI_Context.WinPos.x;
+    i_16 yPos = GUI_Context.WinPos.y;
+    GUI_POINT *p1, *p2;
+    void(*draw)(i_16, i_16, i_16, i_16);
+
+    if (GUI_Context.AAEnable) {
+        int factor = GUI_Context.AAFactor;
+
+        xPos *= factor;
+        yPos *= factor;
+    }
+    xPos += x;
+    yPos += y;
+    if (GUI_Context.PenSize > 1) {
+        draw = _DrawLineW;
+    } else {
+        draw = _DrawLine;
+    }
+    for (i = 0; i < cnt - 1; ++i) {
+        p1 = Points + i;
+        p2 = Points + i + 1;
+        draw(p1->x + xPos, p1->y + yPos, p2->x + xPos, p2->y + yPos);
+    }
+}
+
+/* 绘制折线 */
+void GUI_DrawLines(i_16 x, i_16 y, GUI_POINT *Points, int cnt)
+{
+    GUI_RECT r;
+
+    GUI_GetPolyArea(&r, Points, cnt);
+    GUI_MoveRect(&r, x, y);
+    _ClientToScreenRect(&r);
+    GUI_DrawAreaInit(&r);
+    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
+        _DrawLines(x, y, Points, cnt);
+    }
+}
+
+static void _waveTest(void)
+{
+    int i;
+    static GUI_POINT Points[300];
+
+    for (i = 0; i < 300; ++i) {
+        Points[i].x = i * 4;
+        Points[i].y = (int)sinf(i / 3.0f) * 50 * 4;
+    }
+    GUI_Context.AAFactor = 4;
+    GUI_SetPenSize(10);
+    GUI_DrawLines((i_16)100, (i_16)200, Points, 300);
+}
+
+void GUI_2DTest(float angle)
 {
 	void GUI_2DTestAA(void);
     int i, nodes;
-    static float angle = 0.0;
+    float s = 1.0;
     GUI_POINT Point[7];
-    static GUI_POINT points[] = {
-        { 100 * 4, 10 * 4 },
-        { 140 * 4, 60 * 4 },
-        { 115 * 4, 50 * 4 },
-        { 115 * 4, 100 * 4 },
-        { 85 * 4, 100 * 4 },
-        { 85 * 4, 50 * 4 },
-        { 60 * 4, 60 * 4 }
+    GUI_POINT points[] = {
+        { 100, 10 },
+        { 140, 60 },
+        { 115, 50 },
+        { 115, 100 },
+        { 85, 100 },
+        { 85, 50 },
+        { 60, 60 }
     };
+
+    nodes = GUI_COUNTOF(points);
     /* 旋转图像 */
-    for (i = 0; i < 7; ++i) {
-        Point[i].x = (int)((points[i].x - 100.0f * 4.0f) * cosf(angle) 
-			- (points[i].y - 100.0f * 4.0f) * sinf(angle) + 100.0f * 4.0f);
-        Point[i].y = (int)((points[i].x - 100.0f * 4.0f) * sinf(angle)
-			+ (points[i].y - 100.0f * 4.0f) * cosf(angle) + 100.0f * 4.0f);
+    for (i = 0; i < nodes; ++i) {
+        Point[i].x = (int)((points[i].x - 100.0f * s) * cosf(angle)
+			- (points[i].y - 100.0f * s) * sinf(angle) + 100.0f * s);
+        Point[i].y = (int)((points[i].x - 100.0f * s) * sinf(angle)
+			+ (points[i].y - 100.0f * s) * cosf(angle) + 100.0f * s);
     }
-    angle += 0.01f;
-    nodes = GUI_COUNTOF(Point);
     GUI_SetFGColor(0x00803050);
-	GUI_Context.AAFactor = 4;
-    GUI_FillPolygonAA(Point, nodes);
-	GUI_2DTestAA();
+	//GUI_Context.AAFactor = 4;
+    GUI_FillPolygon(Point, nodes);
+    GUI_SetFGColor(0x50000000);
+    GUI_DrawPolygon(Point, nodes);
+	//GUI_2DTestAA();
+    //_waveTest();
 }

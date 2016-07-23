@@ -51,7 +51,7 @@ void GameCb(WM_MESSAGE *pMsg)
     case WM_PAINT:
         Game_Paint(pMsg->hWin);
         break;
-    case WM_TIME_UPDATA:
+    case WM_TIMER:
 #ifdef _MSC_VER
         sprintf_s(StarStr, sizeof(StarStr), "Star:%d", Star);
 #else
@@ -61,10 +61,10 @@ void GameCb(WM_MESSAGE *pMsg)
             FgColor = 0x00FF00FF;
         } else if (Star < 1000) {
             FgColor = 0x000000FF;
-            GUI_SetWindowTimer(pMsg->hWin, 30);
+            GUI_ResetTimer((GUI_HTMR)pMsg->Param, 30);
         } else {
             FgColor = 0x0000FFFF;
-            GUI_SetWindowTimer(pMsg->hWin, 20);
+            GUI_ResetTimer((GUI_HTMR)pMsg->Param, 20);
         }
         if (!daid) {
             ++Star;
@@ -102,6 +102,7 @@ void GameWin_Cb(WM_MESSAGE *pMsg)
     int i;
     GUI_RECT *r;
     WM_HWIN hWin, hItem;
+    static GUI_HTMR hTimer;
 
     switch (pMsg->MsgId) {
     case WM_CREATED:
@@ -110,7 +111,7 @@ void GameWin_Cb(WM_MESSAGE *pMsg)
         hWin = WM_GetClientWindow(pMsg->hWin);
         hItem = WM_CreateWindowAsChild(0, 0, r->x1 - r->x0 + 1,
             r->y1 - r->y0 + 1, hWin, 0, GAME_WIN, GameCb, 0);
-        GUI_SetWindowTimer(hItem, 50);
+        hTimer = GUI_TimerCreate(hItem, 0, 50, GUI_TMR_AUTO);
         for (i = 0; i < CubeNum / 2; ++i) {
             CubeX[i * 2] = -100;
             CubeX[i * 2 + 1] = 100;

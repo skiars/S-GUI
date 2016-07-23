@@ -21,7 +21,7 @@ typedef const struct {
 typedef const struct GUI_FONT_PROP {
     u_16 FirstChar;                    /* 第一个字符 */
     u_16 LastChar;                     /* 最后一个字符 */
-    GUI_CHARINFO *pCharInfo;     /* 字符数据 */
+    GUI_CHARINFO *pCharInfo;           /* 字符数据 */
     const struct GUI_FONT_PROP *pNext; /* 下一个节点 */
 } GUI_FONT_PROP;
 

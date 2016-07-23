@@ -136,7 +136,7 @@ GUI_AREA GUI_GetWindowClipArea(GUI_HWIN hWin)
     if (pWin) {
         /* 透明窗口直接返回上一个窗口用的剪切域 */
         if (pWin->Status & WM_WS_TRANS) {
-            return GUI_CurrentClipArea();
+            return GUI_GetClipArea();
         }
         return pWin->ClipArea;
     }

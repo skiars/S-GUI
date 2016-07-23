@@ -27,15 +27,12 @@ static char _Str[30];
 static u_16 _FpsVal; /* 帧率 */
 static u_8 _CPUUsage; /* CPU占用率 */
 
-void GUI_2DTest(void);
-
 static void _RootWinPaint(WM_HWIN hWin)
 {
     /* 绘制背景 */
-    GUI_SetFGColor(0x00FFFFFF);
+    GUI_SetFGColor(0x00C0C0C0);
     GUI_FillRect(0, 0, GUI_GetScreenWidth(), GUI_GetScreenHeight());
     //GUI_DrawBitmap(0, 0, 480, 320, &bmpic_rootwin);
-    GUI_2DTest();
     GUI_DispString(10, 300, _Str);
 }
 
@@ -52,6 +49,7 @@ static void _RootWinTimer(WM_HWIN hWin)
     //WM_InvalidateRect(_hRootWin, &Rect);
     WM_Invalidate(_hRootWin);
     _FpsVal = 0; /* 帧率清零 */
+    printf("Mem usage: %d/%d bytes.\n", GUI_GetMemUsage(), GUI_GetMemSize());
 }
 
 /* GUI测试 */
@@ -163,9 +161,19 @@ void Create_Window1(void)
 
 void Graphic_Cb(WM_MESSAGE *pMsg)
 {
+    void GUI_2DTest(float angle);
+    static float angle;
+
     switch (pMsg->MsgId) {
     case WM_PAINT:
-        GUI_2DTest();
+        if (GUI_GetPaintWindow() != pMsg->hWin) {
+            GUI_2DTest(angle);
+        }
+        break;
+    case WM_TIMER:
+        angle += 0.04f;
+        WM_Invalidate(WM_GetClientWindow(pMsg->hWin));
+        GUI_ResetTimer((GUI_HTMR)pMsg->Param, 50);
         break;
     }
 }
@@ -174,8 +182,9 @@ static void Create_GraphicTest(void)
 {
     GUI_HWIN hWin;
 
-    hWin = WINDOW_Create(GUI_GetScreenWidth() / 2, GUI_GetScreenHeight() / 2,
-        GUI_GetScreenWidth(), GUI_GetScreenHeight(),
+    hWin = WINDOW_Create(200, 20,
+        240, 240,
         NULL, WINDOW4, WM_WS_MOVE, Graphic_Cb);
     WINDOW_SetTitle(hWin, "Graphics Library Test");
+    GUI_TimerCreate(hWin, 0, 50, GUI_TMR_ONE);
 }

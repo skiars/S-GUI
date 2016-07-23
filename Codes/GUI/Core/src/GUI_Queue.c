@@ -10,9 +10,9 @@ GUI_QUEUE *__MsgQueue;
  */
 GUI_QUEUE * GUI_QueueInit(u_16 Capacity)
 {
-    GUI_QUEUE *pQue = GUI_fastmalloc(sizeof(GUI_QUEUE));
+    GUI_QUEUE *pQue = GUI_Malloc(sizeof(GUI_QUEUE));
 
-    pQue->pArray = GUI_fastmalloc((u_32)Capacity * sizeof(GUI_MESSAGE));
+    pQue->pArray = GUI_Malloc((u_32)Capacity * sizeof(GUI_MESSAGE));
     pQue->Capacity = Capacity;
     pQue->size = 0;
     pQue->front = 1;
@@ -24,8 +24,8 @@ GUI_QUEUE * GUI_QueueInit(u_16 Capacity)
 void GUI_QueueDelete(GUI_QUEUE *pQue)
 {
     if (pQue) {
-        GUI_fastfree(pQue->pArray);
-        GUI_fastfree(pQue);
+        GUI_Free(pQue->pArray);
+        GUI_Free(pQue);
     }
 }
 

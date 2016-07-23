@@ -6,5 +6,6 @@
 
 void GUI_DrawLineAA(i_16 x0, i_16 y0, i_16 x1, i_16 y1);
 void GUI_FillPolygonAA(GUI_POINT *Points, int cnt);
+void GUI_DrawLinesAA(i_16 x, i_16 y, GUI_POINT *Points, int cnt);
 
 #endif

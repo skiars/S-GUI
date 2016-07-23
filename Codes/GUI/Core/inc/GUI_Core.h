@@ -23,11 +23,6 @@
 
 #define GUI_DEBUG_OUT(s) GUI_DebugOut(s);
 
-#define GUI_malloc(S)     GUI_Malloc((S), GUI_Heap[GUI_HEAP_HCAP])
-#define GUI_free(P)       GUI_Free((P), GUI_Heap[GUI_HEAP_HCAP])
-#define GUI_fastmalloc(S) GUI_Malloc((S), GUI_Heap[GUI_HEAP_FAST])
-#define GUI_fastfree(P)   GUI_Free((P), GUI_Heap[GUI_HEAP_FAST])
-
 /* 矩形链表 */
 typedef struct AREA_NODE {
     GUI_RECT Rect;
@@ -54,7 +49,6 @@ typedef struct {
 	int       AAHL;         /* 使用高分辨率坐标 */
 }GUI_CONTEXT;
 
-extern void *GUI_Heap[2];
 extern GUI_CONTEXT GUI_Context;
 extern GUI_HWIN GUI_RootWin;
 extern GUI_AREA GUI_AreaHeap;
@@ -70,7 +64,8 @@ void GUI_UNLOCK(void);
 void GUI_DebugOut(const char *s);
 GUI_BOOL GUI_StartPaint(GUI_HWIN hWin, GUI_CONTEXT *Backup);
 void GUI_EndPaint(GUI_CONTEXT *Backup);
-GUI_AREA GUI_CurrentClipArea(void);
+GUI_HWIN GUI_GetPaintWindow(void);
+GUI_AREA GUI_GetClipArea(void);
 void GUI_DrawAreaInit(GUI_RECT *p);
 GUI_BOOL GUI_GetNextArea(void);
 void GUI_ClientToScreen(i_16 *x, i_16 *y);

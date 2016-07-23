@@ -26,7 +26,7 @@ static void _RootWin_Callback(WM_MESSAGE *pMsg)
     case WM_PAINT:
         __Paint(pMsg->hWin);
         break;
-    case WM_TIME_UPDATA:
+    case WM_TIMER:
         /* 用户函数 */
         if (RootWinTimer_Cb) {
             RootWinTimer_Cb(pMsg->hWin);
@@ -65,5 +65,5 @@ void WM_RootWindowInit(WM_Obj *pObj)
 /* 设置根窗口的定时器 */
 void GUI_SetRootWindowTimer(GUI_TIME timer)
 {
-    GUI_SetWindowTimer(_hRootWin, timer);
+    GUI_TimerCreate(_hRootWin, 0, timer, GUI_TMR_AUTO);
 }

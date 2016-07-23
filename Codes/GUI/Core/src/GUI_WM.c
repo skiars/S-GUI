@@ -10,7 +10,7 @@ static int __InvalidWindowNum = 0;
 /* 窗口管理器初始化 */
 GUI_RESULT WM_Init(void)
 {
-    _hRootWin = GUI_fastmalloc(sizeof(WM_Obj));
+    _hRootWin = GUI_Malloc(sizeof(WM_Obj));
     if (_hRootWin == NULL) {
         return GUI_ERR;
     }
@@ -255,7 +255,7 @@ void WM_Exec(void)
     while (GUI_GetMessage(&Msg) == GUI_OK) {
         WM__DispatchMessage(&Msg); /* 派发消息 */
     }
-    GUI_TimerHandle();
+    GUI_TimerHandler(); /* 处理定时器 */
     _PaintAll(); /* 重绘所有窗口 */
 }
 
@@ -409,11 +409,10 @@ void WM_DeleteWindow(WM_HWIN hWin)
     while (pWin) {
         hWin = pWin;
         pWin = pWin->hNextLine;
-        /* 删除窗口的定时器 */
-        GUI_SetWindowTimer(hWin, 0);
         WM_SendMessage(hWin, WM_DELETE, 0);
+        GUI_TimerDeleteAtWindow(hWin); /* 删除窗口的定时器 */
         GUI_DeleteWindowClipArea(hWin); /* 删除剪切域 */
-        GUI_fastfree(hWin); /* 释放空间 */
+        GUI_Free(hWin); /* 释放空间 */
     }
     WM_SetActiveWindow(pFront); /* 设置活动窗口 */
     GUI_UNLOCK();
@@ -545,7 +544,7 @@ WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
         GUI_UNLOCK();
         return NULL;
     }
-    pObj = GUI_fastmalloc(sizeof(WM_Obj) + bytes);
+    pObj = GUI_Malloc(sizeof(WM_Obj) + bytes);
     if (pObj == NULL) {
         GUI_UNLOCK();
         return NULL;
@@ -907,38 +906,36 @@ void WM_DefaultProc(GUI_MESSAGE *pMsg)
 {
     /* 处理消息 */
     switch (pMsg->MsgId) {
-    case WM_DELETE:
-        return;
     case WM_TP_CHECKED:
         WM_SetForegroundWindow(pMsg->hWin); /* 设置为前景窗口 */
         WM_SetActiveWindow(pMsg->hWin); /* 设置为活动窗口 */
-        return;
+        break;
     case WM_TP_PRESS: /* 移动窗口 */
         WM_MoveWindow(pMsg->hWin,
             ((GUI_POINT*)pMsg->Param)[1].x,
             ((GUI_POINT*)pMsg->Param)[1].y);
-        return;
+        break;
     case WM_TP_LEAVE: /* 移动窗口 */
         WM_MoveWindow(pMsg->hWin,
             ((GUI_POINT*)pMsg->Param)[1].x,
             ((GUI_POINT*)pMsg->Param)[1].y);
-        return;
+        break;
     case WM_SET_FOCUS: /* 设置输入焦点 */
         WM_SendMessageToParent(pMsg->hWin, pMsg);
-        return;
+        break;
     case WM_GET_FOCUS: /* 获取输入焦点 */
         WM_SendMessageToParent(pMsg->hWin, pMsg);
-        return;
+        break;
     case WM_KEYDOWN:
         if (pMsg->Param == KEY_TAB) { /* TAB键切换焦点 */
             pMsg->MsgId = WM_SET_FOCUS;
             pMsg->Param = 0;
             WM__SendMessage(pMsg->hWin, pMsg);
         }
-        return;
+        break;
+    default:
+        break;
     }
-    /* 设置默认参数 */
-    pMsg->Param = 0;
 }
 
 /* 将一个窗口的属性设置为透明 */

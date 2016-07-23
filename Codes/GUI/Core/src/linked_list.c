@@ -1,8 +1,8 @@
 #include "linked_list.h"
 #include "GUI.h"
 
-#define MALLOC(x)  GUI_fastmalloc(x)
-#define FREE(x)    GUI_fastfree(x);
+#define MALLOC(x)  GUI_Malloc(x)
+#define FREE(x)    GUI_Free(x);
 
 /* 查找链表pl中节点pt的前驱 */
 static LIST FindPrecious(LIST pl, LIST pt)

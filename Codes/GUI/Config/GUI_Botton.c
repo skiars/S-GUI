@@ -52,8 +52,8 @@ void _GUI_Delay_ms(GUI_TIME tms)
 /* ÄÚ´æ¶Ñ¿Õ¼ä·ÖÅä */
 void * _GUI_GetHeapBuffer(int Page, u_32 *Size)
 {
-    static char heap0[1024 * 32];
-    static char heap1[1024 * 1024];
+    static u_32 heap0[10 * 32 / 4];
+    static u_32 heap1[10 * 320 / 4];
 
     if (Page == 0) {
         *Size = sizeof(heap0);

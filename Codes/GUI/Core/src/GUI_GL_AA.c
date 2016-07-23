@@ -137,7 +137,7 @@ static void _FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
 }
 
 /*  */
-static void _AA_Init(i_16 x0, i_16 x1)
+void GUI_AA_Init(i_16 x0, i_16 x1)
 {
     int xPos = GUI_Context.WinPos.x * GUI_Context.AAFactor;
 
@@ -168,7 +168,7 @@ static void _AA_Init(i_16 x0, i_16 x1)
 }
 
 /*  */
-static _AA_Exit(void)
+void GUI_AA_Exit(void)
 {
     GUI_Context.AAEnable = 0;
     _flushLine();
@@ -191,9 +191,9 @@ void GUI_DrawLineAA(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
     }
     xMin -= w;
     xMax += w;
-    _AA_Init(xMin, xMax);
+    GUI_AA_Init(xMin, xMax);
     GUI_DrawLine(x0, y0, x1, y1);
-    _AA_Exit();
+    GUI_AA_Exit();
 }
 
 void GUI_FillPolygonAA(GUI_POINT *Points, int cnt)
@@ -201,9 +201,20 @@ void GUI_FillPolygonAA(GUI_POINT *Points, int cnt)
     GUI_RECT r;
 
     GUI_GetPolyArea(&r, Points, cnt);
-    _AA_Init(r.x0, r.x1);
+    GUI_AA_Init(r.x0, r.x1);
     GUI_FillPolygon(Points, cnt);
-    _AA_Exit();
+    GUI_AA_Exit();
+}
+
+void GUI_DrawLinesAA(i_16 x, i_16 y, GUI_POINT *Points, int cnt)
+{
+    GUI_RECT r;
+
+    GUI_GetPolyArea(&r, Points, cnt);
+    GUI_MoveRect(&r, x, y);
+    GUI_AA_Init(r.x0, r.x1);
+    GUI_DrawLines(x, y, Points, cnt);
+    GUI_AA_Exit();
 }
 
 #define M_PI 3.14159265358979323846f
@@ -213,18 +224,18 @@ void GUI_2DTestAA(void)
     int x0, y0, x1, y1;
     static float angle = 0.0f, a;
 
-    GUI_SetPenSize(39);
+    GUI_SetPenSize(2);
     GUI_Context.AAFactor = 8;
     GUI_SetFGColor(0x00000000);
     //for (angle = 0.0; angle <= 360.0; angle += 5.0)
     {
         a = angle * M_PI / 180.0f;
         /* Ðý×ªÍ¼Ïñ */
-        x0 = (int)(((210.0f - 200.0f) * cosf(a) + 200.0f) * 8);
-        y0 = (int)(((210.0f - 200.0f) * sinf(a) + 160.0f) * 8);
-        x1 = (int)(((350.0f - 200.0f) * cosf(a) + 200.0f) * 8);
-        y1 = (int)(((350.0f - 200.0f) * sinf(a) + 160.0f) * 8);
-        GUI_DrawLineAA(x0, y0, x1, y1);
+        x0 = (int)(((210.0f - 200.0f) * cosf(a) + 200.0f));
+        y0 = (int)(((210.0f - 200.0f) * sinf(a) + 160.0f));
+        x1 = (int)(((350.0f - 200.0f) * cosf(a) + 200.0f));
+        y1 = (int)(((350.0f - 200.0f) * sinf(a) + 160.0f));
+        GUI_DrawLine(x0, y0, x1, y1);
     }
     angle += 0.3f;
     //GUI_DrawLineAA(-50 * 4, 200 * 4, 190 * 4, 220 * 4);

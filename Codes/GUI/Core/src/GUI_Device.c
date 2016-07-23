@@ -7,7 +7,7 @@ GUI_GDEV   *GUI_CurDevice;  /* 当前的图形设备 */
 GUI_DRIVER *GUI_CurDriver;  /* 当前的图形设备的驱动库 */
 GUI_GLAPI   GUI_glAPI;      /* 基本的绘图函数 */
 
-/* 默认画点函数 */
+                            /* 默认画点函数 */
 static void _SetPixel(u_16 x, u_16 y, GUI_COLOR Color)
 {
 
@@ -94,10 +94,10 @@ static void _FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color)
 
 /* 绘制位图 */
 static void __DrawBitmap(u_8 cFormat, const unsigned char *pData,
-        i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, u_32 Offset)
+    i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, u_32 Offset)
 {
     int i, j, pixBytes;
-    
+
     if (cFormat == GUI_RGB565) {
         pixBytes = 2;
     } else if (cFormat == GUI_RGB888) {
@@ -117,50 +117,50 @@ static void __DrawBitmap(u_8 cFormat, const unsigned char *pData,
 /* 裁剪像素 */
 static void _SetPixelClip(i_16 x, i_16 y)
 {
-	GUI_COLOR Color = GUI_Context.FGColor;
+    GUI_COLOR Color = GUI_Context.FGColor;
 
-	CHECK_X(x);
-	CHECK_Y(y);
-	if (Color >> 24) {
-		Color = GUI_AlphaBlend(Color, GL_GetPixel(x, y), Color >> 24);
-	}
-	GL_SetPixel(x, y, Color);
+    CHECK_X(x);
+    CHECK_Y(y);
+    if (Color >> 24) {
+        Color = GUI_AlphaBlend(Color, GL_GetPixel(x, y), Color >> 24);
+    }
+    GL_SetPixel(x, y, Color);
 }
 
 /* 绘制水平线 */
 static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1)
 {
-	CLIP_X(x0, x1);
-	CHECK_Y(y0);
-	if (x0 <= x1) {
-		GUI_GDev.DrawHLine(x0, y0, x1, GUI_Context.FGColor);
-	}
+    CLIP_X(x0, x1);
+    CHECK_Y(y0);
+    if (x0 <= x1) {
+        GUI_GDev.DrawHLine(x0, y0, x1, GUI_Context.FGColor);
+    }
 }
 
 /* 绘制垂直线 */
 static void _glDrawVLine(i_16 x0, i_16 y0, i_16 y1)
 {
-	CLIP_Y(y0, y1);
-	CHECK_X(x0);
-	if (y0 <= y1) {
-		GUI_GDev.DrawVLine(x0, y0, y1, GUI_Context.FGColor);
-	}
+    CLIP_Y(y0, y1);
+    CHECK_X(x0);
+    if (y0 <= y1) {
+        GUI_GDev.DrawVLine(x0, y0, y1, GUI_Context.FGColor);
+    }
 }
 
 static void _glFillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
 {
-	CLIP_X(x0, x1);
-	CLIP_Y(y0, y1);
-	GUI_GDev.FillRect(x0, y0, x1, y1, GUI_Context.FGColor);
+    CLIP_X(x0, x1);
+    CLIP_Y(y0, y1);
+    GUI_GDev.FillRect(x0, y0, x1, y1, GUI_Context.FGColor);
 }
 
 /* LCD初始化 */
 void GUI_DeviceInit(void)
 {
-	GUI_glAPI.SetPixel = _SetPixelClip;
-	GUI_glAPI.DrawHLine = _glDrawHLine;
-	GUI_glAPI.DrawVLine = _glDrawVLine;
-	GUI_glAPI.FillRect =  _glFillRect;
+    GUI_glAPI.SetPixel = _SetPixelClip;
+    GUI_glAPI.DrawHLine = _glDrawHLine;
+    GUI_glAPI.DrawVLine = _glDrawVLine;
+    GUI_glAPI.FillRect = _glFillRect;
     GUI_GDev.xSize = 0;
     GUI_GDev.ySize = 0;
     GUI_GDev.SetPixel = _SetPixel;

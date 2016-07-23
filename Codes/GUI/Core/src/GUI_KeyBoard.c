@@ -11,7 +11,6 @@ void GUI_SendKey(u_8 Key, u_8 Status)
     } else if (Status == GUI_KEYUP){ /* 按键松开 */
         WM_PostMessage(WM_GetActiveWindow(), WM_KEYUP, Key);
     }
-    
 }
 
 /* 按键处理 */
