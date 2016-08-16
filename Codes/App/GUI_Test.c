@@ -49,7 +49,6 @@ static void _RootWinTimer(WM_HWIN hWin)
     //WM_InvalidateRect(_hRootWin, &Rect);
     WM_Invalidate(_hRootWin);
     _FpsVal = 0; /* 帧率清零 */
-    printf("Mem usage: %d/%d bytes.\n", GUI_GetMemUsage(), GUI_GetMemSize());
 }
 
 /* GUI测试 */
@@ -66,7 +65,6 @@ void GUI_Test(void)
     while (1) {
         GUI_Delay(20);
         ++_FpsVal; /* 统计帧率 */
-        WM_Invalidate(_hRootWin);
     }
 }
 
@@ -159,21 +157,93 @@ void Create_Window1(void)
     WINDOW_SetFont(hWin, &GUI_FontUI17_4pp);
 }
 
+void CLockInit(GUI_RECT *r, int s)
+{
+    i_16 t;
+    int i;
+    float angle;
+
+    /* 旋转刻度 */
+    for (i = 0; i < 60; ++i) {
+        angle = 3.1415926f / 30 * i;
+        if (!(i % 5)) {
+            t = 84;
+        } else {
+            t = 90;
+        }
+        r->x0 = (i_16)(sinf(angle) * t * s);
+        r->y0 = (i_16)(cosf(angle) * t * s);
+        r->x1 = (i_16)(sinf(angle) * 96 * s);
+        r->y1 = (i_16)(cosf(angle) * 96 * s);
+        r->x0 = 105 * s + r->x0;
+        r->y0 = 105 * s + r->y0;
+        r->x1 = 105 * s + r->x1;
+        r->y1 = 105 * s + r->y1;
+        ++r;
+    }
+}
+
+/* 钟面 */
+void ClockDisp(int time, GUI_RECT *r, int s)
+{
+    int i;
+    i_16 x0, x1, y0, y1;
+    float angle;
+    GUI_POINT Points[3];
+    static const GUI_POINT points[3] = {
+        { 105, 105 - 96 },
+        { 105 - 2, 105 },
+        { 105 + 2, 105 }
+    };
+
+    GUI_SetFGColor(0x00803050);
+    GUI_SetAAFactor(s);
+    /* 旋转刻度 */
+    for (i = 0; i < 60; ++i) {
+        if (!(i % 5)) {
+            GUI_SetPenSize(3 * s);
+        } else {
+            GUI_SetPenSize(2 * s);
+        }
+        GUI_DrawLineAA(r->x0, r->y0, r->x1, r->y1);
+        ++r;
+    }
+    /* 旋转指针 */
+    angle = 3.1415926f / 30 * time;
+    for (i = 0; i < 3; ++i) {
+        Points[i].x = (int)(((points[i].x - 105) * s) * cosf(angle)
+            - ((points[i].y - 105) * s) * sinf(angle) + 105 * s);
+        Points[i].y = (int)(((points[i].x - 105) * s) * sinf(angle)
+            + ((points[i].y - 105) * s) * cosf(angle) + 105 * s);
+    }
+    GUI_SetFGColor(0x00808050);
+    GUI_FillPolygonAA(Points, 3);
+    GUI_SetFGColor(0x00303030);
+    GUI_FillCircleAA(105 * s, 105 * s, 5 * s);
+}
+
 void Graphic_Cb(WM_MESSAGE *pMsg)
 {
-    void GUI_2DTest(float angle);
-    static float angle;
+    int i;
+    static GUI_RECT Rect[60];
+    static int time;
 
     switch (pMsg->MsgId) {
     case WM_PAINT:
         if (GUI_GetPaintWindow() != pMsg->hWin) {
-            GUI_2DTest(angle);
+            ClockDisp(time, Rect, 15);
         }
         break;
+    case WM_CREATED:
+        CLockInit(Rect, 15);
+        break;
     case WM_TIMER:
-        angle += 0.04f;
         WM_Invalidate(WM_GetClientWindow(pMsg->hWin));
-        GUI_ResetTimer((GUI_HTMR)pMsg->Param, 50);
+        if (time < 59) {
+            time++;
+        } else {
+            time = 0;
+        }
         break;
     }
 }
@@ -182,9 +252,19 @@ static void Create_GraphicTest(void)
 {
     GUI_HWIN hWin;
 
-    hWin = WINDOW_Create(200, 20,
-        240, 240,
+    hWin = WINDOW_Create(190, 50, 240, 240,
         NULL, WINDOW4, WM_WS_MOVE, Graphic_Cb);
     WINDOW_SetTitle(hWin, "Graphics Library Test");
-    GUI_TimerCreate(hWin, 0, 50, GUI_TMR_ONE);
+    GUI_TimerCreate(hWin, 0, 1000, GUI_TMR_AUTO);
+
+    /* 置顶窗口实验 */
+    hWin = WINDOW_Create(40, 140, 120, 80,
+        NULL, 0x1000, WM_WS_MOVE | WM_WS_STICK, NULL);
+    WINDOW_SetTitle(hWin, "Top window 1");
+    hWin = WINDOW_Create(60, 160, 120, 80,
+        NULL, 0x1001, WM_WS_MOVE | WM_WS_STICK, NULL);
+    WINDOW_SetTitle(hWin, "Top window 2");
+    hWin = WINDOW_Create(70, 170, 180, 180,
+        NULL, 0x102, WM_WS_MOVE | WM_WS_BACKGND, NULL);
+    WINDOW_SetTitle(hWin, "Bottom window");
 }

@@ -10,7 +10,7 @@ typedef int            i_32;
 typedef void * GUI_HWIN;      /* ´°¿Ú¾ä±ú */
 typedef u_32 GUI_TIME;        /* GUIÊ±¼ä */
 typedef u_32 GUI_COLOR;
-typedef u_16 LCD_COLOR;
+typedef u_32 LCD_COLOR;
 
 #define GUI_ARGB8888       0
 #define GUI_RGB888         1

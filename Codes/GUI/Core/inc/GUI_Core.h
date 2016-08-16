@@ -6,6 +6,7 @@
 #include "GUI_Botton.h"
 #include "GUI_Queue.h"
 #include "GUI_Font.h"
+#include "GUI_Surface.h"
 
 #define GUI_ALIGN_TOP     0x01 /* 顶部对齐 */
 #define GUI_ALIGN_BOTTOM  0x02 /* 底部对齐 */
@@ -43,10 +44,11 @@ typedef struct {
     GUI_COLOR FGColor;      /* 当前前景色 */
     GUI_COLOR BGColor;      /* 当前背景色 */
     GUI_COLOR FontColor;    /* 当前字体颜色 */
-    int       PenSize;      /* 绘制线宽 */
-	int       AAFactor;     /* 抗锯齿因子 */
-	int       AAEnable;     /* 抗锯齿模式已经开启 */
-	int       AAHL;         /* 使用高分辨率坐标 */
+    int PenSize;            /* 绘制线宽 */
+	int AAFactor;           /* 抗锯齿因子 */
+	int AAEnable;           /* 抗锯齿模式已经开启 */
+	int AAHL;               /* 使用高分辨率坐标 */
+    GUI_SURFACE *Surface;   /* 当前绘制面板 */
 }GUI_CONTEXT;
 
 extern GUI_CONTEXT GUI_Context;
@@ -77,5 +79,6 @@ void GUI_SetBGColor(GUI_COLOR Color);
 void GUI_SetFGColor(GUI_COLOR Color);
 void GUI_SetFontColor(GUI_COLOR Color);
 void GUI_SetPenSize(int Width);
+void GUI_SetAAFactor(int Factor);
 
 #endif /* __GUI_CORE_H */

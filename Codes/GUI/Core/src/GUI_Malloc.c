@@ -5,7 +5,7 @@ static MEM_HEAP *__HeapList;   /* 堆链表 */
 static size_t __SizeBytes;     /* 总容量 */
 static size_t __UsageBytes;    /* 总使用量 */
 
-static _ListInsert(MEM_HEAP *heap)
+static void _ListInsert(MEM_HEAP *heap)
 {
     MEM_HEAP *p = __HeapList;
 

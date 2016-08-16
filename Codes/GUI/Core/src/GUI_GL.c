@@ -477,24 +477,32 @@ void GUI_DrawCircle(i_16 x0, i_16 y0, u_16 r)
 /* Ìî³äÔ² */
 static void _FillCircle(int x0, int y0, int r)
 {
-    i_32 i;
-    int imax = (r * 707) / 1000 + 1;
-    i_32 sqmax = r * r + r / 2;
-    int x = r;
+    int i, x;
+    int sqmax = r * r + r / 2;
+    int yMin, yMax;
+    /* First step : find uppermost and lowermost coordinates */
+    yMin = y0 - r;
+    yMax = y0 + r;
 
-    GL_DrawHLine(x0 - r, y0, x0 + r);
-    for (i = 1; i <= imax; ++i) {
-        if (i * i + x * x > sqmax) {
-            /* draw lines from outside */
-            if (x > imax) {
-                GL_DrawHLine(x0 - i + 1, y0 + x, x0 + i - 1);
-                GL_DrawHLine(x0 - i + 1, y0 - x, x0 + i - 1);
-            }
-            --x;
+    /* Draw top half */
+    for (i = 0, x = r; i<r; i++) {
+        int y = y0 - i;
+        if ((y >= yMin) && (y <= yMax)) {
+            /* calc proper x-value */
+            while ((i*i + x*x) >sqmax)
+                --x;
+            GL_DrawHLine(x0 - x, y, x0 + x);
         }
-        /* draw lines from inside (center) */
-        GL_DrawHLine(x0 - x, y0 + i, x0 + x);
-        GL_DrawHLine(x0 - x, y0 - i, x0 + x);
+    }
+    /* Draw bottom half */
+    for (i = 0, x = r; i<r; i++) {
+        int y = y0 + i;
+        if ((y >= yMin) && (y <= yMax)) {
+            /* calc proper x-value */
+            while ((i*i + x*x) >sqmax)
+                --x;
+            GL_DrawHLine(x0 - x, y, x0 + x);
+        }
     }
 }
 
@@ -722,31 +730,35 @@ void GUI_2DTest(float angle)
 {
 	void GUI_2DTestAA(void);
     int i, nodes;
-    float s = 1.0;
+    int s = 8;
     GUI_POINT Point[7];
     GUI_POINT points[] = {
-        { 100, 10 },
+        /*{ 100, 10 },
         { 140, 60 },
         { 115, 50 },
         { 115, 100 },
         { 85, 100 },
         { 85, 50 },
-        { 60, 60 }
+        { 60, 60 }*/
+        /*{ 100 , 96 },
+        { 200, 96 },
+        { 200, 104 },
+        { 100, 104 }*/
+        { 100, 100 },
+        { 160, 100 }
     };
 
     nodes = GUI_COUNTOF(points);
     /* Ðý×ªÍ¼Ïñ */
     for (i = 0; i < nodes; ++i) {
-        Point[i].x = (int)((points[i].x - 100.0f * s) * cosf(angle)
-			- (points[i].y - 100.0f * s) * sinf(angle) + 100.0f * s);
-        Point[i].y = (int)((points[i].x - 100.0f * s) * sinf(angle)
-			+ (points[i].y - 100.0f * s) * cosf(angle) + 100.0f * s);
+        Point[i].x = (int)(((points[i].x - 100.0f) * s) * cosf(angle)
+			- ((points[i].y - 100.0f) * s) * sinf(angle) + 100.0f * s);
+        Point[i].y = (int)(((points[i].x - 100.0f) * s) * sinf(angle)
+			+ ((points[i].y - 100.0f) * s) * cosf(angle) + 100.0f * s);
     }
     GUI_SetFGColor(0x00803050);
-	//GUI_Context.AAFactor = 4;
-    GUI_FillPolygon(Point, nodes);
-    GUI_SetFGColor(0x50000000);
-    GUI_DrawPolygon(Point, nodes);
-	//GUI_2DTestAA();
-    //_waveTest();
+    GUI_SetAAFactor((int)s);
+    GUI_SetPenSize(5 * s);
+    GUI_DrawLineAA(Point[0].x, Point[0].y, Point[1].x, Point[1].y);
+    GUI_FillCircleAA(100 * s, 100 * s, 10 * s);
 }

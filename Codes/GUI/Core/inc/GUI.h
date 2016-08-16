@@ -21,6 +21,7 @@
 #include "RootWindow.h"
 #include "GUI_ClipArea.h"
 #include "GUI_Color.h"
+#include "GUI_Surface.h"
 
 #include "WIDGET.h"
 #include "BUTTON.h"

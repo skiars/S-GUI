@@ -9,12 +9,20 @@
 
 static u_8 _lineBuffer[GUI_AA_LINEBUFFER_SIZE];
 static int _x0, _x1, _y, _xStart, _xEnd;
+static GUI_GLAPI _glAPI;
 
-static void(*_setPixel)(i_16, i_16);
-static void(*_drawHLine)(i_16, i_16, i_16);
-static void(*_drawVLine)(i_16, i_16, i_16);
-static void(*_fillRect)(i_16, i_16, i_16, i_16);
+static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color)
+{
+    GUI_FLIPOUT Cmd;
 
+    Cmd.x0 = x0;
+    Cmd.y0 = y0;
+    Cmd.x1 = x1;
+    Cmd.Color = Color;
+    if (x0 <= x1) {
+        GUI_GDev.DrawHLine(&Cmd);
+    }
+}
 
 /*
 @ 按亮度级别输出像素
@@ -51,12 +59,11 @@ static void _flushLine(void)
             }
             if (j != i) {
                 /* 绘制水平线 */
-                GUI_GDev.DrawHLine(_x0 + i, _y, _x0 + j,
-                    GUI_Context.FGColor);
+                _glDrawHLine(_x0 + i, _y, _x0 + j, GUI_Context.FGColor);
                 i = j;
             } else {
                 /* 绘制单个像素 */
-                GUI_GDev.SetPixel(_x0 + i, _y, GUI_Context.FGColor);
+                GL_SetPixel(_x0 + i, _y, GUI_Context.FGColor);
             }
         } else {
             _lightPixel(_x0 + i, _y, intens);
@@ -120,15 +127,6 @@ static void _SetPixel(i_16 x, i_16 y)
     _DrawHLine(x, y, x);
 }
 
-static void _DrawVLine(i_16 x, i_16 y0, i_16 y1)
-{
-    CLIP_Y(y0, y1);
-    CHECK_X(x);
-    while (y0 <= y1) {
-        _SetPixel(x, y0++);
-    }
-}
-
 static void _FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
 {
     while (y0 <= y1) {
@@ -151,13 +149,9 @@ void GUI_AA_Init(i_16 x0, i_16 x1)
         x0 = x1;
     }
     GUI_Context.AAEnable = 1;
-    _setPixel = GUI_glAPI.SetPixel;
-    GUI_glAPI.SetPixel = _SetPixel;
-    _drawHLine = GUI_glAPI.DrawHLine;
+    _glAPI = GUI_glAPI;
+    GUI_glAPI.SetPixelClip = _SetPixel;
     GUI_glAPI.DrawHLine = _DrawHLine;
-    _drawVLine = GUI_glAPI.DrawVLine;
-    GUI_glAPI.DrawVLine = _DrawVLine;
-    _fillRect = GUI_glAPI.FillRect;
     GUI_glAPI.FillRect = _FillRect;
     _x0 = x0 / GUI_Context.AAFactor - 1;
     _x1 = x1 / GUI_Context.AAFactor + 1;
@@ -172,10 +166,7 @@ void GUI_AA_Exit(void)
 {
     GUI_Context.AAEnable = 0;
     _flushLine();
-    GUI_glAPI.DrawHLine = _drawHLine;
-    GUI_glAPI.DrawVLine = _drawVLine;
-    GUI_glAPI.SetPixel = _setPixel;
-    GUI_glAPI.FillRect = _fillRect;
+    GUI_glAPI = _glAPI;
 }
 
 void GUI_DrawLineAA(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
@@ -203,6 +194,13 @@ void GUI_FillPolygonAA(GUI_POINT *Points, int cnt)
     GUI_GetPolyArea(&r, Points, cnt);
     GUI_AA_Init(r.x0, r.x1);
     GUI_FillPolygon(Points, cnt);
+    GUI_AA_Exit();
+}
+
+void GUI_FillCircleAA(i_16 x0, i_16 y0, i_16 r)
+{
+    GUI_AA_Init(x0 - r, x0 + r);
+    GUI_FillCircle(x0, y0, r);
     GUI_AA_Exit();
 }
 

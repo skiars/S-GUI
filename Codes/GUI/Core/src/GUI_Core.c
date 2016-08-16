@@ -278,6 +278,12 @@ void GUI_SetPenSize(int Width)
     GUI_Context.PenSize = Width;
 }
 
+/* 设置抗锯齿等级 */
+void GUI_SetAAFactor(int Factor)
+{
+    GUI_Context.AAFactor = Factor;
+}
+
 /* GUI调试输出 */
 #if GUI_DEBUG_MODE
 void GUI_DebugOut(const char *s)

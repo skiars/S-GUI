@@ -8,7 +8,7 @@
 /* 用户自己添加的头文件 */
 #include <stdio.h>
 #include "../../App/sdlscreen.h"
-#include "SDL.h"
+#include "SDL/SDL.h"
 
 /* 用于Windows的互斥信号量 */
 SDL_mutex *GUI_Mutex;
@@ -52,8 +52,8 @@ void _GUI_Delay_ms(GUI_TIME tms)
 /* 内存堆空间分配 */
 void * _GUI_GetHeapBuffer(int Page, u_32 *Size)
 {
-    static u_32 heap0[10 * 32 / 4];
-    static u_32 heap1[10 * 320 / 4];
+    static u_32 heap0[1024 * 1 / 4];
+    static u_32 heap1[1024 * 16 / 4];
 
     if (Page == 0) {
         *Size = sizeof(heap0);
@@ -66,11 +66,10 @@ void * _GUI_GetHeapBuffer(int Page, u_32 *Size)
 }
 
 /* GUI图形硬件物理层接口 */
-static GUI_COLOR Phy_GetPixel(u_16 x, u_16 y);
-static void Phy_SetPixel(u_16 x, u_16 y, GUI_COLOR Color);
-void Phy_FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color);
-void Phy_DrawBitmap(u_8 ColorFormat, const unsigned char *pPixel,
-    i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, u_32 Offset);
+static GUI_COLOR Phy_GetPixel(GUI_FLIPOUT *Cmd);
+static void Phy_SetPixel(GUI_FLIPOUT *Cmd);
+void Phy_FillRect(GUI_FLIPOUT *Cmd);
+void Phy_DrawBitmap(GUI_FLIPOUT *Cmd);
 
 /* 图形硬件初始化 */
 void GUI_UserConfig(GUI_DRIVER *phy)
@@ -84,27 +83,27 @@ void GUI_UserConfig(GUI_DRIVER *phy)
 }
 
 /* 读取屏幕上的点 */
-static GUI_COLOR Phy_GetPixel(u_16 x, u_16 y)
+static GUI_COLOR Phy_GetPixel(GUI_FLIPOUT *Cmd)
 {
-    return HAL_GetPixel(x, y);
+    return HAL_GetPixel(Cmd->x0, Cmd->y0);
 }
 
 /* 写入屏幕上的一个点 */
-static void Phy_SetPixel(u_16 x, u_16 y, GUI_COLOR Color)
+static void Phy_SetPixel(GUI_FLIPOUT *Cmd)
 {
-    HAL_SetPixel(x, y, Color);
+    HAL_SetPixel(Cmd->x0, Cmd->y0, Cmd->Color);
 }
 
-void Phy_FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color)
+void Phy_FillRect(GUI_FLIPOUT *Cmd)
 {
-    HAL_FillRect(x0, y0, x1, y1, Color);
+    HAL_FillRect(Cmd->x0, Cmd->y0, Cmd->x1, Cmd->y1, Cmd->Color);
 }
 
-void Phy_DrawBitmap(u_8 ColorFormat, const unsigned char *pPixel,
-    i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, u_32 Offset)
+void Phy_DrawBitmap(GUI_FLIPOUT *Cmd)
 {
-    if (ColorFormat == GUI_RGB888) {
-        HAL_DrawBitmap(HAL_RGB888, pPixel, x0, y0, xSize, ySize, Offset);
+    if (Cmd->SrcFormat == GUI_RGB888) {
+        HAL_DrawBitmap(HAL_RGB888, Cmd->pSrc,
+            Cmd->x0, Cmd->y0, Cmd->xSize, Cmd->ySize, Cmd->Offset);
     }
 }
 

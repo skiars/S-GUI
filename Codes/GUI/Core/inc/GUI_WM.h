@@ -34,6 +34,9 @@
 #define WM_WS_TRANS          (1 << 1)   /* 透明窗口 */
 #define WM_WS_MOVE           (1 << 2)   /* 可移动的窗口 */
 #define WM_WS_INVAILD        (1 << 3)   /* 无效窗口  */
+#define WM_WS_BACKGND        (1 << 4)   /* 背景窗口 */
+#define WM_WS_STICK          (1 << 5)   /* 置顶窗口 */
+#define WM_WS_HIDE           (1 << 6)   /* 隐藏的窗口 */
 
 /* 保留ID */
 #define WM_NULL_ID          0x0000
@@ -85,6 +88,11 @@ GUI_RESULT WM_SetActiveWindow(WM_HWIN hWin);
 WM_HWIN WM_GetActiveWindow(void);
 GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin);
 WM_HWIN WM_GetForegroundWindow(void);
+void WM_MoveToBottom(WM_HWIN hWin);
+void WM_MoveToTop(WM_HWIN hWin);
+void WM_SetStickWindow(WM_HWIN hWin);
+void WM_ResetStickWindow(WM_HWIN hWin);
+void WM_SetBackgroundWindow(WM_HWIN hWin);
 WM_HWIN WM_CreateWindowAsChild(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize,
     WM_HWIN hParent, u_16 Style, u_16 Id, WM_CALLBACK *WinCb, u_32 bytes);
 void WM_DeleteWindow(WM_HWIN hWin);

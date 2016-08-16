@@ -1,5 +1,5 @@
 #include "sdlscreen.h"
-#include "SDL.h"
+#include "SDL/SDL.h"
 #include "GUI.h"
 #include "GUI_Test.h"
 

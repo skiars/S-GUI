@@ -31,6 +31,7 @@
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Queue.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Rect.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_String.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Surface.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Timer.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_TouchPad.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_WM.c" />
@@ -65,6 +66,7 @@
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Queue.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Rect.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_String.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Surface.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Timer.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_TouchPad.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_WM.h" />
@@ -125,11 +127,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\Codes\GUI\Config;..\..\Codes\GUI\Core\inc;..\..\Codes\GUI\Fonts;..\..\Codes\GUI\Widget;..\..\Codes\sdl\include\vendor\win32\SDL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Codes\GUI\Config;..\..\Codes\GUI\Core\inc;..\..\Codes\GUI\Fonts;..\..\Codes\GUI\Widget;..\..\Codes\sdl\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\..\Codes\sdl\win32\SDL.lib;..\..\Codes\sdl\win32\SDL_image.lib;..\..\Codes\sdl\win32\SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\Codes\sdl\win32\SDL.lib;..\..\Codes\sdl\win32\SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
       <Command>

@@ -74,66 +74,6 @@ GUI_RESULT WM_PostMessage(WM_HWIN hWin, u_16 MsgId, GUI_PARAM Param)
     return GUI_PostMessage(&Msg);
 }
 
-/* 裁剪透明窗口的子窗口 */
-static GUI_AREA _ClipTransChildren(GUI_AREA L, WM_Obj *pWin)
-{
-    for (pWin = pWin->hFirstChild; pWin && L; pWin = pWin->hNext) {
-        if (pWin->Status & WM_WS_TRANS) {
-            L = _ClipTransChildren(L, pWin); /* 裁剪子窗口 */
-        } else {
-            L = GUI_ClipExcludeRect(L, &pWin->Rect);  /* 裁剪透明窗口的孩子 */
-        }
-    }
-    return L;
-}
-
-#if 0
-/* 为一个窗口计算裁剪矩形链表 */
-static GUI_AREA WM__ClipWindowArea(WM_HWIN hWin)
-{
-    WM_Obj *pWin = hWin, *pObj;
-    GUI_RECT Rect1;
-    GUI_AREA Area;
-
-    /* 在考虑遮挡之前,窗口就只有一个裁剪矩形 */
-    Area = GUI_GetRectList(1);
-    if (Area) {
-        Rect1 = WM_GetTaliorInvalidRect(pWin);
-        Area->Rect = Rect1;
-    }
-    /* 窗口会被它的儿子们或者右边的兄弟们(如果有的话)裁剪,也就是遮挡，遍历它的孩子和兄弟们，
-       逐个计算窗口的裁剪矩形链表，最后就能得到这个窗口被它们遮挡后的裁剪矩形链表. */
-    /* 再遍历它右边的同属窗口及祖先的同属窗口 */
-    pObj = pWin;
-    while (pObj != _pRootWin && Area) {
-        while (pObj->hNext && Area) {
-            pObj = pObj->hNext; /* 向右遍历 */
-            /* 如果是普通窗口就直接计算裁剪，如果是透明窗口就用它的孩子来计算裁剪 */
-            if (pObj->Status & WM_WS_TRANS) {
-                Area = _ClipTransChildren(Area, pObj);
-            } else {
-                Area = GUI_ClipExcludeRect(Area, &pObj->Rect);
-            }
-        }
-        pObj = pObj->hParent; /* 向上遍历 */
-    }
-    if (pWin->hFirstChild && Area) {
-        /* 先遍历子窗口 */
-        pObj = pWin->hFirstChild;
-        while (pObj && Area) {
-            /* 如果是普通窗口就直接计算裁剪，如果是透明窗口就用它的孩子来计算裁剪 */
-            if (pObj->Status & WM_WS_TRANS) {
-                Area = _ClipTransChildren(Area, pObj);
-            } else {
-                Area = GUI_ClipExcludeRect(Area, &pObj->Rect);
-            }
-            pObj = pObj->hNext; /* 向右遍历 */
-        }
-    }
-    return Area;
-}
-#endif
-
 /*
 * 将一个矩形裁剪到窗口的可见区域中。
 * 返回值:FALSE,该矩形与窗口的可见区域不相交。
@@ -230,6 +170,7 @@ static void _PaintAll(void)
             GUI_UNLOCK();
         }
         _OutScreen();
+        __InvalidWindowNum = 0;
     }
 }
 
@@ -300,7 +241,9 @@ WM_HWIN WM_GetFrontWindow(WM_HWIN hWin)
     return pWin;
 }
 
-/* 获得某个窗口Z序最高的子窗口 */
+/* 
+ @ 获得某个窗口最顶部的子窗口.
+ @ 如果窗口拥有子窗口则返回最顶部的子窗口,否则返回窗口自己. */
 WM_HWIN WM_GetTopChildWindow(WM_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
@@ -326,10 +269,10 @@ WM_HWIN WM_GetTopWindow(void)
     return WM_GetTopChildWindow(_hRootWin);
 }
 
-/* 将一个窗口添加到父窗口下的最顶层 */
+/* 将一个窗口添加到给定父窗口下的最顶部 */
 void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent)
 {
-    WM_Obj *pWin = hWin, *pObj, *ptr;
+    WM_Obj *pWin = hWin, *pObj;
 
     if (hWin == NULL) {
         return;
@@ -347,17 +290,27 @@ void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent)
         pObj->hFirstChild = pWin;
     } else { /* 父窗口已经有子窗口 */
         pObj = pObj->hFirstChild;
-        while (pObj->hNext) { /* 直到窗口的左兄弟 */
-            pObj = pObj->hNext;
+        if (pObj->Status & WM_WS_STICK) {
+            pWin->hNext = pObj;
+            pObj = pObj->hParent;
+            pObj->hFirstChild = pWin;
+        } else {
+            WM_Obj *pNext = pObj->hNext;
+
+            while (pNext && !(pNext->Status & WM_WS_STICK)) {
+                pObj = pNext;
+                pNext = pNext->hNext;
+            }
+            pWin->hNext = pObj->hNext;
+            pObj->hNext = pWin;
+            /* 取这个窗口Z序最高的子窗口 */
+            pObj = WM_GetTopChildWindow(pObj);
         }
-        pObj->hNext = pWin;
-        /* 取这个窗口Z序最高的子窗口 */
-        pObj = WM_GetTopChildWindow(pObj);
     }
     /* 连接链表 */
-    ptr = WM_GetTopChildWindow(pWin);
-    ptr->hNextLine = pObj->hNextLine;
-    pObj->hNextLine = pWin;
+    pWin = WM_GetTopChildWindow(hWin);
+    pWin->hNextLine = pObj->hNextLine;
+    pObj->hNextLine = hWin;
     GUI_UNLOCK();
 }
 
@@ -395,7 +348,7 @@ void WM_RemoveWindow(WM_HWIN hWin)
 /* 删除窗口 */
 void WM_DeleteWindow(WM_HWIN hWin)
 {
-    WM_Obj *pWin = hWin, *pFront;
+    WM_Obj *pWin = hWin, *pObj, *pFront;
 
     if (hWin == NULL) { /* hWin不能为NULL */
         return;
@@ -407,14 +360,17 @@ void WM_DeleteWindow(WM_HWIN hWin)
     WM_RemoveWindow(pWin); /* 先移除窗口 */
     GUI_ClipWindows(pFront); /* 重新计算剪切域 */
     while (pWin) {
-        hWin = pWin;
+        pObj = pWin;
         pWin = pWin->hNextLine;
-        WM_SendMessage(hWin, WM_DELETE, 0);
-        GUI_TimerDeleteAtWindow(hWin); /* 删除窗口的定时器 */
-        GUI_DeleteWindowClipArea(hWin); /* 删除剪切域 */
-        GUI_Free(hWin); /* 释放空间 */
+        WM_SendMessage(pObj, WM_DELETE, 0);
+        GUI_TimerDeleteAtWindow(pObj);
+        GUI_DeleteWindowClipArea(pObj);
+        GUI_Free(pObj);
     }
-    WM_SetActiveWindow(pFront); /* 设置活动窗口 */
+    if (GUI_Context.hActive == hWin) { /* 重新设置活动窗口 */
+        GUI_Context.hActive = NULL;
+        WM_SetActiveWindow(pFront);
+    }
     GUI_UNLOCK();
 }
 
@@ -485,22 +441,17 @@ WM_HWIN WM_GetActiveWindow(void)
  **/
 GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin)
 {
-    WM_Obj *pObj = hWin;
+    WM_Obj *pWin = hWin;
 
     if (hWin == NULL || hWin == _hRootWin) {
         return GUI_ERR;
     }
     GUI_LOCK();
     /* 先找到它位于根窗口下的祖先 */
-    while (pObj && pObj->hParent != _pRootWin) {
-        pObj = pObj->hParent;
+    while (pWin && pWin->hParent != _pRootWin) {
+        pWin = pWin->hParent;
     }
-    if (WM_GetForegroundWindow() != pObj) {
-        WM_RemoveWindow(pObj); /* 先移除窗口 */
-        WM_AttachWindow(pObj, NULL); /* 插入窗口到最后 */
-        GUI_ClipWindows(pObj);
-        WM_InvalidTree(pObj); /* 窗口及其所有的子窗口无效化 */
-    }
+    WM_MoveToTop(pWin);
     GUI_UNLOCK();
     return GUI_OK;
 }
@@ -518,6 +469,119 @@ WM_HWIN WM_GetForegroundWindow(void)
         GUI_UNLOCK();
     }
     return pWin;
+}
+
+/*
+ @ 将一个窗口移动到最父窗口下的最底部.
+ @ 调用此函数不会使窗口失去活动属性(如果有的话).
+ */
+void WM_MoveToBottom(WM_HWIN hWin)
+{
+    WM_Obj *pWin = hWin, *pParent, *pObj, *pFront;
+
+    if (pWin == NULL || pWin->hParent == NULL) {
+        return;
+    }
+    pParent = pWin->hParent;
+    pObj = pParent->hFirstChild;
+    if (pObj->Status & WM_WS_BACKGND
+        || pWin->Status & (WM_WS_BACKGND | WM_WS_STICK)) {
+        return; /* 已有锁定属性, 无法再把窗口移动到最底部 */
+    }
+    GUI_LOCK();
+    WM_InvalidCoverWindow(pWin, &pWin->Rect); /* 被遮挡的窗口无效化 */
+    pFront = WM_GetFrontHandle(hWin);
+    WM_RemoveWindow(pWin); /* 先移除窗口 */
+    pObj = pParent->hFirstChild;
+    /* 连接父窗口 */
+    pParent->hFirstChild = pWin;
+    pParent->hNextLine = pWin;
+    pWin->hParent = pParent;
+    /* 连接兄弟 */
+    pWin->hNext = pObj;
+    pWin = WM_GetTopChildWindow(pWin);
+    pWin->hNextLine = pObj;
+    GUI_ClipWindows(hWin); /* 重新计算剪切域 */
+    WM_InvalidTree(hWin); /* 窗口及其所有的子窗口无效化 */
+    GUI_ClipWindows(pFront); /* 重新计算剪切域 */
+    WM_InvalidTree(pWin); /* 之前被遮挡的窗口重新计算剪切域 */
+    GUI_UNLOCK();
+}
+
+/* 
+ @ 将一个窗口移动到父窗口下的最顶部
+ @ 调用此函数不会改变窗口原有的活动属性.
+ */
+void WM_MoveToTop(WM_HWIN hWin)
+{
+    WM_Obj *pWin = hWin, *pParent;
+
+    if (hWin == NULL || hWin == _hRootWin) {
+        return;
+    }
+    GUI_LOCK();
+    if (pWin->hNext
+        && !(pWin->Status & (WM_WS_STICK | WM_WS_BACKGND))) {
+        pParent = pWin->hParent;
+        WM_RemoveWindow(pWin); /* 先移除窗口 */
+        WM_AttachWindow(pWin, pParent); /* 插入窗口到最后 */
+        GUI_ClipWindows(pWin); /* 重新计算剪切域 */
+        WM_InvalidTree(pWin); /* 窗口及其所有的子窗口无效化 */
+    }
+    GUI_UNLOCK();
+}
+
+/* 将窗口置顶, 同时会让窗口变为活动窗口 */
+void WM_SetStickWindow(WM_HWIN hWin)
+{
+    WM_Obj *pWin = hWin;
+
+    if (hWin == NULL && pWin->Status & WM_WS_STICK) {
+        return;
+    }
+    GUI_LOCK();
+    WM_MoveToTop(pWin);
+    pWin->Status |= WM_WS_STICK;
+    WM_SetActiveWindow(pWin);
+    GUI_UNLOCK();
+}
+
+/* 取消置顶窗口 */
+void WM_ResetStickWindow(WM_HWIN hWin)
+{
+    WM_Obj *pWin = hWin;
+
+    if (hWin == NULL) {
+        return;
+    }
+    GUI_LOCK();
+    pWin->Status &= ~WM_WS_STICK;
+    WM_MoveToTop(pWin);
+    GUI_UNLOCK();
+}
+
+/*
+ @ 将窗口设置为背景窗口, 窗口必须是根窗口的一级子窗口. 每一级窗口中
+ @ 最多只存在一个背景窗口, 调用本函数会替换已经存在的背景窗口(如果存在).
+ @ 背景窗口将一直置于同级别窗口的底部. 
+ */
+void WM_SetBackgroundWindow(WM_HWIN hWin)
+{
+    WM_Obj *pWin = hWin, *pParent, *pObj;
+
+    if (!pWin || !pWin->hParent) {
+        return;
+    }
+    GUI_LOCK();
+    pWin->Status &= ~WM_WS_BACKGND;
+    pParent = pWin->hParent;
+    pObj = pParent->hFirstChild;
+    if (pObj->Status & WM_WS_BACKGND) {
+        pObj->Status &= ~WM_WS_BACKGND;
+    }
+    WM_MoveToBottom(pWin);
+    pWin->Status |= WM_WS_BACKGND;
+    GUI_UNLOCK();
 }
 
 /*
@@ -566,6 +630,11 @@ WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* 橫坐标 */
     GUI_ClipNewWindow(pObj); /* 更新剪切域 */
     WM_SetActiveWindow(pObj);
     WM_Invalidate(pObj);
+    if (Style & WM_WS_STICK) {
+        WM_SetStickWindow(pObj);
+    } else if (Style & WM_WS_BACKGND) {
+        WM_SetBackgroundWindow(pObj);
+    }
     GUI_UNLOCK();
     return pObj;
 }
@@ -788,10 +857,10 @@ WM_HWIN WM_GetDsektopWindow(WM_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
 
-    if (pWin == NULL || pWin->hParent == NULL || pWin->hParent == _hRootWin) {
+    if (pWin == NULL || pWin->hParent == NULL) {
         return pWin;
     }
-    while (pWin->hParent != _hRootWin) {
+    while (pWin && pWin->hParent != _hRootWin) {
         pWin = pWin->hParent;
     }
     return pWin;

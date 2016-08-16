@@ -4,25 +4,35 @@
 #include "GUI_Config.h"
 #include "GUI_Typedef.h"
 
-#define GL_SetPixel       GUI_GDev.SetPixel
-#define GL_GetPixel       GUI_GDev.GetPixel
-#define GL_DrawBitmap     GUI_GDev.DrawBitmap
-#define GL_SetPixelClip   GUI_glAPI.SetPixel
+#define GL_SetPixel       _GL_SetPixel
+#define GL_GetPixel       _GL_GetPixel
+#define GL_DrawBitmap     _GL_DrawBitmap
+#define GL_SetPixelClip   GUI_glAPI.SetPixelClip
 #define GL_DrawHLine      GUI_glAPI.DrawHLine
-#define GL_DrawVLine      GUI_glAPI.DrawVLine
+#define GL_DrawVLine      _GL_DrawVLine
 #define GL_FillRect	      GUI_glAPI.FillRect
+
+/* 绘图指令 */
+typedef struct {
+    i_16 x0, y0, x1, y1;
+    u_16 xSize, ySize;
+    u_32 Offset;
+    GUI_COLOR Color;
+    const unsigned char *pSrc;
+    unsigned char *pDst;
+    u_8 SrcFormat, DstFormat;
+}GUI_FLIPOUT;
 
 /* 图形设备驱动函数 */
 typedef struct {
     u_16 xSize; /* 显示设备的宽度 */
     u_16 ySize; /* 显示设备的高度 */
-    void (*SetPixel)(u_16 x, u_16 y, GUI_COLOR Color); /* 显示某个像素 */
-    GUI_COLOR (*GetPixel)(u_16 x, u_16 y);             /* 读取某个像素 */
-    void (*DrawHLine)(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color);
-    void(*DrawVLine)(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color);
-    void (*FillRect)(i_16 x0, i_16 y0, i_16 x1, i_16 y1, GUI_COLOR Color);
-    void (*DrawBitmap)(u_8 cFormat, const unsigned char *pData,
-        i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, u_32 Offset);
+    void (*SetPixel)(GUI_FLIPOUT *); /* 显示某个像素 */
+    GUI_COLOR (*GetPixel)(GUI_FLIPOUT *);             /* 读取某个像素 */
+    void (*DrawHLine)(GUI_FLIPOUT *);
+    void (*DrawVLine)(GUI_FLIPOUT *);
+    void (*FillRect)(GUI_FLIPOUT *);
+    void (*DrawBitmap)(GUI_FLIPOUT *);
 } GUI_DRIVER;
 
 /* 图形设备抽象结构 */
@@ -40,15 +50,19 @@ typedef struct {
 
 /* 绘图API定义 */
 typedef struct {
-	void (*SetPixel)(i_16, i_16);
-	void (*DrawHLine)(i_16, i_16, i_16);
-	void (*DrawVLine)(i_16, i_16, i_16);
-	void (*FillRect)(i_16, i_16, i_16, i_16);
+    void (*SetPixelClip)(i_16, i_16);
+    void (*DrawHLine)(i_16, i_16, i_16);
+    void (*FillRect)(i_16, i_16, i_16, i_16);
 } GUI_GLAPI;
 
 extern GUI_DRIVER GUI_GDev;
 extern GUI_GLAPI   GUI_glAPI;
 
+void _GL_SetPixel(i_16 x, i_16 y, GUI_COLOR);
+GUI_COLOR _GL_GetPixel(i_16 x, i_16 y);
+void _GL_DrawVLine(i_16 x0, i_16 y0, i_16 y1);
+void _GL_DrawBitmap(u_8 PixelFormat, const unsigned char *pPixel,
+    i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, int Offset);
 void GUI_DeviceInit(void);
 
 #endif /* __GUI_DRIVER_H */

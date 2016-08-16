@@ -13,7 +13,7 @@
 /* 裁剪矩形链表堆大小，注意不能太小，发现现实出现问题时，应该先增加
  * GUI_RECT_HEAP_SIZE 的值，如果问题没有解决再去排除其他地方的问题。
  **/
-#define GUI_RECT_HEAP_SIZE    100
+#define GUI_RECT_HEAP_SIZE    200
 
 /* 使用图形加速器 */
 #define GUI_USE_GRAPHPHY      0

@@ -129,6 +129,9 @@
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Math.c">
       <Filter>S-GUI\Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Surface.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI.h">
@@ -222,6 +225,9 @@
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Math.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Surface.h">
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
   </ItemGroup>

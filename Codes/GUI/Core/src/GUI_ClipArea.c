@@ -32,6 +32,64 @@ GUI_AREA GUI_ClipExcludeRect(GUI_AREA Area, GUI_RECT *Rect)
     return pDst;
 }
 
+/* 裁剪透明窗口的子窗口 */
+static GUI_AREA _ClipTransChildren(GUI_AREA L, WM_Obj *pWin)
+{
+    for (pWin = pWin->hFirstChild; pWin && L; pWin = pWin->hNext) {
+        if (pWin->Status & WM_WS_TRANS) {
+            L = _ClipTransChildren(L, pWin); /* 裁剪子窗口 */
+        } else {
+            L = GUI_ClipExcludeRect(L, &pWin->Rect);  /* 裁剪透明窗口的孩子 */
+        }
+    }
+    return L;
+}
+
+/* 裁剪一个窗口 */
+GUI_AREA GUI_ClipOneWindow(GUI_HWIN hWin)
+{
+    WM_Obj *pWin = hWin, *pObj;
+    GUI_RECT r;
+    GUI_AREA Area;
+
+    /* 在考虑遮挡之前,窗口就只有一个裁剪矩形 */
+    Area = GUI_GetRectList(1);
+    if (Area) {
+        WM_GetWindowAreaRect(pWin, &r);;
+        Area->Rect = r;
+    }
+    /* 窗口会被它的儿子们或者右边的兄弟们(如果有的话)裁剪,也就是遮挡，遍历它的孩子和兄弟们，
+       逐个计算窗口的裁剪矩形链表，最后就能得到这个窗口被它们遮挡后的裁剪矩形链表. */
+    /* 再遍历它右边的同属窗口及祖先的同属窗口 */
+    pObj = pWin;
+    while (pObj != _pRootWin && Area) {
+        while (pObj->hNext && Area) {
+            pObj = pObj->hNext; /* 向右遍历 */
+            /* 如果是普通窗口就直接计算裁剪，如果是透明窗口就用它的孩子来计算裁剪 */
+            if (pObj->Status & WM_WS_TRANS) {
+                Area = _ClipTransChildren(Area, pObj);
+            } else {
+                Area = GUI_ClipExcludeRect(Area, &pObj->Rect);
+            }
+        }
+        pObj = pObj->hParent; /* 向上遍历 */
+    }
+    if (pWin->hFirstChild && Area) {
+        /* 先遍历子窗口 */
+        pObj = pWin->hFirstChild;
+        while (pObj && Area) {
+            /* 如果是普通窗口就直接计算裁剪，如果是透明窗口就用它的孩子来计算裁剪 */
+            if (pObj->Status & WM_WS_TRANS) {
+                Area = _ClipTransChildren(Area, pObj);
+            } else {
+                Area = GUI_ClipExcludeRect(Area, &pObj->Rect);
+            }
+            pObj = pObj->hNext; /* 向右遍历 */
+        }
+    }
+    return Area;
+}
+
 /**
  @ GUI在添加一个窗口时更新剪切域.
  @ hWin:添加的新窗口句柄.
@@ -40,20 +98,15 @@ void GUI_ClipNewWindow(GUI_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
     GUI_RECT Rect;
-    GUI_AREA Area;
 
     /* 透明窗口直接返回 */
     if (pWin->Status & WM_WS_TRANS) {
         pWin->ClipArea = NULL;
         return;
     }
+    /* 计算新窗口的剪切域 */
+    pWin->ClipArea = GUI_ClipOneWindow(hWin);
     WM_GetWindowAreaRect(hWin, &Rect);
-    /* 在考虑遮挡之前,窗口就只有一个裁剪矩形 */
-    Area = GUI_GetRectList(1);
-    if (Area) { /* 当新建窗口的顶部还有窗口时存在Bug */
-        Area->Rect = Rect;
-        pWin->ClipArea = Area;
-    }
     do {
         pWin = pWin->hParent; /* 跳过透明的祖先 */
     } while (pWin && pWin->Status & WM_WS_TRANS);
