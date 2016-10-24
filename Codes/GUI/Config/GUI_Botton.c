@@ -113,7 +113,7 @@ static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
             Cmd->x0 = x0 + i;
             Cmd->y0 = y0 + j;
             Phy_SetPixel(Cmd);
-            (u_8 *)pSrc += 1;
+            pSrc += 1;
         }
         pSrc += Cmd->Offset;
     }

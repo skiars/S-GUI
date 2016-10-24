@@ -133,9 +133,11 @@ void GUI_FreeIdleRectList(void)
 {
     GUI_AREA pNode, pNext;
 
-    for (pNode = GUI_AreaHeap->pNext; pNode; pNode = pNode->pNext) {
+    pNode = GUI_AreaHeap->pNext;
+    while (pNode) {
         pNext = pNode->pNext;
         GUI_Free(pNode);
+        pNode = pNext;
     }
     GUI_AreaHeap->pNext = NULL;
 }

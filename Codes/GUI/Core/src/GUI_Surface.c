@@ -16,6 +16,7 @@ void GUI_SelectSurface(GUI_SURFACE *pSrfc)
 
 void GUI_FlipSurface(void)
 {
+#if 0
     GUI_SURFACE *pSrfc;
 
     if (GUI_Context.Surface) {
@@ -23,10 +24,12 @@ void GUI_FlipSurface(void)
         GUI_Context.Surface = NULL;
         /* Draw bitmap... */
     }
+#endif
 }
 
 void GUI_FlipSurfaceAt(i_16 xPos, i_16 yPos)
 {
+#if 0
     GUI_SURFACE *pSrfc;
 
     if (GUI_Context.Surface) {
@@ -34,4 +37,5 @@ void GUI_FlipSurfaceAt(i_16 xPos, i_16 yPos)
         GUI_Context.Surface = NULL;
         /* Draw bitmap... */
     }
+#endif
 }

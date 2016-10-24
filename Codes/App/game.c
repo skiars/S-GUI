@@ -102,7 +102,6 @@ void GameWin_Cb(WM_MESSAGE *pMsg)
     int i;
     GUI_RECT *r;
     WM_HWIN hWin, hItem;
-    static GUI_HTMR hTimer;
 
     switch (pMsg->MsgId) {
     case WM_CREATED:
@@ -111,7 +110,7 @@ void GameWin_Cb(WM_MESSAGE *pMsg)
         hWin = WM_GetClientWindow(pMsg->hWin);
         hItem = WM_CreateWindowAsChild(0, 0, r->x1 - r->x0 + 1,
             r->y1 - r->y0 + 1, hWin, 0, GAME_WIN, GameCb, 0);
-        hTimer = GUI_TimerCreate(hItem, 0, 50, GUI_TMR_AUTO);
+        GUI_TimerCreate(hItem, 0, 50, GUI_TMR_AUTO);
         for (i = 0; i < CubeNum / 2; ++i) {
             CubeX[i * 2] = -100;
             CubeX[i * 2 + 1] = 100;

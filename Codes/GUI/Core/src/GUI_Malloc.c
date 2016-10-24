@@ -123,7 +123,7 @@ void * GUI_Malloc(size_t Size)
 
     if (Size) {
         if (Size & 0x03) { /* 4字节对齐 */
-            Size += 4 - Size & 0x03;
+            Size += 4 - (Size & 0x03);
         }
         /* 遍历所有的堆 */
         for (ph = __HeapList; ph && !pn; ph = ph->pNext) {

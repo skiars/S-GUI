@@ -65,7 +65,7 @@ static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
             Cmd->x0 = x0 + i;
             Cmd->y0 = y0 + j;
             HL_SetPixel(Cmd);
-            (u_8 *)pSrc += 1;
+            pSrc += 1;
         }
         pSrc += Cmd->Offset;
     }
@@ -74,9 +74,9 @@ static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
 /* »æÖÆÎ»Í¼ */
 static void _DrawBitmap(GUI_FLIPOUT *Cmd)
 {
-    int i, j, pixBytes;
+    int i, j, pixBytes = 1;
     i_16 x0 = Cmd->x0, y0 = Cmd->y0;
-    const void *pSrc = Cmd->pSrc;
+    const u_8 *pSrc = (const u_8 *)Cmd->pSrc;
 
     if (Cmd->SrcFormat == GUI_RGB565) {
         pixBytes = 2;
@@ -93,9 +93,9 @@ static void _DrawBitmap(GUI_FLIPOUT *Cmd)
             Cmd->x0 = x0 + i;
             Cmd->y0 = y0 + j;
             HL_SetPixel(Cmd);
-            (u_8 *)pSrc += pixBytes;
+            pSrc += pixBytes;
         }
-        (u_8 *)pSrc += Cmd->Offset;
+        pSrc += Cmd->Offset;
     }
 }
 

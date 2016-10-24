@@ -112,7 +112,6 @@ static void __Callback(WM_MESSAGE *pMsg)
 static void __PaintClient(WM_HWIN hWin)
 {
     GUI_RECT Rect;
-    WINDOW_Obj *pObj = WM_GetParentHandle(hWin);
 
     GUI_GetClientRect(&Rect);
     /* ªÊ÷∆±≥æ∞ */

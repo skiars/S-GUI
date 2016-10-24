@@ -6,7 +6,6 @@
 #include "GUI.h"
 #include "GUI_Math.h"
 #include "GUI_GL_AA.h"
-#include <math.h>
 
 /* 全透明直接返回 */
 #define RETURN_TRANSPARENT() \
@@ -626,7 +625,8 @@ static void _FillPolygon(GUI_POINT *Points, int cnt)
                 } else {
                     GL_DrawHLine(pj->x + xPos, y + yPos, pi->x + xPos);
                 }
-            } else if (pi->y < y && pj->y >= y || pj->y < y && pi->y >= y) {
+            } else if (((pi->y < y) && (pj->y >= y))
+                || ((pj->y < y) && (pi->y >= y))) {
                 nodeX[nodes++] = pi->x + ((y - pi->y)
                     * (pj->x - pi->x)) / (pj->y - pi->y);
             }
@@ -710,55 +710,4 @@ void GUI_DrawLines(i_16 x, i_16 y, GUI_POINT *Points, int cnt)
     while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
         _DrawLines(x, y, Points, cnt);
     }
-}
-
-static void _waveTest(void)
-{
-    int i;
-    static GUI_POINT Points[300];
-
-    for (i = 0; i < 300; ++i) {
-        Points[i].x = i * 4;
-        Points[i].y = (int)sinf(i / 3.0f) * 50 * 4;
-    }
-    GUI_Context.AAFactor = 4;
-    GUI_SetPenSize(10);
-    GUI_DrawLines((i_16)100, (i_16)200, Points, 300);
-}
-
-void GUI_2DTest(float angle)
-{
-	void GUI_2DTestAA(void);
-    int i, nodes;
-    int s = 8;
-    GUI_POINT Point[7];
-    GUI_POINT points[] = {
-        /*{ 100, 10 },
-        { 140, 60 },
-        { 115, 50 },
-        { 115, 100 },
-        { 85, 100 },
-        { 85, 50 },
-        { 60, 60 }*/
-        /*{ 100 , 96 },
-        { 200, 96 },
-        { 200, 104 },
-        { 100, 104 }*/
-        { 100, 100 },
-        { 160, 100 }
-    };
-
-    nodes = GUI_COUNTOF(points);
-    /* 旋转图像 */
-    for (i = 0; i < nodes; ++i) {
-        Point[i].x = (int)(((points[i].x - 100.0f) * s) * cosf(angle)
-			- ((points[i].y - 100.0f) * s) * sinf(angle) + 100.0f * s);
-        Point[i].y = (int)(((points[i].x - 100.0f) * s) * sinf(angle)
-			+ ((points[i].y - 100.0f) * s) * cosf(angle) + 100.0f * s);
-    }
-    GUI_SetFGColor(0x00803050);
-    GUI_SetAAFactor((int)s);
-    GUI_SetPenSize(5 * s);
-    GUI_DrawLineAA(Point[0].x, Point[0].y, Point[1].x, Point[1].y);
-    GUI_FillCircleAA(100 * s, 100 * s, 10 * s);
 }

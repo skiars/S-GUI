@@ -62,13 +62,8 @@ Uint32 TimerCb(Uint32 interval, void *param)
 void MessageLoop(void)
 {
     int quit = 1;
-    SDL_Rect rect;
     SDL_Event event;
 
-    rect.x = 0;
-    rect.y = 0;
-    rect.w = HAL_SCREEN_W;
-    rect.h = HAL_SCREEN_H;
     while (quit) {
         SDL_WaitEvent(&event);
         switch (event.type) {

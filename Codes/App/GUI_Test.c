@@ -32,8 +32,8 @@ static void _RootWinPaint(WM_HWIN hWin)
 {
     /* »æÖÆ±³¾° */
     GUI_SetFGColor(0x00C0C0C0);
-    GUI_FillRect(0, 0, GUI_GetScreenWidth(), GUI_GetScreenHeight());
-    //GUI_DrawBitmap(0, 0, 480, 320, &bmpic_rootwin);
+    //GUI_FillRect(0, 0, GUI_GetScreenWidth(), GUI_GetScreenHeight());
+    GUI_DrawBitmap(0, 0, 480, 320, &bmpic_rootwin);
     GUI_DispString(10, 300, _Str);
 }
 
@@ -71,7 +71,6 @@ void GUI_Test(void)
 
 void Window2_Cb(WM_MESSAGE *pMsg)
 {
-    static u_8 Alpha;
     WM_HWIN hWin, hItem;
 
     hWin = WM_GetClientWindow(pMsg->hWin);
@@ -87,7 +86,6 @@ void Window2_Cb(WM_MESSAGE *pMsg)
     case WM_BUTTON_RELEASED:
         if (WM_GetDialogId(pMsg->hWinSrc) == WIN2_BTN1) {
             WM_DeleteWindow(pMsg->hWin);
-            Alpha = 0;
         }
         break;
     case WM_KEYDOWN:
@@ -148,30 +146,4 @@ void Create_Window1(void)
     hWin = WINDOW_Create(20, 20, 120, 80, NULL, WINDOW1, WM_WS_MOVE, Window1_Cb);
     WINDOW_SetTitle(hWin, "S-GUI Demo");
     WINDOW_SetFont(hWin, &GUI_FontUI17_4pp);
-}
-
-void CLockInit(GUI_RECT *r, int s)
-{
-    i_16 t;
-    int i;
-    float angle;
-
-    /* Ðý×ª¿Ì¶È */
-    for (i = 0; i < 60; ++i) {
-        angle = 3.1415926f / 30 * i;
-        if (!(i % 5)) {
-            t = 84;
-        } else {
-            t = 90;
-        }
-        r->x0 = (i_16)(sinf(angle) * t * s);
-        r->y0 = (i_16)(cosf(angle) * t * s);
-        r->x1 = (i_16)(sinf(angle) * 96 * s);
-        r->y1 = (i_16)(cosf(angle) * 96 * s);
-        r->x0 = 105 * s + r->x0;
-        r->y0 = 105 * s + r->y0;
-        r->x1 = 105 * s + r->x1;
-        r->y1 = 105 * s + r->y1;
-        ++r;
-    }
 }

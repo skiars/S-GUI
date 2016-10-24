@@ -214,27 +214,3 @@ void GUI_DrawLinesAA(i_16 x, i_16 y, GUI_POINT *Points, int cnt)
     GUI_DrawLines(x, y, Points, cnt);
     GUI_AA_Exit();
 }
-
-#define M_PI 3.14159265358979323846f
-
-void GUI_2DTestAA(void)
-{
-    int x0, y0, x1, y1;
-    static float angle = 0.0f, a;
-
-    GUI_SetPenSize(2);
-    GUI_Context.AAFactor = 8;
-    GUI_SetFGColor(0x00000000);
-    //for (angle = 0.0; angle <= 360.0; angle += 5.0)
-    {
-        a = angle * M_PI / 180.0f;
-        /* Ðý×ªÍ¼Ïñ */
-        x0 = (int)(((210.0f - 200.0f) * cosf(a) + 200.0f));
-        y0 = (int)(((210.0f - 200.0f) * sinf(a) + 160.0f));
-        x1 = (int)(((350.0f - 200.0f) * cosf(a) + 200.0f));
-        y1 = (int)(((350.0f - 200.0f) * sinf(a) + 160.0f));
-        GUI_DrawLine(x0, y0, x1, y1);
-    }
-    angle += 0.3f;
-    //GUI_DrawLineAA(-50 * 4, 200 * 4, 190 * 4, 220 * 4);
-}

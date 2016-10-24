@@ -8,7 +8,7 @@ endif
 CPP      =	g++
 CC       =	gcc
 BIN      =	demo
-LIBS	 =	../../Codes/sdl/win32/libSDL.dll.a
+LIBS	 =	-lSDL
 CFLAGS   =	$(INCS) -Wall -Ofast
 RM       =	rm -f
 
