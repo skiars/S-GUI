@@ -3,6 +3,7 @@
 
 #include "GUI_Config.h"
 #include "GUI_Typedef.h"
+#include "GUI_Bitmap.h"
 
 #define GL_SetPixel       _GL_SetPixel
 #define GL_GetPixel       _GL_GetPixel
@@ -18,6 +19,7 @@ typedef struct {
     u_16 xSize, ySize;
     u_32 Offset;
     GUI_COLOR Color;
+    const LCD_LOGPALETTE *pLog;
     const unsigned char *pSrc;
     unsigned char *pDst;
     u_8 SrcFormat, DstFormat;
@@ -62,7 +64,8 @@ void _GL_SetPixel(i_16 x, i_16 y, GUI_COLOR);
 GUI_COLOR _GL_GetPixel(i_16 x, i_16 y);
 void _GL_DrawVLine(i_16 x0, i_16 y0, i_16 y1);
 void _GL_DrawBitmap(u_8 PixelFormat, const unsigned char *pPixel,
-    i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, int Offset);
+    i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, int Offset,
+    const LCD_LOGPALETTE *pLog);
 void GUI_DeviceInit(void);
 
 #endif /* __GUI_DRIVER_H */

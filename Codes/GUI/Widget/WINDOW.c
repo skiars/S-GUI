@@ -31,11 +31,11 @@ static void __Paint(WM_HWIN hWin)
     
     /* 绘制标题栏 */
     if (pObj != WM_GetActiveWindow()) {
-        GUI_SetFGColor(pObj->Widget.Skin.CaptionColor[1]);
-        GUI_SetFontColor(pObj->Widget.Skin.FontColor[1]);
+        GUI_SetFGColor(WINDOW_CAPTION_COLOR2);
+        GUI_SetFontColor(WINDOW_TITLE_COLOR2);
     } else {
-        GUI_SetFGColor(pObj->Widget.Skin.CaptionColor[0]);
-        GUI_SetFontColor(pObj->Widget.Skin.FontColor[0]);
+        GUI_SetFGColor(WINDOW_CAPTION_COLOR1);
+        GUI_SetFontColor(WINDOW_TITLE_COLOR1);
     }
     GUI_FillRect(1, 1, xSize - 2, pObj->CaptionHeight - 1);
     /* 绘制标题 */
@@ -44,9 +44,9 @@ static void __Paint(WM_HWIN hWin)
     GUI_DispStringInRect(&Rect, pObj->Title, GUI_ALIGN_VCENTER); /* 垂直居中 */
     /* 绘制边框 */
     if (pObj != WM_GetActiveWindow()) {
-        GUI_SetFGColor(pObj->Widget.Skin.FontColor[1]);
+        GUI_SetFGColor(WINDOW_TITLE_COLOR2);
     } else {
-        GUI_SetFGColor(pObj->Widget.Skin.CaptionColor[0]);
+        GUI_SetFGColor(WINDOW_CAPTION_COLOR1);
     }
     GUI_DrawRect(0, 0, xSize, ySize);
 }
@@ -116,7 +116,7 @@ static void __PaintClient(WM_HWIN hWin)
 
     GUI_GetClientRect(&Rect);
     /* 绘制背景 */
-    GUI_SetFGColor(pObj->Widget.Skin.BackColor[0]);
+    GUI_SetFGColor(WINDOW_BODY_BKC);
     GUI_FillRect(0, 0, Rect.x1 + 1, Rect.y1 + 1);
 }
 
@@ -130,8 +130,6 @@ static void __ClientCallback(WM_MESSAGE *pMsg)
     switch (pMsg->MsgId) {
     case WM_PAINT:
         __PaintClient(pMsg->hWin);
-        break;
-    case WM_DELETE:
         break;
     case WM_SET_FOCUS:
         pMsg->hWin = hParent;
@@ -155,22 +153,25 @@ static void __ClientCallback(WM_MESSAGE *pMsg)
 static void __BtnPaint(GUI_HWIN hWin)
 {
     GUI_RECT Rect;
+	i_16 x0, y0;
+	GUI_COLOR lColor = WINDOW_TITLE_COLOR1;
 
-    GUI_SetFontColor(((WIDGET *)hWin)->Skin.FontColor[0]);
-    if (WM_GetActiveWindow() != WM_GetDsektopWindow(hWin)) {
-        GUI_SetFGColor(((WIDGET *)hWin)->Skin.BackColor[1]);
-        GUI_SetFontColor(((WIDGET *)hWin)->Skin.FontColor[1]);
-    } else if (BUTTON_GetStatus(hWin)) { /* 按下 */
-        GUI_SetFGColor(((WIDGET *)hWin)->Skin.EdgeColor[0]);
-    } else {
-        GUI_SetFGColor(((WIDGET *)hWin)->Skin.BackColor[0]);
-    }
     GUI_GetClientRect(&Rect);
-    /* 绘制背景 */
-    GUI_FillRect(0, 0, Rect.x1 + 1, Rect.y1 + 1);
-    GUI_DispStringInRect(&Rect, "X", GUI_ALIGN_VCENTER | GUI_ALIGN_HCENTER);
+    if (WM_GetActiveWindow() != WM_GetDsektopWindow(hWin)) {
+		lColor = WINDOW_TITLE_COLOR2;
+    } else if (BUTTON_GetStatus(hWin)) { /* 按下 */
+		GUI_SetFGColor(0x00D04040);
+        GUI_FillRect(0, 0, Rect.x1 + 1, Rect.y1 + 1);
+    }
+    /* 绘制'X' */
+	GUI_SetFGColor(lColor);
+	x0 = Rect.x0 + (Rect.x1 - Rect.x0 - 9) / 2;
+	y0 = Rect.y0 + (Rect.y1 - Rect.y0 - 9) / 2;
+	GUI_DrawLine(x0, y0, x0 + 9, y0 + 9);
+	GUI_DrawLine(x0, y0 + 9, x0 + 9, y0);
 }
 
+// 创建客户区
 static void __CreateClient(WINDOW_Obj *pObj)
 {
     u_16 xSize, ySize;
@@ -185,19 +186,15 @@ static void __CreateClient(WINDOW_Obj *pObj)
 /* 关闭按钮 */
 void __CreateBtn(WINDOW_Obj *pObj)
 {
-    u_16 xSize, ySize;
-    GUI_RECT *r = &pObj->Widget.Win.Rect;
+	u_16 xSize, ySize;
+	GUI_RECT *r = &pObj->Widget.Win.Rect;
 
-    xSize = r->x1 - r->x0 + 1;
-    ySize = pObj->CaptionHeight - 2;
-    pObj->hBtn = BUTTON_Create(xSize - ySize * 4 / 3 - 1,
-        1, ySize * 4 / 3, ySize, pObj, 0, 0);
-    WIDGET_SetPaintFunction(pObj->hBtn, __BtnPaint);
-    ((WIDGET *)pObj->hBtn)->Skin.BackColor[0] = WINDOW_CAPTION_COLOR1;
-    ((WIDGET *)pObj->hBtn)->Skin.BackColor[1] = WINDOW_CAPTION_COLOR2;
-    ((WIDGET *)pObj->hBtn)->Skin.EdgeColor[0] = 0x00D04040;
-    ((WIDGET *)pObj->hBtn)->Skin.FontColor[0] = WINDOW_TITLE_COLOR1;
-    ((WIDGET *)pObj->hBtn)->Skin.FontColor[1] = WINDOW_TITLE_COLOR2;
+	xSize = r->x1 - r->x0 + 1;
+	ySize = pObj->CaptionHeight - 2;
+	pObj->hBtn = BUTTON_Create(xSize - ySize * 4 / 3 - 1,
+		1, ySize * 4 / 3, ySize, pObj, 0, 0);
+	WIDGET_SetPaintFunction(pObj->hBtn, __BtnPaint);
+    WM_SetTransWindow(pObj->hBtn, 1);
 }
 
 /*
@@ -230,13 +227,6 @@ WM_HWIN WINDOW_Create(i_16 x0,
         return NULL;
     }
     pObj->CaptionHeight = WINDOW_DEF_CAPHEIGHT;  /* 标题栏高度 */
-    /* 配色 */
-    pObj->Widget.Skin.CaptionColor[0] = WINDOW_CAPTION_COLOR1;  /* 标题栏 */
-    pObj->Widget.Skin.CaptionColor[1] = WINDOW_CAPTION_COLOR2;
-    pObj->Widget.Skin.EdgeColor[0] = WINDOW_EDGE_COLOR;        /* 边线 */
-    pObj->Widget.Skin.BackColor[0] = WINDOW_BODY_BKC;          /* 底色 */
-    pObj->Widget.Skin.FontColor[0] = WINDOW_TITLE_COLOR1;
-    pObj->Widget.Skin.FontColor[1] = WINDOW_TITLE_COLOR2;
     pObj->UserCb = cb;
     WIDGET_SetPaintFunction(pObj, __Paint);
     WINDOW_SetTitle(pObj, ""); /* 设置初始字符串 */
@@ -264,16 +254,5 @@ GUI_RESULT WINDOW_SetTitle(WM_HWIN hWin, const char *str)
 GUI_RESULT WINDOW_SetFont(WM_HWIN hWin, GUI_FONT *Font)
 {
     WIDGET_SetFont(hWin, Font);
-    return GUI_OK;
-}
-
-/* WINDOW设置为透明窗口 */
-GUI_RESULT WINDOW_SetAllAlpha(WM_HWIN hWin, u_8 Alpha)
-{
-    WINDOW_Obj *pObj = hWin;
-    
-    /* 设置Alpha */
-    WIDGET_Alpha(hWin, WIDGET_ALL, 0, Alpha);
-    WM_SetTransWindow(pObj->hClient, 1);
     return GUI_OK;
 }

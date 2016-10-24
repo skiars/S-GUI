@@ -93,44 +93,73 @@ void GUI_MoveRect(GUI_RECT *Rect, i_16 dX, i_16 dY)
     Rect->y1 += dY;
 }
 
-/* 窗口裁剪矩形区域私有堆初始化 */
-GUI_RESULT GUI_RectListInit(u_16 num)
+/* 获取一个窗口裁剪堆 */
+static GUI_AREA _GetRectList(u_16 num)
 {
-    GUI_AREA pNode;
+    GUI_AREA pNode, pList;
 
+    if (!num) {
+        return NULL;
+    }
     /* 申请内存(包括一个表头) */
-    ++num;
-    GUI_AreaHeap = GUI_Malloc(sizeof(AREA_NODE) * (u_32)num);
-    if (GUI_AreaHeap == NULL) {
-        return GUI_ERR; /* 申请失败 */
+    pList = GUI_Malloc(sizeof(AREA_NODE));
+    for (pNode = pList; --num && pNode; pNode = pNode->pNext) {
+        pNode->pNext = GUI_Malloc(sizeof(AREA_NODE));
     }
-    pNode = GUI_AreaHeap;
-    while (--num) { /* 关联链表pNext */
-        pNode->pNext = pNode + 1;
-        ++pNode;
+    if (pNode == NULL) {
+        /* 释放链表 */
+        for (pNode = pList; pNode; pNode = pNode->pNext) {
+            GUI_Free(pNode);
+        }
+        return NULL;
+    } else {
+        pNode->pNext = NULL;
     }
-    pNode->pNext = NULL;
-    return GUI_OK;
+    return pList;
+}
+
+/* 窗口裁剪矩形区域私有堆初始化 */
+GUI_RESULT GUI_RectListInit(void)
+{
+    GUI_AreaHeap = _GetRectList(1);
+    if (GUI_AreaHeap) {
+        return GUI_OK;
+    }
+    return GUI_ERR;
+}
+
+/* 释放空闲的剪切域堆 */
+void GUI_FreeIdleRectList(void)
+{
+    GUI_AREA pNode, pNext;
+
+    for (pNode = GUI_AreaHeap->pNext; pNode; pNode = pNode->pNext) {
+        pNext = pNode->pNext;
+        GUI_Free(pNode);
+    }
+    GUI_AreaHeap->pNext = NULL;
 }
 
 /* 申请一个裁剪矩形链表 */
 GUI_AREA GUI_GetRectList(u_16 num)
 {
-    GUI_AREA pNode;
-    GUI_AREA Area = GUI_AreaHeap;
+    int n = num;
+    GUI_AREA pNode, pLast, Area = GUI_AreaHeap;
 
-    if (!num) {
+    if (!num && !Area) {
         return NULL;
     }
     pNode = Area;
-    while (pNode && num--) {
+    pLast = Area;
+ReTest:
+    while (pNode && n--) {
+        pLast = pNode;
         pNode = pNode->pNext;
     }
     if (pNode == NULL) { /* 容量不够 */
-#if GUI_DEBUG_MODE
-        GUI_DEBUG_OUT("GUI clip rect heap overflow.");
-#endif
-        return NULL;
+        pLast->pNext = _GetRectList(n + 1);
+        pNode = pLast->pNext;
+        goto ReTest;
     }
     Area = Area->pNext;
     GUI_AreaHeap->pNext = pNode->pNext;

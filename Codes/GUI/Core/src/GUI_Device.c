@@ -51,6 +51,26 @@ static void _FillRect(GUI_FLIPOUT *Cmd)
     }
 }
 
+/* 绘制查色表位图 */
+static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
+{
+    int i, j;
+    i_16 x0 = Cmd->x0, y0 = Cmd->y0;
+    const u_8 *pSrc = Cmd->pSrc;
+    const GUI_COLOR *pLog = Cmd->pLog->pPalEntries;
+
+    for (j = 0; j < Cmd->ySize; ++j) {
+        for (i = 0; i < Cmd->xSize; ++i) {
+            Cmd->Color = pLog[*pSrc];
+            Cmd->x0 = x0 + i;
+            Cmd->y0 = y0 + j;
+            HL_SetPixel(Cmd);
+            (u_8 *)pSrc += 1;
+        }
+        pSrc += Cmd->Offset;
+    }
+}
+
 /* 绘制位图 */
 static void _DrawBitmap(GUI_FLIPOUT *Cmd)
 {
@@ -62,13 +82,16 @@ static void _DrawBitmap(GUI_FLIPOUT *Cmd)
         pixBytes = 2;
     } else if (Cmd->SrcFormat == GUI_RGB888) {
         pixBytes = 3;
+    } else if (Cmd->SrcFormat == GUI_LOG) {
+        _DrawLogBitmap(Cmd);
+        return;
     }
     Cmd->Offset *= pixBytes;
     for (j = 0; j < Cmd->ySize; ++j) {
         for (i = 0; i < Cmd->xSize; ++i) {
             Cmd->Color = GUI_RGB565To888(*(u_16 *)pSrc);
             Cmd->x0 = x0 + i;
-            Cmd->y0 = y0 + i;
+            Cmd->y0 = y0 + j;
             HL_SetPixel(Cmd);
             (u_8 *)pSrc += pixBytes;
         }
@@ -164,7 +187,8 @@ void _GL_DrawBitmap(u_8 PixelFormat,
     i_16 y0,
     u_16 xSize,
     u_16 ySize,
-    int Offset)
+    int Offset,
+    const LCD_LOGPALETTE *pLog)
 {
     GUI_FLIPOUT Cmd;
 
@@ -175,6 +199,7 @@ void _GL_DrawBitmap(u_8 PixelFormat,
     Cmd.xSize = xSize;
     Cmd.ySize = ySize;
     Cmd.Offset = Offset;
+    Cmd.pLog = pLog;
     GUI_GDev.DrawBitmap(&Cmd);
 }
 

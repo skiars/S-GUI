@@ -52,8 +52,8 @@ void _GUI_Delay_ms(GUI_TIME tms)
 /* 内存堆空间分配 */
 void * _GUI_GetHeapBuffer(int Page, u_32 *Size)
 {
-    static u_32 heap0[1024 * 1 / 4];
-    static u_32 heap1[1024 * 16 / 4];
+    static u_32 heap0[1024 * 10 / 4];
+    static u_32 heap1[1024 * 10 / 4];
 
     if (Page == 0) {
         *Size = sizeof(heap0);
@@ -99,11 +99,33 @@ void Phy_FillRect(GUI_FLIPOUT *Cmd)
     HAL_FillRect(Cmd->x0, Cmd->y0, Cmd->x1, Cmd->y1, Cmd->Color);
 }
 
+/* 绘制查色表位图 */
+static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
+{
+    int i, j;
+    i_16 x0 = Cmd->x0, y0 = Cmd->y0;
+    const u_8 *pSrc = Cmd->pSrc;
+    const GUI_COLOR *pLog = Cmd->pLog->pPalEntries;
+
+    for (j = 0; j < Cmd->ySize; ++j) {
+        for (i = 0; i < Cmd->xSize; ++i) {
+            Cmd->Color = pLog[*pSrc];
+            Cmd->x0 = x0 + i;
+            Cmd->y0 = y0 + j;
+            Phy_SetPixel(Cmd);
+            (u_8 *)pSrc += 1;
+        }
+        pSrc += Cmd->Offset;
+    }
+}
+
 void Phy_DrawBitmap(GUI_FLIPOUT *Cmd)
 {
     if (Cmd->SrcFormat == GUI_RGB888) {
         HAL_DrawBitmap(HAL_RGB888, Cmd->pSrc,
             Cmd->x0, Cmd->y0, Cmd->xSize, Cmd->ySize, Cmd->Offset);
+    } else if (Cmd->SrcFormat == GUI_LOG) {
+        _DrawLogBitmap(Cmd);
     }
 }
 

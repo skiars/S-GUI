@@ -13,22 +13,22 @@ static void __Paint(WM_HWIN hWin)
     xSize = Rect.x1 + 1;
     ySize = Rect.y1 + 1;
     if (pObj->Check) {
-        GUI_SetFGColor(pObj->Widget.Skin.EdgeColor[1]);
+        GUI_SetFGColor(0x002060FF);
     } else {
-        GUI_SetFGColor(pObj->Widget.Skin.EdgeColor[0]);
+        GUI_SetFGColor(0x00708090);
     }
     /* 绘制边框 */
     GUI_DrawRect(0, 0, xSize, ySize);
     if (!pObj->Check && hFocus == pObj) {
-        GUI_SetFGColor(pObj->Widget.Skin.EdgeColor[1]);
+        GUI_SetFGColor(0x002060FF);
         GUI_DrawRect(1, 1, xSize - 2, ySize - 2);
     }
     if (pObj->Check && hFocus == pObj) {
-        GUI_SetFGColor(pObj->Widget.Skin.BackColor[1]);
-        GUI_SetFontColor(pObj->Widget.Skin.FontColor[1]);
+        GUI_SetFGColor(0X00B0E2FF);
+        GUI_SetFontColor(0X00000000);
     } else {
-        GUI_SetFGColor(pObj->Widget.Skin.BackColor[0]);
-        GUI_SetFontColor(pObj->Widget.Skin.FontColor[0]);
+        GUI_SetFGColor(0X00E5E5E5);
+        GUI_SetFontColor(0X00000000);
         pObj->Check = 0;
     }
     /* 绘制按键内部 */
@@ -110,13 +110,6 @@ WM_HWIN BUTTON_Create(i_16 x0,
     if (pObj == NULL) {
         return NULL;
     }
-    /* 配色 */
-    pObj->Widget.Skin.EdgeColor[0] = 0x00708090;  /* 边线未按下 */
-    pObj->Widget.Skin.EdgeColor[1] = 0x002060FF;  /* 边线按下 */
-    pObj->Widget.Skin.BackColor[0] = 0X00E5E5E5;  /* 背景未按下 */
-    pObj->Widget.Skin.BackColor[1] = 0X00B0E2FF;  /* 背景按下 */
-    pObj->Widget.Skin.FontColor[0] = 0X00000000;  /* 字体没按下 */
-    pObj->Widget.Skin.FontColor[1] = 0X00000000;  /* 字体按下 */
     pObj->Check = 0;                /* 没有按下 */
     WIDGET_SetPaintFunction(pObj, __Paint);
     BUTTON_SetTitle(pObj, "");      /* 设置初始字符串 */
@@ -124,26 +117,23 @@ WM_HWIN BUTTON_Create(i_16 x0,
     return pObj;
 }
 
-GUI_RESULT BUTTON_SetTitle(WM_HWIN hWin, const char *str)
+void BUTTON_SetTitle(WM_HWIN hWin, const char *str)
 {
-    ((BUTTON_Obj*)hWin)->Title = (char*)str;
-    return GUI_OK;
+    ((BUTTON_Obj*)hWin)->Title = (char *)str;
 }
 
-GUI_RESULT BUTTON_SetFont(WM_HWIN hWin, GUI_FONT *Font)
+void BUTTON_SetFont(WM_HWIN hWin, GUI_FONT *Font)
 {
     WIDGET_SetFont(hWin, Font);
-    return GUI_OK;
 }
 
 /* 按键按下API */
-GUI_RESULT BUTTON_Check(WM_HWIN hWin, u_8 NewStatus)
+void BUTTON_Check(WM_HWIN hWin, u_8 NewStatus)
 {
     BUTTON_Obj *pObj = hWin;
     
     pObj->Check = NewStatus;
     WM_Invalidate(hWin);
-    return GUI_OK;
 }
 
 /* 获取按键状态 */

@@ -36,7 +36,7 @@ GUI_RESULT GUI_Init(void)
     /* 初始化图形硬件 */
     GUI_DeviceInit();
     /* 初始化窗口剪切域裁剪私有堆 */
-    if (GUI_RectListInit(GUI_RECT_HEAP_SIZE) == GUI_ERR) {
+    if (GUI_RectListInit() == GUI_ERR) {
         return GUI_ERR;
     }
     /* 初始化消息队列 */
@@ -86,8 +86,13 @@ u_16 GUI_GetScreenHeight(void)
 void GUI_Delay(GUI_TIME tms)
 {
     GUI_TIME t = GUI_GetTime();
+    static GUI_TIME t_last;
 
     WM_Exec();
+    if (t > t_last + GUI_AUTO_MANAGE_TIME) {
+        t_last = t;
+        GUI_FreeIdleRectList();
+    }
     t = GUI_GetTime() - t; /* 计算执行WM_Exec()的时间 */
     if (tms > t) {
         _GUI_Delay_ms(tms - t); /* 延时 */

@@ -10,16 +10,14 @@
 /* 最大消息嵌套层数 */
 #define GUI_MAX_MSG_NEST      10
 
-/* 裁剪矩形链表堆大小，注意不能太小，发现现实出现问题时，应该先增加
- * GUI_RECT_HEAP_SIZE 的值，如果问题没有解决再去排除其他地方的问题。
- **/
-#define GUI_RECT_HEAP_SIZE    200
-
 /* 使用图形加速器 */
 #define GUI_USE_GRAPHPHY      0
 
 /* 调试模式开关 */
 #define GUI_DEBUG_MODE        1
+
+/* 自动维护时间 */
+#define GUI_AUTO_MANAGE_TIME  5000
 
 /* 绘制多变形时支持的最大边数 */
 #define GUI_MAX_POLY_CORNERS  1000

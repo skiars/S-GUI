@@ -60,7 +60,7 @@ static MEM_NODE * __alloc(MEM_NODE *pl, size_t Size)
     }
     if (pl) {
         /* 空间够大则进行分割 */
-        if (pl->Size > Size + sizeof(MEM_NODE) * 2) {
+        if (pl->Size > Size + (sizeof(MEM_NODE) << 1)) {
             pl->Size -= Size + sizeof(MEM_NODE);
             pn = (MEM_NODE *)((char *)pl + pl->Size);
             pn->pNext = pl->pNext;
