@@ -1,7 +1,7 @@
-#include "GUI_Rect.h"
+ï»¿#include "GUI_Rect.h"
 #include "GUI.h"
 
-/* ½«±íÊ¾¾ØÐÎµÄ×ø±ê×ª»»Îª½á¹¹Ìå */
+/* å°†è¡¨ç¤ºçŸ©å½¢çš„åæ ‡è½¬æ¢ä¸ºç»“æž„ä½“ */
 GUI_BOOL GUI_Val2Rect(GUI_RECT *pDst,
     i_16 x0,
     i_16 y0,
@@ -18,34 +18,34 @@ GUI_BOOL GUI_Val2Rect(GUI_RECT *pDst,
     return FALSE;
 }
 
-/* È¡Á½¸ö¾ØÐÎÏà½»µÄ²¿·Ö,½á¹û´æ´¢ÔÚ*pDstÀïÃæ,±ÈGUI_RectAndCalc()¿ì */
+/* å–ä¸¤ä¸ªçŸ©å½¢ç›¸äº¤çš„éƒ¨åˆ†,ç»“æžœå­˜å‚¨åœ¨*pDsté‡Œé¢,æ¯”GUI_RectAndCalc()å¿« */
 GUI_BOOL GUI_RectOverlay(GUI_RECT *pDst, GUI_RECT *a, GUI_RECT *b)
 {
-    /*  ×óÉÏ½ÇµÄ½»µã  */
+    /*  å·¦ä¸Šè§’çš„äº¤ç‚¹  */
     pDst->x0 = MAX(a->x0, b->x0);
     pDst->y0 = MAX(a->y0, b->y0);
-    /*  ÓÒÏÂ½ÇµÄ½»µã  */
+    /*  å³ä¸‹è§’çš„äº¤ç‚¹  */
     pDst->x1 = MIN(a->x1, b->x1);
     pDst->y1 = MIN(a->y1, b->y1);
     
     if (pDst->x0 > pDst->x1 || pDst->y0 > pDst->y1) {
-        return FALSE; /* Á½¸ö¾ØÐÎ²»Ïà½» */
+        return FALSE; /* ä¸¤ä¸ªçŸ©å½¢ä¸ç›¸äº¤ */
     }
     return TRUE;
 }
 
-/* È¡Á½¸ö¾ØÐÎ²¢¼¯,±ÈGUI_RectOrCalc()¿ì£¬aºÍb²»ÄÜÊÇNULL */
+/* å–ä¸¤ä¸ªçŸ©å½¢å¹¶é›†,æ¯”GUI_RectOrCalc()å¿«ï¼Œaå’Œbä¸èƒ½æ˜¯NULL */
 void GUI_RectSum(GUI_RECT *pDst, GUI_RECT *a, GUI_RECT *b)
 {
-    /*  ×óÉÏ½ÇµÄÆðµã  */
+    /*  å·¦ä¸Šè§’çš„èµ·ç‚¹  */
     pDst->x0 = MIN(a->x0, b->x0);
     pDst->y0 = MIN(a->y0, b->y0);
-    /*  ÓÒÏÂ½ÇµÄÖÕµã  */
+    /*  å³ä¸‹è§’çš„ç»ˆç‚¹  */
     pDst->x1 = MAX(a->x1, b->x1);
     pDst->y1 = MAX(a->y1, b->y1);
 }
 
-/* ¼ì²éÒ»¸öµãÊÇ·ñÔÚÒ»¸ö¾ØÐÎÄÚ */
+/* æ£€æŸ¥ä¸€ä¸ªç‚¹æ˜¯å¦åœ¨ä¸€ä¸ªçŸ©å½¢å†… */
 GUI_BOOL GUI_CheckPointAtRect(i_16 x, i_16 y, GUI_RECT *Rect)
 {
     if (x >= Rect->x0 && x <= Rect->x1 &&
@@ -55,26 +55,26 @@ GUI_BOOL GUI_CheckPointAtRect(i_16 x, i_16 y, GUI_RECT *Rect)
     return FALSE;
 }
 
-/* ¼ì²éÒ»¸ö¾ØÐÎÊÇ·ñÎª¿Õ */
+/* æ£€æŸ¥ä¸€ä¸ªçŸ©å½¢æ˜¯å¦ä¸ºç©º */
 GUI_BOOL GUI_CheckRectNull(GUI_RECT *Rect)
 {
     if (Rect->x1 >= Rect->x0 && Rect->y1 >= Rect->y0) {
-        return TRUE;  /* ·Ç¿Õ */
+        return TRUE;  /* éžç©º */
     }
     return FALSE;
 }
 
-/* ¼ì²éÁ½¸ö¾ØÐÎÊÇ·ñÏà½»*/
+/* æ£€æŸ¥ä¸¤ä¸ªçŸ©å½¢æ˜¯å¦ç›¸äº¤*/
 GUI_BOOL GUI_CheckRectIntersect(GUI_RECT *pRect1, GUI_RECT *pRect2)
 {
     if (pRect1->x0 > pRect2->x1 || pRect1->y0 > pRect2->y1
      || pRect1->x1 < pRect2->x0 || pRect1->y1 < pRect2->y0) {
-        return FALSE;    /* ²»Ïà½» */
+        return FALSE;    /* ä¸ç›¸äº¤ */
     }
-    return TRUE;/* Ïà½» */
+    return TRUE;/* ç›¸äº¤ */
 }
 
-/* ¼ì²éÒ»¸ö¾ØÐÎÊÇ·ñ°üº¬ÁíÒ»¸ö¾ØÐÎ */
+/* æ£€æŸ¥ä¸€ä¸ªçŸ©å½¢æ˜¯å¦åŒ…å«å¦ä¸€ä¸ªçŸ©å½¢ */
 GUI_BOOL GUI_RectInclude(GUI_RECT *pSrc, GUI_RECT *pDst)
 {
     if (pSrc->x0 <= pDst->x0 && pSrc->y0 <= pDst->y0
@@ -84,7 +84,7 @@ GUI_BOOL GUI_RectInclude(GUI_RECT *pSrc, GUI_RECT *pDst)
     return FALSE;
 }
 
-/* ÒÆ¶¯Ò»¸ö¾ØÐÎ */
+/* ç§»åŠ¨ä¸€ä¸ªçŸ©å½¢ */
 void GUI_MoveRect(GUI_RECT *Rect, i_16 dX, i_16 dY)
 {
     Rect->x0 += dX;
@@ -93,7 +93,7 @@ void GUI_MoveRect(GUI_RECT *Rect, i_16 dX, i_16 dY)
     Rect->y1 += dY;
 }
 
-/* »ñÈ¡Ò»¸ö´°¿Ú²Ã¼ô¶Ñ */
+/* èŽ·å–ä¸€ä¸ªçª—å£è£å‰ªå † */
 static GUI_AREA _GetRectList(u_16 num)
 {
     GUI_AREA pNode, pList;
@@ -101,13 +101,13 @@ static GUI_AREA _GetRectList(u_16 num)
     if (!num) {
         return NULL;
     }
-    /* ÉêÇëÄÚ´æ(°üÀ¨Ò»¸ö±íÍ·) */
+    /* ç”³è¯·å†…å­˜(åŒ…æ‹¬ä¸€ä¸ªè¡¨å¤´) */
     pList = GUI_Malloc(sizeof(AREA_NODE));
     for (pNode = pList; --num && pNode; pNode = pNode->pNext) {
         pNode->pNext = GUI_Malloc(sizeof(AREA_NODE));
     }
     if (pNode == NULL) {
-        /* ÊÍ·ÅÁ´±í */
+        /* é‡Šæ”¾é“¾è¡¨ */
         for (pNode = pList; pNode; pNode = pNode->pNext) {
             GUI_Free(pNode);
         }
@@ -118,7 +118,7 @@ static GUI_AREA _GetRectList(u_16 num)
     return pList;
 }
 
-/* ´°¿Ú²Ã¼ô¾ØÐÎÇøÓòË½ÓÐ¶Ñ³õÊ¼»¯ */
+/* çª—å£è£å‰ªçŸ©å½¢åŒºåŸŸç§æœ‰å †åˆå§‹åŒ– */
 GUI_RESULT GUI_RectListInit(void)
 {
     GUI_AreaHeap = _GetRectList(1);
@@ -128,7 +128,7 @@ GUI_RESULT GUI_RectListInit(void)
     return GUI_ERR;
 }
 
-/* ÊÍ·Å¿ÕÏÐµÄ¼ôÇÐÓò¶Ñ */
+/* é‡Šæ”¾ç©ºé—²çš„å‰ªåˆ‡åŸŸå † */
 void GUI_FreeIdleRectList(void)
 {
     GUI_AREA pNode, pNext;
@@ -142,7 +142,7 @@ void GUI_FreeIdleRectList(void)
     GUI_AreaHeap->pNext = NULL;
 }
 
-/* ÉêÇëÒ»¸ö²Ã¼ô¾ØÐÎÁ´±í */
+/* ç”³è¯·ä¸€ä¸ªè£å‰ªçŸ©å½¢é“¾è¡¨ */
 GUI_AREA GUI_GetRectList(u_16 num)
 {
     int n = num;
@@ -158,7 +158,7 @@ ReTest:
         pLast = pNode;
         pNode = pNode->pNext;
     }
-    if (pNode == NULL) { /* ÈÝÁ¿²»¹» */
+    if (pNode == NULL) { /* å®¹é‡ä¸å¤Ÿ */
         pLast->pNext = _GetRectList(n + 1);
         pNode = pLast->pNext;
         goto ReTest;
@@ -169,7 +169,7 @@ ReTest:
     return Area;
 }
 
-/* ÊÍ·ÅÒ»¸ö²Ã¼ô¾ØÐÎÁ´±í */
+/* é‡Šæ”¾ä¸€ä¸ªè£å‰ªçŸ©å½¢é“¾è¡¨ */
 GUI_RESULT GUI_FreeRectList(GUI_AREA Area)
 {
     GUI_AREA p;
@@ -178,7 +178,7 @@ GUI_RESULT GUI_FreeRectList(GUI_AREA Area)
         return GUI_ERR;
     }
     p = GUI_AreaHeap->pNext;
-    GUI_AreaHeap->pNext = Area; /* ²åÈëµ½Á´±íµÄ×îÇ°Ãæ */
+    GUI_AreaHeap->pNext = Area; /* æ’å…¥åˆ°é“¾è¡¨çš„æœ€å‰é¢ */
     while (Area->pNext) {
         Area = Area->pNext;
     }
@@ -186,18 +186,18 @@ GUI_RESULT GUI_FreeRectList(GUI_AREA Area)
     return GUI_OK;
 }
 
-/* ÊÍ·ÅÒ»¸ö¼ôÇÐÓò½Úµã,×¢ÒâArea²»ÄÜÎªNULL */
+/* é‡Šæ”¾ä¸€ä¸ªå‰ªåˆ‡åŸŸèŠ‚ç‚¹,æ³¨æ„Areaä¸èƒ½ä¸ºNULL */
 void GUI_FreeRectListNode(GUI_AREA Area)
 {
     GUI_AREA p;
 
     p = GUI_AreaHeap->pNext;
-    GUI_AreaHeap->pNext = Area; /* ²åÈëµ½Á´±íµÄ×îÇ°Ãæ */
+    GUI_AreaHeap->pNext = Area; /* æ’å…¥åˆ°é“¾è¡¨çš„æœ€å‰é¢ */
     Area->pNext = p;
 }
 
-/* ½«¾ØÐÎSrcÓÃ¾ØÐÎDstÈ¥²Ã¼ô
- * -SrcÓëDst±ØÐëÊÇÓÐÐ§µØ¾ØÐÎ.
+/* å°†çŸ©å½¢Srcç”¨çŸ©å½¢DståŽ»è£å‰ª
+ * -Srcä¸ŽDstå¿…é¡»æ˜¯æœ‰æ•ˆåœ°çŸ©å½¢.
  */
 GUI_AREA GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst)
 {
@@ -207,26 +207,26 @@ GUI_AREA GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst)
 
     GUI_AREA Area;
 
-    if (GUI_RectOverlay(&r, Src, Dst) == FALSE) { /* ÅÐ¶ÏÊÇ·ñÏà½» */
-        /* ²»Ïà½»£¬²Ã¼ôÇøÓò¾ÍÊÇSrc¾ØÐÎ×Ô¼º */
-        Area = GUI_GetRectList(1); /* ÉêÇëÁ´±í */
+    if (GUI_RectOverlay(&r, Src, Dst) == FALSE) { /* åˆ¤æ–­æ˜¯å¦ç›¸äº¤ */
+        /* ä¸ç›¸äº¤ï¼Œè£å‰ªåŒºåŸŸå°±æ˜¯SrcçŸ©å½¢è‡ªå·± */
+        Area = GUI_GetRectList(1); /* ç”³è¯·é“¾è¡¨ */
         if (Area) {
             Area->Rect = *Src;
         }
         return Area;
     }
-    /* SrcÍêÈ«±»SrcÓëDstµÄÏà½»²¿·ÖÕÚµ²,½«²»»áÓÐ²Ã¼ôÇøÓò */
+    /* Srcå®Œå…¨è¢«Srcä¸ŽDstçš„ç›¸äº¤éƒ¨åˆ†é®æŒ¡,å°†ä¸ä¼šæœ‰è£å‰ªåŒºåŸŸ */
     if (Src->x0 >= r.x0 && Src->x1 <= r.x1
      && Src->y0 >= r.y0 && Src->y1 <= r.y1) {
         return NULL;
     }
-    /* Ã¿Ò»¸ö¾ØÐÎ×î¶à¿ÉÒÔ±»ÁíÍâÒ»¸ö¾ØÐÎ·Ö¸îÎª4¸ö */
-    Area = GUI_GetRectList(4); /* ÉêÇëÁ´±í */
-    if (Area == NULL) { /* ÉêÇëÊ§°Ü */
+    /* æ¯ä¸€ä¸ªçŸ©å½¢æœ€å¤šå¯ä»¥è¢«å¦å¤–ä¸€ä¸ªçŸ©å½¢åˆ†å‰²ä¸º4ä¸ª */
+    Area = GUI_GetRectList(4); /* ç”³è¯·é“¾è¡¨ */
+    if (Area == NULL) { /* ç”³è¯·å¤±è´¥ */
         return NULL;
     }
     p = Area;
-    /* Öð¸ö¼ÆËã²Ã¼ôÇøÓò */
+    /* é€ä¸ªè®¡ç®—è£å‰ªåŒºåŸŸ */
     if (Src->y0 < r.y0) {
         p->Rect.x0 = Src->x0;
         p->Rect.y0 = Src->y0;
@@ -259,13 +259,13 @@ GUI_AREA GUI_RectCut(GUI_RECT *Src, GUI_RECT *Dst)
         p = p->pNext;
         ++n;
     }
-    GUI_FreeRectList(p); /* ÊÍ·Å¶àÓàµÄÁ´±í */
-    if (n) { /* µ±²Ã¼ô´ÎÊý²»Îª0Ê±ÉèÖÃÁ´±íÎ² */
+    GUI_FreeRectList(p); /* é‡Šæ”¾å¤šä½™çš„é“¾è¡¨ */
+    if (n) { /* å½“è£å‰ªæ¬¡æ•°ä¸ä¸º0æ—¶è®¾ç½®é“¾è¡¨å°¾ */
         for (p = Area; --n; p = p->pNext);
         p->pNext = NULL;
         return Area;
     }
-    /* Èç¹û²Ã¼ô´ÎÊýÎª0£¬ËµÃ÷Á½Src±»ÕÚµ²£¬Ôò·µ»ØÖµÎªNULL */
-    /* bug±ê¼Ç.´Ë´¦²»Ó¦¸Ã±»Ö´ÐÐµ½£¬ÒòÎªÇ°ÃæÒÑ¾­ÅÐ¶¨ÁËÕÚµ² */
+    /* å¦‚æžœè£å‰ªæ¬¡æ•°ä¸º0ï¼Œè¯´æ˜Žä¸¤Srcè¢«é®æŒ¡ï¼Œåˆ™è¿”å›žå€¼ä¸ºNULL */
+    /* bugæ ‡è®°.æ­¤å¤„ä¸åº”è¯¥è¢«æ‰§è¡Œåˆ°ï¼Œå› ä¸ºå‰é¢å·²ç»åˆ¤å®šäº†é®æŒ¡ */
     return NULL;
 }

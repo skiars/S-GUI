@@ -1,4 +1,4 @@
-#ifndef __GUI_RECT_H
+﻿#ifndef __GUI_RECT_H
 #define __GUI_RECT_H
 
 #include "GUI_Core.h"

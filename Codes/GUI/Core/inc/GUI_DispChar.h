@@ -1,4 +1,4 @@
-#ifndef __GUI_DISPCHAR_H
+﻿#ifndef __GUI_DISPCHAR_H
 #define __GUI_DISPCHAR_H
 
 #include "GUI_Typedef.h"

@@ -1,28 +1,28 @@
-#include "GUI_Device.h"
+﻿#include "GUI_Device.h"
 #include "GUI.h"
 
-GUI_DRIVER  GUI_GDev;       /* ��ǰʹ�õ����� */
-GUI_GDEV    GUI_Screen;     /* ��Ļ�豸 */
-GUI_GDEV   *GUI_CurDevice;  /* ��ǰ��ͼ���豸 */
-GUI_DRIVER *GUI_CurDriver;  /* ��ǰ��ͼ���豸�������� */
-GUI_GLAPI   GUI_glAPI;      /* �����Ļ�ͼ���� */
+GUI_DRIVER  GUI_GDev;       /* 当前使用的驱动 */
+GUI_GDEV    GUI_Screen;     /* 屏幕设备 */
+GUI_GDEV   *GUI_CurDevice;  /* 当前的图形设备 */
+GUI_DRIVER *GUI_CurDriver;  /* 当前的图形设备的驱动库 */
+GUI_GLAPI   GUI_glAPI;      /* 基本的绘图函数 */
 
 #define HL_SetPixel GUI_GDev.SetPixel
 #define HL_GetPixel GUI_GDev.GetPixel
 
-/* Ĭ�ϻ��㺯�� */
+/* 默认画点函数 */
 static void _SetPixel(GUI_FLIPOUT *Cmd)
 {
 
 }
 
-/* Ĭ�϶�ȡ���غ��� */
+/* 默认读取像素函数 */
 static GUI_COLOR _GetPixel(GUI_FLIPOUT *Cmd)
 {
     return 0;
 }
 
-/* ���豸�ϻ�ˮƽ�� */
+/* 在设备上画水平线 */
 static void _DrawHLine(GUI_FLIPOUT *Cmd)
 {
     while (Cmd->x0 <= Cmd->x1) {
@@ -31,7 +31,7 @@ static void _DrawHLine(GUI_FLIPOUT *Cmd)
     }
 }
 
-/* ���豸�ϻ���ֱ�� */
+/* 在设备上画垂直线 */
 static void _DrawVLine(GUI_FLIPOUT *Cmd)
 {
     while (Cmd->y0 <= Cmd->y1) {
@@ -40,7 +40,7 @@ static void _DrawVLine(GUI_FLIPOUT *Cmd)
     }
 }
 
-/* ���豸��������� */
+/* 在设备上填充区域 */
 static void _FillRect(GUI_FLIPOUT *Cmd)
 {
     i_16 x0 = Cmd->x0;
@@ -51,7 +51,7 @@ static void _FillRect(GUI_FLIPOUT *Cmd)
     }
 }
 
-/* ���Ʋ�ɫ��λͼ */
+/* 绘制查色表位图 */
 static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
 {
     int i, j;
@@ -71,7 +71,7 @@ static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
     }
 }
 
-/* ����λͼ */
+/* 绘制位图 */
 static void _DrawBitmap(GUI_FLIPOUT *Cmd)
 {
     int i, j, pixBytes = 1;
@@ -99,7 +99,7 @@ static void _DrawBitmap(GUI_FLIPOUT *Cmd)
     }
 }
 
-/* �������� */
+/* 绘制像素 */
 void _GL_SetPixel(i_16 x, i_16 y, GUI_COLOR Color)
 {
     GUI_FLIPOUT Cmd;
@@ -110,7 +110,7 @@ void _GL_SetPixel(i_16 x, i_16 y, GUI_COLOR Color)
     HL_SetPixel(&Cmd);
 }
 
-/* ��ȡ���� */
+/* 读取像素 */
 GUI_COLOR _GL_GetPixel(i_16 x, i_16 y)
 {
     GUI_FLIPOUT Cmd;
@@ -120,7 +120,7 @@ GUI_COLOR _GL_GetPixel(i_16 x, i_16 y)
     return HL_GetPixel(&Cmd);
 }
 
-/* �ü��������� */
+/* 裁剪绘制像素 */
 static void _glSetPixelClip(i_16 x, i_16 y)
 {
     GUI_FLIPOUT Cmd;
@@ -133,7 +133,7 @@ static void _glSetPixelClip(i_16 x, i_16 y)
     HL_SetPixel(&Cmd);
 }
 
-/* ����ˮƽ�� */
+/* 绘制水平线 */
 static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1)
 {
     GUI_FLIPOUT Cmd;
@@ -149,7 +149,7 @@ static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1)
     }
 }
 
-/* ���ƴ�ֱ�� */
+/* 绘制垂直线 */
 void _GL_DrawVLine(i_16 x0, i_16 y0, i_16 y1)
 {
     GUI_FLIPOUT Cmd;
@@ -165,7 +165,7 @@ void _GL_DrawVLine(i_16 x0, i_16 y0, i_16 y1)
     }
 }
 
-/* ������ */
+/* 填充矩形 */
 static void _glFillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
 {
     GUI_FLIPOUT Cmd;
@@ -180,7 +180,7 @@ static void _glFillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
     GUI_GDev.FillRect(&Cmd);
 }
 
-/* ����λͼ */
+/* 绘制位图 */
 void _GL_DrawBitmap(u_8 PixelFormat,
     const unsigned char *pPixel,
     i_16 x0,
@@ -203,7 +203,7 @@ void _GL_DrawBitmap(u_8 PixelFormat,
     GUI_GDev.DrawBitmap(&Cmd);
 }
 
-/* LCD��ʼ�� */
+/* LCD初始化 */
 void GUI_DeviceInit(void)
 {
     GUI_glAPI.SetPixelClip = _glSetPixelClip;
@@ -217,10 +217,10 @@ void GUI_DeviceInit(void)
     GUI_GDev.DrawVLine = _DrawVLine;
     GUI_GDev.FillRect = _FillRect;
     GUI_GDev.DrawBitmap = _DrawBitmap;
-    GUI_UserConfig(&GUI_GDev); /* ִ���û��ĳ�ʼ������ */
+    GUI_UserConfig(&GUI_GDev); /* 执行用户的初始化函数 */
 }
 
-/* �ڴ�ӳ����ͼ���豸����ʾƫ��λ������ */
+/* 内存映射型图形设备的显示偏移位置设置 */
 void _SetPosition(u_16 x, u_16 y)
 {
     GUI_CurDevice->Position = (void *)((int)GUI_CurDevice->FrameBuffer
@@ -228,7 +228,7 @@ void _SetPosition(u_16 x, u_16 y)
         * GUI_CurDevice->BytesPerPixel);
 }
 
-/* �ڵ�ǰλ����д������ */
+/* 在当前位置下写入像素 */
 void _WriteCurPosition(GUI_COLOR ColorIndex)
 {
     switch (GUI_CurDevice->BytesPerPixel) {
@@ -254,20 +254,20 @@ void _WriteCurPosition(GUI_COLOR ColorIndex)
         + GUI_CurDevice->BytesPerPixel);
 }
 
-/* ��ʾ����ƫ��ƫ�� */
+/* 显示像素偏移偏移 */
 void _DispOffset(int OffsetPixels)
 {
     GUI_CurDevice->Position = (void *)((u_32)GUI_CurDevice->Position
         + OffsetPixels * GUI_CurDevice->BytesPerPixel);
 }
 
-/* ����֡�����ַ */
+/* 设置帧缓冲地址 */
 void GUI_SetFrameBuffer(GUI_GDEV *gDevice, void *Ptr)
 {
     gDevice->FrameBuffer = Ptr;
 }
 
-/* ����������ɫ��ʽ */
+/* 设置像素颜色格式 */
 GUI_RESULT GUI_SetPixelFormat(GUI_GDEV *gDevice, int PixelFormat)
 {
     if (PixelFormat == GUI_ARGB8888) {

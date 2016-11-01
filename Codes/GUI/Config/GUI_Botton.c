@@ -10,29 +10,26 @@
 #include "../../App/sdlscreen.h"
 #include "SDL/SDL.h"
 
-/* 用于Windows的互斥信号量 */
-SDL_mutex *GUI_Mutex;
-
-/* GUI多任务初始化 */
-void GUI_InitOS(void)
+/* GUI创建任务锁 */
+void * GUI_TaskCreateLock(void)
 {
-    GUI_Mutex = SDL_CreateMutex();
+    return (void *)SDL_CreateMutex();
 }
 
 /* GUI上锁 */
-void GUI_TaskLock(void)
+void GUI_TaskLock(void *pLock)
 {
-    SDL_LockMutex(GUI_Mutex);
+    SDL_LockMutex((SDL_mutex *)pLock);
 }
 
 /* GUI解锁 */
-void GUI_TaskUnlock(void)
+void GUI_TaskUnlock(void *pLock)
 {
-    SDL_UnlockMutex(GUI_Mutex);
+    SDL_UnlockMutex((SDL_mutex *)pLock);
 }
 
 /* GUI获取任务ID */
-u_32 GUI_GetTaskId(void)
+u_32 GUI_TaskGetId(void)
 {
     return SDL_GetThreadID(NULL);
 }
@@ -52,8 +49,8 @@ void _GUI_Delay_ms(GUI_TIME tms)
 /* 内存堆空间分配 */
 void * _GUI_GetHeapBuffer(int Page, u_32 *Size)
 {
-    static u_32 heap0[1024 * 10 / 4];
-    static u_32 heap1[1024 * 10 / 4];
+    static u_32 heap0[1024 * 1 / 4];
+    static u_32 heap1[1024 * 5 / 4];
 
     if (Page == 0) {
         *Size = sizeof(heap0);
@@ -133,7 +130,7 @@ void Phy_DrawBitmap(GUI_FLIPOUT *Cmd)
 #if GUI_DEBUG_MODE
 void _GUI_DebugOut(const char *s)
 {
-    printf(s);
+    puts(s);
     while (1);
 }
 #endif

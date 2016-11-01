@@ -1,7 +1,7 @@
-#include "RootWindow.h"
+ï»¿#include "RootWindow.h"
 #include "GUI.h"
 
-#define ROOTWINDOW_BACK_COLOR 0x00FFFFFF     /* ¸ù´°¿ÚÄ¬ÈÏ±³¾°É« */
+#define ROOTWINDOW_BACK_COLOR 0x00FFFFFF     /* æ ¹çª—å£é»˜è®¤èƒŒæ™¯è‰² */
 
 void (*RootWinPaint_Cb)(WM_HWIN hWin) = NULL;
 void (*RootWinTimer_Cb)(WM_HWIN hWin) = NULL;
@@ -13,7 +13,7 @@ static void __Paint(WM_HWIN hWin)
     if (RootWinPaint_Cb) {
         RootWinPaint_Cb(hWin);
     } else {
-        /* »æÖÆ±³¾° */
+        /* ç»˜åˆ¶èƒŒæ™¯ */
         GUI_SetFGColor(ROOTWINDOW_BACK_COLOR);
         GUI_FillRect(r->x0, r->y0, r->x1 - r->x0 + 1,
             r->y1 - r->y0 +1);
@@ -27,17 +27,17 @@ static void _RootWin_Callback(WM_MESSAGE *pMsg)
         __Paint(pMsg->hWin);
         break;
     case WM_TIMER:
-        /* ÓÃ»§º¯Êı */
+        /* ç”¨æˆ·å‡½æ•° */
         if (RootWinTimer_Cb) {
             RootWinTimer_Cb(pMsg->hWin);
         }
         break;
-    case WM_SET_FOCUS: /* ÉèÖÃÊäÈë½¹µã */
+    case WM_SET_FOCUS: /* è®¾ç½®è¾“å…¥ç„¦ç‚¹ */
         break;
     case WM_GET_FOCUS:
         break;
     case WM_TP_CHECKED:
-        WM_SetActiveWindow(pMsg->hWin); /* ÉèÖÃÎª»î¶¯´°¿Ú */
+        WM_SetActiveWindow(pMsg->hWin); /* è®¾ç½®ä¸ºæ´»åŠ¨çª—å£ */
         break;
     }
 }
@@ -58,11 +58,11 @@ void WM_RootWindowInit(WM_Obj *pObj)
     pObj->hFirstChild = NULL;
     pObj->Status = 0x0000;
     pObj->Id = WM_ROOTWIN_ID;
-    WM_Invalidate(pObj);  /* ¸ù´°¿ÚÎŞĞ§»¯ */
-    GUI_ClipNewWindow(pObj); /* ¸üĞÂ¼ôÇĞÓò */
+    WM_Invalidate(pObj);  /* æ ¹çª—å£æ— æ•ˆåŒ– */
+    GUI_ClipNewWindow(pObj); /* æ›´æ–°å‰ªåˆ‡åŸŸ */
 }
 
-/* ÉèÖÃ¸ù´°¿ÚµÄ¶¨Ê±Æ÷ */
+/* è®¾ç½®æ ¹çª—å£çš„å®šæ—¶å™¨ */
 void GUI_SetRootWindowTimer(GUI_TIME timer)
 {
     GUI_TimerCreate(_hRootWin, 0, timer, GUI_TMR_AUTO);

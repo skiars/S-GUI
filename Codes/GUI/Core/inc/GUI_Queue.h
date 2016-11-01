@@ -1,4 +1,4 @@
-#ifndef __GUI_QUEUE_H
+﻿#ifndef __GUI_QUEUE_H
 #define __GUI_QUEUE_H
 
 #include "GUI_Config.h"
@@ -6,21 +6,21 @@
 
 typedef u_32 GUI_PARAM;
 
-/* ��Ϣ�ṹ�嶨�� */
+/* 消息结构体定义 */
 typedef struct {
-    u_16 MsgId;       /* ��Ϣ��� */
-    GUI_HWIN hWin;    /* Ŀ�괰�ھ�� */
-    GUI_HWIN hWinSrc; /* Դ���ھ��  */
-    GUI_PARAM Param;  /* ���� */
+    u_16 MsgId;       /* 消息编号 */
+    GUI_HWIN hWin;    /* 目标窗口句柄 */
+    GUI_HWIN hWinSrc; /* 源窗口句柄  */
+    GUI_PARAM Param;  /* 参数 */
 } GUI_MESSAGE;
 
-/* ���нṹ���� */
+/* 队列结构定义 */
 typedef struct {
-    GUI_MESSAGE *pArray; /* ����ָ�� */
-    u_16 Capacity;       /* ������������ */
-    u_16 size;           /* ����Ŀǰ���ݵ�Ԫ���� */
-    u_16 front;          /* ��ͷ */
-    u_16 rear;           /* ��β */
+    GUI_MESSAGE *pArray; /* 队列指针 */
+    u_16 Capacity;       /* 队列数组容量 */
+    u_16 size;           /* 队列目前数据单元数量 */
+    u_16 front;          /* 队头 */
+    u_16 rear;           /* 队尾 */
 } GUI_QUEUE;
 
 GUI_QUEUE * GUI_QueueInit(u_16 Capacity);

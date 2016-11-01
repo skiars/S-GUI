@@ -1,4 +1,4 @@
-#include "GUI_Bitmap.h"
+ï»¿#include "GUI_Bitmap.h"
 #include "GUI.h"
 
 static void _ClientToScreen(i_16 *x, i_16 *y)
@@ -16,7 +16,7 @@ static void _ClientToScreen(i_16 *x, i_16 *y)
     *y += yPos;
 }
 
-/* »æÖÆÎ»Í¼£¬²»Ö§³ÖÍ¸Ã÷Ğ§¹û */
+/* ç»˜åˆ¶ä½å›¾ï¼Œä¸æ”¯æŒé€æ˜æ•ˆæœ */
 void GUI_DrawBitmap24b(i_16 x0,
     i_16 y0,
     u_16 xSize,
@@ -30,11 +30,11 @@ void GUI_DrawBitmap24b(i_16 x0,
     u_32 Offset;
     GUI_RECT r1;
 
-    xSize = (u_16)GUI_MIN(xSize, xMag); /* Í¼Æ¬¿í¶È */
-    ySize = (u_16)GUI_MIN(ySize, yMag); /* Í¼Æ¬¸ß¶È */
+    xSize = (u_16)GUI_MIN(xSize, xMag); /* å›¾ç‰‡å®½åº¦ */
+    ySize = (u_16)GUI_MIN(ySize, yMag); /* å›¾ç‰‡é«˜åº¦ */
     GUI_Val2Rect(&r1, x0, y0, xSize, ySize);
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
+    while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
         x0 = r1.x0;
         y0 = r1.y0;
         x1 = r1.x1;
@@ -48,7 +48,7 @@ void GUI_DrawBitmap24b(i_16 x0,
     }
 }
 
-/* »æÖÆÎ»Í¼£¬²»Ö§³ÖÍ¸Ã÷Ğ§¹û */
+/* ç»˜åˆ¶ä½å›¾ï¼Œä¸æ”¯æŒé€æ˜æ•ˆæœ */
 void GUI_DrawBitmap16b(i_16 x0,
     i_16 y0,
     u_16 xSize,
@@ -62,11 +62,11 @@ void GUI_DrawBitmap16b(i_16 x0,
     u_32 Offset, PixelBytes = 2;
     GUI_RECT r1;
 
-    xSize = (u_16)GUI_MIN(xSize, xMag); /* Í¼Æ¬¿í¶È */
-    ySize = (u_16)GUI_MIN(ySize, yMag); /* Í¼Æ¬¸ß¶È */
+    xSize = (u_16)GUI_MIN(xSize, xMag); /* å›¾ç‰‡å®½åº¦ */
+    ySize = (u_16)GUI_MIN(ySize, yMag); /* å›¾ç‰‡é«˜åº¦ */
     GUI_Val2Rect(&r1, x0, y0, xSize, ySize);
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
+    while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
         x0 = r1.x0;
         y0 = r1.y0;
         x1 = r1.x1;
@@ -95,11 +95,11 @@ void GUI_DrawGif(i_16 x0,
     u_32 Offset, PixelBytes = 1;
     GUI_RECT r1;
 
-    xSize = (u_16)GUI_MIN(xSize, xMag); /* Í¼Æ¬¿í¶È */
-    ySize = (u_16)GUI_MIN(ySize, yMag); /* Í¼Æ¬¸ß¶È */
+    xSize = (u_16)GUI_MIN(xSize, xMag); /* å›¾ç‰‡å®½åº¦ */
+    ySize = (u_16)GUI_MIN(ySize, yMag); /* å›¾ç‰‡é«˜åº¦ */
     GUI_Val2Rect(&r1, x0, y0, xSize, ySize);
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
+    while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
         x0 = r1.x0;
         y0 = r1.y0;
         x1 = r1.x1;

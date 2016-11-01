@@ -1,14 +1,14 @@
-#include "GUI_TouchPad.h"
+ï»¿#include "GUI_TouchPad.h"
 #include "GUI.h"
 
-/* ÉèÖÃ´¥Ãş°å×´Ì¬ */
+/* è®¾ç½®è§¦æ‘¸æ¿çŠ¶æ€ */
 void GUI_TouchPadSendValue(i_16 x, i_16 y, u_16 State)
 {
     static u_16 LastState = GUI_TP_REMOVED;
 
     /*
-     * ´¥Ãş°åµ±Ç°×´Ì¬Îª°´ÏÂ»òÉÏÒ»´ÎµÄ×´Ì¬Îª°´ÏÂ¡£
-     * Ò²¾ÍÊÇËµÖ»»áÏòGUIÏûÏ¢¶ÓÁĞ·¢ËÍÒ»´Î´¥ÃşËÉ¿ªÏûÏ¢¡£
+     * è§¦æ‘¸æ¿å½“å‰çŠ¶æ€ä¸ºæŒ‰ä¸‹æˆ–ä¸Šä¸€æ¬¡çš„çŠ¶æ€ä¸ºæŒ‰ä¸‹ã€‚
+     * ä¹Ÿå°±æ˜¯è¯´åªä¼šå‘GUIæ¶ˆæ¯é˜Ÿåˆ—å‘é€ä¸€æ¬¡è§¦æ‘¸æ¾å¼€æ¶ˆæ¯ã€‚
      **/
     if (State == GUI_TP_CHECKED || LastState == GUI_TP_CHECKED) {
         u_32 Point;
@@ -16,7 +16,7 @@ void GUI_TouchPadSendValue(i_16 x, i_16 y, u_16 State)
 
         LastState = State;
         Point = ((u_32)x << 16) | y;
-        /* Ìî³äÏûÏ¢½á¹¹Ìå */
+        /* å¡«å……æ¶ˆæ¯ç»“æ„ä½“ */
         Msg.hWin = NULL;
         Msg.hWinSrc = NULL;
         if (State == GUI_TP_CHECKED) {
@@ -25,17 +25,17 @@ void GUI_TouchPadSendValue(i_16 x, i_16 y, u_16 State)
             Msg.MsgId = WM_TP_REMOVED;
         }
         Msg.Param = (GUI_PARAM)Point;
-        GUI_PostMessage(&Msg); /* ·¢ËÍÏûÏ¢µ½GUIÏûÏ¢¶ÓÁĞ */
+        GUI_PostMessage(&Msg); /* å‘é€æ¶ˆæ¯åˆ°GUIæ¶ˆæ¯é˜Ÿåˆ— */
     }
 }
 
-/* ´¥Ãş°åÏûÏ¢´¦Àí */
+/* è§¦æ‘¸æ¿æ¶ˆæ¯å¤„ç† */
 GUI_RESULT GUI_TouchPadMessageProc(GUI_MESSAGE *pMsg)
 {
     static GUI_HWIN _CurWin = NULL;
     static GUI_POINT _CurPos;
     
-    /* ¼ì²éÊÇ·ñÊÇWM´¥Ãş°åÏûÏ¢ */
+    /* æ£€æŸ¥æ˜¯å¦æ˜¯WMè§¦æ‘¸æ¿æ¶ˆæ¯ */
     if (pMsg->MsgId == WM_TP_CHECKED || pMsg->MsgId == WM_TP_REMOVED) {
         GUI_HWIN hWin;
         GUI_POINT Point;
@@ -45,29 +45,29 @@ GUI_RESULT GUI_TouchPadMessageProc(GUI_MESSAGE *pMsg)
         Point.y = (u_32)pMsg->Param & 0xffff;
         if (pMsg->MsgId == WM_TP_CHECKED) {
             hWin = WM_GetExposedWindow(Point.x, Point.y);
-            /* ÅĞ¶ÏÊÇ·ñ»¹ÊÇÉÏÒ»´ÎµÄ´°¿Ú */
+            /* åˆ¤æ–­æ˜¯å¦è¿˜æ˜¯ä¸Šä¸€æ¬¡çš„çª—å£ */
             if (hWin != NULL) {
                 GUI_POINT Pos[2];
 
-                /* µ±Ç°×ø±ê */
+                /* å½“å‰åæ ‡ */
                 Pos[0].x = Point.x;
                 Pos[0].y = Point.y;
-                /* ×ø±êÆ«ÒÆ */
+                /* åæ ‡åç§» */
                 Pos[1].x = Point.x - _CurPos.x;
                 Pos[1].y = Point.y - _CurPos.y;
-                if (_CurWin == NULL) { /* µÚÒ»´Î´¥Ãş */
+                if (_CurWin == NULL) { /* ç¬¬ä¸€æ¬¡è§¦æ‘¸ */
                     _CurWin = hWin;
                     WM_SendMessage(hWin, WM_TP_CHECKED, (GUI_PARAM)&Point);
-                } else if (hWin == _CurWin) { /* Ò»Ö±ÔÚ´¥Ãş */
+                } else if (hWin == _CurWin) { /* ä¸€ç›´åœ¨è§¦æ‘¸ */
                     WM_SendMessage(hWin, WM_TP_PRESS, (GUI_PARAM)&Pos);
                 } else if (WM_FindWindow(_CurWin) == GUI_OK) {
-                    /* Àë¿ªÁË¿Ø¼şÇÒ´°¿Ú´æÔÚ */
+                    /* ç¦»å¼€äº†æ§ä»¶ä¸”çª—å£å­˜åœ¨ */
                     WM_SendMessage(_CurWin, WM_TP_LEAVE, (GUI_PARAM)&Pos);
                 }
                 _CurPos = Point;
             }
-        } else {  /* ´¥ÃşËÉ¿ª */
-            if (WM_FindWindow(_CurWin) == GUI_OK) {  /* ´°¿Ú»¹´æÔÚ */
+        } else {  /* è§¦æ‘¸æ¾å¼€ */
+            if (WM_FindWindow(_CurWin) == GUI_OK) {  /* çª—å£è¿˜å­˜åœ¨ */
                 WM_SendMessage(_CurWin, WM_TP_REMOVED, (GUI_PARAM)&_CurPos);
             }
             _CurWin = NULL;

@@ -1,6 +1,6 @@
-#include "GUI_Color.h"
+Ôªø#include "GUI_Color.h"
 
-/* RGB888∏Ò Ω◊™ªªŒ™RGB565∏Ò Ω */
+/* RGB888Ê†ºÂºèËΩ¨Êç¢‰∏∫RGB565Ê†ºÂºè */
 u_16 GUI_RGB888To565(u_32 RGB)
 {
     u_16 R, G, B;
@@ -10,7 +10,7 @@ u_16 GUI_RGB888To565(u_32 RGB)
     return (R << 11) | (G << 5) | B;
 }
 
-/* RGB565∏Ò Ω◊™ªªŒ™RGB888∏Ò Ω */
+/* RGB565Ê†ºÂºèËΩ¨Êç¢‰∏∫RGB888Ê†ºÂºè */
 u_32 GUI_RGB565To888(u_16 RGB)
 {
     u_32 Color;
@@ -32,10 +32,10 @@ u_16 GUI_ARGB8888To4444(u_32 ARGB)
 }
 
 /*
-* AlphaªÏ∫œ
-* BkColor:±≥æ∞—’…´
-* Color:ƒø±Í—’…´
-* Alpha:Õ∏√˜∂»(0~256)
+* AlphaÊ∑∑Âêà
+* BkColor:ËÉåÊôØÈ¢úËâ≤
+* Color:ÁõÆÊ†áÈ¢úËâ≤
+* Alpha:ÈÄèÊòéÂ∫¶(0~256)
 **/
 GUI_COLOR GUI_AlphaBlend(GUI_COLOR Color, GUI_COLOR BkColor, u_16 Alpha)
 {

@@ -1,4 +1,4 @@
-#ifndef __GUI_TYPEDEF_H
+ï»¿#ifndef __GUI_TYPEDEF_H
 #define __GUI_TYPEDEF_H
 
 typedef unsigned char  u_8;
@@ -7,8 +7,8 @@ typedef unsigned long  u_32;
 typedef short          i_16;
 typedef int            i_32;
 
-typedef void * GUI_HWIN;      /* ´°¿Ú¾ä±ú */
-typedef u_32 GUI_TIME;        /* GUIÊ±¼ä */
+typedef void * GUI_HWIN;      /* çª—å£å¥æŸ„ */
+typedef u_32 GUI_TIME;        /* GUIæ—¶é—´ */
 typedef u_32 GUI_COLOR;
 typedef u_32 LCD_COLOR;
 
@@ -26,12 +26,12 @@ typedef enum {
 
 typedef u_8 GUI_BOOL;
 
-/* ¾ØĞÎ */
+/* çŸ©å½¢ */
 typedef struct {
     i_16 x0, y0, x1, y1;
 } GUI_RECT;
 
-/* µã */
+/* ç‚¹ */
 typedef struct {
     i_16 x, y;
 } GUI_POINT;

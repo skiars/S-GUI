@@ -1,5 +1,5 @@
-/*****************************************************************************
-* S-GUI¿¹¾â³İÍ¼ĞÎ¿â.
+ï»¿/*****************************************************************************
+* S-GUIæŠ—é”¯é½¿å›¾å½¢åº“.
 *****************************************************************************/
 #include "GUI_GL_AA.h"
 #include "GUI.h"
@@ -25,8 +25,8 @@ static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color)
 }
 
 /*
-@ °´ÁÁ¶È¼¶±ğÊä³öÏñËØ
-@ light: 0-255, Ô½´óÁÁ¶ÈÔ½´ó
+@ æŒ‰äº®åº¦çº§åˆ«è¾“å‡ºåƒç´ 
+@ light: 0-255, è¶Šå¤§äº®åº¦è¶Šå¤§
 */
 void _lightPixel(i_16 x, i_16 y, u_8 light)
 {
@@ -58,11 +58,11 @@ static void _flushLine(void)
                 }
             }
             if (j != i) {
-                /* »æÖÆË®Æ½Ïß */
+                /* ç»˜åˆ¶æ°´å¹³çº¿ */
                 _glDrawHLine(_x0 + i, _y, _x0 + j, GUI_Context.FGColor);
                 i = j;
             } else {
-                /* »æÖÆµ¥¸öÏñËØ */
+                /* ç»˜åˆ¶å•ä¸ªåƒç´  */
                 GL_SetPixel(_x0 + i, _y, GUI_Context.FGColor);
             }
         } else {
@@ -72,7 +72,7 @@ static void _flushLine(void)
     _CleanLine();
 }
 
-/* »æÖÆË®Æ½Ïß */
+/* ç»˜åˆ¶æ°´å¹³çº¿ */
 static void _DrawHLine(i_16 x0, i_16 y, i_16 x1)
 {
     int factor = GUI_Context.AAFactor;
@@ -104,18 +104,18 @@ static void _DrawHLine(i_16 x0, i_16 y, i_16 x1)
     if (x1Real > _xEnd) {
         _xEnd = x1Real + 1;
     }
-    /* Ğ´Èëµ½»º³åÖĞ */
+    /* å†™å…¥åˆ°ç¼“å†²ä¸­ */
     pl = _lineBuffer + x0Real - _x0;
     if (dx == 1) {
         *pl += x1 - x0 + 1;
     } else {
-        /* µÚÒ»ÏñËØ */
+        /* ç¬¬ä¸€åƒç´  */
         *pl++ += (x0Real + 1) * factor - x0;
-        /* ÖĞ¼äÏñËØ */
+        /* ä¸­é—´åƒç´  */
         while (--dx > 1) {
             *pl++ += factor;
         }
-        /* ×îºóÏñËØ */
+        /* æœ€ååƒç´  */
         *pl += x1 - x1Real * factor;
     }
 }

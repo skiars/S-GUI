@@ -1,4 +1,4 @@
-#include "GUI_Surface.h"
+﻿#include "GUI_Surface.h"
 #include "GUI.h"
 
 GUI_SURFACE * GUI_SurfaceCreate(i_16 x0,

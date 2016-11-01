@@ -1,4 +1,4 @@
-#ifndef __GUI_TOUCHPAD_H
+﻿#ifndef __GUI_TOUCHPAD_H
 #define __GUI_TOUCHPAD_H
 
 #include "GUI_Queue.h"

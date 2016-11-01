@@ -1,4 +1,4 @@
-#include "GUI.h"
+﻿#include "GUI.h"
 
 #ifndef GUI_CONST_STORAGE
   #define GUI_CONST_STORAGE

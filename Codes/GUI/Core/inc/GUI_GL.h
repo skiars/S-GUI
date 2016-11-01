@@ -1,4 +1,4 @@
-#ifndef __GUI_GL_H
+﻿#ifndef __GUI_GL_H
 #define __GUI_GL_H
 
 #include "GUI_Typedef.h"

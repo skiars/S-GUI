@@ -1,5 +1,5 @@
 # Project: S-GUI Demo
-# Makefile created by Dev-C++ 5.11
+# Makefile created by Wenliang Guan.
 
 ifneq ($V,1)
 Q ?= @
@@ -9,7 +9,7 @@ CPP      =	g++
 CC       =	gcc
 BIN      =	demo
 LIBS	 =	../../Codes/sdl/win32/libSDL.dll.a
-CFLAGS   =	$(INCS) -Wall -Ofast
+CFLAGS   =	$(INCS) -Wall -Ofast -g
 RM       =	rm -f
 
 APPDIR	 =	../../Codes/App/

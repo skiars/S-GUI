@@ -1,16 +1,16 @@
-#ifndef __WINDOW_H
+ï»¿#ifndef __WINDOW_H
 #define __WINDOW_H
 
 #include "WIDGET.h"
 
 typedef struct {
     WIDGET Widget;
-    WM_HWIN hClient;        /* ¿Í»§Çø¾ä±ú */
-    WM_HWIN hFocus;         /* ´°¿Úµ±Ç°½¹µã */
-    WM_HWIN hBtn;           /* ¹Ø±Õ°´Å¥ */
+    WM_HWIN hClient;        /* å®¢æˆ·åŒºå¥æŸ„ */
+    WM_HWIN hFocus;         /* çª—å£å½“å‰ç„¦ç‚¹ */
+    WM_HWIN hBtn;           /* å…³é—­æŒ‰é’® */
     char *Title;
-    u_8  CaptionHeight;     /* ±êÌâÀ¸¸ß¶È */
-    WM_CALLBACK *UserCb;    /* ÓÃ»§¹¦ÄÜ»Øµ÷º¯Êı */
+    u_8  CaptionHeight;     /* æ ‡é¢˜æ é«˜åº¦ */
+    WM_CALLBACK *UserCb;    /* ç”¨æˆ·åŠŸèƒ½å›è°ƒå‡½æ•° */
 }WINDOW_Obj;
 
 WM_HWIN WINDOW_Create(i_16 x0, i_16 y0,  u_16 xSize, u_16 ySize,

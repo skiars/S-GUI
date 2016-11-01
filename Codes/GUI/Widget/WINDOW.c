@@ -1,24 +1,24 @@
-#include "WINDOW.h"
+ï»¿#include "WINDOW.h"
 #include "GUI.h"
 
 #define WINDOW_DEF_CAPHEIGHT   20
-/* Ä¬ÈÏµÄ´°Ìåcaption±³¾°É«captionµÄÑÕÉ«. */
-/* ÒÔ¼°´°Ìå±³¾°É«. */
-#define WINDOW_CAPTION_COLOR1       0x0042789B  /* ´°¿ÚCAPTIONÌî³äÉ« */
-#define WINDOW_CAPTION_COLOR2       0x00FFFFFF  /* ´°¿Ú·Ç»î¶¯ÑÕÉ« */
-#define WINDOW_TITLE_COLOR1         0x00FFFFFF  /* ´°¿Ú±êÌâÑÕÉ« */
-#define WINDOW_TITLE_COLOR2         0x00909090  /* ´°¿Ú±êÌâÑÕÉ« */
-#define WINDOW_BODY_BKC             0x00FFFFFF  /* ´°¿Úµ×É« */
+/* é»˜è®¤çš„çª—ä½“captionèƒŒæ™¯è‰²captionçš„é¢œè‰². */
+/* ä»¥åŠçª—ä½“èƒŒæ™¯è‰². */
+#define WINDOW_CAPTION_COLOR1       0x0042789B  /* çª—å£CAPTIONå¡«å……è‰² */
+#define WINDOW_CAPTION_COLOR2       0x00FFFFFF  /* çª—å£éžæ´»åŠ¨é¢œè‰² */
+#define WINDOW_TITLE_COLOR1         0x00FFFFFF  /* çª—å£æ ‡é¢˜é¢œè‰² */
+#define WINDOW_TITLE_COLOR2         0x00909090  /* çª—å£æ ‡é¢˜é¢œè‰² */
+#define WINDOW_BODY_BKC             0x00FFFFFF  /* çª—å£åº•è‰² */
 
-/* ±ê×¼´°Ìå±ß¿òÑÕÉ«¶¨Òå */
-#define WINDOW_EDGE_COLOR           0x002A3033  /* ±ßÏßÑÕÉ« */
+/* æ ‡å‡†çª—ä½“è¾¹æ¡†é¢œè‰²å®šä¹‰ */
+#define WINDOW_EDGE_COLOR           0x002A3033  /* è¾¹çº¿é¢œè‰² */
 
 static WM_HWIN __GetClient(WINDOW_Obj *pObj)
 {
     return pObj->hClient;
 }
 
-/* Window×Ô»æº¯Êý */
+/* Windowè‡ªç»˜å‡½æ•° */
 static void __Paint(WM_HWIN hWin)
 {
     u_16 xSize, ySize;
@@ -29,7 +29,7 @@ static void __Paint(WM_HWIN hWin)
     xSize = Rect.x1 + 1;
     ySize = Rect.y1 + 1;
     
-    /* »æÖÆ±êÌâÀ¸ */
+    /* ç»˜åˆ¶æ ‡é¢˜æ  */
     if (pObj != WM_GetActiveWindow()) {
         GUI_SetFGColor(WINDOW_CAPTION_COLOR2);
         GUI_SetFontColor(WINDOW_TITLE_COLOR2);
@@ -38,11 +38,11 @@ static void __Paint(WM_HWIN hWin)
         GUI_SetFontColor(WINDOW_TITLE_COLOR1);
     }
     GUI_FillRect(1, 1, xSize - 2, pObj->CaptionHeight - 1);
-    /* »æÖÆ±êÌâ */
+    /* ç»˜åˆ¶æ ‡é¢˜ */
     GUI_SetFont(WIDGET_GetFont(pObj));
     GUI_Val2Rect(&Rect, 2, 1, xSize - 4, pObj->CaptionHeight);
-    GUI_DispStringInRect(&Rect, pObj->Title, GUI_ALIGN_VCENTER); /* ´¹Ö±¾ÓÖÐ */
-    /* »æÖÆ±ß¿ò */
+    GUI_DispStringInRect(&Rect, pObj->Title, GUI_ALIGN_VCENTER); /* åž‚ç›´å±…ä¸­ */
+    /* ç»˜åˆ¶è¾¹æ¡† */
     if (pObj != WM_GetActiveWindow()) {
         GUI_SetFGColor(WINDOW_TITLE_COLOR2);
     } else {
@@ -51,17 +51,34 @@ static void __Paint(WM_HWIN hWin)
     GUI_DrawRect(0, 0, xSize, ySize);
 }
 
-/* WINDOWÉèÖÃ½¹µãº¯Êý */
+/* WINDOWè®¾ç½®ç„¦ç‚¹å‡½æ•° */
 static void WINDOW_SetFocus(GUI_MESSAGE *pMsg)
 {
     WINDOW_Obj *pObj = pMsg->hWin;
 
     if (pMsg->hWinSrc != pObj && pMsg->hWinSrc != pObj->hClient) {
         pObj->hFocus = pMsg->hWinSrc;
+        WM_Invalidate(pObj->hFocus); /* å½“å‰ç„¦ç‚¹æŽ§ä»¶æ— æ•ˆåŒ– */
     }
 }
 
-/* WINDOW¿Ø¼þ×Ô¶¯»Øµ÷º¯Êý */
+/* å°†ä¸‹ä¸€ä¸ªæŽ§ä»¶è®¾ç½®ä¸ºç„¦ç‚¹  */
+static void WINDOW_ChangeFocus(WINDOW_Obj *pObj)
+{
+    WM_Obj *pFocus;
+
+    pFocus = pObj->hFocus;
+    if (pFocus && pFocus->hNext) {
+        pFocus = pFocus->hNext;
+    } else {
+        pFocus = ((WM_Obj *)(pObj->hClient))->hFirstChild;
+    }
+    if (pFocus) {
+        WM_SetWindowFocus(pFocus);
+    }
+}
+
+/* WINDOWæŽ§ä»¶è‡ªåŠ¨å›žè°ƒå‡½æ•° */
 static void __Callback(WM_MESSAGE *pMsg)
 {
     WM_CALLBACK *UserCb = ((WINDOW_Obj*)pMsg->hWin)->UserCb;
@@ -74,18 +91,20 @@ static void __Callback(WM_MESSAGE *pMsg)
         pMsg->Param = (GUI_PARAM)__GetClient(pMsg->hWin);
         return;
     case WM_SET_FOCUS:
-        WINDOW_SetFocus(pMsg); /* ÉèÖÃ½¹µã */
-        WM_Invalidate(((WINDOW_Obj*)pMsg->hWin)->hBtn);
+        WINDOW_SetFocus(pMsg); /* è®¾ç½®ç„¦ç‚¹ */
         return;
     case WM_GET_FOCUS:
         pMsg->hWin = ((WINDOW_Obj*)pMsg->hWin)->hFocus;
         return;
-    case WM_KILL_FOCUS:
-        WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hFocus, WM_KILL_FOCUS, 0);
-        WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hBtn, WM_KILL_FOCUS, 0);
+    case WM_KILL_FOCUS: /* æ³¨æ„WindowæŽ§ä»¶çš„ç„¦ç‚¹ä¸èƒ½æ˜¯è‡ªå·± */
         WM_Invalidate(pMsg->hWin);
-        return;
+        WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hFocus,
+            WM_KILL_FOCUS, pMsg->Param);
+        break;
     case WM_KEYDOWN:
+        if (pMsg->Param == KEY_TAB) {
+            WINDOW_ChangeFocus(pMsg->hWin);
+       }
         WM_SendMessage(((WINDOW_Obj*)pMsg->hWin)->hFocus,
             WM_KEYDOWN, pMsg->Param);
         break;
@@ -108,18 +127,18 @@ static void __Callback(WM_MESSAGE *pMsg)
     }
 }
 
-/* ¿Í»§Çø×Ô»æº¯Êý */
+/* å®¢æˆ·åŒºè‡ªç»˜å‡½æ•° */
 static void __PaintClient(WM_HWIN hWin)
 {
     GUI_RECT Rect;
 
     GUI_GetClientRect(&Rect);
-    /* »æÖÆ±³¾° */
+    /* ç»˜åˆ¶èƒŒæ™¯ */
     GUI_SetFGColor(WINDOW_BODY_BKC);
     GUI_FillRect(0, 0, Rect.x1 + 1, Rect.y1 + 1);
 }
 
-/* ¿Í»§Çø»Øµ÷º¯Êý */
+/* å®¢æˆ·åŒºå›žè°ƒå‡½æ•° */
 static void __ClientCallback(WM_MESSAGE *pMsg)
 {
     WM_HWIN hParent;
@@ -132,11 +151,11 @@ static void __ClientCallback(WM_MESSAGE *pMsg)
         break;
     case WM_SET_FOCUS:
         pMsg->hWin = hParent;
-        WINDOW_SetFocus(pMsg); /* ÉèÖÃ½¹µã */
+        WINDOW_SetFocus(pMsg); /* è®¾ç½®ç„¦ç‚¹ */
+        return;
+    case WM_TP_PRESS: /* ä¸ç§»åŠ¨çª—å£ */
         break;
-    case WM_TP_PRESS: /* ²»ÒÆ¶¯´°¿Ú */
-        break;
-    case WM_TP_LEAVE: /* ²»ÒÆ¶¯´°¿Ú */
+    case WM_TP_LEAVE: /* ä¸ç§»åŠ¨çª—å£ */
         break;
     default:
         WM_DefaultProc(pMsg);
@@ -148,7 +167,7 @@ static void __ClientCallback(WM_MESSAGE *pMsg)
     }
 }
 
-/* ¹Ø±Õ°´Å¥×Ô»æº¯Êý */
+/* å…³é—­æŒ‰é’®è‡ªç»˜å‡½æ•° */
 static void __BtnPaint(GUI_HWIN hWin)
 {
     GUI_RECT Rect;
@@ -158,11 +177,11 @@ static void __BtnPaint(GUI_HWIN hWin)
     GUI_GetClientRect(&Rect);
     if (WM_GetActiveWindow() != WM_GetDsektopWindow(hWin)) {
 		lColor = WINDOW_TITLE_COLOR2;
-    } else if (BUTTON_GetStatus(hWin)) { /* °´ÏÂ */
+    } else if (BUTTON_GetStatus(hWin)) { /* æŒ‰ä¸‹ */
 		GUI_SetFGColor(0x00D04040);
         GUI_FillRect(0, 0, Rect.x1 + 1, Rect.y1 + 1);
     }
-    /* »æÖÆ'X' */
+    /* ç»˜åˆ¶'X' */
 	GUI_SetFGColor(lColor);
 	x0 = Rect.x0 + (Rect.x1 - Rect.x0 - 9) / 2;
 	y0 = Rect.y0 + (Rect.y1 - Rect.y0 - 9) / 2;
@@ -170,7 +189,7 @@ static void __BtnPaint(GUI_HWIN hWin)
 	GUI_DrawLine(x0, y0 + 9, x0 + 9, y0);
 }
 
-// ´´½¨¿Í»§Çø
+// åˆ›å»ºå®¢æˆ·åŒº
 static void __CreateClient(WINDOW_Obj *pObj)
 {
     u_16 xSize, ySize;
@@ -182,7 +201,7 @@ static void __CreateClient(WINDOW_Obj *pObj)
         xSize, ySize, pObj, 0, WM_NULL_ID, __ClientCallback, 0);
 }
 
-/* ¹Ø±Õ°´Å¥ */
+/* å…³é—­æŒ‰é’® */
 void __CreateBtn(WINDOW_Obj *pObj)
 {
 	u_16 xSize, ySize;
@@ -197,15 +216,15 @@ void __CreateBtn(WINDOW_Obj *pObj)
 }
 
 /*
- * ´´½¨´°¿Ú¿Ø¼þ
- * x0:WINDOW¿Ø¼þµÄ×î×óÏñËØ(Ïà¶ÔÓÚ¸¸´°¿Ú)
- * y0:WINDOW¿Ø¼þµÄ×îÓÒÏñËØ(Ïà¶ÔÓÚ¸¸´°¿Ú)
- * xSize:WINDOW¿Ø¼þµÄË®Æ½¿í¶È
- * ySize:WINDOW¿Ø¼þµÄÊúÖ±¸ß¶È
- * hParent:¸¸´°¿Ú¾ä±ú
- * Id:´°¿ÚID
- * Flag:´°¿Ú×´Ì¬
- * cb:ÓÃ»§»Øµ÷Àú³ÌÖ¸Õë
+ * åˆ›å»ºçª—å£æŽ§ä»¶
+ * x0:WINDOWæŽ§ä»¶çš„æœ€å·¦åƒç´ (ç›¸å¯¹äºŽçˆ¶çª—å£)
+ * y0:WINDOWæŽ§ä»¶çš„æœ€å³åƒç´ (ç›¸å¯¹äºŽçˆ¶çª—å£)
+ * xSize:WINDOWæŽ§ä»¶çš„æ°´å¹³å®½åº¦
+ * ySize:WINDOWæŽ§ä»¶çš„ç«–ç›´é«˜åº¦
+ * hParent:çˆ¶çª—å£å¥æŸ„
+ * Id:çª—å£ID
+ * Flag:çª—å£çŠ¶æ€
+ * cb:ç”¨æˆ·å›žè°ƒåŽ†ç¨‹æŒ‡é’ˆ
  **/
 WM_HWIN WINDOW_Create(i_16 x0,
     i_16 y0,
@@ -225,21 +244,22 @@ WM_HWIN WINDOW_Create(i_16 x0,
         GUI_UNLOCK();
         return NULL;
     }
-    pObj->CaptionHeight = WINDOW_DEF_CAPHEIGHT;  /* ±êÌâÀ¸¸ß¶È */
+    pObj->hFocus = NULL; /* é˜²æ­¢hFocusæˆé‡ŽæŒ‡é’ˆ */
+    pObj->CaptionHeight = WINDOW_DEF_CAPHEIGHT;  /* æ ‡é¢˜æ é«˜åº¦ */
     pObj->UserCb = cb;
     WIDGET_SetPaintFunction(pObj, __Paint);
-    WINDOW_SetTitle(pObj, ""); /* ÉèÖÃ³õÊ¼×Ö·û´® */
+    WINDOW_SetTitle(pObj, ""); /* è®¾ç½®åˆå§‹å­—ç¬¦ä¸² */
     WINDOW_SetFont(pObj, &GUI_DEF_FONT);
-    __CreateClient(pObj); /* ½¨Á¢¿Í»§Çø */
+    __CreateClient(pObj); /* å»ºç«‹å®¢æˆ·åŒº */
     __CreateBtn(pObj);
     WM_SendMessage(pObj, WM_CREATED, (GUI_PARAM)NULL);
-    /* ÉèÖÃÊäÈë½¹µã */
+    /* è®¾ç½®è¾“å…¥ç„¦ç‚¹ */
     pObj->hFocus = ((WM_Obj *)pObj->hClient)->hFirstChild;
     GUI_UNLOCK();
     return pObj;
 }
 
-/* WINDOWÉèÖÃ±êÌâ */
+/* WINDOWè®¾ç½®æ ‡é¢˜ */
 GUI_RESULT WINDOW_SetTitle(WM_HWIN hWin, const char *str)
 {
     if (hWin) {
@@ -249,7 +269,7 @@ GUI_RESULT WINDOW_SetTitle(WM_HWIN hWin, const char *str)
     return GUI_ERR;
 }
 
-/* WINDOWÉèÖÃ×ÖÌå */
+/* WINDOWè®¾ç½®å­—ä½“ */
 GUI_RESULT WINDOW_SetFont(WM_HWIN hWin, GUI_FONT *Font)
 {
     WIDGET_SetFont(hWin, Font);

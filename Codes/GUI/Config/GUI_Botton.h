@@ -1,12 +1,12 @@
-#ifndef __GUI_BOTTON_H
+﻿#ifndef __GUI_BOTTON_H
 #define __GUI_BOTTON_H
 
 #include "GUI_Device.h"
 
-void GUI_InitOS(void);
-void GUI_TaskLock(void);
-void GUI_TaskUnlock(void);
-u_32 GUI_GetTaskId(void);
+void * GUI_TaskCreateLock(void);
+void GUI_TaskLock(void *pLock);
+void GUI_TaskUnlock(void *pLock);
+u_32 GUI_TaskGetId(void);
 GUI_TIME GUI_GetTime(void);
 void _GUI_Delay_ms(GUI_TIME tms);
 void * _GUI_GetHeapBuffer(int Page, u_32 *Size);

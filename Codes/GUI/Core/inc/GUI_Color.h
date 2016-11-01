@@ -1,4 +1,4 @@
-#ifndef __GUI_COLOR_H
+﻿#ifndef __GUI_COLOR_H
 #define __GUI_COLOR_H
 
 #include "GUI_Config.h"

@@ -1,4 +1,4 @@
-#ifndef __GUI_FONT_H
+ï»¿#ifndef __GUI_FONT_H
 #define __GUI_FONT_H
 
 #include "GUI_Typedef.h"
@@ -17,22 +17,22 @@ typedef const struct {
     const unsigned char *pData;
 } GUI_CHARINFO;
 
-/* ×ÖÌå½Úµã */
+/* å­—ä½“èŠ‚ç‚¹ */
 typedef const struct GUI_FONT_PROP {
-    u_16 FirstChar;                    /* µÚÒ»¸ö×Ö·û */
-    u_16 LastChar;                     /* ×îºóÒ»¸ö×Ö·û */
-    GUI_CHARINFO *pCharInfo;           /* ×Ö·ûÊı¾İ */
-    const struct GUI_FONT_PROP *pNext; /* ÏÂÒ»¸ö½Úµã */
+    u_16 FirstChar;                    /* ç¬¬ä¸€ä¸ªå­—ç¬¦ */
+    u_16 LastChar;                     /* æœ€åä¸€ä¸ªå­—ç¬¦ */
+    GUI_CHARINFO *pCharInfo;           /* å­—ç¬¦æ•°æ® */
+    const struct GUI_FONT_PROP *pNext; /* ä¸‹ä¸€ä¸ªèŠ‚ç‚¹ */
 } GUI_FONT_PROP;
 
-/* ×ÖÌå¸ñÊ½¶¨Òå */
+/* å­—ä½“æ ¼å¼å®šä¹‰ */
 typedef const struct GUI_FONT {
-    u_8  FontType;        /* ×ÖÌåÀàĞÍ */
-    u_16 CharHeight;      /* ×Ö·û¸ß¶È */
-    GUI_FONT_PROP *pProp; /* Ö¸ÏòµãÕóÊı¾İ */
+    u_8  FontType;        /* å­—ä½“ç±»å‹ */
+    u_16 CharHeight;      /* å­—ç¬¦é«˜åº¦ */
+    GUI_FONT_PROP *pProp; /* æŒ‡å‘ç‚¹é˜µæ•°æ® */
 } GUI_FONT;
 
-/* ×ÖÌåÁĞ±í */
+/* å­—ä½“åˆ—è¡¨ */
 extern GUI_FONT GUI_FontASCII_8x16;
 extern GUI_FONT GUI_FontUI17_4pp;
 

@@ -1,4 +1,4 @@
-#ifndef __WIDGET_H
+ï»¿#ifndef __WIDGET_H
 #define __WIDGET_H
 
 #include "GUI_WM.h"
@@ -14,7 +14,7 @@
 #define WIDGET_DRAW_FONT1      0x0020
 #define WIDGET_DRAW_FONT2      0x0021
 
-/* WIDGETÆ¤·ôÎ»ÖÃ¶¨Òå */
+/* WIDGETçš®è‚¤ä½ç½®å®šä¹‰ */
 #define WIDGET_ALL             0x00
 #define WIDGET_EDGE            0x01
 #define WIDGET_BACK            0x02
@@ -24,9 +24,9 @@
 typedef void WIDGET_PAINT(GUI_HWIN);
 
 typedef struct {
-    GUI_FONT      *Font;            /* ×ÖÌå */
-    WIDGET_PAINT  *Paint;           /* »æÖÆ»Øµ÷º¯Êı */
-} WIDGET_SKIN;                      /* ´°¿Ú¿Ø¼şÆ¤·ô */
+    GUI_FONT      *Font;            /* å­—ä½“ */
+    WIDGET_PAINT  *Paint;           /* ç»˜åˆ¶å›è°ƒå‡½æ•° */
+} WIDGET_SKIN;                      /* çª—å£æ§ä»¶çš®è‚¤ */
 
 typedef struct {
     WM_Obj Win;

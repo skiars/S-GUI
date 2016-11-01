@@ -1,4 +1,4 @@
-#ifndef __GUI_DRIVER_H
+ï»¿#ifndef __GUI_DRIVER_H
 #define __GUI_DRIVER_H
 
 #include "GUI_Config.h"
@@ -13,7 +13,7 @@
 #define GL_DrawVLine      _GL_DrawVLine
 #define GL_FillRect	      GUI_glAPI.FillRect
 
-/* »æÍ¼Ö¸Áî */
+/* ç»˜å›¾æŒ‡ä»¤ */
 typedef struct {
     i_16 x0, y0, x1, y1;
     u_16 xSize, ySize;
@@ -25,32 +25,32 @@ typedef struct {
     u_8 SrcFormat, DstFormat;
 }GUI_FLIPOUT;
 
-/* Í¼ĞÎÉè±¸Çı¶¯º¯Êı */
+/* å›¾å½¢è®¾å¤‡é©±åŠ¨å‡½æ•° */
 typedef struct {
-    u_16 xSize; /* ÏÔÊ¾Éè±¸µÄ¿í¶È */
-    u_16 ySize; /* ÏÔÊ¾Éè±¸µÄ¸ß¶È */
-    void (*SetPixel)(GUI_FLIPOUT *); /* ÏÔÊ¾Ä³¸öÏñËØ */
-    GUI_COLOR (*GetPixel)(GUI_FLIPOUT *);             /* ¶ÁÈ¡Ä³¸öÏñËØ */
+    u_16 xSize; /* æ˜¾ç¤ºè®¾å¤‡çš„å®½åº¦ */
+    u_16 ySize; /* æ˜¾ç¤ºè®¾å¤‡çš„é«˜åº¦ */
+    void (*SetPixel)(GUI_FLIPOUT *); /* æ˜¾ç¤ºæŸä¸ªåƒç´  */
+    GUI_COLOR (*GetPixel)(GUI_FLIPOUT *);             /* è¯»å–æŸä¸ªåƒç´  */
     void (*DrawHLine)(GUI_FLIPOUT *);
     void (*DrawVLine)(GUI_FLIPOUT *);
     void (*FillRect)(GUI_FLIPOUT *);
     void (*DrawBitmap)(GUI_FLIPOUT *);
 } GUI_DRIVER;
 
-/* Í¼ĞÎÉè±¸³éÏó½á¹¹ */
+/* å›¾å½¢è®¾å¤‡æŠ½è±¡ç»“æ„ */
 typedef struct {
-    void *FrameBuffer; /* Ö¡»º³å */
-    void *Position;    /* µ±Ç°¹¤×÷µÄÎ»ÖÃ */
-    i_16 x0;           /* ÔÚÎïÀíÉè±¸ÖĞµÄx0 */
-    i_16 y0;           /* ÔÚÎïÀíÉè±¸ÖĞµÄy0 */
+    void *FrameBuffer; /* å¸§ç¼“å†² */
+    void *Position;    /* å½“å‰å·¥ä½œçš„ä½ç½® */
+    i_16 x0;           /* åœ¨ç‰©ç†è®¾å¤‡ä¸­çš„x0 */
+    i_16 y0;           /* åœ¨ç‰©ç†è®¾å¤‡ä¸­çš„y0 */
     u_16 Width;
     u_16 Height;
-    int BytesPerPixel; /* ÑÕÉ«Éî¶È */
-    int PixelFormat;   /* ÏñËØÑÕÉ«¸ñÊ½ */
-    GUI_DRIVER Phy;    /* Çı¶¯³ÌĞò */
+    int BytesPerPixel; /* é¢œè‰²æ·±åº¦ */
+    int PixelFormat;   /* åƒç´ é¢œè‰²æ ¼å¼ */
+    GUI_DRIVER Phy;    /* é©±åŠ¨ç¨‹åº */
 } GUI_GDEV;
 
-/* »æÍ¼API¶¨Òå */
+/* ç»˜å›¾APIå®šä¹‰ */
 typedef struct {
     void (*SetPixelClip)(i_16, i_16);
     void (*DrawHLine)(i_16, i_16, i_16);

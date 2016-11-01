@@ -1,12 +1,13 @@
-#include "GUI_Queue.h"
+ï»¿#include "GUI_Queue.h"
 #include "GUI.h"
 
 GUI_QUEUE *__MsgQueue;
+static void *__msgLockPtr;
 
 /*
- * ÏûÏ¢¶ÓÁĞ³õÊ¼»¯
- * Capacity:¶ÓÁĞÈİÁ¿
- * ·µ»ØÖµ£ºÒ»¸öÒÑ¾­³õÊ¼»¯µÄ¶ÓÁĞÖ¸Õë
+ * æ¶ˆæ¯é˜Ÿåˆ—åˆå§‹åŒ–
+ * Capacity:é˜Ÿåˆ—å®¹é‡
+ * è¿”å›å€¼ï¼šä¸€ä¸ªå·²ç»åˆå§‹åŒ–çš„é˜Ÿåˆ—æŒ‡é’ˆ
  */
 GUI_QUEUE * GUI_QueueInit(u_16 Capacity)
 {
@@ -20,7 +21,7 @@ GUI_QUEUE * GUI_QueueInit(u_16 Capacity)
     return pQue;
 }
 
-/* É¾³ı¶ÓÁĞ */
+/* åˆ é™¤é˜Ÿåˆ— */
 void GUI_QueueDelete(GUI_QUEUE *pQue)
 {
     if (pQue) {
@@ -30,7 +31,7 @@ void GUI_QueueDelete(GUI_QUEUE *pQue)
 }
 
 /*
- * ´ÓÏûÏ¢¶ÓÁĞÀï¶ÁÈ¡Ò»ÌõÏûÏ¢
+ * ä»æ¶ˆæ¯é˜Ÿåˆ—é‡Œè¯»å–ä¸€æ¡æ¶ˆæ¯
  **/
 GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
 {
@@ -38,13 +39,13 @@ GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
         return GUI_ERR;
     }
     GUI_LOCK();
-    if (!pQue->size) {   /* ¶ÓÁĞÎª¿Õ */
+    if (!pQue->size) {   /* é˜Ÿåˆ—ä¸ºç©º */
         GUI_UNLOCK();
         return GUI_ERR;
     }
     --pQue->size;
     *pMsg = pQue->pArray[pQue->front];
-    if (++pQue->front == pQue->Capacity) {  /* ¶ÓÍ·ÈÆ»Øµ½¿ªÍ· */
+    if (++pQue->front == pQue->Capacity) {  /* é˜Ÿå¤´ç»•å›åˆ°å¼€å¤´ */
         pQue->front = 0;
     }
     GUI_UNLOCK();
@@ -52,34 +53,37 @@ GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
 }
 
 /*
- * ÏòÏûÏ¢¶ÓÁĞ·¢ËÍÒ»ÌõÏûÏ¢
- * pQue:ÊÂ¼ş¶ÓÁĞÖ¸Õë
- * pMsg:ĞèÒª·¢ËÍµÄÏûÏ¢
+ * å‘æ¶ˆæ¯é˜Ÿåˆ—å‘é€ä¸€æ¡æ¶ˆæ¯
+ * pQue:äº‹ä»¶é˜Ÿåˆ—æŒ‡é’ˆ
+ * pMsg:éœ€è¦å‘é€çš„æ¶ˆæ¯
  **/
 GUI_RESULT GUI_PostMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
 {
     if (!pQue) {
         return GUI_ERR;
-    }
-    if (pQue->size == pQue->Capacity - 1) { /* ¶ÓÁĞÒÑÂú */
+    } 
+    if (pQue->size == pQue->Capacity - 1) { /* é˜Ÿåˆ—å·²æ»¡ */
 #if GUI_DEBUG_MODE
         GUI_DEBUG_OUT("GUI message queue is full.");
 #endif
         return GUI_ERR;
     }
     ++pQue->size;
-    if (++pQue->rear == pQue->Capacity) {  /* ¶ÓÎ²ÈÆ»Øµ½¿ªÍ· */
+    if (++pQue->rear == pQue->Capacity) {  /* é˜Ÿå°¾ç»•å›åˆ°å¼€å¤´ */
         pQue->rear = 0;
     }
     pQue->pArray[pQue->rear] = *pMsg;
     return GUI_OK;
 }
 
-/* -------------------- GUIÏûÏ¢´¦Àí -------------------- */
-/* GUIÏûÏ¢¶ÓÁĞ³õÊ¼»¯ */
+/* -------------------- GUIæ¶ˆæ¯å¤„ç† -------------------- */
+/* GUIæ¶ˆæ¯é˜Ÿåˆ—åˆå§‹åŒ– */
 GUI_RESULT GUI_MessageQueueInit(void)
 {
+    __msgLockPtr = GUI_TaskCreateLock(); /* åˆ›å»ºé” */
+    GUI_TaskLock(__msgLockPtr); /* ä¸Šé” */
     __MsgQueue = GUI_QueueInit(GUI_MSG_QUEUE_SIZE);
+    GUI_TaskUnlock(__msgLockPtr); /* è§£é” */
     if (__MsgQueue == NULL) {
 #if GUI_DEBUG_MODE
         GUI_DEBUG_OUT("Failure to create message queue.");
@@ -89,31 +93,33 @@ GUI_RESULT GUI_MessageQueueInit(void)
     return GUI_OK;
 }
 
-/* É¾³ıGUIÏûÏ¢¶ÓÁĞ */
+/* åˆ é™¤GUIæ¶ˆæ¯é˜Ÿåˆ— */
 void GUI_MessageQueueDelete(void)
 {
+    GUI_TaskLock(__msgLockPtr); /* ä¸Šé” */
     GUI_QueueDelete(__MsgQueue);
     __MsgQueue = NULL;
+    GUI_TaskUnlock(__msgLockPtr); /* è§£é” */
 }
 
-/* ´ÓGUIÏûÏ¢¶ÓÁĞÖĞ¶ÁÈ¡Ò»¸öÏûÏ¢ */
+/* ä»GUIæ¶ˆæ¯é˜Ÿåˆ—ä¸­è¯»å–ä¸€ä¸ªæ¶ˆæ¯ */
 GUI_RESULT GUI_GetMessage(GUI_MESSAGE *pMsg)
 {
     GUI_RESULT res;
 
-    GUI_LOCK();
+    GUI_TaskLock(__msgLockPtr); /* ä¸Šé” */
     res = GUI_GetMessageQueue(__MsgQueue, pMsg);
-    GUI_UNLOCK();
+    GUI_TaskUnlock(__msgLockPtr); /* è§£é” */
     return res;
 }
 
-/* ÏòGUIÏûÏ¢¶ÓÁĞ·¢ËÍÒ»ÌõÏûÏ¢ */
+/* å‘GUIæ¶ˆæ¯é˜Ÿåˆ—å‘é€ä¸€æ¡æ¶ˆæ¯ */
 GUI_RESULT GUI_PostMessage(GUI_MESSAGE *pMsg)
 {
     GUI_RESULT res;
 
-    GUI_LOCK();
+    GUI_TaskLock(__msgLockPtr); /* ä¸Šé” */
     res = GUI_PostMessageQueue(__MsgQueue, pMsg);
-    GUI_UNLOCK();
+    GUI_TaskUnlock(__msgLockPtr); /* è§£é” */
     return res;
 }

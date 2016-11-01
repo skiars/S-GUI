@@ -1,44 +1,44 @@
-#ifndef __GUI_WM_H
+ï»¿#ifndef __GUI_WM_H
 #define __GUI_WM_H
 
 #include "GUI_Typedef.h"
 #include "GUI_Core.h"
 
-/* ÏµÍ³±£ÁôÏûÏ¢ */
-#define WM_INIT_DIALOG       0x0100    /* ¶Ô»°¿ò³õÊ¼»¯ */
-#define WM_PAINT             0x0101    /* ÖØ»æ */
-#define WM_DELETE            0x0102    /* É¾³ı´°¿Ú */
-#define WM_CREATED           0x0103    /* ´°¿ÚÒÑ¾­´´½¨ */
-#define WM_TIMER             0x0104    /* ´°¿Ú¶¨Ê±Æ÷¸üĞÂ */
-#define WM_GET_CLIENT        0x0105    /* »ñÈ¡¿Í»§Çø¾ä±ú */
-#define WM_SET_FOCUS         0x0106    /* ÉèÖÃÊäÈë½¹µã */
-#define WM_GET_FOCUS         0x0107    /* »ñÈ¡ÊäÈë½¹µã */
-#define WM_KILL_FOCUS        0x0108     /* ´°¿ÚÊ§È¥½¹µã */
-#define WM_QUIT              0x0109    /* ÍË³ö */
-#define WM_TP_CHECKED        0x0120    /* ´¥Ãş°å°´ÏÂ */
-#define WM_TP_REMOVED        0x0121    /* ´¥Ãş°åËÉ¿ª */
-#define WM_TP_PRESS          0x0122    /* ´¥Ãş×ø±êÒ»Ö±ÔÚµ±Ç°´°¿Ú */
-#define WM_TP_LEAVE          0x0123    /* ´¥Ãş×ø±êÀë¿ªµ±Ç°´°¿Ú */
-#define WM_BUTTON_CLICKED    0x0200    /* BUTTON¿Ø¼ş°´ÏÂ */
-#define WM_BUTTON_RELEASED   0x0201    /* BUTTON¿Ø¼şÒÑ¾­ÊÍ·Å */
-#define WM_NUTTON_MOVED_OUT  0x0202    /* BUTTON±»µã»÷È»ºóÖ¸ÕëÒÆ¿ª */
-#define WM_WIONDOW_CHECKED   0x0203    /* ´°¿Ú±»µã»÷ */
-#define WM_LISTBOX_CHECK     0x0204    /* LISTBOX±»µã»÷(ĞÂµÄÑ¡ÖĞÏî) */
-#define WM_KEYDOWN           0x0210    /* °´¼ü°´ÏÂ */
-#define WM_KEYUP             0x0211    /* °´¼üËÉ¿ª */
-#define WM_USER_MESSAGE      0x1000    /* ÓÃ»§×Ô¶¨ÒåµÄÏûÏ¢ */
-/* 0x0400ÒÔºóÎªÀ©Õ¹ÏûÏ¢(ÓÃ»§×Ô¶¨Òå) */
+/* ç³»ç»Ÿä¿ç•™æ¶ˆæ¯ */
+#define WM_INIT_DIALOG       0x0100    /* å¯¹è¯æ¡†åˆå§‹åŒ– */
+#define WM_PAINT             0x0101    /* é‡ç»˜ */
+#define WM_DELETE            0x0102    /* åˆ é™¤çª—å£ */
+#define WM_CREATED           0x0103    /* çª—å£å·²ç»åˆ›å»º */
+#define WM_TIMER             0x0104    /* çª—å£å®šæ—¶å™¨æ›´æ–° */
+#define WM_GET_CLIENT        0x0105    /* è·å–å®¢æˆ·åŒºå¥æŸ„ */
+#define WM_SET_FOCUS         0x0106    /* è®¾ç½®è¾“å…¥ç„¦ç‚¹ */
+#define WM_GET_FOCUS         0x0107    /* è·å–è¾“å…¥ç„¦ç‚¹ */
+#define WM_KILL_FOCUS        0x0108    /* çª—å£å¤±å»ç„¦ç‚¹ */
+#define WM_QUIT              0x0109    /* é€€å‡º */
+#define WM_TP_CHECKED        0x0120    /* è§¦æ‘¸æ¿æŒ‰ä¸‹ */
+#define WM_TP_REMOVED        0x0121    /* è§¦æ‘¸æ¿æ¾å¼€ */
+#define WM_TP_PRESS          0x0122    /* è§¦æ‘¸åæ ‡ä¸€ç›´åœ¨å½“å‰çª—å£ */
+#define WM_TP_LEAVE          0x0123    /* è§¦æ‘¸åæ ‡ç¦»å¼€å½“å‰çª—å£ */
+#define WM_BUTTON_CLICKED    0x0200    /* BUTTONæ§ä»¶æŒ‰ä¸‹ */
+#define WM_BUTTON_RELEASED   0x0201    /* BUTTONæ§ä»¶å·²ç»é‡Šæ”¾ */
+#define WM_NUTTON_MOVED_OUT  0x0202    /* BUTTONè¢«ç‚¹å‡»ç„¶åæŒ‡é’ˆç§»å¼€ */
+#define WM_WIONDOW_CHECKED   0x0203    /* çª—å£è¢«ç‚¹å‡» */
+#define WM_LISTBOX_CHECK     0x0204    /* LISTBOXè¢«ç‚¹å‡»(æ–°çš„é€‰ä¸­é¡¹) */
+#define WM_KEYDOWN           0x0210    /* æŒ‰é”®æŒ‰ä¸‹ */
+#define WM_KEYUP             0x0211    /* æŒ‰é”®æ¾å¼€ */
+#define WM_USER_MESSAGE      0x1000    /* ç”¨æˆ·è‡ªå®šä¹‰çš„æ¶ˆæ¯ */
+/* 0x0400ä»¥åä¸ºæ‰©å±•æ¶ˆæ¯(ç”¨æˆ·è‡ªå®šä¹‰) */
 
-/* ´°¿Ú×´Ì¬¶¨Òå(Window status define) */
-#define WM_WS_ACTIVE         (1 << 0)   /* »î¶¯´°¿Ú */
-#define WM_WS_TRANS          (1 << 1)   /* Í¸Ã÷´°¿Ú */
-#define WM_WS_MOVE           (1 << 2)   /* ¿ÉÒÆ¶¯µÄ´°¿Ú */
-#define WM_WS_INVAILD        (1 << 3)   /* ÎŞĞ§´°¿Ú  */
-#define WM_WS_BACKGND        (1 << 4)   /* ±³¾°´°¿Ú */
-#define WM_WS_STICK          (1 << 5)   /* ÖÃ¶¥´°¿Ú */
-#define WM_WS_HIDE           (1 << 6)   /* Òş²ØµÄ´°¿Ú */
+/* çª—å£çŠ¶æ€å®šä¹‰(Window status define) */
+#define WM_WS_ACTIVE         (1 << 0)   /* æ´»åŠ¨çª—å£ */
+#define WM_WS_TRANS          (1 << 1)   /* é€æ˜çª—å£ */
+#define WM_WS_MOVE           (1 << 2)   /* å¯ç§»åŠ¨çš„çª—å£ */
+#define WM_WS_INVAILD        (1 << 3)   /* æ— æ•ˆçª—å£  */
+#define WM_WS_BACKGND        (1 << 4)   /* èƒŒæ™¯çª—å£ */
+#define WM_WS_STICK          (1 << 5)   /* ç½®é¡¶çª—å£ */
+#define WM_WS_HIDE           (1 << 6)   /* éšè—çš„çª—å£ */
 
-/* ±£ÁôID */
+/* ä¿ç•™ID */
 #define WM_NULL_ID          0x0000
 #define WM_ROOTWIN_ID       0x0001
 #define WM_USER_ID          0x0200
@@ -53,21 +53,21 @@
 typedef GUI_HWIN WM_HWIN;
 typedef GUI_MESSAGE WM_MESSAGE;
 
-/* ÏûÏ¢´¦Àí»Øµ÷º¯Êı */
+/* æ¶ˆæ¯å¤„ç†å›è°ƒå‡½æ•° */
 typedef void WM_CALLBACK (WM_MESSAGE *pMsg);
 
-/* ´°¿Ú¹ÜÀíÆ÷»ùÀà */
+/* çª—å£ç®¡ç†å™¨åŸºç±» */
 typedef struct {
-    WM_HWIN hParent;        /* ¸¸´°¿ÚÖ¸Õë */
-    WM_HWIN hFirstChild;    /* µÚÒ»¸ö×Ó´°¿ÚÖ¸Õë */
-    WM_HWIN hNext;          /* Ö¸ÏòÏÂÒ»¸öÍ¬Êô´°¿Ú */
-    WM_HWIN hNextLine;      /* Ö¸ÏòÏÂÒ»Á´½Ú */
-    GUI_RECT Rect;          /* ´°¿Ú³ß´ç */
-    GUI_RECT InvalidRect;   /* ´°¿ÚÎŞĞ§ÇøÓò */
-    GUI_AREA ClipArea;      /* ´°¿Ú¼ôÇĞÓò */
-    WM_CALLBACK *WinCb;     /* ´°¿ÚĞÅÏ¢ÏìÓ¦»Øµ÷º¯Êı */
-    u_16 Status;            /* ´°¿Ú×´Ì¬ */
-    u_16 Id;                /* ´°¿ÚId */
+    WM_HWIN hParent;        /* çˆ¶çª—å£æŒ‡é’ˆ */
+    WM_HWIN hFirstChild;    /* ç¬¬ä¸€ä¸ªå­çª—å£æŒ‡é’ˆ */
+    WM_HWIN hNext;          /* æŒ‡å‘ä¸‹ä¸€ä¸ªåŒå±çª—å£ */
+    WM_HWIN hNextLine;      /* æŒ‡å‘ä¸‹ä¸€é“¾èŠ‚ */
+    GUI_RECT Rect;          /* çª—å£å°ºå¯¸ */
+    GUI_RECT InvalidRect;   /* çª—å£æ— æ•ˆåŒºåŸŸ */
+    GUI_AREA ClipArea;      /* çª—å£å‰ªåˆ‡åŸŸ */
+    WM_CALLBACK *WinCb;     /* çª—å£ä¿¡æ¯å“åº”å›è°ƒå‡½æ•° */
+    u_16 Status;            /* çª—å£çŠ¶æ€ */
+    u_16 Id;                /* çª—å£Id */
 } WM_Obj;
 
 GUI_RESULT WM_Init(void);
@@ -82,8 +82,8 @@ WM_HWIN WM_GetFrontWindow(WM_HWIN hWin);
 WM_HWIN WM_GetTopChildWindow(WM_HWIN hWin);
 WM_HWIN WM_GetTopWindow(void);
 void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent);
-GUI_RESULT WM_SetFocusWindow(WM_HWIN hWin);
-WM_HWIN WM_GetCurrentFocus(void);
+GUI_RESULT WM_SetWindowFocus(WM_HWIN hWin);
+WM_HWIN WM_GetWindowFocus(void);
 GUI_RESULT WM_SetActiveWindow(WM_HWIN hWin);
 WM_HWIN WM_GetActiveWindow(void);
 GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin);

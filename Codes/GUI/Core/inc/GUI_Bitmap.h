@@ -1,4 +1,4 @@
-#ifndef __GUI_BITMAP_H
+ï»¿#ifndef __GUI_BITMAP_H
 #define __GUI_BITMAP_H
 
 #include "GUI_Typedef.h"
@@ -7,7 +7,7 @@
 #define GUI_DRAW_BMPM565  &GUI_DrawBitmap16b
 #define GUI_DRAW_GIF      &GUI_DrawGif
 
-/* µ÷É«°å */
+/* è°ƒè‰²æ¿ */
 typedef struct {
     u_32             NumEntries;
     char             HasTrans;
@@ -16,7 +16,7 @@ typedef struct {
 
 typedef LCD_LOGPALETTE GUI_LOGPALETTE;
 
-/* Î»Í¼½á¹¹Ìå */
+/* ä½å›¾ç»“æ„ä½“ */
 typedef struct {
     u_16 xSize, ySize;
     u_32 LineBytes;

@@ -1,9 +1,12 @@
-#include "GUI_Malloc.h"
+ï»¿#include "GUI_Malloc.h"
 #include "GUI_Core.h"
 
-static MEM_HEAP *__HeapList;   /* ¶ÑÁ´±í */
-static size_t __SizeBytes;     /* ×ÜÈİÁ¿ */
-static size_t __UsageBytes;    /* ×ÜÊ¹ÓÃÁ¿ */
+static MEM_HEAP *__HeapList;   /* å †é“¾è¡¨ */
+static size_t __SizeBytes;     /* æ€»å®¹é‡ */
+static size_t __UsageBytes;    /* æ€»ä½¿ç”¨é‡ */
+#if GUI_USE_MEM_LOCK
+static void * __LockPtr;       /* äº’æ–¥é” */
+#endif
 
 static void _ListInsert(MEM_HEAP *heap)
 {
@@ -20,12 +23,12 @@ static void _ListInsert(MEM_HEAP *heap)
 }
 
 /**
- @ ÄÚ´æ³Ø³õÊ¼»¯.
- @ Mem: ÄÚ´æ³ØµØÖ·(½¨ÒéÕâ¸öµØÖ·ÊÇ4×Ö½Ú¶ÔÆëµÄ, ÒÔ±ãÄÜÂú×ãÌØÊâĞèÇó).
- @ Size: ÄÚ´æ³Ø´óĞ¡(Byte).
- @ ·µ»ØÖµ: GUI_OK: ÄÚ´æ³Ø³õÊ¼»¯³É¹¦, GUI_ERR: ÄÚ´æ³Ø³õÊ¼»¯Ê§°Ü.
+ @ å†…å­˜æ± åˆå§‹åŒ–.
+ @ Mem: å†…å­˜æ± åœ°å€(å»ºè®®è¿™ä¸ªåœ°å€æ˜¯4å­—èŠ‚å¯¹é½çš„, ä»¥ä¾¿èƒ½æ»¡è¶³ç‰¹æ®Šéœ€æ±‚).
+ @ Size: å†…å­˜æ± å¤§å°(Byte).
+ @ è¿”å›å€¼: GUI_OK: å†…å­˜æ± åˆå§‹åŒ–æˆåŠŸ, GUI_ERR: å†…å­˜æ± åˆå§‹åŒ–å¤±è´¥.
  **/
-GUI_RESULT GUI_HeapInit(void *Mem, size_t Size)
+static GUI_RESULT _HeapInit(void *Mem, size_t Size)
 {
     MEM_HEAP *mPool;
 
@@ -39,27 +42,27 @@ GUI_RESULT GUI_HeapInit(void *Mem, size_t Size)
     mPool->MemPool.pLast = NULL;
     mPool->MemPool.pNext = NULL;
     mPool->MemPool.Size = Size - (sizeof(MEM_HEAP) - sizeof(MEM_NODE));
-    _ListInsert(mPool); /* Ìí¼Óµ½Á´±í */
+    _ListInsert(mPool); /* æ·»åŠ åˆ°é“¾è¡¨ */
     __SizeBytes += Size - (sizeof(MEM_HEAP) - sizeof(MEM_NODE));
     return GUI_OK;
 }
 
 /**
- @ ÉêÇëÄÚ´æ, ÄÚ²¿µ÷ÓÃ.
- @ pl: ÄÚ´æ³ØµÄµÚÒ»¸ö¶Ñ½ÚµãµØÖ·.
- @ Size: ÒªÉêÇëµÄ×Ö½ÚÊı.
- @ ·µ»ØÖµ: ÉêÇëµ½µÄ¶Ñ½ÚµãµØÖ·, ·µ»ØNULL±íÊ¾ÉêÇëÊ§°Ü.
+ @ ç”³è¯·å†…å­˜, å†…éƒ¨è°ƒç”¨.
+ @ pl: å†…å­˜æ± çš„ç¬¬ä¸€ä¸ªå †èŠ‚ç‚¹åœ°å€.
+ @ Size: è¦ç”³è¯·çš„å­—èŠ‚æ•°.
+ @ è¿”å›å€¼: ç”³è¯·åˆ°çš„å †èŠ‚ç‚¹åœ°å€, è¿”å›NULLè¡¨ç¤ºç”³è¯·å¤±è´¥.
  **/
 static MEM_NODE * __alloc(MEM_NODE *pl, size_t Size)
 {
     MEM_NODE *pn;
 
-    /* Ñ°ÕÒ¿Õ¼ä×ã¹»µÄ¿ÕÏĞ½Úµã */
+    /* å¯»æ‰¾ç©ºé—´è¶³å¤Ÿçš„ç©ºé—²èŠ‚ç‚¹ */
     while (pl && (pl->Size < Size + sizeof(MEM_NODE) || pl->Tag)) {
         pl = pl->pNext;
     }
     if (pl) {
-        /* ¿Õ¼ä¹»´óÔò½øĞĞ·Ö¸î */
+        /* ç©ºé—´å¤Ÿå¤§åˆ™è¿›è¡Œåˆ†å‰² */
         if (pl->Size > Size + (sizeof(MEM_NODE) << 1)) {
             pl->Size -= Size + sizeof(MEM_NODE);
             pn = (MEM_NODE *)((char *)pl + pl->Size);
@@ -79,16 +82,16 @@ static MEM_NODE * __alloc(MEM_NODE *pl, size_t Size)
 }
 
 /**
- @ ÊÍ·ÅÄÚ´æ, ÄÚ²¿µ÷ÓÃ.
- @ pl: ĞèÒªÊÍ·ÅµÄ¶Ñ½ÚµãµØÖ·.
+ @ é‡Šæ”¾å†…å­˜, å†…éƒ¨è°ƒç”¨.
+ @ pl: éœ€è¦é‡Šæ”¾çš„å †èŠ‚ç‚¹åœ°å€.
  **/
 static void __free(MEM_NODE *pl)
 {
     MEM_NODE *pn;
 
-    pl->Tag = 0; /* ±ê¼ÇÎª¿ÕÏĞ */
-    /* Èç¹ûÇ°Ò»¸ö¶Ñ½ÚµãÊÇ¿ÕÏĞµÄ¾ÍºÏ²¢Á½¸ö½Úµã */
-    pn = pl->pLast; /* Ö¸ÏòÇ°Ò»¸öÁ´½Ú */
+    pl->Tag = 0; /* æ ‡è®°ä¸ºç©ºé—² */
+    /* å¦‚æœå‰ä¸€ä¸ªå †èŠ‚ç‚¹æ˜¯ç©ºé—²çš„å°±åˆå¹¶ä¸¤ä¸ªèŠ‚ç‚¹ */
+    pn = pl->pLast; /* æŒ‡å‘å‰ä¸€ä¸ªé“¾èŠ‚ */
     if (pn && !pn->Tag) {
         pn->pNext = pl->pNext;
         pn->Size += pl->Size;
@@ -98,8 +101,8 @@ static void __free(MEM_NODE *pl)
             pn->pLast = pl;
         }
     }
-    /* Èç¹ûÏÂÒ»¸ö¶Ñ½ÚµãÊÇ¿ÕÏĞµÄ¾ÍºÏ²¢Á½¸ö½Úµã */
-    pn = pl->pNext; /* Ö¸ÏòÏÂÒ»Á´½Ú */
+    /* å¦‚æœä¸‹ä¸€ä¸ªå †èŠ‚ç‚¹æ˜¯ç©ºé—²çš„å°±åˆå¹¶ä¸¤ä¸ªèŠ‚ç‚¹ */
+    pn = pl->pNext; /* æŒ‡å‘ä¸‹ä¸€é“¾èŠ‚ */
     if (pn && !pn->Tag) {
         pl->pNext = pn->pNext;
         pl->Size += pn->Size;
@@ -110,11 +113,36 @@ static void __free(MEM_NODE *pl)
     }
 }
 
+/* å†…å­˜ç®¡ç†åˆå§‹åŒ– */
+GUI_RESULT GUI_MemoryManagementInit(void)
+{
+    int page = 0;
+    u_32 size;
+    void *p;
+    GUI_RESULT res = GUI_ERR;
+
+#if GUI_USE_MEM_LOCK
+    __LockPtr = GUI_TaskCreateLock(); /* åˆ›å»ºäº’æ–¥é” */
+#endif
+    do {
+        p = _GUI_GetHeapBuffer(page++, &size); /* è·å–å†…å­˜æ±  */
+        if (_HeapInit(p, size) == GUI_OK) {
+            res = GUI_OK;
+        }
+    } while (p != NULL);
+#if GUI_DEBUG_MODE
+    if (res == GUI_ERR) {
+        GUI_DEBUG_OUT("GUI memory init faild, the memory pool is too small.");
+    }
+#endif
+    return res;
+}
+
 /**
- @ ÉêÇëÄÚ´æ, Íâ²¿µ÷ÓÃ.
- @ Size: ÒªÉêÇëµÄ×Ö½ÚÊı.
- @ Mem: ÄÚ´æ³ØµØÖ·.
- @ ·µ»ØÖµ: ÉêÇëµ½¿Õ¼äµÄÊ×µØÖ·.
+ @ ç”³è¯·å†…å­˜, å¤–éƒ¨è°ƒç”¨.
+ @ Size: è¦ç”³è¯·çš„å­—èŠ‚æ•°.
+ @ Mem: å†…å­˜æ± åœ°å€.
+ @ è¿”å›å€¼: ç”³è¯·åˆ°ç©ºé—´çš„é¦–åœ°å€.
  **/
 void * GUI_Malloc(size_t Size)
 {
@@ -122,13 +150,19 @@ void * GUI_Malloc(size_t Size)
     MEM_HEAP *ph;
 
     if (Size) {
-        if (Size & 0x03) { /* 4×Ö½Ú¶ÔÆë */
+        if (Size & 0x03) { /* 4å­—èŠ‚å¯¹é½ */
             Size += 4 - (Size & 0x03);
         }
-        /* ±éÀúËùÓĞµÄ¶Ñ */
+#if GUI_USE_MEM_LOCK
+        GUI_TaskLock(__LockPtr); /* ä¸Šé” */
+#endif
+        /* éå†æ‰€æœ‰çš„å † */
         for (ph = __HeapList; ph && !pn; ph = ph->pNext) {
             pn = __alloc(&ph->MemPool, Size);
         }
+#if GUI_USE_MEM_LOCK
+        GUI_TaskUnlock(__LockPtr); /* è§£é” */
+#endif
         if (pn) {
             __UsageBytes += pn->Size;
             return (void *)((u_32)pn + sizeof(MEM_NODE));
@@ -137,13 +171,13 @@ void * GUI_Malloc(size_t Size)
         GUI_DEBUG_OUT("GUI alloc failed (heap overflow).");
 #endif
     }
-    return NULL;
+    return pn;
 }
 
 /**
- @ ÊÍ·ÅÄÚ´æ, Íâ²¿µ÷ÓÃ.
- @ pl: ĞèÒªÊÍ·ÅµÄ¶Ñ½ÚµãµØÖ·.
- @ Mem: ÄÚ´æ³ØÖ¸Õë.
+ @ é‡Šæ”¾å†…å­˜, å¤–éƒ¨è°ƒç”¨.
+ @ pl: éœ€è¦é‡Šæ”¾çš„å †èŠ‚ç‚¹åœ°å€.
+ @ Mem: å†…å­˜æ± æŒ‡é’ˆ.
  **/
 void GUI_Free(void *Ptr)
 {
@@ -151,24 +185,32 @@ void GUI_Free(void *Ptr)
     MEM_HEAP *ph;
 
     if (Ptr) {
+#if GUI_USE_MEM_LOCK
+        GUI_TaskLock(__LockPtr); /* ä¸Šé” */
+#endif
         for (ph = __HeapList; ph; ph = ph->pNext) {
             addr2 = (size_t)ph;
             if (addr1 > addr2 && addr1 < addr2 + ph->Size) {
                 __UsageBytes -= ((MEM_NODE *)addr1)->Size;
                 __free((MEM_NODE *)addr1);
-                return;
+                break;
             }
         }
+#if GUI_USE_MEM_LOCK
+        GUI_TaskUnlock(__LockPtr); /* è§£é” */
+#endif
 #if GUI_DEBUG_MODE
-        GUI_DEBUG_OUT("GUI free filed (pointer is invalid).");
+        if (ph == NULL) {
+            GUI_DEBUG_OUT("GUI free filed (pointer is invalid).");
+        }
 #endif
     }
 }
 
 /**
- @ »ñÈ¡ÄÚ´æ³ØÒÑÊ¹ÓÃ×Ö½ÚÊı.
- @ Mem: ÄÚ´æ³ØµØÖ·.
- @ ·µ»ØÖµ: ÄÚ´æ³ØÒÑÊ¹ÓÃ×Ö½ÚÊı.
+ @ è·å–å†…å­˜æ± å·²ä½¿ç”¨å­—èŠ‚æ•°.
+ @ Mem: å†…å­˜æ± åœ°å€.
+ @ è¿”å›å€¼: å†…å­˜æ± å·²ä½¿ç”¨å­—èŠ‚æ•°.
  **/
 size_t GUI_GetMemUsage(void)
 {
@@ -176,9 +218,9 @@ size_t GUI_GetMemUsage(void)
 }
 
 /**
- @ »ñÈ¡ÄÚ´æ³ØÈİÁ¿(µ¥Î»ÎªByte).
- @ Mem: ÄÚ´æ³ØµØÖ·.
- @ ·µ»ØÖµ: ÄÚ´æ³ØÈİÁ¿(µ¥Î»ÎªByte).
+ @ è·å–å†…å­˜æ± å®¹é‡(å•ä½ä¸ºByte).
+ @ Mem: å†…å­˜æ± åœ°å€.
+ @ è¿”å›å€¼: å†…å­˜æ± å®¹é‡(å•ä½ä¸ºByte).
  **/
 size_t GUI_GetMemSize(void)
 {

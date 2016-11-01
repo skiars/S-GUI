@@ -1,10 +1,10 @@
-#include "GUI_Timer.h"
+ï»¿#include "GUI_Timer.h"
 #include "GUI.h"
 
 static GUI_TIMER *__TimerList = NULL;
 
-/* ÔÚ¶¨Ê±Æ÷Á´±íÖĞÑ°ÕÒµ±Ç°½Úµã
- @ ´æÔÚµ±Ç°½Úµã¾Í·µ»Ø½á½ÚµãÖ¸Õë, ·ñÔò·µ»ØNULL.
+/* åœ¨å®šæ—¶å™¨é“¾è¡¨ä¸­å¯»æ‰¾å½“å‰èŠ‚ç‚¹
+ @ å­˜åœ¨å½“å‰èŠ‚ç‚¹å°±è¿”å›ç»“èŠ‚ç‚¹æŒ‡é’ˆ, å¦åˆ™è¿”å›NULL.
  */
 static GUI_TIMER * _FindInList(GUI_HTMR hTimer)
 {
@@ -18,25 +18,25 @@ static GUI_TIMER * _FindInList(GUI_HTMR hTimer)
     return pNode;
 }
 
-/* ¶¨Ê±Æ÷¸üĞÂÊÂ¼ş */
+/* å®šæ—¶å™¨æ›´æ–°äº‹ä»¶ */
 static void __TimerEvent(GUI_TIMER *p)
 {
     int per = p->Period;
     GUI_TIME t = GUI_GetTime();
 
     if (per && t >= p->SetTime) {
-        if (p->Mode == GUI_TMR_ONE) { /* µ¥´Î´¥·¢ */
+        if (p->Mode == GUI_TMR_ONE) { /* å•æ¬¡è§¦å‘ */
             p->Period = 0;
-        } else { /* ×Ô¶¯ÖØÔØ */
-            /* ¼ÆËãÏÂÒ»´Î¶¨Ê±Æ÷¸üĞÂµÄÊ±¼ä */
+        } else { /* è‡ªåŠ¨é‡è½½ */
+            /* è®¡ç®—ä¸‹ä¸€æ¬¡å®šæ—¶å™¨æ›´æ–°çš„æ—¶é—´ */
             p->SetTime = t + (per - (t - p->SetTime) % per);
         }
         WM_SendMessage(p->hWin, WM_TIMER, (u_32)p);
     }
 }
 
-/* ´°¿Ú¼ÆÊ±Æ÷
- * ´°¿Ú¶¨Ê±Æ÷¿ÉÒÔÈÃ¿ªÆôÁË¶¨Ê±¹¦ÄÜµÄ´°¿ÚÔÚ¶¨Ê±Ê±¼äµ½ÒÔºó²úÉúÒ»¸öWM_TIMERÏûÏ¢
+/* çª—å£è®¡æ—¶å™¨
+ * çª—å£å®šæ—¶å™¨å¯ä»¥è®©å¼€å¯äº†å®šæ—¶åŠŸèƒ½çš„çª—å£åœ¨å®šæ—¶æ—¶é—´åˆ°ä»¥åäº§ç”Ÿä¸€ä¸ªWM_TIMERæ¶ˆæ¯
  **/
 void GUI_TimerHandler(void)
 {
@@ -44,20 +44,20 @@ void GUI_TimerHandler(void)
 
     GUI_LOCK();
     for (pNode = __TimerList; pNode; pNode = pNext) {
-        /* ±£´æpNextµÄÖµÒÔ·ÀÖ¹ÔÚ»Øµ÷º¯ÊıÖĞÉ¾³ı¶¨Ê±Æ÷ºó³öÏÖ´íÎó */
+        /* ä¿å­˜pNextçš„å€¼ä»¥é˜²æ­¢åœ¨å›è°ƒå‡½æ•°ä¸­åˆ é™¤å®šæ—¶å™¨åå‡ºç°é”™è¯¯ */
         pNext = pNode->pNext;
         __TimerEvent(pNode);
     }
     GUI_UNLOCK();
 }
 
-/* ´´½¨¶¨Ê±Æ÷ */
+/* åˆ›å»ºå®šæ—¶å™¨ */
 GUI_HWIN GUI_TimerCreate(GUI_HWIN hWin, int Id, int Period, u_8 Mode)
 {
     GUI_TIMER *pNode;
 
     GUI_LOCK();
-    /* ²åÈëĞÂ½Úµãµ½Á´±íÍ· */
+    /* æ’å…¥æ–°èŠ‚ç‚¹åˆ°é“¾è¡¨å¤´ */
     pNode = __TimerList;
     __TimerList = GUI_Malloc(sizeof(GUI_TIMER));
     __TimerList->hWin = hWin;
@@ -70,7 +70,7 @@ GUI_HWIN GUI_TimerCreate(GUI_HWIN hWin, int Id, int Period, u_8 Mode)
     return pNode;
 }
 
-/* É¾³ı¶¨Ê±Æ÷ */
+/* åˆ é™¤å®šæ—¶å™¨ */
 void GUI_TimerDetete(GUI_HTMR hTimer)
 {
     GUI_TIMER *pNode = __TimerList, *pLast = NULL;
@@ -80,10 +80,10 @@ void GUI_TimerDetete(GUI_HTMR hTimer)
         pLast = pNode;
         pNode = pNode->pNext;
     }
-    if (pNode) { /* pNode²»ÎªNULLËµÃ÷´æÔÚ½Úµã */
-        if (pLast) { /* ²»ÔÚµÚ1¸ö½Úµã */
+    if (pNode) { /* pNodeä¸ä¸ºNULLè¯´æ˜å­˜åœ¨èŠ‚ç‚¹ */
+        if (pLast) { /* ä¸åœ¨ç¬¬1ä¸ªèŠ‚ç‚¹ */
             pLast->pNext = pNode->pNext;
-        } else { /* É¾³ıµÚÒ»¸ö½Úµã */
+        } else { /* åˆ é™¤ç¬¬ä¸€ä¸ªèŠ‚ç‚¹ */
             __TimerList = pNode->pNext;
         }
         GUI_Free(pNode);
@@ -91,7 +91,7 @@ void GUI_TimerDetete(GUI_HTMR hTimer)
     GUI_UNLOCK();
 }
 
-/* É¾³ıÄ³¸ö´°¿ÚËùÓĞµÄ¶¨Ê±Æ÷ */
+/* åˆ é™¤æŸä¸ªçª—å£æ‰€æœ‰çš„å®šæ—¶å™¨ */
 void GUI_TimerDeleteAtWindow(GUI_HWIN hWin)
 {
     GUI_TIMER *pNode = __TimerList, *pLast = NULL, *pNext;
@@ -100,9 +100,9 @@ void GUI_TimerDeleteAtWindow(GUI_HWIN hWin)
     while (pNode) {
         pNext = pNode->pNext;
         if (pNode->hWin == hWin) {
-            if (pLast) { /* ²»ÔÚµÚ1¸ö½Úµã */
+            if (pLast) { /* ä¸åœ¨ç¬¬1ä¸ªèŠ‚ç‚¹ */
                 pLast->pNext = pNext;
-            } else { /* É¾³ıµÚÒ»¸ö½Úµã */
+            } else { /* åˆ é™¤ç¬¬ä¸€ä¸ªèŠ‚ç‚¹ */
                 __TimerList = pNext;
             }
             GUI_Free(pNode);
@@ -114,7 +114,7 @@ void GUI_TimerDeleteAtWindow(GUI_HWIN hWin)
     GUI_UNLOCK();
 }
 
-/* »ñÈ¡¶¨Ê±Æ÷ID */
+/* è·å–å®šæ—¶å™¨ID */
 u_16 GUI_GetTimerId(GUI_HTMR hTimer)
 {
     u_16 Id = 0;
@@ -127,7 +127,7 @@ u_16 GUI_GetTimerId(GUI_HTMR hTimer)
     return Id;
 }
 
-/* ÖØÖÃ¶¨Ê±Æ÷ */
+/* é‡ç½®å®šæ—¶å™¨ */
 void GUI_ResetTimer(GUI_HTMR hTimer, int Period)
 {
     GUI_LOCK();

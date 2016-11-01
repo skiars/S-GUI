@@ -1,6 +1,6 @@
-#include "GUI_String.h"
+ï»¿#include "GUI_String.h"
 
-/* ½«×Ö·û´®ÖĞµÄ´óĞ´×ÖÄ¸×ª»»ÎªĞ¡Ğ´ */
+/* å°†å­—ç¬¦ä¸²ä¸­çš„å¤§å†™å­—æ¯è½¬æ¢ä¸ºå°å†™ */
 void GUI_Strlwr(char *str)
 {
     do {
@@ -8,7 +8,7 @@ void GUI_Strlwr(char *str)
     } while (*str++);
 }
 
-/* ¼ì²éÁ½¸ö×Ö·û´®ÊÇ·ñÏàÍ¬£¬²»Çø·Ö´óĞ¡Ğ´ */
+/* æ£€æŸ¥ä¸¤ä¸ªå­—ç¬¦ä¸²æ˜¯å¦ç›¸åŒï¼Œä¸åŒºåˆ†å¤§å°å†™ */
 int GUI_Stricmp(const char *dst, const char *src)
 {
     int ch1, ch2;
@@ -22,7 +22,7 @@ int GUI_Stricmp(const char *dst, const char *src)
     return (ch1 - ch2);
 }
 
-/* ×Ö·û´®¿½±´ */
+/* å­—ç¬¦ä¸²æ‹·è´ */
 char * GUI_Strcpy(char *dst, const char *src)
 {
     char c;  
@@ -36,7 +36,7 @@ char * GUI_Strcpy(char *dst, const char *src)
      return dst;  
 }
 
-/* ¼ÆËã×Ö·û´®³¤¶È */
+/* è®¡ç®—å­—ç¬¦ä¸²é•¿åº¦ */
 int GUI_Strlen(const char *Str)
 {
     int i = 0;

@@ -1,4 +1,4 @@
-#include "game.h"
+ï»¿#include "game.h"
 #include <stdlib.h>
 
 #define GAME_WIN (WM_USER_ID + 0x90)
@@ -93,7 +93,7 @@ void GameCb(WM_MESSAGE *pMsg)
         KeyVal = 0;
         break;
     default:
-        WM_DefaultProc(pMsg); /* Ä¬ÈÏÏûÏ¢´¦Àí */
+        WM_DefaultProc(pMsg); /* é»˜è®¤æ¶ˆæ¯å¤„ç† */
     }
 }
 
