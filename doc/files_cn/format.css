@@ -34,10 +34,14 @@ pre span.arg {
 }
 
 p, li,a {
-  text-indent:2em; /* 首行缩进 */
+  text-indent:2em;
   margin: 1em 1em;
   border-color: black;
-  background-color: #EEEED4;
+}
+
+a {
+  text-decoration:none
+  margin: 1em 1em;
 }
 
 h1 {
