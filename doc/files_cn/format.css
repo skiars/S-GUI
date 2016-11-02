@@ -40,7 +40,11 @@ p, li {
 }
 
 a {
-  text-decoration:none;
+  text-decoration: none;
+}
+
+a.nove {
+  text-decoration: underline;
 }
 
 h1 {
