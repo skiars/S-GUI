@@ -1,0 +1,62 @@
+html {
+  background-color: #99CC99
+}
+
+body{
+  margin: 8px;
+  background-color: #EEEED4;
+  color: black;
+  margin: 0 auto; /* 上下边界为0，左右自适应为同值(居中) */
+  font-family: lucida, verdana, helvetica, arial, sans-serif;
+	padding: 0px;
+	max-width: 1200px;
+}
+
+pre {
+  border: 1px dashed gray;
+  margin: 0.5em 1em;
+  padding: 0.5em;
+  font-size: 90%;
+  font-family: "Consolas", "Courier New", monospace;
+  background-color: white;
+}
+
+pre span.c {
+  color: green;
+}
+
+pre span.k {
+  color: blue;
+}
+
+pre span.arg {
+  font-style: italic;
+}
+
+p, li,a {
+  text-indent:2em; /* 首行缩进 */
+  margin: 1em 1em;
+  border-color: black;
+  background-color: #EEEED4;
+}
+
+h1 {
+  color: #004060;
+  background-color: #B0C0FF;
+  padding: 0.4em;
+  text-align:center;
+}
+
+h2 {
+  background-color: #EEEED4;
+  margin: 1.5em 0.5em;
+}
+
+h3 {
+  background-color: #EEEED4;
+  margin: 0 0.8em;
+}
+
+tt, code {
+  font-family: "Consolas", "Courier New", monospace;
+}
