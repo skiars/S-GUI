@@ -1,0 +1,48 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="format.css">
+</head>
+<title>Start</title>
+
+<body>
+  <h1>开始</h1>
+
+  <h2>获取源代码</h2>
+  <p>您可以通过访问<a href="https://github.com/Le-Seul/S-GUI">https://github.com/Le-Seul/S-GUI</a>页面来下载S-GUI的源码。如果系统安装了git工具，也可以通过命令:
+  <code>git clone https://github.com/Le-Seul/S-GUI.git</code>
+  将源代码克隆到本地。下载的S-GUI目录下包含完整的S-GUI库以及一个demo程序，源代码在Codes目录下面，demo的工程文件或者编译脚本在build目录下。</p>
+
+  <h2>编译</h2>
+  <h3>Windows:</h3>
+  <h4>Visual Studio 2015:</h4>
+  <p>使用Visual Studio 2015打开文件文件build/msvs/S-GUI.sln，点击"本地Windows调试器"按钮即可编译并开始运行demo程序。</p>
+  <h4>GCC:</h4>
+  <p>若要在Windows下使用GCC编译S-GUI的demo程序，需要确保已经安装了GCC并且设置好环境变量，此时应该可以在cmd窗口下使用gcc和make命令，如果您安装的GCC版本没有gcc.exe和make.exe文件，请到GCC安装目录下把实现对应功能的可执行文件重命名成gcc.exe或者make.exe。一切准备就绪之后，按下<nobr>Win + R</nobr>键后输入"cmd"进入cmd窗口，然后使用cd指令打开build/mingw目录，最后使用make命令来编译。具体命令如下(以E:/S-GUI目录为例):
+    <code class= "edge">
+      <span class="LineNr">01 </span>E:<br>
+      <span class="LineNr">02 </span>cd E:\S-GUI\build\mingw<br>
+      <span class="LineNr">03 </span>make
+    </code>
+    编译成功后会在build/mingw目录下生成demo.exe文件，到Codes/sdl/win32目录下将SDL.dll文件复制到build/mingw目录下之后就可以运行demo.exe了。此外，可以通过make clean命令删除编译产生的中间文件，不过这需要确保你的系统能够使用rm命令。</p>
+  <h3>Linux:</h3>
+  <p>在Linux下编译demo程序需要预先安装SDL库，首先到<a href="http://www.libsdl.org/release/SDL-1.2.15.tar.gz">http://www.libsdl.org/release/SDL-1.2.15.tar.gz</a>下载SDL 1.2的源代码，解压后执行以下命令:
+    <code class= "edge">
+      <span class="LineNr">01 </span>cd ./SDL-1.2.15<br>
+      <span class="LineNr">02 </span>./configure<br>
+      <span class="LineNr">03 </span>make<br>
+      <span class="LineNr">03 </span>sudo make install
+    </code>
+    然后进入S-GUI源代码的build/linux目录，执行:
+    <span class="LineNr">01 </span>make<br>
+      <span class="LineNr">02 </span>./demo
+    </code>
+    就可以编译个运行S-GUI的demo程序了。可以用make clean命令删除编译产生的中间文件。
+  </p>
+
+  <h2>组建自己的工程</h2>
+  <p>现在，您已经可以编译S-GUI的示例程序了。接下来您可以创建自己的S-GUI工程。</p>
+
+  <a class= "btn" href="javascript:history.go(-1);">◂返回上一页</a>
+  <a class= "btn" href="../doc_cn.html">◂Home</a>
+
+</body>
+</html>

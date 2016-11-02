@@ -1,12 +1,9 @@
-html {
-  background-color: #99CC99
-}
+html { background-color: #99CC99 }
 
 body{
-  margin: 8px;
   background-color: #EEEED4;
   color: black;
-  margin: 0 auto; /* 上下边界为0，左右自适应为同值(居中) */
+  margin: 0 auto;
   font-family: lucida, verdana, helvetica, arial, sans-serif;
 	padding: 0px;
 	max-width: 1200px;
@@ -17,36 +14,20 @@ pre {
   margin: 0.5em 1em;
   padding: 0.5em;
   font-size: 90%;
+  white-space: pre-wrap;
   font-family: "Consolas", "Courier New", monospace;
-  background-color: white;
+  background-color: #ffffff;
 }
+pre.edge { border: 1px dashed gray; }
 
-pre span.c {
-  color: green;
-}
+p { text-indent: 2em; margin: 1em 1em; border-color: black; }
+p.sentence { text-indent: 0; }
 
-pre span.k {
-  color: blue;
-}
+li { margin: 0.5em 2em; }
 
-pre span.arg {
-  font-style: italic;
-}
-
-p, li {
-  text-indent:2em;
-  margin: 1em 1em;
-  border-color: black;
-}
-
-a {
-  margin: 1em 1em;
-  text-decoration: none;
-}
-
-a.nove {
-  text-decoration: underline;
-}
+a { text-decoration: none; }
+a.btn { margin: 1em 1em; }
+a.nove { text-decoration: underline; }
 
 h1 {
   color: #004060;
@@ -55,16 +36,35 @@ h1 {
   text-align:center;
 }
 
-h2 {
-  background-color: #EEEED4;
-  margin: 1.5em 0.5em;
-}
+h2 { margin: 1em 0.5em; color: #205050; }
+h3 { margin: 0.5em 0.8em; color: #0050B0;}
+h4 { margin: 0.5em 1.2em;}
+tt { font-family: "Consolas", "Courier New", monospace; }
 
-h3 {
-  background-color: #EEEED4;
-  margin: 0 0.8em;
-}
-
-tt, code {
+code {
+  display:block;
+  text-indent: 0;
+  margin: 0.5em 0;
+  padding: 0.5em;
   font-family: "Consolas", "Courier New", monospace;
+  background-color: #ffffff;
 }
+
+code.edge { border: 1px dashed gray; }
+
+span.arg { font-style: italic; }
+span.Conditional { color: #b031b0; }
+span.Repeat { color: #b031b0; }
+span.Label { color: #b031b0; }
+span.LineNr { color: #555555; background-color: #ebebeb; padding-bottom: 1px; }
+span.cOperator { color: #b34100; }
+span.cPreCondit { color: #b031b0; }
+span.Statement { color: #644dcb; font-weight: bold; }
+span.Type { color: #b031b0; }
+span.String { color: #cc3825; }
+span.Include { color: #b031b0; }
+span.Macro { color: #644dcb; }
+span.StorageClass { color: #b031b0; }
+span.Comment { color: #088525; }
+span.Constant { color: #0464d9; }
+span.Number { color: #0464d9; }

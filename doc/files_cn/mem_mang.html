@@ -12,20 +12,20 @@
 
   <h2>API说明</h2>
 
-  <h3><tt>GUI_Malloc()</tt>函数</h3>
+  <h3><tt>GUI_Malloc()</tt></h3>
   <p>函数原型:</p>
-  <pre><span class= "k">void</span> * GUI_Malloc(<span class= "k">size_t</span> Size);</pre>
+  <pre><span class="Type">void</span> * GUI_Malloc(<span class="Type">size_t</span> Size);</pre>
   <p>调用该函数来申请一片内存。参数<tt><i>Size</i></tt>表示需要申请的字节数，该函数返回一个指针，该指针指向申请到的内存区域的第一个字节。通过<tt>GUI_Malloc()</tt>申请到的内存首地址是四字节对齐的。</p>
 
-  <h3><tt>GUI_Free()</tt>函数</h3>
+  <h3><tt>GUI_Free()</tt></h3>
   <p>函数原型:</p>
-  <pre><span class= "k">void</span> GUI_Free(<span class= "k">void</span> *Ptr);</pre>
-  <p>调用该函数来释放一片内存区域，<tt><i>Ptr</i></tt>指向需要释放的内存区域的首地址。注意，<tt><i>Ptr</i></tt>的值必对应使用<code>GUI_Malloc()</code>时申请到的值.</p>
+  <pre><span class="Type">void</span> GUI_Free(<span class="Type">void</span> *Ptr);</pre>
+  <p>调用该函数来释放一片内存区域，<tt><i>Ptr</i></tt>指向需要释放的内存区域的首地址。注意，<tt><i>Ptr</i></tt>的值必对应使用<tt>GUI_Malloc()</tt>时申请到的值.</p>
 
   <h2>私有函数说明</h2>
-  <h3><tt>GUI_MemoryManagementInit()</tt>函数</h3>
+  <h3><tt>GUI_MemoryManagementInit()</tt></h3>
   <p>函数原型:</p>
-  <pre>GUI_RESULT GUI_MemoryManagementInit(<span class= "k">void</span>)</pre>
+  <pre>GUI_RESULT GUI_MemoryManagementInit(<span class="Type">void</span>);</pre>
   <p>该函数负责对内存管理行初始化，这个函数由<tt>GUI_Init()</tt>函数调用，因此，用户不要调用这个函数。</p>
 
   <h2>其他信息</h2>
@@ -36,7 +36,7 @@
   <h3>分块内存</h3>
   <p>内存管理单元允许用户定义多个内存池用于内存申请，这样，用户可以把内存池定义到不同的物理随机存储器(RAM)中去。调用<tt>GUI_Malloc()</tt>时它会自动选择一个内存池，而不需要用户去干预，然而有时候用户希望能够指定内存池，S-GUI目前还不支持这样的操作，我们将在未来的版本中支持它。</p>
 
-  <a href="javascript:history.go(-1);">◂返回上一页</a>
-  <a href="../doc_cn.html">◂Home</a>
+  <a class= "btn" href="javascript:history.go(-1);">◂返回上一页</a>
+  <a class= "btn" href="../doc_cn.html">◂Home</a>
 </body>
 </html>
