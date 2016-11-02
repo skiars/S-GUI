@@ -33,15 +33,14 @@ pre span.arg {
   font-style: italic;
 }
 
-p, li,a {
+p, li {
   text-indent:2em;
   margin: 1em 1em;
   border-color: black;
 }
 
 a {
-  text-decoration:none
-  margin: 1em 1em;
+  text-decoration:none;
 }
 
 h1 {
