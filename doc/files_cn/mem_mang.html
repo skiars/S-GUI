@@ -1,42 +1,54 @@
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel="stylesheet" type="text/css" href="format.css">
+  <title>内存管理单元</title>
 </head>
-<title>内存管理单元</title>
 
 <body>
+<section class= "page-header">
   <h1>内存管理单元</h1>
+</section>
 
-  <p>S-GUI使用自己的动态内存管理单元，而不用系统的<tt>malloc()</tt>和<tt>free()</tt>函数。因为在很多小型嵌入式系统中对这两个函数的支持并不好。<nobr>S-GUI</nobr>的内存管理系统提供了类似标准库函数的动态内存分配函数，它们可以包含线程安全的特性，如果用户不会使用这些函数(也就是说只有S-GUI)使用它们)，可以关闭线程安全的支持，以提升速度。</p>
+<section class= "main-content">
+<div>
+  <p>S-GUI使用自己的动态内存管理单元，而不用系统的<code>malloc()</code>和<code>free()</code>函数。因为在很多小型嵌入式系统中对这两个函数的支持并不好。<nobr>S-GUI</nobr>的内存管理系统提供了类似标准库函数的动态内存分配函数，它们可以包含线程安全的特性，如果用户不会使用这些函数(也就是说只有S-GUI)使用它们)，可以关闭线程安全的支持，以提升速度。</p>
+  <p>S-GUI通过提供<code>GUI_Malloc()</code>和<code>GUI_Free()</code>这两个API来实现动态内存分配。</p>
+</div>
 
-  <p>S-GUI通过提供<tt>GUI_Malloc()</tt>和<tt>GUI_Free()</tt>这两个API来实现动态内存分配。</p>
-
+<div>
   <h2>API说明</h2>
-
-  <h3><tt>GUI_Malloc()</tt></h3>
+  <h3><code>GUI_Malloc()</code></h3>
   <p>函数原型:</p>
-  <pre><span class="Type">void</span> * GUI_Malloc(<span class="Type">size_t</span> Size);</pre>
-  <p>调用该函数来申请一片内存。参数<tt><i>Size</i></tt>表示需要申请的字节数，该函数返回一个指针，该指针指向申请到的内存区域的第一个字节。通过<tt>GUI_Malloc()</tt>申请到的内存首地址是四字节对齐的。</p>
+  <pre class="edge"><span class="Type">void</span> * GUI_Malloc(<span class="Type">size_t</span> Size);</pre>
+  <p>调用该函数来申请一片内存。参数<code><i>Size</i></code>表示需要申请的字节数，该函数返回一个指针，该指针指向申请到的内存区域的第一个字节。通过<code>GUI_Malloc()</code>申请到的内存首地址是四字节对齐的。</p>
 
-  <h3><tt>GUI_Free()</tt></h3>
+  <h3><code>GUI_Free()</code></h3>
   <p>函数原型:</p>
-  <pre><span class="Type">void</span> GUI_Free(<span class="Type">void</span> *Ptr);</pre>
-  <p>调用该函数来释放一片内存区域，<tt><i>Ptr</i></tt>指向需要释放的内存区域的首地址。注意，<tt><i>Ptr</i></tt>的值必对应使用<tt>GUI_Malloc()</tt>时申请到的值.</p>
+  <pre class="edge"><span class="Type">void</span> GUI_Free(<span class="Type">void</span> *Ptr);</pre>
+  <p>调用该函数来释放一片内存区域，<code><i>Ptr</i></code>指向需要释放的内存区域的首地址。注意，<code><i>Ptr</i></code>的值必对应使用<code>GUI_Malloc()</code>时申请到的值.</p>
+</div>
 
+<div>
   <h2>私有函数说明</h2>
-  <h3><tt>GUI_MemoryManagementInit()</tt></h3>
+  <h3><code>GUI_MemoryManagementInit()</code></h3>
   <p>函数原型:</p>
-  <pre>GUI_RESULT GUI_MemoryManagementInit(<span class="Type">void</span>);</pre>
-  <p>该函数负责对内存管理行初始化，这个函数由<tt>GUI_Init()</tt>函数调用，因此，用户不要调用这个函数。</p>
+  <pre class="edge">GUI_RESULT GUI_MemoryManagementInit(<span class="Type">void</span>);</pre>
+  <p>该函数负责对内存管理行初始化，这个函数由<code>GUI_Init()</code>函数调用，因此，用户不要调用这个函数。</p>
+</div>
 
+<div>
   <h2>其他信息</h2>
   <h3>内存管理单元的安全性</h3>
-  <p>S-GUI的内存管理单元使用内存池来实现动态内存分配，内存管理单元通过维护一个表示空闲内存块的链表来分配内存，该链表是一个隐式链表，需要注意的是，一旦程序在内存池中发生地址越界就会破坏空闲链表的信息，从而使内存管理单元崩溃。</p>
-  <p>内存管理单元的API使用单独的互斥锁来实现线程保护，如果用户不需要使用这些API，可以不使用内存管理单元的锁，从而节省一个锁(通常是信号量)，并且可以减少时间开销，S-GUI在使用<tt>GUI_Malloc()</tt>和<tt>GUI_Free()</tt>函数时都会使用<tt>GUI_Lock()</tt>加锁，因此不需要额外的锁。但是如果用户需要在其他线程中自行使用内存管理函数就需要开启内存管理单元的互斥锁。</p>
+  <p>S-GUI的内存管理单元使用内存池来实现动态内存分配，内存管理单元通过维护一个表示空闲内存块的链表来分配内存，该链表是一个隐式链表，需要注意的是，<mark class= "warn">错误的操作如果改变了隐式链表结构的节点信息会使内存管理单元崩溃。</mark></p>
+  <p>内存管理单元的API使用单独的互斥锁来实现线程保护，如果用户不需要使用这些API，可以不使用内存管理单元的锁，从而节省一个锁(通常是信号量)，并且可以减少时间开销，S-GUI在使用<code>GUI_Malloc()</code>和<code>GUI_Free()</code>函数时都会使用<code>GUI_Lock()</code>加锁，因此不需要额外的锁。但是如果用户需要在其他线程中自行使用内存管理函数就需要开启内存管理单元的互斥锁。</p>
 
   <h3>分块内存</h3>
-  <p>内存管理单元允许用户定义多个内存池用于内存申请，这样，用户可以把内存池定义到不同的物理随机存储器(RAM)中去。调用<tt>GUI_Malloc()</tt>时它会自动选择一个内存池，而不需要用户去干预，然而有时候用户希望能够指定内存池，S-GUI目前还不支持这样的操作，我们将在未来的版本中支持它。</p>
+  <p>内存管理单元允许用户定义多个内存池用于内存申请，这样，用户可以把内存池定义到不同的物理随机存储器(RAM)中去。调用<code>GUI_Malloc()</code>时它会自动选择一个内存池，而不需要用户去干预，然而有时候用户希望能够指定内存池，S-GUI目前还不支持这样的操作，我们将在未来的版本中支持它。</p>
+</div>
 
-  <a class= "btn" href="javascript:history.go(-1);">◂返回上一页</a>
-  <a class= "btn" href="../doc_cn.html">◂Home</a>
+  <footer>
+    <a class= "btn" href="javascript:history.go(-1);">◂返回上一页</a>
+    <a class= "btn" href="../doc_cn.html">◂Home</a>
+  </footer>
+</section>
 </body>
 </html>

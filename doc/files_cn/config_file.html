@@ -1,31 +1,41 @@
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel="stylesheet" type="text/css" href="format.css">
+  <title>GUI_Config.h</title>
 </head>
-<title>GUI_Config.h</title>
 
 <body>
+<section class= "page-header">
   <h1>配置文件GUI_Config.h</h1>
+</section>
 
+<section class= "main-content">
+<div>
   <p>GUI_Config.h文件包含S-GUI的主要配置信息，这些配置通过若干个宏来控制源代码中的条件编译选项，因此，GUI_Config.h中的配置是静态的，它们在编译时就已经确定，无法在程序执行时修改。GUI_Config.h文件在 /GUI/Config 目录下。用户可以通过修改这个宏来实现对S-GUI的裁剪，不过目前的版本的S-GUI裁剪余地很小。</p>
+</div>
 
+<div>
   <h2>功能配置宏</h2>
 
-  <h3><tt>GUI_MSG_QUEUE_SIZE</tt></h3>
-  <p>这个宏定义了S-GUI的消息队列允许的容量。S-GUI使用固定大小的消息队列。将<tt>GUI_MSG_QUEUE_SIZE</tt>设置的更大可容纳更多的的消息，但是也会占用更多的RAM。</p>
+  <h3><code>GUI_MSG_QUEUE_SIZE</code></h3>
+  <p>这个宏定义了S-GUI的消息队列允许的容量。S-GUI使用固定大小的消息队列。将<code>GUI_MSG_QUEUE_SIZE</code>设置的更大可容纳更多的的消息，但是也会占用更多的RAM。</p>
 
-  <h3><tt>GUI_DEF_FONT</tt></h3>
-  <p>这个宏定义了S-GUI的默认字体，其值的类型为<tt>GUI_FONT</tt>。</p>
+  <h3><code>GUI_DEF_FONT</code></h3>
+  <p>这个宏定义了S-GUI的默认字体，其值的类型为<code>GUI_FONT</code>。</p>
 
-  <h3><tt>GUI_MAX_MSG_NEST</tt></h3>
-  <p>最大消息嵌套层数，函数<tt>WM__SendMessage()</tt>在时会对消息嵌套层数计数，如果嵌套超过<tt>GUI_MAX_MSG_NEST</tt>层, S-GUI将会停止递归并产生一个致命错误。如果栈空间比较大并且需要更多的消息嵌套层数则可以把<tt>GUI_MAX_MSG_NEST</tt>设置的大一些。</p>
+  <h3><code>GUI_MAX_MSG_NEST</code></h3>
+  <p>最大消息嵌套层数，函数<code>WM__SendMessage()</code>在时会对消息嵌套层数计数，如果嵌套超过<code>GUI_MAX_MSG_NEST</code>层, S-GUI将会停止递归并产生一个致命错误。如果栈空间比较大并且需要更多的消息嵌套层数则可以把<code>GUI_MAX_MSG_NEST</code>设置的大一些。</p>
 
-  <h3><tt>GUI_USE_MEM_LOCK</tt></h3>
-  <p>是否使用内存管理单元的互斥锁，如果用户需要在多线程环境中单独调用<tt>GUI_Malloc()</tt>和<tt>GUI_Free()</tt>函数就需要定义<tt>GUI_USE_MEM_LOCK</tt>为1，否则使其为0.这样可以少用一个互斥锁，并且提高运行速度。</p>
+  <h3><code>GUI_USE_MEM_LOCK</code></h3>
+  <p>是否使用内存管理单元的互斥锁，如果用户需要在多线程环境中单独调用<code>GUI_Malloc()</code>和<code>GUI_Free()</code>函数就需要定义<code>GUI_USE_MEM_LOCK</code>为1，否则使其为0.这样可以少用一个互斥锁，并且提高运行速度。</p>
 
-  <h3><tt>GUI_DEBUG_MODE</tt></h3>
-  <p>调试模式开关<tt>GUI_DEBUG_MODE</tt>的值非时0会打开调试模式。开启调试模式时，如果S-GUI在运行中发生错误，将会通过用户实现的调试输出接口输出相关的调试信息。不过，有很多错误都无法通过调试模式捕获，这时还需要结合开发工具的调试功能来进行调试。</p>
+  <h3><code>GUI_DEBUG_MODE</code></h3>
+  <p>调试模式开关<code>GUI_DEBUG_MODE</code>的值非时0会打开调试模式。开启调试模式时，如果S-GUI在运行中发生错误，将会通过用户实现的调试输出接口输出相关的调试信息。不过，有很多错误都无法通过调试模式捕获，这时还需要结合开发工具的调试功能来进行调试。</p>
+</div>
 
+<footer>
   <a class= "btn" href="javascript:history.go(-1);">◂返回上一页</a>
   <a class= "btn" href="../doc_cn.html">◂Home</a>
+</footer>
+</section>
 </body>
 </html>
