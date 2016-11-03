@@ -3,7 +3,7 @@ html { background-color: #FFFFFF; }
 body{
   color: black;
   margin: 0;
-  font-family: lucida, verdana, helvetica, arial, sans-serif;
+  font-family: lucida, verdana, helvetica, arial, sans-serif, "Microsoft YaHei";
 }
 
 section { margin: 0 auto; }
@@ -24,7 +24,7 @@ pre {
   font-size: 90%;
   white-space: pre-wrap;
   font-family: "Consolas", "Courier New", monospace;
-  background-color: #F0F0D0;
+  background-color: #F0F0D9;
 }
 pre.edge { border: 1px solid gray; }
 
@@ -40,13 +40,13 @@ h1 { padding: 0.4em; }
 h2 { margin: 0.5em 0; color: #205050; }
 h3 { margin: 0.5em 0; color: #004090;}
 h4 { margin: 0.5em 0;}
-code { white-space:pre; font-family: "Consolas", "Courier New", monospace; }
+code { white-space:pre; font-size: 100%; font-family: "Consolas", "Courier New", monospace; }
 
 span.arg { font-style: italic; }
 span.Conditional { color: #b031b0; }
 span.Repeat { color: #b031b0; }
 span.Label { color: #b031b0; }
-span.LineNr { color: #305050; background-color: #B0D0D0; padding-bottom: 1px; }
+span.LineNr { color: #305050; background-color: #D0E0E0; padding-bottom: 1px; }
 span.cOperator { color: #b34100; }
 span.cPreCondit { color: #b031b0; }
 span.Statement { color: #644dcb; font-weight: bold; }
