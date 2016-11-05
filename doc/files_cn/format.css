@@ -1,0 +1,67 @@
+html { background-color: #FFFFFF; }
+
+body{
+  color: black;
+  margin: 0;
+  font-family: lucida, verdana, helvetica, arial, sans-serif, "Microsoft YaHei";
+}
+
+section { margin: 0 auto; }
+section.page-header {
+  color: #FFF;
+  text-align: center;
+  background-color: #159957;
+  background-image: linear-gradient(120deg, #155799, #159957);
+}
+section.main-content { max-width: 1000px; }
+section.site-footer { max-width: 1000px; }
+
+div { padding: 0.5em 0; }
+
+pre {
+  padding: 0.5em;
+  margin: 0.5em 0;
+  font-size: 90%;
+  white-space: pre-wrap;
+  font-family: "Consolas", "Courier New", monospace;
+  background-color: #F0F0D9;
+}
+pre.edge { border: 1px solid gray; }
+
+p { text-indent: 2em; margin: 0.5em 0; border-color: black; }
+
+li { margin: 0.5em 0em; }
+
+a { text-decoration: none; }
+a.btn { margin: 1em; }
+a.nove { text-decoration: underline; }
+
+h1 { padding: 0.4em; }
+h2 { margin: 0.5em 0; color: #205050; }
+h3 { margin: 0.5em 0; color: #004090; }
+h4 { margin: 0.5em 0;}
+code { white-space:pre; font-size: 100%; font-family: "Consolas", "Courier New", monospace; }
+
+span.arg { font-style: italic; }
+span.Conditional { color: #b031b0; }
+span.Repeat { color: #b031b0; }
+span.Label { color: #b031b0; }
+span.LineNr { color: #305050; background-color: #D0E0E0; padding-bottom: 1px; }
+span.cOperator { color: #b34100; }
+span.cPreCondit { color: #b031b0; }
+span.Statement { color: #644dcb; font-weight: bold; }
+span.Type { color: #b031b0; }
+span.String { color: #cc3825; }
+span.Include { color: #b031b0; }
+span.Macro { color: #644dcb; }
+span.StorageClass { color: #b031b0; }
+span.Comment { color: #088525; }
+span.Constant { color: #0464d9; }
+span.Number { color: #0464d9; }
+
+mark { padding: 0 0.2em; background-color: #B0D0FF; border-radius: 0.3em; }
+mark.warn { background-color: #F44; }
+
+footer {
+  padding: 2em 0;
+}

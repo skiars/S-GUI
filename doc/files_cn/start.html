@@ -1,0 +1,85 @@
+﻿<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="format.css">
+   <title>Start</title>
+</head>
+
+<body>
+<section class= "page-header">
+  <h1>开始使用</h1>
+</section>
+
+<section class= "main-content">
+<div>
+  <h2>获取源代码</h2>
+  <p>您可以通过访问<a href="https://github.com/Le-Seul/S-GUI">https://github.com/Le-Seul/S-GUI</a>页面来下载S-GUI的源码。如果系统安装了git工具，也可以通过命令将源代码克隆到本地:</p>
+<pre class= "edge">
+git clone https://github.com/Le-Seul/S-GUI.git
+</pre>
+  <p>下载的S-GUI目录下包含完整的S-GUI库以及一个demo程序，源代码在Codes目录下面，demo的工程文件或者编译脚本在build目录下。</p>
+</div>
+
+<div>
+  <h2>编译</h2>
+  <div>
+    <h3>Windows:</h3>
+    <div>
+      <h4>Visual Studio 2015:</h4>
+      <p>使用Visual Studio 2015打开文件文件build/msvs/S-GUI.sln，点击"本地Windows调试器"按钮即可编译并开始运行demo程序。</p>
+    </div>
+    <div>
+      <h4>GCC:</h4>
+      <p>若要在Windows下使用GCC编译S-GUI的demo程序，需要确保已经安装了GCC并且设置好环境变量，此时应该可以在cmd窗口下使用<code>gcc</code>和<code>make</code>命令，如果您安装的GCC版本没有gcc.exe和make.exe文件，请到GCC安装目录下把实现对应功能的可执行文件重命名成gcc.exe或者make.exe。一切准备就绪之后，按下Win + R键后输入"cmd"进入cmd窗口，然后使用<code>cd</code>命令打开build/mingw目录，最后使用<code>make</code>命令来编译。具体命令如下(以E:/S-GUI目录为例):</p>
+<pre class= "edge">
+<span class="LineNr">01 </span>E:
+<span class="LineNr">02 </span>cd E:\S-GUI\build\mingw
+<span class="LineNr">03 </span>make
+</pre>
+      <p>编译成功后会在build/mingw目录下生成demo.exe文件，到Codes/sdl/win32目录将SDL.dll文件复制到build/mingw目录下，双击运行demo.exe。可以通过<code>make clean</code>命令删除编译产生的中间文件，不过这需要确保系统能够使用<mark><code>rm</code></mark>命令。</p>
+    </div>
+  </div>
+
+  <div>
+    <h3>Linux:</h3>
+    <p>在Linux下编译demo程序需要预先安装SDL库，首先到<a href="http://www.libsdl.org/release/SDL-1.2.15.tar.gz">http://www.libsdl.org/release/SDL-1.2.15.tar.gz</a>下载SDL 1.2的源代码，解压后执行以下命令:</p>
+<pre class= "edge">
+<span class="LineNr">01 </span>cd ./SDL-1.2.15
+<span class="LineNr">02 </span>./configure
+<span class="LineNr">03 </span>make
+<span class="LineNr">03 </span>sudo make install
+</pre>
+    <p>然后进入S-GUI源代码的build/linux目录，执行:</p>
+<pre class= "edge">
+<span class="LineNr">01 </span>make
+<span class="LineNr">02 </span>./demo
+</pre>
+    <p>这个两个命令编译并运行S-GUI的demo程序。可以用<code>make clean</code>命令删除编译产生的中间文件。</p>
+  </div>
+</div>
+
+<div>
+  <h2>组建自己的工程</h2>
+  <p>现在，你已经可以编译S-GUI的示例程序了。S-GUI库的源代码在Codes/GUI目录下，该目录有四个子目录: Config, Core, Fonts, Widget, 这些目录下包含了S-GUI的各个组件。</p>
+  <ul>
+    <li>Config目录下的文件主要功能包括S-GUI的配置、基础类型的定义、硬件驱动程序和其他底层接口：</li>
+    <li>Core目录下是S-GUI的核心部分，Core包含两个子目录: inc和src，src中的文件是S-GUI源文件，inc中的文件是它们相对应的头文件。这些文件用于实现窗口管理器、颜色管理、内存管理、消息处理、图形库以及相关数据结构。</li>
+    <li>Fonts目录提供对字体的支持。</li>
+    <li>Widget目录提供各种控件。</li>
+  </ul>
+  <p>推荐按照上面的结构在IDE中建立文件夹并包含这些文件夹下所有的源文件(*.c文件)，然后在IDE的工程配置选项中添加以下头文件包含路径：</p>
+  <ul>
+    <li>GUI/Config</li>
+    <li>GUI/Core/inc</li>
+    <li>GUI/Fonts</li>
+    <li>GUI/Widget</li>
+  </ul>
+  <p>添加好S-GUI和用户的的源文件后</p>
+  <p>移植主要工作就是编写GUI/Config/GUI_Botton.c文件，你需要填充自己的LCD驱动程序，提供内存池的首地址和容量，如果使用了OS还需要提供多任务环境的支持。</p>
+</div>
+
+<footer>
+  <a class= "btn" href="javascript:history.go(-1);">◂返回上一页</a>
+  <a class= "btn" href="../doc_cn.html">◂Home</a>
+</footer>
+</section>
+</body>
+</html>
