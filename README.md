@@ -8,8 +8,9 @@ S-GUI是为单片机等小型嵌入式系统设计的图形用户界面库.这�
 S-GUI基于事件驱动，消息机制支持队列式消息和非队列式消息，窗口管理器支持Z序排列、裁剪、拖动与切换等功能。
   
 访问网站: [s-gui.org](http://s-gui.org)
+
 [查看在线文档](http://s-gui.org/doc/doc_ch.html)
-  
+
 Video: http://v.youku.com/v_show/id_XMTUzNTc5MDk1Mg==.html
 
 详情请参看S-GUI文件夹下的[ReadMe.txt](https://github.com/Le-Seul/S-GUI/blob/master/S-GUI/ReadMe.txt)文件.
