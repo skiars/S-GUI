@@ -13,14 +13,8 @@ static GUI_GLAPI _glAPI;
 
 static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color)
 {
-    GUI_FLIPOUT Cmd;
-
-    Cmd.x0 = x0;
-    Cmd.y0 = y0;
-    Cmd.x1 = x1;
-    Cmd.Color = Color;
     if (x0 <= x1) {
-        GUI_GDev.DrawHLine(&Cmd);
+        GUI_GDev.DrawHLine(x0, y0, x1, Color);
     }
 }
 

@@ -63,8 +63,8 @@ void * _GUI_GetHeapBuffer(int Page, u_32 *Size)
 }
 
 /* GUI图形硬件物理层接口 */
-static GUI_COLOR Phy_GetPixel(GUI_FLIPOUT *Cmd);
-static void Phy_SetPixel(GUI_FLIPOUT *Cmd);
+static GUI_COLOR Phy_GetPixel(u_16 x, u_16 y);
+static void Phy_SetPixel(u_16 x, u_16 y, GUI_COLOR Color);
 void Phy_FillRect(GUI_FLIPOUT *Cmd);
 void Phy_DrawBitmap(GUI_FLIPOUT *Cmd);
 
@@ -80,15 +80,15 @@ void GUI_UserConfig(GUI_DRIVER *phy)
 }
 
 /* 读取屏幕上的点 */
-static GUI_COLOR Phy_GetPixel(GUI_FLIPOUT *Cmd)
+static GUI_COLOR Phy_GetPixel(u_16 x, u_16 y)
 {
-    return HAL_GetPixel(Cmd->x0, Cmd->y0);
+    return HAL_GetPixel(x, y);
 }
 
 /* 写入屏幕上的一个点 */
-static void Phy_SetPixel(GUI_FLIPOUT *Cmd)
+static void Phy_SetPixel(u_16 x, u_16 y, GUI_COLOR Color)
 {
-    HAL_SetPixel(Cmd->x0, Cmd->y0, Cmd->Color);
+    HAL_SetPixel(x, y, Color);
 }
 
 void Phy_FillRect(GUI_FLIPOUT *Cmd)
@@ -106,10 +106,7 @@ static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
 
     for (j = 0; j < Cmd->ySize; ++j) {
         for (i = 0; i < Cmd->xSize; ++i) {
-            Cmd->Color = pLog[*pSrc];
-            Cmd->x0 = x0 + i;
-            Cmd->y0 = y0 + j;
-            Phy_SetPixel(Cmd);
+            Phy_SetPixel(x0 + i, y0 + j, pLog[*pSrc]);
             pSrc += 1;
         }
         pSrc += Cmd->Offset;

@@ -11,43 +11,43 @@ GUI_GLAPI   GUI_glAPI;      /* 基本的绘图函数 */
 #define HL_GetPixel GUI_GDev.GetPixel
 
 /* 默认画点函数 */
-static void _SetPixel(GUI_FLIPOUT *Cmd)
+static void _SetPixel(u_16 x, u_16 y, GUI_COLOR Color)
 {
 
 }
 
 /* 默认读取像素函数 */
-static GUI_COLOR _GetPixel(GUI_FLIPOUT *Cmd)
+static GUI_COLOR _GetPixel(u_16 x, u_16 y)
 {
     return 0;
 }
 
 /* 在设备上画水平线 */
-static void _DrawHLine(GUI_FLIPOUT *Cmd)
+static void _DrawHLine(u_16 x0, u_16 y0, u_16 x1, GUI_COLOR Color)
 {
-    while (Cmd->x0 <= Cmd->x1) {
-        HL_SetPixel(Cmd);
-        Cmd->x0++;
+    while (x0 <= x1) {
+        HL_SetPixel(x0, y0, Color);
+        ++x0;
     }
 }
 
 /* 在设备上画垂直线 */
-static void _DrawVLine(GUI_FLIPOUT *Cmd)
+static void _DrawVLine(u_16 x0, u_16 y0, u_16 y1, GUI_COLOR Color)
 {
-    while (Cmd->y0 <= Cmd->y1) {
-        HL_SetPixel(Cmd);
-        Cmd->y0++;
+    while (y0 <= y1) {
+        HL_SetPixel(x0, y0, Color);
+        ++y0;
     }
 }
 
 /* 在设备上填充区域 */
 static void _FillRect(GUI_FLIPOUT *Cmd)
 {
-    i_16 x0 = Cmd->x0;
+    u_16 x0 = Cmd->x0, y0 = Cmd->y0, x1 = Cmd->x1, y1 = Cmd->y1;
+    GUI_COLOR Color = Cmd->Color;
 
-    for (; Cmd->y0 <= Cmd->y1; Cmd->y0++) {
-        GUI_GDev.DrawHLine(Cmd);
-        Cmd->x0 = x0;
+    while (y0 <= y1) {
+        GUI_GDev.DrawHLine(x0, y0, x1, Color);
     }
 }
 
@@ -61,10 +61,7 @@ static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
 
     for (j = 0; j < Cmd->ySize; ++j) {
         for (i = 0; i < Cmd->xSize; ++i) {
-            Cmd->Color = pLog[*pSrc];
-            Cmd->x0 = x0 + i;
-            Cmd->y0 = y0 + j;
-            HL_SetPixel(Cmd);
+            HL_SetPixel(x0 + i, y0 + j, pLog[*pSrc]);
             pSrc += 1;
         }
         pSrc += Cmd->Offset;
@@ -89,10 +86,7 @@ static void _DrawBitmap(GUI_FLIPOUT *Cmd)
     Cmd->Offset *= pixBytes;
     for (j = 0; j < Cmd->ySize; ++j) {
         for (i = 0; i < Cmd->xSize; ++i) {
-            Cmd->Color = GUI_RGB565To888(*(u_16 *)pSrc);
-            Cmd->x0 = x0 + i;
-            Cmd->y0 = y0 + j;
-            HL_SetPixel(Cmd);
+            HL_SetPixel(x0 + i, y0 +j, GUI_RGB565To888(*(u_16 *)pSrc));
             pSrc += pixBytes;
         }
         pSrc += Cmd->Offset;
@@ -102,50 +96,30 @@ static void _DrawBitmap(GUI_FLIPOUT *Cmd)
 /* 绘制像素 */
 void _GL_SetPixel(i_16 x, i_16 y, GUI_COLOR Color)
 {
-    GUI_FLIPOUT Cmd;
-
-    Cmd.x0 = x;
-    Cmd.y0 = y;
-    Cmd.Color = Color;
-    HL_SetPixel(&Cmd);
+    HL_SetPixel(x, y, Color);
 }
 
 /* 读取像素 */
 GUI_COLOR _GL_GetPixel(i_16 x, i_16 y)
 {
-    GUI_FLIPOUT Cmd;
-
-    Cmd.x0 = x;
-    Cmd.y0 = y;
-    return HL_GetPixel(&Cmd);
+    return HL_GetPixel(x, y);
 }
 
 /* 裁剪绘制像素 */
 static void _glSetPixelClip(i_16 x, i_16 y)
 {
-    GUI_FLIPOUT Cmd;
-
     CHECK_X(x);
     CHECK_Y(y);
-    Cmd.x0 = x;
-    Cmd.y0 = y;
-    Cmd.Color = GUI_Context.FGColor;
-    HL_SetPixel(&Cmd);
+    HL_SetPixel(x, y, GUI_Context.FGColor);
 }
 
 /* 绘制水平线 */
 static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1)
 {
-    GUI_FLIPOUT Cmd;
-
     CLIP_X(x0, x1);
     CHECK_Y(y0);
-    Cmd.x0 = x0;
-    Cmd.y0 = y0;
-    Cmd.x1 = x1;
-    Cmd.Color = GUI_Context.FGColor;
     if (x0 <= x1) {
-        GUI_GDev.DrawHLine(&Cmd);
+        GUI_GDev.DrawHLine(x0, y0, x1, GUI_Context.FGColor);
     }
 }
 
@@ -156,12 +130,8 @@ void _GL_DrawVLine(i_16 x0, i_16 y0, i_16 y1)
 
     CLIP_Y(y0, y1);
     CHECK_X(x0);
-    Cmd.x0 = x0;
-    Cmd.y0 = y0;
-    Cmd.y1 = y1;
-    Cmd.Color = GUI_Context.FGColor;
     if (y0 <= y1) {
-        GUI_GDev.DrawVLine(&Cmd);
+        GUI_GDev.DrawVLine(x0, y0, y1, GUI_Context.FGColor);
     }
 }
 

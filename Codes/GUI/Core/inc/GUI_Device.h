@@ -29,10 +29,10 @@ typedef struct {
 typedef struct {
     u_16 xSize; /* 显示设备的宽度 */
     u_16 ySize; /* 显示设备的高度 */
-    void (*SetPixel)(GUI_FLIPOUT *); /* 显示某个像素 */
-    GUI_COLOR (*GetPixel)(GUI_FLIPOUT *);             /* 读取某个像素 */
-    void (*DrawHLine)(GUI_FLIPOUT *);
-    void (*DrawVLine)(GUI_FLIPOUT *);
+    void (*SetPixel)(u_16, u_16, GUI_COLOR); /* 显示某个像素 */
+    GUI_COLOR (*GetPixel)(u_16, u_16);       /* 读取某个像素 */
+    void (*DrawHLine)(u_16, u_16, u_16, GUI_COLOR);
+    void (*DrawVLine)(u_16, u_16, u_16, GUI_COLOR);
     void (*FillRect)(GUI_FLIPOUT *);
     void (*DrawBitmap)(GUI_FLIPOUT *);
 } GUI_DRIVER;
