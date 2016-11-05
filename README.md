@@ -9,7 +9,7 @@ S-GUI基于事件驱动，消息机制支持队列式消息和非队列式消息
   
 访问网站: [s-gui.org](http://s-gui.org)
 
-[查看在线文档](http://s-gui.org/doc/doc_ch.html)
+[查看在线文档](http://s-gui.org/doc/doc_cn.html)
 
 Video: http://v.youku.com/v_show/id_XMTUzNTc5MDk1Mg==.html
 
