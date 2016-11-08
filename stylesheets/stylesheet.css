@@ -7,7 +7,8 @@ body {
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, "Microsoft YaHei";
   font-size: 16px;
   line-height: 1.5;
-  color: #606c71; }
+  color: #606c71;
+  background: #e4ebe9 url(../images/fancy_deboss.png) repeat top left; }
 
 a {
   color: #1e6bb8;
@@ -223,7 +224,7 @@ a {
 .site-footer {
   padding-top: 2rem;
   margin-top: 2rem;
-  border-top: solid 1px #eff0f1; }
+  border-top: solid 1px rgba(0, 0, 0, 0.2); }
 
 .site-footer-owner {
   display: block;
