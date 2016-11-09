@@ -14,7 +14,7 @@ static GUI_GLAPI _glAPI;
 static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color)
 {
     if (x0 <= x1) {
-        GUI_GDev.DrawHLine(x0, y0, x1, Color);
+        GUI_GDev->DrawHLine(x0, y0, x1, Color);
     }
 }
 

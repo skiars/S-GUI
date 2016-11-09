@@ -69,10 +69,10 @@ void Phy_FillRect(GUI_FLIPOUT *Cmd);
 void Phy_DrawBitmap(GUI_FLIPOUT *Cmd);
 
 /* 图形硬件初始化 */
-void GUI_UserConfig(GUI_DRIVER *phy)
+void GUI_UserConfig(GUI_GDEV *phy)
 {
-    phy->xSize = HAL_SCREEN_W;
-    phy->ySize = HAL_SCREEN_H;
+    phy->Width = HAL_SCREEN_W;
+    phy->Height = HAL_SCREEN_H;
     phy->GetPixel = Phy_GetPixel;
     phy->SetPixel = Phy_SetPixel;
     phy->FillRect = Phy_FillRect;

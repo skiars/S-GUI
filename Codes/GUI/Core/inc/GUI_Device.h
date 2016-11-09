@@ -1,9 +1,12 @@
-﻿#ifndef __GUI_DRIVER_H
-#define __GUI_DRIVER_H
+﻿#ifndef __GUI_DEVICE_H
+#define __GUI_DEVICE_H
 
 #include "GUI_Config.h"
 #include "GUI_Typedef.h"
 #include "GUI_Bitmap.h"
+
+#define GUI_DEF_SCREEN   0
+#define GUI_MEN_SEREEN   0xFF
 
 #define GL_SetPixel       _GL_SetPixel
 #define GL_GetPixel       _GL_GetPixel
@@ -26,28 +29,17 @@ typedef struct {
 }GUI_FLIPOUT;
 
 /* 图形设备驱动函数 */
-typedef struct {
-    u_16 xSize; /* 显示设备的宽度 */
-    u_16 ySize; /* 显示设备的高度 */
+typedef struct GUI_GDEV {
+    u_16 Width, Height; /* 显示设备的宽度和高度高度 */
+    unsigned char Id;   /* 设备ID */
+    int PixelFormat;    /* 像素颜色格式 */
     void (*SetPixel)(u_16, u_16, GUI_COLOR); /* 显示某个像素 */
     GUI_COLOR (*GetPixel)(u_16, u_16);       /* 读取某个像素 */
     void (*DrawHLine)(u_16, u_16, u_16, GUI_COLOR);
     void (*DrawVLine)(u_16, u_16, u_16, GUI_COLOR);
     void (*FillRect)(GUI_FLIPOUT *);
-    void (*DrawBitmap)(GUI_FLIPOUT *);
-} GUI_DRIVER;
-
-/* 图形设备抽象结构 */
-typedef struct {
-    void *FrameBuffer; /* 帧缓冲 */
-    void *Position;    /* 当前工作的位置 */
-    i_16 x0;           /* 在物理设备中的x0 */
-    i_16 y0;           /* 在物理设备中的y0 */
-    u_16 Width;
-    u_16 Height;
-    int BytesPerPixel; /* 颜色深度 */
-    int PixelFormat;   /* 像素颜色格式 */
-    GUI_DRIVER Phy;    /* 驱动程序 */
+    void(*DrawBitmap)(GUI_FLIPOUT *);
+    struct GUI_GDEV *pNext;
 } GUI_GDEV;
 
 /* 绘图API定义 */
@@ -57,7 +49,7 @@ typedef struct {
     void (*FillRect)(i_16, i_16, i_16, i_16);
 } GUI_GLAPI;
 
-extern GUI_DRIVER GUI_GDev;
+extern GUI_GDEV   *GUI_GDev;
 extern GUI_GLAPI   GUI_glAPI;
 
 void _GL_SetPixel(i_16 x, i_16 y, GUI_COLOR);
@@ -67,5 +59,9 @@ void _GL_DrawBitmap(u_8 PixelFormat, const unsigned char *pPixel,
     i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, int Offset,
     const LCD_LOGPALETTE *pLog);
 void GUI_DeviceInit(void);
+GUI_RESULT GUI_SelectDevice(unsigned char id);
+GUI_GDEV * GUI_GetDevice(unsigned char id);
+void GUI_DeleteDevice(unsigned char id);
+void GUI_DeleteDeviceList(void);
 
-#endif /* __GUI_DRIVER_H */
+#endif /* __GUI_DEVICE_H */

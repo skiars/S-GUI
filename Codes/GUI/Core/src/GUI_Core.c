@@ -44,26 +44,27 @@ void GUI_Unload(void)
     GUI_LOCK();
     WM_DeleteWindow(_hRootWin); /* 删除所有窗口 */
     GUI_MessageQueueDelete();   /* 删除消息队列 */
+    GUI_DeleteDeviceList();     /* 删除设备列表 */
     GUI_UNLOCK();
 }
 
 /* 获取屏幕尺寸 */
 void GUI_ScreenSize(u_16 *xSize, u_16 *ySize)
 {
-    *xSize = GUI_GDev.xSize;
-    *ySize = GUI_GDev.ySize;
+    *xSize = GUI_GDev->Width;
+    *ySize = GUI_GDev->Height;
 }
 
 /* 获取屏幕宽度 */
 u_16 GUI_GetScreenWidth(void)
 {
-    return GUI_GDev.xSize;
+    return GUI_GDev->Width;
 }
 
 /* 获取屏幕高度 */
 u_16 GUI_GetScreenHeight(void)
 {
-    return GUI_GDev.ySize;
+    return GUI_GDev->Height;
 }
 
 /* GUI延时并更新 */

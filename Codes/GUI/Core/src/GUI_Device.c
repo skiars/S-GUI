@@ -1,14 +1,13 @@
 ﻿#include "GUI_Device.h"
 #include "GUI.h"
 
-GUI_DRIVER  GUI_GDev;       /* 当前使用的驱动 */
-GUI_GDEV    GUI_Screen;     /* 屏幕设备 */
-GUI_GDEV   *GUI_CurDevice;  /* 当前的图形设备 */
-GUI_DRIVER *GUI_CurDriver;  /* 当前的图形设备的驱动库 */
-GUI_GLAPI   GUI_glAPI;      /* 基本的绘图函数 */
+GUI_GDEV        *GUI_GDev;       /* 当前使用的图形设备 */
+GUI_GDEV         GUI_Screen;     /* 屏幕设备 */
+GUI_GLAPI        GUI_glAPI;      /* 基本的绘图函数 */
+static GUI_GDEV *GUI_GDevList;   /* 图形设备列表 */
 
-#define HL_SetPixel GUI_GDev.SetPixel
-#define HL_GetPixel GUI_GDev.GetPixel
+#define HL_SetPixel GUI_GDev->SetPixel
+#define HL_GetPixel GUI_GDev->GetPixel
 
 /* 默认画点函数 */
 static void _SetPixel(u_16 x, u_16 y, GUI_COLOR Color)
@@ -47,7 +46,7 @@ static void _FillRect(GUI_FLIPOUT *Cmd)
     GUI_COLOR Color = Cmd->Color;
 
     while (y0 <= y1) {
-        GUI_GDev.DrawHLine(x0, y0, x1, Color);
+        GUI_GDev->DrawHLine(x0, y0, x1, Color);
     }
 }
 
@@ -119,19 +118,17 @@ static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1)
     CLIP_X(x0, x1);
     CHECK_Y(y0);
     if (x0 <= x1) {
-        GUI_GDev.DrawHLine(x0, y0, x1, GUI_Context.FGColor);
+        GUI_GDev->DrawHLine(x0, y0, x1, GUI_Context.FGColor);
     }
 }
 
 /* 绘制垂直线 */
 void _GL_DrawVLine(i_16 x0, i_16 y0, i_16 y1)
 {
-    GUI_FLIPOUT Cmd;
-
     CLIP_Y(y0, y1);
     CHECK_X(x0);
     if (y0 <= y1) {
-        GUI_GDev.DrawVLine(x0, y0, y1, GUI_Context.FGColor);
+        GUI_GDev->DrawVLine(x0, y0, y1, GUI_Context.FGColor);
     }
 }
 
@@ -147,7 +144,7 @@ static void _glFillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
     Cmd.x1 = x1;
     Cmd.y1 = y1;
     Cmd.Color = GUI_Context.FGColor;
-    GUI_GDev.FillRect(&Cmd);
+    GUI_GDev->FillRect(&Cmd);
 }
 
 /* 绘制位图 */
@@ -170,7 +167,7 @@ void _GL_DrawBitmap(u_8 PixelFormat,
     Cmd.ySize = ySize;
     Cmd.Offset = Offset;
     Cmd.pLog = pLog;
-    GUI_GDev.DrawBitmap(&Cmd);
+    GUI_GDev->DrawBitmap(&Cmd);
 }
 
 /* LCD初始化 */
@@ -179,78 +176,102 @@ void GUI_DeviceInit(void)
     GUI_glAPI.SetPixelClip = _glSetPixelClip;
     GUI_glAPI.DrawHLine = _glDrawHLine;
     GUI_glAPI.FillRect = _glFillRect;
-    GUI_GDev.xSize = 0;
-    GUI_GDev.ySize = 0;
-    GUI_GDev.SetPixel = _SetPixel;
-    GUI_GDev.GetPixel = _GetPixel;
-    GUI_GDev.DrawHLine = _DrawHLine;
-    GUI_GDev.DrawVLine = _DrawVLine;
-    GUI_GDev.FillRect = _FillRect;
-    GUI_GDev.DrawBitmap = _DrawBitmap;
-    GUI_UserConfig(&GUI_GDev); /* 执行用户的初始化函数 */
+    GUI_GDevList = NULL;
+    GUI_GDev = GUI_GetDevice(GUI_DEF_SCREEN);
+    GUI_GDev->Width = 0;
+    GUI_GDev->Height = 0;
+    GUI_GDev->SetPixel = _SetPixel;
+    GUI_GDev->GetPixel = _GetPixel;
+    GUI_GDev->DrawHLine = _DrawHLine;
+    GUI_GDev->DrawVLine = _DrawVLine;
+    GUI_GDev->FillRect = _FillRect;
+    GUI_GDev->DrawBitmap = _DrawBitmap;
+    GUI_UserConfig(GUI_GDev); /* 执行用户的初始化函数 */
 }
 
-/* 内存映射型图形设备的显示偏移位置设置 */
-void _SetPosition(u_16 x, u_16 y)
+/* 选中某个图形设备 */
+GUI_RESULT GUI_SelectDevice(unsigned char id)
 {
-    GUI_CurDevice->Position = (void *)((int)GUI_CurDevice->FrameBuffer
-        + ((int)y * (int)GUI_CurDevice->Width + (int)x)
-        * GUI_CurDevice->BytesPerPixel);
-}
+    GUI_GDEV *pNode;
 
-/* 在当前位置下写入像素 */
-void _WriteCurPosition(GUI_COLOR ColorIndex)
-{
-    switch (GUI_CurDevice->BytesPerPixel) {
-    case 1: /* 8bpp */
-        *(u_8 *)GUI_CurDevice->Position = (u_8)ColorIndex;
-        break;
-    case 2: /* 16bpp */
-        *(u_16 *)GUI_CurDevice->Position = (u_16)ColorIndex;
-        break;
-    case 3: /* 24bpp */
-        *(u_8 *)GUI_CurDevice->Position
-            = (u_8)((ColorIndex >> 16) & 0xFF);
-        *(u_8 *)((u_32)GUI_CurDevice->Position + 1)
-            = (u_8)((ColorIndex >> 8) & 0xFF);
-        *(u_8 *)((u_32)GUI_CurDevice->Position + 2)
-            = (u_8)(ColorIndex & 0xFF);
-        break;
-    case 4: /* 32bpp */
-        *(u_32 *)GUI_CurDevice->Position = (u_32)ColorIndex;
-        break;
+    GUI_LOCK();
+    for (pNode = GUI_GDevList; pNode && pNode->Id != id; pNode = pNode->pNext);
+    if (pNode) {
+        GUI_GDev = pNode;
     }
-    GUI_CurDevice->Position = (void *)((u_32)GUI_CurDevice->Position
-        + GUI_CurDevice->BytesPerPixel);
+    GUI_UNLOCK();
+    if (pNode) {
+        return GUI_OK;
+    }
+    return GUI_ERR;
 }
 
-/* 显示像素偏移偏移 */
-void _DispOffset(int OffsetPixels)
+/* 获取一个图形设备的指针,如果设备不存在就创建一个 */
+GUI_GDEV * GUI_GetDevice(unsigned char id)
 {
-    GUI_CurDevice->Position = (void *)((u_32)GUI_CurDevice->Position
-        + OffsetPixels * GUI_CurDevice->BytesPerPixel);
-}
+    GUI_GDEV *pNode;
 
-/* 设置帧缓冲地址 */
-void GUI_SetFrameBuffer(GUI_GDEV *gDevice, void *Ptr)
-{
-    gDevice->FrameBuffer = Ptr;
-}
-
-/* 设置像素颜色格式 */
-GUI_RESULT GUI_SetPixelFormat(GUI_GDEV *gDevice, int PixelFormat)
-{
-    if (PixelFormat == GUI_ARGB8888) {
-        gDevice->BytesPerPixel = 4;
-    } else if (PixelFormat == GUI_RGB888) {
-        gDevice->BytesPerPixel = 3;
-    } else if (PixelFormat == GUI_RGB565) {
-        gDevice->BytesPerPixel = 2;
-    } else if (PixelFormat == GUI_L8) {
-        gDevice->BytesPerPixel = 1;
+    GUI_LOCK();
+    pNode = GUI_GDevList;
+    if (pNode == NULL) { /* 链表为空则创建 */
+        pNode = GUI_Malloc(sizeof(GUI_GDEV));
+        pNode->Id = id;
+        pNode->pNext = NULL;
     } else {
-        return GUI_ERR;
+        while (pNode->pNext && pNode->Id != id) { /* 寻找ID为id的设备 */
+            pNode = pNode->pNext;
+        }
+        if (pNode->Id != id) { /* 不存在设备 */
+            pNode->pNext = GUI_Malloc(sizeof(GUI_GDEV));
+            pNode = pNode->pNext;
+            pNode->Id = id;
+            pNode->pNext = NULL;
+        }
     }
-    gDevice->PixelFormat = PixelFormat;
-    return GUI_OK;
+    GUI_UNLOCK();
+    return pNode;
+}
+
+/* 删除图形设备 */
+void GUI_DeleteDevice(unsigned char id)
+{
+    GUI_GDEV *pNode;
+
+    if (id == GUI_DEF_SCREEN) { /* 默认设备不可删除 */
+        return;
+    }
+    GUI_LOCK();
+    pNode = GUI_GDevList;
+    if (pNode->Id == id) {
+        GUI_GDevList = pNode->pNext;
+        GUI_Free(pNode);
+    } else if (pNode) { /* 链表不为空 */
+        while (pNode->pNext && pNode->pNext->Id != id) { /* 到要删除的前一个链节 */
+            pNode = pNode->pNext;
+        }
+        if (pNode->pNext && pNode->pNext->Id == id) {
+            if (GUI_GDev->Id == id) { /* 使用默认设备 */
+                GUI_GDev = GUI_GetDevice(GUI_DEF_SCREEN);
+            }
+            pNode->pNext = pNode->pNext->pNext;
+            GUI_Free(pNode->pNext);
+        }
+    }
+    GUI_UNLOCK();
+}
+
+/* 删除图形设备表, 此函数调用之后不能再使用S-GUI */
+void GUI_DeleteDeviceList(void)
+{
+    GUI_GDEV *pNode, *pNext;
+
+    GUI_LOCK();
+    pNode = GUI_GDevList;
+    while (pNode) {
+        pNext = pNode->pNext;
+        GUI_Free(pNode);
+        pNode = pNext;
+    }
+    GUI_GDevList = NULL;
+    GUI_UNLOCK();
 }
