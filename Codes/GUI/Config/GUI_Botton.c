@@ -63,8 +63,8 @@ void * _GUI_GetHeapBuffer(int Page, u_32 *Size)
 }
 
 /* GUI图形硬件物理层接口 */
-static GUI_COLOR Phy_GetPixel(u_16 x, u_16 y);
-static void Phy_SetPixel(u_16 x, u_16 y, GUI_COLOR Color);
+static GUI_COLOR Phy_GetPixel(int x, int y);
+static void Phy_SetPixel(int x, int y, GUI_COLOR Color);
 void Phy_FillRect(GUI_FLIPOUT *Cmd);
 void Phy_DrawBitmap(GUI_FLIPOUT *Cmd);
 
@@ -80,13 +80,13 @@ void GUI_UserConfig(GUI_GDEV *phy)
 }
 
 /* 读取屏幕上的点 */
-static GUI_COLOR Phy_GetPixel(u_16 x, u_16 y)
+static GUI_COLOR Phy_GetPixel(int x, int y)
 {
     return HAL_GetPixel(x, y);
 }
 
 /* 写入屏幕上的一个点 */
-static void Phy_SetPixel(u_16 x, u_16 y, GUI_COLOR Color)
+static void Phy_SetPixel(int x, int y, GUI_COLOR Color)
 {
     HAL_SetPixel(x, y, Color);
 }
@@ -100,12 +100,12 @@ void Phy_FillRect(GUI_FLIPOUT *Cmd)
 static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
 {
     int i, j;
-    i_16 x0 = Cmd->x0, y0 = Cmd->y0;
+    int x0 = Cmd->x0, y0 = Cmd->y0;
     const u_8 *pSrc = Cmd->pSrc;
     const GUI_COLOR *pLog = Cmd->pLog->pPalEntries;
 
-    for (j = 0; j < Cmd->ySize; ++j) {
-        for (i = 0; i < Cmd->xSize; ++i) {
+    for (j = 0; j < (int)Cmd->ySize; ++j) {
+        for (i = 0; i < (int)Cmd->xSize; ++i) {
             Phy_SetPixel(x0 + i, y0 + j, pLog[*pSrc]);
             pSrc += 1;
         }

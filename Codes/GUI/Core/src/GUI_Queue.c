@@ -1,15 +1,15 @@
-ï»¿#include "GUI_Queue.h"
+#include "GUI_Queue.h"
 #include "GUI.h"
 
 GUI_QUEUE *__MsgQueue;
 static void *__msgLockPtr;
 
 /*
- * æ¶ˆæ¯é˜Ÿåˆ—åˆå§‹åŒ–
- * Capacity:é˜Ÿåˆ—å®¹é‡
- * è¿”å›å€¼ï¼šä¸€ä¸ªå·²ç»åˆå§‹åŒ–çš„é˜Ÿåˆ—æŒ‡é’ˆ
+ * ÏûÏ¢¶ÓÁĞ³õÊ¼»¯
+ * Capacity:¶ÓÁĞÈİÁ¿
+ * ·µ»ØÖµ£ºÒ»¸öÒÑ¾­³õÊ¼»¯µÄ¶ÓÁĞÖ¸Õë
  */
-GUI_QUEUE * GUI_QueueInit(u_16 Capacity)
+GUI_QUEUE * GUI_QueueInit(int Capacity)
 {
     GUI_QUEUE *pQue = GUI_Malloc(sizeof(GUI_QUEUE));
 
@@ -21,7 +21,7 @@ GUI_QUEUE * GUI_QueueInit(u_16 Capacity)
     return pQue;
 }
 
-/* åˆ é™¤é˜Ÿåˆ— */
+/* É¾³ı¶ÓÁĞ */
 void GUI_QueueDelete(GUI_QUEUE *pQue)
 {
     if (pQue) {
@@ -31,7 +31,7 @@ void GUI_QueueDelete(GUI_QUEUE *pQue)
 }
 
 /*
- * ä»æ¶ˆæ¯é˜Ÿåˆ—é‡Œè¯»å–ä¸€æ¡æ¶ˆæ¯
+ * ´ÓÏûÏ¢¶ÓÁĞÀï¶ÁÈ¡Ò»ÌõÏûÏ¢
  **/
 GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
 {
@@ -39,13 +39,13 @@ GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
         return GUI_ERR;
     }
     GUI_LOCK();
-    if (!pQue->size) {   /* é˜Ÿåˆ—ä¸ºç©º */
+    if (!pQue->size) {   /* ¶ÓÁĞÎª¿Õ */
         GUI_UNLOCK();
         return GUI_ERR;
     }
     --pQue->size;
     *pMsg = pQue->pArray[pQue->front];
-    if (++pQue->front == pQue->Capacity) {  /* é˜Ÿå¤´ç»•å›åˆ°å¼€å¤´ */
+    if (++pQue->front == pQue->Capacity) {  /* ¶ÓÍ·ÈÆ»Øµ½¿ªÍ· */
         pQue->front = 0;
     }
     GUI_UNLOCK();
@@ -53,37 +53,37 @@ GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
 }
 
 /*
- * å‘æ¶ˆæ¯é˜Ÿåˆ—å‘é€ä¸€æ¡æ¶ˆæ¯
- * pQue:äº‹ä»¶é˜Ÿåˆ—æŒ‡é’ˆ
- * pMsg:éœ€è¦å‘é€çš„æ¶ˆæ¯
+ * ÏòÏûÏ¢¶ÓÁĞ·¢ËÍÒ»ÌõÏûÏ¢
+ * pQue:ÊÂ¼ş¶ÓÁĞÖ¸Õë
+ * pMsg:ĞèÒª·¢ËÍµÄÏûÏ¢
  **/
 GUI_RESULT GUI_PostMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg)
 {
     if (!pQue) {
         return GUI_ERR;
     } 
-    if (pQue->size == pQue->Capacity - 1) { /* é˜Ÿåˆ—å·²æ»¡ */
+    if (pQue->size == pQue->Capacity - 1) { /* ¶ÓÁĞÒÑÂú */
 #if GUI_DEBUG_MODE
         GUI_DEBUG_OUT("GUI message queue is full.");
 #endif
         return GUI_ERR;
     }
     ++pQue->size;
-    if (++pQue->rear == pQue->Capacity) {  /* é˜Ÿå°¾ç»•å›åˆ°å¼€å¤´ */
+    if (++pQue->rear == pQue->Capacity) {  /* ¶ÓÎ²ÈÆ»Øµ½¿ªÍ· */
         pQue->rear = 0;
     }
     pQue->pArray[pQue->rear] = *pMsg;
     return GUI_OK;
 }
 
-/* -------------------- GUIæ¶ˆæ¯å¤„ç† -------------------- */
-/* GUIæ¶ˆæ¯é˜Ÿåˆ—åˆå§‹åŒ– */
+/* -------------------- GUIÏûÏ¢´¦Àí -------------------- */
+/* GUIÏûÏ¢¶ÓÁĞ³õÊ¼»¯ */
 GUI_RESULT GUI_MessageQueueInit(void)
 {
-    __msgLockPtr = GUI_TaskCreateLock(); /* åˆ›å»ºé” */
-    GUI_TaskLock(__msgLockPtr); /* ä¸Šé” */
+    __msgLockPtr = GUI_TaskCreateLock(); /* ´´½¨Ëø */
+    GUI_TaskLock(__msgLockPtr); /* ÉÏËø */
     __MsgQueue = GUI_QueueInit(GUI_MSG_QUEUE_SIZE);
-    GUI_TaskUnlock(__msgLockPtr); /* è§£é” */
+    GUI_TaskUnlock(__msgLockPtr); /* ½âËø */
     if (__MsgQueue == NULL) {
 #if GUI_DEBUG_MODE
         GUI_DEBUG_OUT("Failure to create message queue.");
@@ -93,33 +93,33 @@ GUI_RESULT GUI_MessageQueueInit(void)
     return GUI_OK;
 }
 
-/* åˆ é™¤GUIæ¶ˆæ¯é˜Ÿåˆ— */
+/* É¾³ıGUIÏûÏ¢¶ÓÁĞ */
 void GUI_MessageQueueDelete(void)
 {
-    GUI_TaskLock(__msgLockPtr); /* ä¸Šé” */
+    GUI_TaskLock(__msgLockPtr); /* ÉÏËø */
     GUI_QueueDelete(__MsgQueue);
     __MsgQueue = NULL;
-    GUI_TaskUnlock(__msgLockPtr); /* è§£é” */
+    GUI_TaskUnlock(__msgLockPtr); /* ½âËø */
 }
 
-/* ä»GUIæ¶ˆæ¯é˜Ÿåˆ—ä¸­è¯»å–ä¸€ä¸ªæ¶ˆæ¯ */
+/* ´ÓGUIÏûÏ¢¶ÓÁĞÖĞ¶ÁÈ¡Ò»¸öÏûÏ¢ */
 GUI_RESULT GUI_GetMessage(GUI_MESSAGE *pMsg)
 {
     GUI_RESULT res;
 
-    GUI_TaskLock(__msgLockPtr); /* ä¸Šé” */
+    GUI_TaskLock(__msgLockPtr); /* ÉÏËø */
     res = GUI_GetMessageQueue(__MsgQueue, pMsg);
-    GUI_TaskUnlock(__msgLockPtr); /* è§£é” */
+    GUI_TaskUnlock(__msgLockPtr); /* ½âËø */
     return res;
 }
 
-/* å‘GUIæ¶ˆæ¯é˜Ÿåˆ—å‘é€ä¸€æ¡æ¶ˆæ¯ */
+/* ÏòGUIÏûÏ¢¶ÓÁĞ·¢ËÍÒ»ÌõÏûÏ¢ */
 GUI_RESULT GUI_PostMessage(GUI_MESSAGE *pMsg)
 {
     GUI_RESULT res;
 
-    GUI_TaskLock(__msgLockPtr); /* ä¸Šé” */
+    GUI_TaskLock(__msgLockPtr); /* ÉÏËø */
     res = GUI_PostMessageQueue(__MsgQueue, pMsg);
-    GUI_TaskUnlock(__msgLockPtr); /* è§£é” */
+    GUI_TaskUnlock(__msgLockPtr); /* ½âËø */
     return res;
 }

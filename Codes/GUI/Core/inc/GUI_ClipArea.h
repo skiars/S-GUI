@@ -1,4 +1,4 @@
-﻿#ifndef __GUI_CLIPAREA_H
+#ifndef __GUI_CLIPAREA_H
 #define __GUI_CLIPAREA_H
 
 #include "GUI_Config.h"

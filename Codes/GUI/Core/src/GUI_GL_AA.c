@@ -1,5 +1,5 @@
-ï»¿/*****************************************************************************
-* S-GUIæŠ—é”¯é½¿å›¾å½¢åº“.
+/*****************************************************************************
+* S-GUI¿¹¾â³İÍ¼ĞÎ¿â.
 *****************************************************************************/
 #include "GUI_GL_AA.h"
 #include "GUI.h"
@@ -11,7 +11,7 @@ static u_8 _lineBuffer[GUI_AA_LINEBUFFER_SIZE];
 static int _x0, _x1, _y, _xStart, _xEnd;
 static GUI_GLAPI _glAPI;
 
-static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color)
+static void _glDrawHLine(int x0, int y0, int x1, GUI_COLOR Color)
 {
     if (x0 <= x1) {
         GUI_GDev->DrawHLine(x0, y0, x1, Color);
@@ -19,10 +19,10 @@ static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1, GUI_COLOR Color)
 }
 
 /*
-@ æŒ‰äº®åº¦çº§åˆ«è¾“å‡ºåƒç´ 
-@ light: 0-255, è¶Šå¤§äº®åº¦è¶Šå¤§
+@ °´ÁÁ¶È¼¶±ğÊä³öÏñËØ
+@ light: 0-255, Ô½´óÁÁ¶ÈÔ½´ó
 */
-void _lightPixel(i_16 x, i_16 y, u_8 light)
+void _lightPixel(int x, int y, u_8 light)
 {
     GL_SetPixel(x, y, GUI_AlphaBlend(
         GL_GetPixel(x, y), GUI_Context.FGColor,
@@ -52,22 +52,22 @@ static void _flushLine(void)
                 }
             }
             if (j != i) {
-                /* ç»˜åˆ¶æ°´å¹³çº¿ */
+                /* »æÖÆË®Æ½Ïß */
                 _glDrawHLine(_x0 + i, _y, _x0 + j, GUI_Context.FGColor);
                 i = j;
             } else {
-                /* ç»˜åˆ¶å•ä¸ªåƒç´  */
+                /* »æÖÆµ¥¸öÏñËØ */
                 GL_SetPixel(_x0 + i, _y, GUI_Context.FGColor);
             }
         } else {
-            _lightPixel(_x0 + i, _y, intens);
+            _lightPixel(_x0 + i, _y, (u_8)intens);
         }
     }
     _CleanLine();
 }
 
-/* ç»˜åˆ¶æ°´å¹³çº¿ */
-static void _DrawHLine(i_16 x0, i_16 y, i_16 x1)
+/* »æÖÆË®Æ½Ïß */
+static void _DrawHLine(int x0, int y, int x1)
 {
     int factor = GUI_Context.AAFactor;
     int x0Real, x1Real, dx;
@@ -98,30 +98,30 @@ static void _DrawHLine(i_16 x0, i_16 y, i_16 x1)
     if (x1Real > _xEnd) {
         _xEnd = x1Real + 1;
     }
-    /* å†™å…¥åˆ°ç¼“å†²ä¸­ */
+    /* Ğ´Èëµ½»º³åÖĞ */
     pl = _lineBuffer + x0Real - _x0;
     if (dx == 1) {
         *pl += x1 - x0 + 1;
     } else {
-        /* ç¬¬ä¸€åƒç´  */
+        /* µÚÒ»ÏñËØ */
         *pl++ += (x0Real + 1) * factor - x0;
-        /* ä¸­é—´åƒç´  */
+        /* ÖĞ¼äÏñËØ */
         while (--dx > 1) {
             *pl++ += factor;
         }
-        /* æœ€ååƒç´  */
+        /* ×îºóÏñËØ */
         *pl += x1 - x1Real * factor;
     }
 }
 
-static void _SetPixel(i_16 x, i_16 y)
+static void _SetPixel(int x, int y)
 {
     CHECK_X(x);
     CHECK_Y(y);
     _DrawHLine(x, y, x);
 }
 
-static void _FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
+static void _FillRect(int x0, int y0, int x1, int y1)
 {
     while (y0 <= y1) {
         _DrawHLine(x0, y0++, x1);
@@ -129,7 +129,7 @@ static void _FillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
 }
 
 /*  */
-void GUI_AA_Init(i_16 x0, i_16 x1)
+void GUI_AA_Init(int x0, int x1)
 {
     int xPos = GUI_Context.WinPos.x * GUI_Context.AAFactor;
 
@@ -163,7 +163,7 @@ void GUI_AA_Exit(void)
     GUI_glAPI = _glAPI;
 }
 
-void GUI_DrawLineAA(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
+void GUI_DrawLineAA(int x0, int y0, int x1, int y1)
 {
     int w = GUI_Context.PenSize, xMin, xMax;
 
@@ -191,14 +191,14 @@ void GUI_FillPolygonAA(GUI_POINT *Points, int cnt)
     GUI_AA_Exit();
 }
 
-void GUI_FillCircleAA(i_16 x0, i_16 y0, i_16 r)
+void GUI_FillCircleAA(int x0, int y0, int r)
 {
     GUI_AA_Init(x0 - r, x0 + r);
     GUI_FillCircle(x0, y0, r);
     GUI_AA_Exit();
 }
 
-void GUI_DrawLinesAA(i_16 x, i_16 y, GUI_POINT *Points, int cnt)
+void GUI_DrawLinesAA(int x, int y, GUI_POINT *Points, int cnt)
 {
     GUI_RECT r;
 

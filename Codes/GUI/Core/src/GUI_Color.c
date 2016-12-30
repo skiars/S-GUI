@@ -1,16 +1,16 @@
-ï»¿#include "GUI_Color.h"
+#include "GUI_Color.h"
 
-/* RGB888æ ¼å¼è½¬æ¢ä¸ºRGB565æ ¼å¼ */
+/* RGB888¸ñÊ½×ª»»ÎªRGB565¸ñÊ½ */
 u_16 GUI_RGB888To565(u_32 RGB)
 {
-    u_16 R, G, B;
+    int R, G, B;
     R = (RGB >> 19) & 0x1F;
     G = (RGB >> 10) & 0x3F;
     B = (RGB >> 3) & 0x1F;
     return (R << 11) | (G << 5) | B;
 }
 
-/* RGB565æ ¼å¼è½¬æ¢ä¸ºRGB888æ ¼å¼ */
+/* RGB565¸ñÊ½×ª»»ÎªRGB888¸ñÊ½ */
 u_32 GUI_RGB565To888(u_16 RGB)
 {
     u_32 Color;
@@ -22,7 +22,7 @@ u_32 GUI_RGB565To888(u_16 RGB)
 
 u_16 GUI_ARGB8888To4444(u_32 ARGB)
 {
-    u_16 A, R, G, B;
+    int A, R, G, B;
     
     A = ARGB >> 28;
     R = (ARGB >> 20) & 0x0f;
@@ -32,12 +32,12 @@ u_16 GUI_ARGB8888To4444(u_32 ARGB)
 }
 
 /*
-* Alphaæ··åˆ
-* BkColor:èƒŒæ™¯é¢œè‰²
-* Color:ç›®æ ‡é¢œè‰²
-* Alpha:é€æ˜åº¦(0~256)
+* Alpha»ìºÏ
+* BkColor:±³¾°ÑÕÉ«
+* Color:Ä¿±êÑÕÉ«
+* Alpha:Í¸Ã÷¶È(0~256)
 **/
-GUI_COLOR GUI_AlphaBlend(GUI_COLOR Color, GUI_COLOR BkColor, u_16 Alpha)
+GUI_COLOR GUI_AlphaBlend(GUI_COLOR Color, GUI_COLOR BkColor, int Alpha)
 {
     /* Calc Color seperations for FgColor first */
     GUI_COLOR R = (BkColor & 0xFF)    * Alpha;
@@ -52,4 +52,62 @@ GUI_COLOR GUI_AlphaBlend(GUI_COLOR Color, GUI_COLOR BkColor, u_16 Alpha)
     G = (G >> 8) & 0xFF00;
     B = (B >> 8) & 0xFF0000;
     return R | G | B;
+}
+
+u_8 GUI_GetBytesPerPixel(u_8 PixelFormat)
+{
+    u_8 bytes = 0;
+
+    switch (PixelFormat) {
+    case GUI_ARGB8888:
+        bytes = 4;
+        break;
+    case GUI_RGB888:
+        bytes = 3;
+        break;
+    case GUI_RGB565:
+        bytes = 2;
+        break;
+    case GUI_A8:
+        bytes = 1;
+        break;
+    case GUI_L8:
+        bytes = 1;
+        break;
+    case GUI_LOG: /* ×¢Òâ²éÉ«±í¸ñÊ½¿ÉÄÜÓĞÏñËØ¿í¶ÈĞ¡ÓÚÒ»¸ö×Ö½ÚµÄÇé¿ö */
+        bytes = 1;
+        break;
+    default:
+        bytes = 0;
+    }
+    return bytes;
+}
+
+u_8 GUI_GetBitsPerPixel(u_8 PixelFormat)
+{
+    u_8 bits = 0;
+
+    switch (PixelFormat) {
+    case GUI_ARGB8888:
+        bits = 32;
+        break;
+    case GUI_RGB888:
+        bits = 24;
+        break;
+    case GUI_RGB565:
+        bits = 16;
+        break;
+    case GUI_A8:
+        bits = 8;
+        break;
+    case GUI_L8:
+        bits = 8;
+        break;
+    case GUI_LOG: /* ×¢Òâ²éÉ«±í¸ñÊ½¿ÉÄÜÓĞÏñËØ¿í¶ÈĞ¡ÓÚÒ»¸ö×Ö½ÚµÄÇé¿ö */
+        bits = 8;
+        break;
+    default:
+        bits = 0;
+    }
+    return bits;
 }

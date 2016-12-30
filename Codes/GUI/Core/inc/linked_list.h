@@ -1,4 +1,4 @@
-﻿#ifndef __LINKED_LIST_H
+#ifndef __LINKED_LIST_H
 #define __LINKED_LIST_H
 
 #include "GUI_Typedef.h"

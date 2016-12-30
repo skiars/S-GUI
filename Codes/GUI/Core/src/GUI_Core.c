@@ -1,73 +1,73 @@
-ï»¿#include "GUI_Core.h"
+#include "GUI_Core.h"
 #include "GUI.h"
 
-GUI_HWIN GUI_RootWin;        /* æ ¹çª—å£ */
-GUI_AREA GUI_AreaHeap;       /* è£å‰ªåŒºåŸŸå † */
-GUI_CONTEXT GUI_Context;     /* GUIä¸Šä¸‹æ–‡ */
+GUI_HWIN GUI_RootWin;        /* ¸ù´°¿Ú */
+GUI_AREA GUI_AreaHeap;       /* ²Ã¼ôÇøÓò¶Ñ */
+GUI_CONTEXT GUI_Context;     /* GUIÉÏÏÂÎÄ */
 static void * __LockPtr;
 static u_32 __LockTaskId;
-static u_16 __TaskLockCnt;
+static int __TaskLockCnt;
 
-/* GUIåˆå§‹åŒ– */
+/* GUI³õÊ¼»¯ */
 GUI_RESULT GUI_Init(void)
 {
-    /* å†…å­˜ç®¡ç†åˆå§‹åŒ– */
+    /* ÄÚ´æ¹ÜÀí³õÊ¼»¯ */
     if (GUI_MemoryManagementInit() == GUI_ERR) {
         return GUI_ERR;
     }
-    /* åˆå§‹åŒ–æ“ä½œç³»ç»Ÿç›¸å…³ä»£ç  */
+    /* ³õÊ¼»¯²Ù×÷ÏµÍ³Ïà¹Ø´úÂë */
     __LockPtr = GUI_TaskCreateLock();
-    /* åˆå§‹åŒ–å›¾å½¢ç¡¬ä»¶ */
+    /* ³õÊ¼»¯Í¼ÐÎÓ²¼þ */
     GUI_DeviceInit();
-    /* åˆå§‹åŒ–çª—å£å‰ªåˆ‡åŸŸè£å‰ªç§æœ‰å † */
+    /* ³õÊ¼»¯´°¿Ú¼ôÇÐÓò²Ã¼ôË½ÓÐ¶Ñ */
     if (GUI_RectListInit() == GUI_ERR) {
         return GUI_ERR;
     }
-    /* åˆå§‹åŒ–æ¶ˆæ¯é˜Ÿåˆ— */
+    /* ³õÊ¼»¯ÏûÏ¢¶ÓÁÐ */
     if (GUI_MessageQueueInit() == GUI_ERR) {
         return GUI_ERR;
     }
-    /* åˆå§‹åŒ–çª—å£ç®¡ç†å™¨ */
+    /* ³õÊ¼»¯´°¿Ú¹ÜÀíÆ÷ */
     if (WM_Init() == GUI_ERR) {
         return GUI_ERR;
     }
     GUI_SetFont(&GUI_DEF_FONT);
-    GUI_SetPenSize(1); /* é»˜è®¤çº¿å®½ä¸º1 */
+    GUI_SetPenSize(1); /* Ä¬ÈÏÏß¿íÎª1 */
 	GUI_Context.AAEnable = 0;
 	GUI_Context.AAFactor = 3;
     return GUI_OK;
 }
 
-/* ä»Žå†…å­˜ä¸­å¸è½½GUI */
+/* ´ÓÄÚ´æÖÐÐ¶ÔØGUI */
 void GUI_Unload(void)
 {
     GUI_LOCK();
-    WM_DeleteWindow(_hRootWin); /* åˆ é™¤æ‰€æœ‰çª—å£ */
-    GUI_MessageQueueDelete();   /* åˆ é™¤æ¶ˆæ¯é˜Ÿåˆ— */
-    GUI_DeleteDeviceList();     /* åˆ é™¤è®¾å¤‡åˆ—è¡¨ */
+    WM_DeleteWindow(_hRootWin); /* É¾³ýËùÓÐ´°¿Ú */
+    GUI_MessageQueueDelete();   /* É¾³ýÏûÏ¢¶ÓÁÐ */
+    GUI_DeleteDeviceList();     /* É¾³ýÉè±¸ÁÐ±í */
     GUI_UNLOCK();
 }
 
-/* èŽ·å–å±å¹•å°ºå¯¸ */
-void GUI_ScreenSize(u_16 *xSize, u_16 *ySize)
+/* »ñÈ¡ÆÁÄ»³ß´ç */
+void GUI_ScreenSize(int *xSize, int *ySize)
 {
     *xSize = GUI_GDev->Width;
     *ySize = GUI_GDev->Height;
 }
 
-/* èŽ·å–å±å¹•å®½åº¦ */
-u_16 GUI_GetScreenWidth(void)
+/* »ñÈ¡ÆÁÄ»¿í¶È */
+int GUI_GetScreenWidth(void)
 {
     return GUI_GDev->Width;
 }
 
-/* èŽ·å–å±å¹•é«˜åº¦ */
-u_16 GUI_GetScreenHeight(void)
+/* »ñÈ¡ÆÁÄ»¸ß¶È */
+int GUI_GetScreenHeight(void)
 {
     return GUI_GDev->Height;
 }
 
-/* GUIå»¶æ—¶å¹¶æ›´æ–° */
+/* GUIÑÓÊ±²¢¸üÐÂ */
 void GUI_Delay(GUI_TIME tms)
 {
     GUI_TIME t = GUI_GetTime();
@@ -78,18 +78,18 @@ void GUI_Delay(GUI_TIME tms)
         t_last = t;
         GUI_FreeIdleRectList();
     }
-    t = GUI_GetTime() - t; /* è®¡ç®—æ‰§è¡ŒWM_Exec()çš„æ—¶é—´ */
+    t = GUI_GetTime() - t; /* ¼ÆËãÖ´ÐÐWM_Exec()µÄÊ±¼ä */
     if (tms > t) {
-        _GUI_Delay_ms(tms - t); /* å»¶æ—¶ */
+        _GUI_Delay_ms(tms - t); /* ÑÓÊ± */
     }
 }
 
-/* -------------------- GUIä»»åŠ¡é” -------------------- */
+/* -------------------- GUIÈÎÎñËø -------------------- */
 
-/* GUIä¸Šé” */
+/* GUIÉÏËø */
 void GUI_LOCK(void)
 {
-    /* è¿˜æ²¡æœ‰ä¸Šé”æˆ–ä¸æ˜¯å·²ç»ä¸Šé”çš„ä»»åŠ¡ä¸Šé” */
+    /* »¹Ã»ÓÐÉÏËø»ò²»ÊÇÒÑ¾­ÉÏËøµÄÈÎÎñÉÏËø */
     if (!__TaskLockCnt || __LockTaskId != GUI_TaskGetId()) {
         GUI_TaskLock(__LockPtr);
         __LockTaskId = GUI_TaskGetId();
@@ -97,7 +97,7 @@ void GUI_LOCK(void)
     ++__TaskLockCnt;
 }
 
-/* GUIè§£é” */
+/* GUI½âËø */
 void GUI_UNLOCK(void)
 {
     if (--__TaskLockCnt == 0) {
@@ -105,7 +105,7 @@ void GUI_UNLOCK(void)
     }
 }
 
-/* å¤åˆ¶å›¾å½¢ä¸Šä¸‹æ–‡ */
+/* ¸´ÖÆÍ¼ÐÎÉÏÏÂÎÄ */
 static void _CopyContext(GUI_CONTEXT *pDst, GUI_CONTEXT *pSrc)
 {
     pDst->Font = pSrc->Font;
@@ -115,15 +115,15 @@ static void _CopyContext(GUI_CONTEXT *pDst, GUI_CONTEXT *pSrc)
     pDst->PenSize = pSrc->PenSize;
 }
 
-/* GUIå¼€å§‹ç»˜åˆ¶ */
+/* GUI¿ªÊ¼»æÖÆ */
 GUI_BOOL GUI_StartPaint(GUI_HWIN hWin, GUI_CONTEXT *Backup)
 {
     GUI_RECT *r;
     GUI_AREA Area;
 
-    Area = GUI_GetWindowClipArea(hWin); /* èŽ·å–çª—å£çš„å‰ªåˆ‡åŸŸ */
+    Area = GUI_GetWindowClipArea(hWin); /* »ñÈ¡´°¿ÚµÄ¼ôÇÐÓò */
     if (Area) {
-        _CopyContext(Backup, &GUI_Context); /* å¤‡ä»½å›¾å½¢ä¸Šä¸‹æ–‡ */
+        _CopyContext(Backup, &GUI_Context); /* ±¸·ÝÍ¼ÐÎÉÏÏÂÎÄ */
         r = WM_GetWindowRect(hWin);
         GUI_Context.Area = Area;
         GUI_Context.InvalidRect = WM_GetWindowInvalidRect(hWin);
@@ -135,25 +135,25 @@ GUI_BOOL GUI_StartPaint(GUI_HWIN hWin, GUI_CONTEXT *Backup)
     return GUI_ERR;
 }
 
-/* GUIç»˜åˆ¶ç»“æŸ */
+/* GUI»æÖÆ½áÊø */
 void GUI_EndPaint(GUI_CONTEXT *Backup)
 {
-    _CopyContext(&GUI_Context, Backup); /* è¿˜åŽŸå›¾å½¢ä¸Šä¸‹æ–‡ */
+    _CopyContext(&GUI_Context, Backup); /* »¹Ô­Í¼ÐÎÉÏÏÂÎÄ */
 }
 
-/* èŽ·å–å½“å‰ç»˜åˆ¶çš„çª—å£ */
+/* »ñÈ¡µ±Ç°»æÖÆµÄ´°¿Ú */
 GUI_HWIN GUI_GetPaintWindow(void)
 {
     return GUI_Context.hWin;
 }
 
-/* è¿”å›žå½“å‰çš„å‰ªåˆ‡åŸŸ */
+/* ·µ»Øµ±Ç°µÄ¼ôÇÐÓò */
 GUI_AREA GUI_GetClipArea(void)
 {
     return GUI_Context.Area;
 }
 
-/* åˆå§‹åŒ–ç»˜åˆ¶åŒºåŸŸ */
+/* ³õÊ¼»¯»æÖÆÇøÓò */
 void GUI_DrawAreaInit(GUI_RECT *p)
 {
     GUI_RECT r;
@@ -162,21 +162,21 @@ void GUI_DrawAreaInit(GUI_RECT *p)
 	if (GUI_Context.AAEnable) {
 		int factor = GUI_Context.AAFactor;
 
-		r.x0 = pInvalid->x0 * (i_16)factor;
-		r.y0 = pInvalid->y0 * (i_16)factor;
-		r.x1 = (pInvalid->x1 + 1) * (i_16)factor - 1;
-		r.y1 = (pInvalid->y1 + 1) * (i_16)factor - 1;
+		r.x0 = pInvalid->x0 * (int)factor;
+		r.y0 = pInvalid->y0 * (int)factor;
+		r.x1 = (pInvalid->x1 + 1) * (int)factor - 1;
+		r.y1 = (pInvalid->y1 + 1) * (int)factor - 1;
     } else {
         r = *pInvalid;
     }
     if (GUI_RectOverlay(&GUI_Context.DrawRect, &r, p)) {
         GUI_Context.pAreaNode = GUI_Context.Area;
     } else {
-        GUI_Context.pAreaNode = NULL; /* ç»˜å›¾åŒºåŸŸä¸Žå½“å‰çš„æœ‰æ•ˆç»˜åˆ¶åŒºåŸŸä¸ç›¸äº¤ */
+        GUI_Context.pAreaNode = NULL; /* »æÍ¼ÇøÓòÓëµ±Ç°µÄÓÐÐ§»æÖÆÇøÓò²»Ïà½» */
     }
 }
 
-/* èŽ·å–ä¸‹ä¸€ä¸ªè£å‰ªçŸ©å½¢ */
+/* »ñÈ¡ÏÂÒ»¸ö²Ã¼ô¾ØÐÎ */
 GUI_BOOL GUI_GetNextArea(void)
 {
     GUI_BOOL res = FALSE;
@@ -185,16 +185,16 @@ GUI_BOOL GUI_GetNextArea(void)
 	GUI_RECT *ClipRect = &GUI_Context.ClipRect;
 	GUI_RECT *DrawRect = &GUI_Context.DrawRect;
 
-    while (GUI_Context.pAreaNode && res == FALSE) { /* ç›´åˆ°æ‰¾åˆ°ä¸‹ä¸€ä¸ªç›¸äº¤çš„çŸ©å½¢ */
+    while (GUI_Context.pAreaNode && res == FALSE) { /* Ö±µ½ÕÒµ½ÏÂÒ»¸öÏà½»µÄ¾ØÐÎ */
         Area = GUI_Context.pAreaNode;
         GUI_Context.pAreaNode = Area->pNext;
 		if (GUI_Context.AAEnable) {
 			int factor = GUI_Context.AAFactor;
 
-			r.x0 = Area->Rect.x0 * (i_16)factor;
-			r.y0 = Area->Rect.y0 * (i_16)factor;
-			r.x1 = (Area->Rect.x1 + 1) * (i_16)factor;
-			r.y1 = (Area->Rect.y1 + 1) * (i_16)factor - 1;
+			r.x0 = Area->Rect.x0 * (int)factor;
+			r.y0 = Area->Rect.y0 * (int)factor;
+			r.x1 = (Area->Rect.x1 + 1) * (int)factor;
+			r.y1 = (Area->Rect.y1 + 1) * (int)factor - 1;
 		} else {
 			r = Area->Rect;
 		}
@@ -203,14 +203,14 @@ GUI_BOOL GUI_GetNextArea(void)
     return res;
 }
 
-/* è½¬æ¢åˆ°å±å¹•åæ ‡ */
-void GUI_ClientToScreen(i_16 *x, i_16 *y)
+/* ×ª»»µ½ÆÁÄ»×ø±ê */
+void GUI_ClientToScreen(int *x, int *y)
 {
     *x += GUI_Context.WinPos.x;
     *y += GUI_Context.WinPos.y;
 }
 
-/* çŸ©å½¢è½¬æ¢åˆ°å±å¹•åæ ‡ */
+/* ¾ØÐÎ×ª»»µ½ÆÁÄ»×ø±ê */
 void GUI_ClientToScreenRect(GUI_RECT *pRect)
 {
     pRect->x0 += GUI_Context.WinPos.x;
@@ -219,14 +219,14 @@ void GUI_ClientToScreenRect(GUI_RECT *pRect)
     pRect->y1 += GUI_Context.WinPos.y;
 }
 
-/* è½¬æ¢åˆ°çª—å£åæ ‡ */
-void GUI_ScreenToClient(i_16 *x, i_16 *y)
+/* ×ª»»µ½´°¿Ú×ø±ê */
+void GUI_ScreenToClient(int *x, int *y)
 {
     *x -= GUI_Context.WinPos.x;
     *y -= GUI_Context.WinPos.y;
 }
 
-/* èŽ·å–å½“å‰çª—å£åœ¨çª—å£åæ ‡ç³»ä¸‹çš„çŸ©å½¢ */
+/* »ñÈ¡µ±Ç°´°¿ÚÔÚ´°¿Ú×ø±êÏµÏÂµÄ¾ØÐÎ */
 void GUI_GetClientRect(GUI_RECT *pRect)
 {
     GUI_RECT *p;
@@ -238,43 +238,43 @@ void GUI_GetClientRect(GUI_RECT *pRect)
     pRect->y1 = p->y1 - p->y0;
 }
 
-/* è®¾ç½®å½“å‰å­—ä½“ */
+/* ÉèÖÃµ±Ç°×ÖÌå */
 void GUI_SetFont(GUI_FONT *Font)
 {
     GUI_Context.Font = Font;
 }
 
-/* è®¾ç½®èƒŒæ™¯è‰² */
+/* ÉèÖÃ±³¾°É« */
 void GUI_SetBGColor(GUI_COLOR Color)
 {
     GUI_Context.BGColor = Color;
 }
 
-/* è®¾ç½®å‰æ™¯è‰² */
+/* ÉèÖÃÇ°¾°É« */
 void GUI_SetFGColor(GUI_COLOR Color)
 {
     GUI_Context.FGColor = Color;
 }
 
-/* è®¾ç½®å­—ä½“é¢œè‰² */
+/* ÉèÖÃ×ÖÌåÑÕÉ« */
 void GUI_SetFontColor(GUI_COLOR Color)
 {
     GUI_Context.FontColor = Color;
 }
 
-/* è®¾ç½®ç”»ç¬”å¤§å° */
+/* ÉèÖÃ»­±Ê´óÐ¡ */
 void GUI_SetPenSize(int Width)
 {
     GUI_Context.PenSize = Width;
 }
 
-/* è®¾ç½®æŠ—é”¯é½¿ç­‰çº§ */
+/* ÉèÖÃ¿¹¾â³ÝµÈ¼¶ */
 void GUI_SetAAFactor(int Factor)
 {
     GUI_Context.AAFactor = Factor;
 }
 
-/* GUIè°ƒè¯•è¾“å‡º */
+/* GUIµ÷ÊÔÊä³ö */
 #if GUI_DEBUG_MODE
 void GUI_DebugOut(const char *s)
 {

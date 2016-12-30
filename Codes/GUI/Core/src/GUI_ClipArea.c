@@ -1,119 +1,119 @@
-ï»¿#include "GUI_ClipArea.h"
+#include "GUI_ClipArea.h"
 #include "GUI.h"
 
-/* æ³¨æ„: ç›®å‰æ”¯æŒé€æ˜Žçª—å£çš„å‰ªåˆ‡åŸŸè®¡ç®—é€»è¾‘å°šæœªå®žçŽ°. */
+/* ×¢Òâ: Ä¿Ç°Ö§³ÖÍ¸Ã÷´°¿ÚµÄ¼ôÇÐÓò¼ÆËãÂß¼­ÉÐÎ´ÊµÏÖ. */
 
 /**
- @ å‰ªåˆ‡åŸŸæŽ’é™¤ä¸€ä¸ªçŸ©å½¢.
- @ Area:è¦è¢«ä¿®æ”¹çš„å‰ªåˆ‡åŸŸ.
- @ Rect:å°†è¦æŽ’é™¤çš„çŸ©å½¢.
- @ è¿”å›žå€¼:æŽ’é™¤çŸ©å½¢åŽçš„å‰ªåˆ‡åŸŸ.
+ @ ¼ôÇÐÓòÅÅ³ýÒ»¸ö¾ØÐÎ.
+ @ Area:Òª±»ÐÞ¸ÄµÄ¼ôÇÐÓò.
+ @ Rect:½«ÒªÅÅ³ýµÄ¾ØÐÎ.
+ @ ·µ»ØÖµ:ÅÅ³ý¾ØÐÎºóµÄ¼ôÇÐÓò.
  **/
 GUI_AREA GUI_ClipExcludeRect(GUI_AREA Area, GUI_RECT *Rect)
 {
     GUI_AREA pNode, pDst = NULL, pNext = NULL, p;
 
-    /* èŽ·å¾—é“¾è¡¨å¤´,ç›´åˆ°èŽ·å¾—éžç©ºçš„æŒ‡é’ˆ(é“¾è¡¨å¤´) */
+    /* »ñµÃÁ´±íÍ·,Ö±µ½»ñµÃ·Ç¿ÕµÄÖ¸Õë(Á´±íÍ·) */
     for (pNode = Area; !pDst && pNode; pNode = pNext) {
-        /* è®¡ç®—ç¬¬ä¸€ä¸ªå‰ªåˆ‡åŸŸ */
+        /* ¼ÆËãµÚÒ»¸ö¼ôÇÐÓò */
         pDst = GUI_RectCut(&pNode->Rect, Rect);
         pNext = pNode->pNext;
-        GUI_FreeRectListNode(pNode); /* é‡Šæ”¾èŠ‚ç‚¹ */
+        GUI_FreeRectListNode(pNode); /* ÊÍ·Å½Úµã */
     }
     if (pDst != NULL) {
         p = pDst;
         for (; pNode; pNode = pNext) {
-            for (; p->pNext; p = p->pNext); /* åˆ°é“¾è¡¨å°¾ */
-            p->pNext = GUI_RectCut(&pNode->Rect, Rect); /* è®¡ç®—å‰ªåˆ‡åŸŸå¹¶è¿žæŽ¥é“¾è¡¨ */
+            for (; p->pNext; p = p->pNext); /* µ½Á´±íÎ² */
+            p->pNext = GUI_RectCut(&pNode->Rect, Rect); /* ¼ÆËã¼ôÇÐÓò²¢Á¬½ÓÁ´±í */
             pNext = pNode->pNext;
-            GUI_FreeRectListNode(pNode); /* é‡Šæ”¾èŠ‚ç‚¹ */
+            GUI_FreeRectListNode(pNode); /* ÊÍ·Å½Úµã */
         }
     }
     return pDst;
 }
 
-/* è£å‰ªé€æ˜Žçª—å£çš„å­çª—å£ */
+/* ²Ã¼ôÍ¸Ã÷´°¿ÚµÄ×Ó´°¿Ú */
 static GUI_AREA _ClipTransChildren(GUI_AREA L, WM_Obj *pWin)
 {
     for (pWin = pWin->hFirstChild; pWin && L; pWin = pWin->hNext) {
         if (pWin->Status & WM_WS_TRANS) {
-            L = _ClipTransChildren(L, pWin); /* è£å‰ªå­çª—å£ */
+            L = _ClipTransChildren(L, pWin); /* ²Ã¼ô×Ó´°¿Ú */
         } else {
-            L = GUI_ClipExcludeRect(L, &pWin->Rect);  /* è£å‰ªé€æ˜Žçª—å£çš„å­©å­ */
+            L = GUI_ClipExcludeRect(L, &pWin->Rect);  /* ²Ã¼ôÍ¸Ã÷´°¿ÚµÄº¢×Ó */
         }
     }
     return L;
 }
 
-/* è£å‰ªä¸€ä¸ªçª—å£ */
+/* ²Ã¼ôÒ»¸ö´°¿Ú */
 GUI_AREA GUI_ClipOneWindow(GUI_HWIN hWin)
 {
     WM_Obj *pWin = hWin, *pObj;
     GUI_RECT r;
     GUI_AREA Area;
 
-    /* åœ¨è€ƒè™‘é®æŒ¡ä¹‹å‰,çª—å£å°±åªæœ‰ä¸€ä¸ªè£å‰ªçŸ©å½¢ */
+    /* ÔÚ¿¼ÂÇÕÚµ²Ö®Ç°,´°¿Ú¾ÍÖ»ÓÐÒ»¸ö²Ã¼ô¾ØÐÎ */
     Area = GUI_GetRectList(1);
     if (Area) {
         WM_GetWindowAreaRect(pWin, &r);;
         Area->Rect = r;
     }
-    /* çª—å£ä¼šè¢«å®ƒçš„å„¿å­ä»¬æˆ–è€…å³è¾¹çš„å…„å¼Ÿä»¬(å¦‚æžœæœ‰çš„è¯)è£å‰ª,ä¹Ÿå°±æ˜¯é®æŒ¡ï¼ŒéåŽ†å®ƒçš„å­©å­å’Œå…„å¼Ÿä»¬ï¼Œ
-       é€ä¸ªè®¡ç®—çª—å£çš„è£å‰ªçŸ©å½¢é“¾è¡¨ï¼Œæœ€åŽå°±èƒ½å¾—åˆ°è¿™ä¸ªçª—å£è¢«å®ƒä»¬é®æŒ¡åŽçš„è£å‰ªçŸ©å½¢é“¾è¡¨. */
-    /* å†éåŽ†å®ƒå³è¾¹çš„åŒå±žçª—å£åŠç¥–å…ˆçš„åŒå±žçª—å£ */
+    /* ´°¿Ú»á±»ËüµÄ¶ù×ÓÃÇ»òÕßÓÒ±ßµÄÐÖµÜÃÇ(Èç¹ûÓÐµÄ»°)²Ã¼ô,Ò²¾ÍÊÇÕÚµ²£¬±éÀúËüµÄº¢×ÓºÍÐÖµÜÃÇ£¬
+       Öð¸ö¼ÆËã´°¿ÚµÄ²Ã¼ô¾ØÐÎÁ´±í£¬×îºó¾ÍÄÜµÃµ½Õâ¸ö´°¿Ú±»ËüÃÇÕÚµ²ºóµÄ²Ã¼ô¾ØÐÎÁ´±í. */
+    /* ÔÙ±éÀúËüÓÒ±ßµÄÍ¬Êô´°¿Ú¼°×æÏÈµÄÍ¬Êô´°¿Ú */
     pObj = pWin;
     while (pObj != _pRootWin && Area) {
         while (pObj->hNext && Area) {
-            pObj = pObj->hNext; /* å‘å³éåŽ† */
-            /* å¦‚æžœæ˜¯æ™®é€šçª—å£å°±ç›´æŽ¥è®¡ç®—è£å‰ªï¼Œå¦‚æžœæ˜¯é€æ˜Žçª—å£å°±ç”¨å®ƒçš„å­©å­æ¥è®¡ç®—è£å‰ª */
+            pObj = pObj->hNext; /* ÏòÓÒ±éÀú */
+            /* Èç¹ûÊÇÆÕÍ¨´°¿Ú¾ÍÖ±½Ó¼ÆËã²Ã¼ô£¬Èç¹ûÊÇÍ¸Ã÷´°¿Ú¾ÍÓÃËüµÄº¢×ÓÀ´¼ÆËã²Ã¼ô */
             if (pObj->Status & WM_WS_TRANS) {
                 Area = _ClipTransChildren(Area, pObj);
             } else {
                 Area = GUI_ClipExcludeRect(Area, &pObj->Rect);
             }
         }
-        pObj = pObj->hParent; /* å‘ä¸ŠéåŽ† */
+        pObj = pObj->hParent; /* ÏòÉÏ±éÀú */
     }
     if (pWin->hFirstChild && Area) {
-        /* å…ˆéåŽ†å­çª—å£ */
+        /* ÏÈ±éÀú×Ó´°¿Ú */
         pObj = pWin->hFirstChild;
         while (pObj && Area) {
-            /* å¦‚æžœæ˜¯æ™®é€šçª—å£å°±ç›´æŽ¥è®¡ç®—è£å‰ªï¼Œå¦‚æžœæ˜¯é€æ˜Žçª—å£å°±ç”¨å®ƒçš„å­©å­æ¥è®¡ç®—è£å‰ª */
+            /* Èç¹ûÊÇÆÕÍ¨´°¿Ú¾ÍÖ±½Ó¼ÆËã²Ã¼ô£¬Èç¹ûÊÇÍ¸Ã÷´°¿Ú¾ÍÓÃËüµÄº¢×ÓÀ´¼ÆËã²Ã¼ô */
             if (pObj->Status & WM_WS_TRANS) {
                 Area = _ClipTransChildren(Area, pObj);
             } else {
                 Area = GUI_ClipExcludeRect(Area, &pObj->Rect);
             }
-            pObj = pObj->hNext; /* å‘å³éåŽ† */
+            pObj = pObj->hNext; /* ÏòÓÒ±éÀú */
         }
     }
     return Area;
 }
 
 /**
- @ GUIåœ¨æ·»åŠ ä¸€ä¸ªçª—å£æ—¶æ›´æ–°å‰ªåˆ‡åŸŸ.
- @ hWin:æ·»åŠ çš„æ–°çª—å£å¥æŸ„.
+ @ GUIÔÚÌí¼ÓÒ»¸ö´°¿ÚÊ±¸üÐÂ¼ôÇÐÓò.
+ @ hWin:Ìí¼ÓµÄÐÂ´°¿Ú¾ä±ú.
  **/
 void GUI_ClipNewWindow(GUI_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
     GUI_RECT Rect;
 
-    /* é€æ˜Žçª—å£ç›´æŽ¥è¿”å›ž */
+    /* Í¸Ã÷´°¿ÚÖ±½Ó·µ»Ø */
     if (pWin->Status & WM_WS_TRANS) {
         pWin->ClipArea = NULL;
         return;
     }
-    /* è®¡ç®—æ–°çª—å£çš„å‰ªåˆ‡åŸŸ */
+    /* ¼ÆËãÐÂ´°¿ÚµÄ¼ôÇÐÓò */
     pWin->ClipArea = GUI_ClipOneWindow(hWin);
     WM_GetWindowAreaRect(hWin, &Rect);
     do {
-        pWin = pWin->hParent; /* è·³è¿‡é€æ˜Žçš„ç¥–å…ˆ */
+        pWin = pWin->hParent; /* Ìø¹ýÍ¸Ã÷µÄ×æÏÈ */
     } while (pWin && pWin->Status & WM_WS_TRANS);
-    /* ä»Žçª—å£çš„çˆ¶äº²å¼€å§‹è®¡ç®—ã€‚ */
+    /* ´Ó´°¿ÚµÄ¸¸Ç×¿ªÊ¼¼ÆËã¡£ */
     while (pWin && pWin != hWin) {
         if (!(pWin->Status & WM_WS_TRANS)) {
-            /* åœ¨çª—å£åŽŸæ¥å‰ªåˆ‡åŸŸçš„åŸºç¡€ä¸ŠæŽ’é™¤æ–°çª—å£çš„çŸ©å½¢ */
+            /* ÔÚ´°¿ÚÔ­À´¼ôÇÐÓòµÄ»ù´¡ÉÏÅÅ³ýÐÂ´°¿ÚµÄ¾ØÐÎ */
             pWin->ClipArea = GUI_ClipExcludeRect(pWin->ClipArea, &Rect);
         }
         pWin = pWin->hNextLine;
@@ -121,30 +121,30 @@ void GUI_ClipNewWindow(GUI_HWIN hWin)
 }
 
 /**
- @ è®¡ç®—æŒ‡å®šçª—å£åŠè¢«å…¶é®æŒ¡çª—å£çš„çš„å‰ªåˆ‡åŸŸ.
- @ hWin:å¼€å§‹è®¡ç®—å‰ªåˆ‡åŸŸçš„çª—å£å¥æŸ„.
- @ hEnd:æœ€åŽä¸€ä¸ªè¦è®¡ç®—å‰ªåˆ‡åŸŸçš„çª—å£.
+ @ ¼ÆËãÖ¸¶¨´°¿Ú¼°±»ÆäÕÚµ²´°¿ÚµÄµÄ¼ôÇÐÓò.
+ @ hWin:¿ªÊ¼¼ÆËã¼ôÇÐÓòµÄ´°¿Ú¾ä±ú.
+ @ hEnd:×îºóÒ»¸öÒª¼ÆËã¼ôÇÐÓòµÄ´°¿Ú.
  **/
 void GUI_WindowClipArea(GUI_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
 
     do {
-        pWin = pWin->hParent; /* è·³è¿‡é€æ˜Žçš„ç¥–å…ˆ */
+        pWin = pWin->hParent; /* Ìø¹ýÍ¸Ã÷µÄ×æÏÈ */
     } while (pWin && pWin->Status & WM_WS_TRANS);
     while (pWin) {
         GUI_FreeRectList(pWin->ClipArea);
         if (!(pWin->Status & WM_WS_TRANS)) {
             GUI_ClipNewWindow(pWin);
         } else {
-            pWin->ClipArea = NULL; /* é€æ˜Žçª—å£ä¸è®¡ç®—å‰ªåˆ‡åŸŸ  */
+            pWin->ClipArea = NULL; /* Í¸Ã÷´°¿Ú²»¼ÆËã¼ôÇÐÓò  */
         }
         pWin = pWin->hNextLine;
     }
 }
 
 /**
- @ åˆ é™¤çª—å£çš„å‰ªåˆ‡åŸŸ.
+ @ É¾³ý´°¿ÚµÄ¼ôÇÐÓò.
  **/
 void GUI_DeleteWindowClipArea(GUI_HWIN hWin)
 {
@@ -152,10 +152,10 @@ void GUI_DeleteWindowClipArea(GUI_HWIN hWin)
 }
 
 /**
- @ è®¡ç®—çª—å£åŠå®ƒæ‰€æœ‰å­çª—å£çš„å‰ªåˆ‡åŸŸ.
- @ hWin:è¦ç§»åŠ¨çš„çª—å£.
- @ dx:xæ–¹å‘ä½ç§».
- @ dy:yæ–¹å‘ä½ç§»
+ @ ¼ÆËã´°¿Ú¼°ËüËùÓÐ×Ó´°¿ÚµÄ¼ôÇÐÓò.
+ @ hWin:ÒªÒÆ¶¯µÄ´°¿Ú.
+ @ dx:x·½ÏòÎ»ÒÆ.
+ @ dy:y·½ÏòÎ»ÒÆ
  **/
 void GUI_ClipWindows(GUI_HWIN hWin)
 {
@@ -168,26 +168,26 @@ void GUI_ClipWindows(GUI_HWIN hWin)
         if (pWin->hParent) {
             pWin = pWin->hParent;
         }
-        /* å…ˆè®¡ç®—åˆ°hWinä¹‹å‰çš„å‰ªåˆ‡åŸŸ */
+        /* ÏÈ¼ÆËãµ½hWinÖ®Ç°µÄ¼ôÇÐÓò */
         for (; pWin != pEnd; pWin = pWin->hNextLine) {
             GUI_FreeRectList(pWin->ClipArea);
             if (!(pWin->Status & WM_WS_TRANS)) {
                 GUI_ClipNewWindow(pWin);
             } else {
-                pWin->ClipArea = NULL; /* é€æ˜Žçª—å£ä¸è®¡ç®—å‰ªåˆ‡åŸŸ  */
+                pWin->ClipArea = NULL; /* Í¸Ã÷´°¿Ú²»¼ÆËã¼ôÇÐÓò  */
             }
         }
     }
     GUI_UNLOCK();
 }
 
-/* èŽ·å–çª—å£çš„å‰ªåˆ‡åŸŸ */
+/* »ñÈ¡´°¿ÚµÄ¼ôÇÐÓò */
 GUI_AREA GUI_GetWindowClipArea(GUI_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
 
     if (pWin) {
-        /* é€æ˜Žçª—å£ç›´æŽ¥è¿”å›žä¸Šä¸€ä¸ªçª—å£ç”¨çš„å‰ªåˆ‡åŸŸ */
+        /* Í¸Ã÷´°¿ÚÖ±½Ó·µ»ØÉÏÒ»¸ö´°¿ÚÓÃµÄ¼ôÇÐÓò */
         if (pWin->Status & WM_WS_TRANS) {
             return GUI_GetClipArea();
         }

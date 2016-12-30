@@ -1,20 +1,20 @@
-ï»¿#ifndef __WINDOW_H
+#ifndef __WINDOW_H
 #define __WINDOW_H
 
 #include "WIDGET.h"
 
 typedef struct {
     WIDGET Widget;
-    WM_HWIN hClient;        /* å®¢æˆ·åŒºå¥æŸ„ */
-    WM_HWIN hFocus;         /* çª—å£å½“å‰ç„¦ç‚¹ */
-    WM_HWIN hBtn;           /* å…³é—­æŒ‰é’® */
+    WM_HWIN hClient;        /* ¿Í»§Çø¾ä±ú */
+    WM_HWIN hFocus;         /* ´°¿Úµ±Ç°½¹µã */
+    WM_HWIN hBtn;           /* ¹Ø±Õ°´Å¥ */
     char *Title;
-    u_8  CaptionHeight;     /* æ ‡é¢˜æ é«˜åº¦ */
-    WM_CALLBACK *UserCb;    /* ç”¨æˆ·åŠŸèƒ½å›è°ƒå‡½æ•° */
+    u_8  CaptionHeight;     /* ±êÌâÀ¸¸ß¶È */
+    WM_CALLBACK *UserCb;    /* ÓÃ»§¹¦ÄÜ»Øµ÷º¯Êı */
 }WINDOW_Obj;
 
-WM_HWIN WINDOW_Create(i_16 x0, i_16 y0,  u_16 xSize, u_16 ySize,
-    WM_HWIN hParent, u_16 Id, u_8 Style, WM_CALLBACK *cb);
+WM_HWIN WINDOW_Create(int x0, int y0,  int xSize, int ySize,
+    WM_HWIN hParent, int Id, u_8 Style, WM_CALLBACK *cb);
 GUI_RESULT WINDOW_SetTitle(WM_HWIN hWin, const char *str);
 GUI_RESULT WINDOW_SetFont(WM_HWIN hWin, GUI_FONT *Font);
 

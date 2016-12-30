@@ -1,4 +1,4 @@
-Ôªø#ifndef __GUI_BITMAP_H
+#ifndef __GUI_BITMAP_H
 #define __GUI_BITMAP_H
 
 #include "GUI_Typedef.h"
@@ -7,7 +7,7 @@
 #define GUI_DRAW_BMPM565  &GUI_DrawBitmap16b
 #define GUI_DRAW_GIF      &GUI_DrawGif
 
-/* Ë∞ÉËâ≤Êùø */
+/* µ˜…´∞Â */
 typedef struct {
     u_32             NumEntries;
     char             HasTrans;
@@ -16,33 +16,33 @@ typedef struct {
 
 typedef LCD_LOGPALETTE GUI_LOGPALETTE;
 
-/* ‰ΩçÂõæÁªìÊûÑ‰Ωì */
+/* ŒªÕºΩ·ππÃÂ */
 typedef struct {
-    u_16 xSize, ySize;
+    int xSize, ySize;
     u_32 LineBytes;
     u_8 PixelBits;
     const unsigned char *pData;
     const LCD_LOGPALETTE *pPal;
-    void(*pDraw)(i_16 x0,
-        i_16 y0,
-        u_16 xSize,
-        u_16 ySize,
+    void(*pDraw)(int x0,
+        int y0,
+        int xSize,
+        int ySize,
         const unsigned char *pPixel,
         const LCD_LOGPALETTE *pLogPal,
         int xMag,
         int yMag);
 } GUI_BITMAP;
 
-void GUI_DrawBitmap24b(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize,
+void GUI_DrawBitmap24b(int x0, int y0, int xSize, int ySize,
     const unsigned char *pPixel, const LCD_LOGPALETTE *pLogPal,
     int xMag, int yMag);
-void GUI_DrawBitmap16b(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize,
+void GUI_DrawBitmap16b(int x0, int y0, int xSize, int ySize,
     const unsigned char *pPixel, const LCD_LOGPALETTE *pLogPal,
     int xMag, int yMag);
-void GUI_DrawGif(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize,
+void GUI_DrawGif(int x0, int y0, int xSize, int ySize,
     const unsigned char *pPixel, const LCD_LOGPALETTE *pLogPal,
     int xMag, int yMag);
-void GUI_DrawBitmap(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize,
+void GUI_DrawBitmap(int x0, int y0, int xSize, int ySize,
     const GUI_BITMAP *Bmp);
 
 #endif /* __GUI_BITMAP_H */

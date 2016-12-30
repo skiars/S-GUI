@@ -1,11 +1,11 @@
-﻿#ifndef __ROOTWINDOW_H
+#ifndef __ROOTWINDOW_H
 #define __ROOTWINDOW_H
 
 #include "GUI.h"
 
-/* 用户自定义的根窗口绘制函数 */
+/* �û��Զ���ĸ����ڻ��ƺ��� */
 extern void (*RootWinPaint_Cb)(WM_HWIN hWin);
-/* 用户自定义的根窗口定时器处理函数 */
+/* �û��Զ���ĸ����ڶ�ʱ���������� */
 extern void (*RootWinTimer_Cb)(WM_HWIN hWin);
 
 void WM_RootWindowInit(WM_Obj *pObj);

@@ -1,4 +1,4 @@
-﻿#ifndef __GUI_MATH_H
+#ifndef __GUI_MATH_H
 #define __GUI_MATH_H
 
 #include "GUI_Config.h"

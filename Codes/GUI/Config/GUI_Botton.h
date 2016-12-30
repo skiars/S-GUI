@@ -1,4 +1,4 @@
-﻿#ifndef __GUI_BOTTON_H
+#ifndef __GUI_BOTTON_H
 #define __GUI_BOTTON_H
 
 #include "GUI_Device.h"

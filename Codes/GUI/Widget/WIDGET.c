@@ -1,7 +1,7 @@
-ï»¿#include "WIDGET.h"
+#include "WIDGET.h"
 #include "GUI.h"
 
-/* è®¾ç½®çª—å£çš„å­—ä½“ */
+/* ÉèÖÃ´°¿ÚµÄ×ÖÌå */
 void WIDGET_SetFont(GUI_HWIN hWin, GUI_FONT *Font)
 {
     if (hWin != NULL) {
@@ -9,7 +9,7 @@ void WIDGET_SetFont(GUI_HWIN hWin, GUI_FONT *Font)
     }
 }
 
-/* èŽ·å–çª—å£çš„å­—ä½“ */
+/* »ñÈ¡´°¿ÚµÄ×ÖÌå */
 GUI_FONT *WIDGET_GetFont(GUI_HWIN hWin)
 {
     return ((WIDGET*)hWin)->Skin.Font;

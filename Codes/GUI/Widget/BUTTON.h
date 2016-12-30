@@ -9,8 +9,8 @@ typedef struct {
     char *Title;
 } BUTTON_Obj;
 
-WM_HWIN BUTTON_Create(i_16 x0, i_16 y0, u_16 xSize,
-    u_16 ySize, WM_HWIN hParent, u_16 Id, u_8 Style);
+WM_HWIN BUTTON_Create(int x0, int y0, int xSize,
+    int ySize, WM_HWIN hParent, int Id, u_8 Style);
 void BUTTON_SetTitle(WM_HWIN hWin, const char *str);
 void BUTTON_SetFont(WM_HWIN hWin, GUI_FONT *Font);
 void BUTTON_Check(WM_HWIN hWin, u_8 NewStatus);

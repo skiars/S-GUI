@@ -1,4 +1,4 @@
-ï»¿#include "GUI_Test.h"
+#include "GUI_Test.h"
 #include "GUI.h"
 #include "GUI_GL_AA.h"
 #include <stdio.h>
@@ -25,12 +25,12 @@
 void Create_Window1(void);
 
 static char _Str[30];
-static u_16 _FpsVal; /* å¸§çŽ‡ */
-static u_8 _CPUUsage; /* CPUå ç”¨çŽ‡ */
+static int _FpsVal; /* Ö¡ÂÊ */
+static u_8 _CPUUsage; /* CPUÕ¼ÓÃÂÊ */
 
 static void _RootWinPaint(WM_HWIN hWin)
 {
-    /* ç»˜åˆ¶èƒŒæ™¯ */
+    /* »æÖÆ±³¾° */
     GUI_SetFGColor(0x00C0C0C0);
     //GUI_FillRect(0, 0, GUI_GetScreenWidth(), GUI_GetScreenHeight());
     GUI_DrawBitmap(0, 0, 480, 320, &bmpic_rootwin);
@@ -41,7 +41,7 @@ static void _RootWinTimer(WM_HWIN hWin)
 {
     //GUI_RECT Rect = { 10, 300, 150, 320 };
 
-#ifdef _MSC_VER
+#if _MSC_VER > 1500
     sprintf_s(_Str, sizeof(_Str), "FPS: %d, CPU: %d%%", _FpsVal, _CPUUsage);
 #else
     sprintf(_Str, "FPS: %d, CPU: %d%%", _FpsVal, _CPUUsage);
@@ -49,15 +49,15 @@ static void _RootWinTimer(WM_HWIN hWin)
     
     //WM_InvalidateRect(_hRootWin, &Rect);
     WM_Invalidate(_hRootWin);
-    _FpsVal = 0; /* å¸§çŽ‡æ¸…é›¶ */
+    _FpsVal = 0; /* Ö¡ÂÊÇåÁã */
     printf("Mem usage: %d bytes\n", GUI_GetMemUsage());
 }
 
-/* GUIæµ‹è¯• */
+/* GUI²âÊÔ */
 void GUI_Test(void)
 {
     GUI_Init();
-    /* è®¾ç½®æ ¹çª—å£å›žè°ƒå‡½æ•° */
+    /* ÉèÖÃ¸ù´°¿Ú»Øµ÷º¯Êý */
     RootWinPaint_Cb = _RootWinPaint;
     RootWinTimer_Cb = _RootWinTimer;
     GUI_SetRootWindowTimer(1000);
@@ -65,7 +65,7 @@ void GUI_Test(void)
     GUI_SetFont(&GUI_FontUI17_4pp);
     while (1) {
         GUI_Delay(20);
-        ++_FpsVal; /* ç»Ÿè®¡å¸§çŽ‡ */
+        ++_FpsVal; /* Í³¼ÆÖ¡ÂÊ */
     }
 }
 
@@ -126,7 +126,7 @@ void Window1_Cb(WM_MESSAGE *pMsg)
         BUTTON_SetFont(hItem, &GUI_FontUI17_4pp);
         break;
     case WM_BUTTON_RELEASED:
-        /* æ ¹æ®ç‚¹å‡»çš„æŒ‰é”®åˆ›å»ºçª—å£ */
+        /* ¸ù¾Ýµã»÷µÄ°´¼ü´´½¨´°¿Ú */
         switch (WM_GetDialogId(pMsg->hWinSrc)) {
         case WIN1_BTN1:
             Create_Window2();

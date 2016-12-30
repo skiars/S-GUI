@@ -1,5 +1,5 @@
-ï»¿/*****************************************************************************
- * S-GUI 2Då›¾å½¢åº“
+/*****************************************************************************
+ * S-GUI 2DÍ¼ĞÎ¿â
  *****************************************************************************/
 
 #include "GUI_GL.h"
@@ -7,14 +7,14 @@
 #include "GUI_Math.h"
 #include "GUI_GL_AA.h"
 
-/* å…¨é€æ˜ç›´æ¥è¿”å› */
+/* È«Í¸Ã÷Ö±½Ó·µ»Ø */
 #define RETURN_TRANSPARENT() \
     if (GUI_Context.FGColor >> 24 == 0xff) return;
 
 #define FG_COLOR (GUI_Context.FGColor)
 #define BG_COLOR (GUI_Context.BGColor)
 
-static void _ClientToScreen(i_16 *x, i_16 *y)
+static void _ClientToScreen(int *x, int *y)
 {
     int xPos = GUI_Context.WinPos.x;
     int yPos = GUI_Context.WinPos.y;
@@ -46,22 +46,22 @@ static void _ClientToScreenRect(GUI_RECT *pRect)
 	pRect->y1 += yPos;
 }
 
-/* ç”»ç›´å¾„ä¸º1çš„ç‚¹ */
-static void _DrawPoint(i_16 x, i_16 y)
+/* »­Ö±¾¶Îª1µÄµã */
+static void _DrawPoint(int x, int y)
 {
     GUI_RECT r1;
 
     RETURN_TRANSPARENT();
-    _ClientToScreen(&x, &y); /* è½¬æ¢åˆ°å±å¹•åæ ‡ç³» */
+    _ClientToScreen(&x, &y); /* ×ª»»µ½ÆÁÄ»×ø±êÏµ */
     GUI_Val2Rect(&r1, x, y, 1, 1);
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+    while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
         GL_SetPixelClip(x, y);
     }
 }
 
-/* ç”»ç‚¹ */
-void GUI_DrawPoint(i_16 x,i_16 y)
+/* »­µã */
+void GUI_DrawPoint(int x,int y)
 {
     if (GUI_Context.PenSize > 1) {
         GUI_FillCircle(x, y, GUI_Context.PenSize / 2);
@@ -70,26 +70,26 @@ void GUI_DrawPoint(i_16 x,i_16 y)
     }
 }
 
-static void _VertLine(i_16 x0, i_16 y0, u_16 len)
+static void _VertLine(int x0, int y0, int len)
 {
     GUI_RECT r;
 
     RETURN_TRANSPARENT();
-    _ClientToScreen(&x0, &y0); /* è½¬æ¢åˆ°å±å¹•åæ ‡ç³» */
+    _ClientToScreen(&x0, &y0); /* ×ª»»µ½ÆÁÄ»×ø±êÏµ */
     if (GUI_Val2Rect(&r, x0, y0, 1, len)) {
         GUI_DrawAreaInit(&r);
-        while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+        while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
             GL_DrawVLine(x0, y0, r.y1);
         }
     }
 }
 
-/* ç”»å‚ç›´çº¿
- * x0,y0:åæ ‡
- * len:çº¿é•¿åº¦
- * color:é¢œè‰²
+/* »­´¹Ö±Ïß
+ * x0,y0:×ø±ê
+ * len:Ïß³¤¶È
+ * color:ÑÕÉ«
  **/
-void GUI_VertLine(i_16 x0,i_16 y0,u_16 len)
+void GUI_VertLine(int x0,int y0,int len)
 {
     int w = GUI_Context.PenSize;
     
@@ -100,26 +100,26 @@ void GUI_VertLine(i_16 x0,i_16 y0,u_16 len)
     }
 }
 
-static void _HoriLine(i_16 x0, i_16 y0, u_16 len)
+static void _HoriLine(int x0, int y0, int len)
 {
     GUI_RECT r;
 
     RETURN_TRANSPARENT();
-    _ClientToScreen(&x0, &y0); /* è½¬æ¢åˆ°å±å¹•åæ ‡ç³» */
+    _ClientToScreen(&x0, &y0); /* ×ª»»µ½ÆÁÄ»×ø±êÏµ */
     if (GUI_Val2Rect(&r, x0, y0, len, 1)) {
         GUI_DrawAreaInit(&r);
-        while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+        while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
             GL_DrawHLine(x0, y0, r.x1);
         }
     }
 }
 
-/* ç”»æ°´å¹³çº¿
- * x0,y0:åæ ‡
- * len:çº¿é•¿åº¦
- * color:é¢œè‰²
+/* »­Ë®Æ½Ïß
+ * x0,y0:×ø±ê
+ * len:Ïß³¤¶È
+ * color:ÑÕÉ«
  **/
-void GUI_HoriLine(i_16 x0, i_16 y0, u_16 len)
+void GUI_HoriLine(int x0, int y0, int len)
 {
     int w = GUI_Context.PenSize;
 
@@ -130,7 +130,7 @@ void GUI_HoriLine(i_16 x0, i_16 y0, u_16 len)
     }
 }
 
-static void _DrawRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
+static void _DrawRect(int x0, int y0, int x1, int y1)
 {
     GL_DrawHLine(x0, y0, x1);
     GL_DrawHLine(x0, y1, x1);
@@ -138,12 +138,12 @@ static void _DrawRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
     GL_DrawVLine(x1, y0 + 1, y1 - 1);
 }
 
-/* ç”»çŸ©å½¢æ¡† */
-void GUI_DrawRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize)
+/* »­¾ØĞÎ¿ò */
+void GUI_DrawRect(int x0, int y0, int xSize, int ySize)
 {
     GUI_RECT r;
 
-    _ClientToScreen(&x0, &y0); /* è½¬æ¢åˆ°å±å¹•åæ ‡ç³» */
+    _ClientToScreen(&x0, &y0); /* ×ª»»µ½ÆÁÄ»×ø±êÏµ */
     if (GUI_Val2Rect(&r, x0, y0, xSize, ySize)) {
         GUI_DrawAreaInit(&r);
         while (GUI_GetNextArea()) {
@@ -152,24 +152,24 @@ void GUI_DrawRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize)
     }
 }
 
-/* å¡«å……çŸ©å½¢ */
-void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize)
+/* Ìî³ä¾ØĞÎ */
+void GUI_FillRect(int x0, int y0, int xSize, int ySize)
 {
     GUI_RECT r;
     
     RETURN_TRANSPARENT();
-    _ClientToScreen(&x0, &y0); /* è½¬æ¢åˆ°å±å¹•åæ ‡ç³» */
-    /* å°†çŸ©å½¢åæ ‡è½¬æ¢ä¸ºç»“æ„ä½“ */
+    _ClientToScreen(&x0, &y0); /* ×ª»»µ½ÆÁÄ»×ø±êÏµ */
+    /* ½«¾ØĞÎ×ø±ê×ª»»Îª½á¹¹Ìå */
     if (GUI_Val2Rect(&r, x0, y0, xSize, ySize)) {
         GUI_DrawAreaInit(&r);
-        while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+        while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
             GL_FillRect(x0, y0, r.x1, r.y1);
         }
     }
 }
 
-/* ç”»ä»»æ„ç›´çº¿, æ–‡ä»¶å†…éƒ¨è°ƒç”¨ */
-static void _DrawLine(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
+/* »­ÈÎÒâÖ±Ïß, ÎÄ¼şÄÚ²¿µ÷ÓÃ */
+static void _DrawLine(int x0, int y0, int x1, int y1)
 {
     int dx, dy, p, diff, addx, addy, i;
 
@@ -218,7 +218,7 @@ static void _DrawLine(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
     }
 }
 
-const i_16 aTan[] = {
+const int aTan[] = {
 	0,       /* atan(0/16) */
 	41,      /* atan(1/16) */
 	81,      /* atan(2/16) */
@@ -302,8 +302,8 @@ static void _CalcOrto(int xDiff, int yDiff, i_32 r, int *px, int *py)
 	*py = y;
 }
 
-/* ç”»ä»»æ„ç›´çº¿, çº¿å®½å¤§äº1 */
-static void _DrawLineW(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
+/* »­ÈÎÒâÖ±Ïß, Ïß¿í´óÓÚ1 */
+static void _DrawLineW(int x0, int y0, int x1, int y1)
 {
 	GUI_POINT Poly[4];
 	int w = GUI_Context.PenSize;
@@ -337,8 +337,8 @@ static void _DrawLineW(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
 	GUI_FillPolygon(Poly, 4);
 }
 
-/* ç”»ä»»æ„ç›´çº¿, å…¬å…±ä»£ç  */
-void GUI_DrawLine(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
+/* »­ÈÎÒâÖ±Ïß, ¹«¹²´úÂë */
+void GUI_DrawLine(int x0, int y0, int x1, int y1)
 {
     int w = GUI_Context.PenSize;
     GUI_RECT r;
@@ -351,11 +351,11 @@ void GUI_DrawLine(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
     r.y0 = y0 < y1 ? y0 : y1;
     r.x1 = x0 > x1 ? x0 : x1;
     r.y1 = y0 > y1 ? y0 : y1;
-    if (x0 == x1) { /* ç«–ç›´çº¿ */
+    if (x0 == x1) { /* ÊúÖ±Ïß */
         GUI_VertLine(r.x0, r.y0, r.y1 - r.y0 + 1);
         return;
     }
-    if (y0 == y1) { /* æ°´å¹³çº¿ */
+    if (y0 == y1) { /* Ë®Æ½Ïß */
         GUI_HoriLine(r.x0, r.y0, r.x1 - r.x0 + 1);
         return;
     }
@@ -368,7 +368,7 @@ void GUI_DrawLine(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
     }
 }
 
-/* ç”»8ç‚¹ */
+/* »­8µã */
 static void _Draw8Point(int x0, int y0, int x, int y)
 {
     
@@ -399,7 +399,7 @@ static void _DrawCircle(int x0, int y0, int r)
     }
 }
 
-/* ç”»8ç‚¹, ç”»çº¿å®½ä¸ä¸º1çš„åœ†æ—¶è°ƒç”¨ */
+/* »­8µã, »­Ïß¿í²»Îª1µÄÔ²Ê±µ÷ÓÃ */
 static void _Draw8PointW(int x0, int y0, int x, int y, int y1)
 {
     if (y1 - x < 0) {
@@ -420,7 +420,7 @@ static void _Draw8PointW(int x0, int y0, int x, int y, int y1)
     }
 }
 
-/* ç”»çº¿å®½ä¸ä¸º1çš„åœ† */
+/* »­Ïß¿í²»Îª1µÄÔ² */
 static void _DrawCircleW(int x0, int y0, int r)
 {
     int x, y = r, d = -(r >> 1);
@@ -444,8 +444,8 @@ static void _DrawCircleW(int x0, int y0, int r)
     }
 }
 
-/* ç”»åœ† */
-void GUI_DrawCircle(i_16 x0, i_16 y0, u_16 r)
+/* »­Ô² */
+void GUI_DrawCircle(int x0, int y0, int r)
 {
     int w = GUI_Context.PenSize;
     GUI_RECT Rect;
@@ -462,18 +462,18 @@ void GUI_DrawCircle(i_16 x0, i_16 y0, u_16 r)
     } else {
         circle = _DrawCircle;
     }
-    _ClientToScreen(&x0, &y0); /* è½¬æ¢åˆ°å±å¹•åæ ‡ç³» */
+    _ClientToScreen(&x0, &y0); /* ×ª»»µ½ÆÁÄ»×ø±êÏµ */
     Rect.x0 = x0 - r;
     Rect.x1 = x0 + r;
     Rect.y0 = y0 - r;
     Rect.y1 = y0 + r;
     GUI_DrawAreaInit(&Rect);
-    while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+    while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
         circle(x0, y0, r);
     }
 }
 
-/* å¡«å……åœ† */
+/* Ìî³äÔ² */
 static void _FillCircle(int x0, int y0, int r)
 {
     int i, x;
@@ -505,26 +505,26 @@ static void _FillCircle(int x0, int y0, int r)
     }
 }
 
-/* å¡«å……åœ† */
-void GUI_FillCircle(i_16 x0, i_16 y0, i_16 r)
+/* Ìî³äÔ² */
+void GUI_FillCircle(int x0, int y0, int r)
 {
     GUI_RECT Rect;
 
-    _ClientToScreen(&x0, &y0); /* è½¬æ¢åˆ°å±å¹•åæ ‡ç³» */
+    _ClientToScreen(&x0, &y0); /* ×ª»»µ½ÆÁÄ»×ø±êÏµ */
     Rect.x0 = x0 - r;
     Rect.x1 = x0 + r;
     Rect.y0 = y0 - r;
     Rect.y1 = y0 + r;
     GUI_DrawAreaInit(&Rect);
-    while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+    while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
         _FillCircle(x0, y0, r);
     }
 }
 
-/* è·å–å¤šè¾¹å½¢çš„è¾¹ç•ŒèŒƒå›´ */
+/* »ñÈ¡¶à±ßĞÎµÄ±ß½ç·¶Î§ */
 void GUI_GetPolyArea(GUI_RECT *r, GUI_POINT *Points, int cnt)
 {
-    i_16 t;
+    int t;
     int i;
 
     r->x0 = Points->x;
@@ -549,12 +549,12 @@ void GUI_GetPolyArea(GUI_RECT *r, GUI_POINT *Points, int cnt)
     }
 }
 
-/* ç»˜åˆ¶å¤šè¾¹å½¢, å†…éƒ¨è°ƒç”¨ */
+/* »æÖÆ¶à±ßĞÎ, ÄÚ²¿µ÷ÓÃ */
 static void _DrawPolygon(GUI_POINT *Points, int cnt)
 {
     int i;
-    i_16 xPos = GUI_Context.WinPos.x;
-    i_16 yPos = GUI_Context.WinPos.y;
+    int xPos = GUI_Context.WinPos.x;
+    int yPos = GUI_Context.WinPos.y;
     GUI_POINT *p1, *p2;
 
     if (GUI_Context.AAEnable) {
@@ -573,7 +573,7 @@ static void _DrawPolygon(GUI_POINT *Points, int cnt)
     _DrawLine(p1->x + xPos, p1->y + yPos, p2->x + xPos, p2->y + yPos);
 }
 
-/* ç»˜åˆ¶å¤šè¾¹å½¢ */
+/* »æÖÆ¶à±ßĞÎ */
 void GUI_DrawPolygon(GUI_POINT *Points, int cnt)
 {
     GUI_RECT r;
@@ -581,16 +581,16 @@ void GUI_DrawPolygon(GUI_POINT *Points, int cnt)
     GUI_GetPolyArea(&r, Points, cnt);
     _ClientToScreenRect(&r);
     GUI_DrawAreaInit(&r);
-    while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+    while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
         _DrawPolygon(Points, cnt);
     }
 }
 
-/* å¡«å……å¤šè¾¹å½¢, å†…éƒ¨è°ƒç”¨ */
+/* Ìî³ä¶à±ßĞÎ, ÄÚ²¿µ÷ÓÃ */
 static void _FillPolygon(GUI_POINT *Points, int cnt)
 {
-    i_16 xPos = GUI_Context.WinPos.x;
-    i_16 yPos = GUI_Context.WinPos.y;
+    int xPos = GUI_Context.WinPos.x;
+    int yPos = GUI_Context.WinPos.y;
     int yMax = Points->y, yMin = yMax;
     int y, i, j, nodes;
     static int nodeX[GUI_MAX_POLY_CORNERS];
@@ -602,7 +602,7 @@ static void _FillPolygon(GUI_POINT *Points, int cnt)
         xPos *= factor;
         yPos *= factor;
     }
-    /* æ‰¾å‡ºæœ€ä¸Šé¢çš„è¡Œå’Œæœ€ä¸‹é¢çš„è¡Œ */
+    /* ÕÒ³ö×îÉÏÃæµÄĞĞºÍ×îÏÂÃæµÄĞĞ */
     for (i = 0; i < cnt; ++i) {
         y = Points[i].y;
         if (y > yMax) {
@@ -613,13 +613,13 @@ static void _FillPolygon(GUI_POINT *Points, int cnt)
         }
     }
     for (y = yMin; y <= yMax; ++y) {
-        /* è®¡ç®—å¤šå˜å½¢ä¸æ‰«æçº¿çš„äº¤ç‚¹ */
+        /* ¼ÆËã¶à±äĞÎÓëÉ¨ÃèÏßµÄ½»µã */
         nodes = 0;
         j = cnt - 1;
         for (i = 0; i < cnt; ++i) {
-            pi = Points + i; /* è¾¹çš„èµ·ç‚¹ */
-            pj = Points + j; /* è¾¹çš„ç»ˆç‚¹ */
-            if (pi->y == y && pj->y == y) { /* æ°´å¹³è¾¹ç›´æ¥å¡«å…… */
+            pi = Points + i; /* ±ßµÄÆğµã */
+            pj = Points + j; /* ±ßµÄÖÕµã */
+            if (pi->y == y && pj->y == y) { /* Ë®Æ½±ßÖ±½ÓÌî³ä */
                 if (pi->x < pj->x) {
                     GL_DrawHLine(pi->x + xPos, y + yPos, pj->x + xPos);
                 } else {
@@ -632,7 +632,7 @@ static void _FillPolygon(GUI_POINT *Points, int cnt)
             }
             j = i;
         }
-        /* äº¤ç‚¹ä»å·¦åˆ°å³æ’åº */
+        /* ½»µã´Ó×óµ½ÓÒÅÅĞò */
         i = 0;
         while (i < nodes - 1) {
             if (nodeX[i] > nodeX[i + 1]) {
@@ -646,14 +646,14 @@ static void _FillPolygon(GUI_POINT *Points, int cnt)
                 ++i;
             }
         }
-        /* å¡«å……çº¿ç»˜åˆ¶ */
+        /* Ìî³äÏß»æÖÆ */
         for (i = 0; i < nodes; i += 2) {
             GL_DrawHLine(nodeX[i] + xPos, y + yPos, nodeX[i + 1] + xPos);
         }
     }
 }
 
-/* å¡«å……å¤šå˜å½¢ */
+/* Ìî³ä¶à±äĞÎ */
 void GUI_FillPolygon(GUI_POINT *Points, int cnt)
 {
     GUI_RECT r;
@@ -664,19 +664,19 @@ void GUI_FillPolygon(GUI_POINT *Points, int cnt)
     GUI_GetPolyArea(&r, Points, cnt);
     _ClientToScreenRect(&r);
     GUI_DrawAreaInit(&r);
-    while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+    while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
         _FillPolygon(Points, cnt);
     }
 }
 
-/* ç»˜åˆ¶æŠ˜çº¿, å†…éƒ¨è°ƒç”¨ */
-static void _DrawLines(i_16 x, i_16 y, GUI_POINT *Points, int cnt)
+/* »æÖÆÕÛÏß, ÄÚ²¿µ÷ÓÃ */
+static void _DrawLines(int x, int y, GUI_POINT *Points, int cnt)
 {
     int i;
-    i_16 xPos = GUI_Context.WinPos.x;
-    i_16 yPos = GUI_Context.WinPos.y;
+    int xPos = GUI_Context.WinPos.x;
+    int yPos = GUI_Context.WinPos.y;
     GUI_POINT *p1, *p2;
-    void(*draw)(i_16, i_16, i_16, i_16);
+    void(*draw)(int, int, int, int);
 
     if (GUI_Context.AAEnable) {
         int factor = GUI_Context.AAFactor;
@@ -698,8 +698,8 @@ static void _DrawLines(i_16 x, i_16 y, GUI_POINT *Points, int cnt)
     }
 }
 
-/* ç»˜åˆ¶æŠ˜çº¿ */
-void GUI_DrawLines(i_16 x, i_16 y, GUI_POINT *Points, int cnt)
+/* »æÖÆÕÛÏß */
+void GUI_DrawLines(int x, int y, GUI_POINT *Points, int cnt)
 {
     GUI_RECT r;
 
@@ -707,7 +707,7 @@ void GUI_DrawLines(i_16 x, i_16 y, GUI_POINT *Points, int cnt)
     GUI_MoveRect(&r, x, y);
     _ClientToScreenRect(&r);
     GUI_DrawAreaInit(&r);
-    while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+    while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
         _DrawLines(x, y, Points, cnt);
     }
 }

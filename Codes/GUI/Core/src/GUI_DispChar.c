@@ -1,10 +1,10 @@
-ï»¿#include "GUI_DispChar.h"
+#include "GUI_DispChar.h"
 #include "GUI.h"
 #include "string.h"
 #include "GUI_Font.h"
 
-/* è·å–å­—ç¬¦ä¿¡æ¯ */
-static GUI_CHARINFO * _GetCharInfo(const u_16 Char)
+/* »ñÈ¡×Ö·ûĞÅÏ¢ */
+static GUI_CHARINFO * _GetCharInfo(const int Char)
 {
     GUI_FONT_PROP *pProp = GUI_Context.Font->pProp;
 
@@ -17,14 +17,14 @@ static GUI_CHARINFO * _GetCharInfo(const u_16 Char)
     return NULL;
 }
 
-/* è·å–å½“å‰å­—ä½“å­—ç¬¦çš„é«˜åº¦ */
-u_16 GUI_GetCharHeight(void)
+/* »ñÈ¡µ±Ç°×ÖÌå×Ö·ûµÄ¸ß¶È */
+int GUI_GetCharHeight(void)
 {
     return GUI_Context.Font->CharHeight;
 }
 
-/* è·å–å½“å‰å­—ä½“å­—ç¬¦çš„å®½åº¦ */
-u_16 GUI_GetCharWidth(u_16 Char)
+/* »ñÈ¡µ±Ç°×ÖÌå×Ö·ûµÄ¿í¶È */
+int GUI_GetCharWidth(int Char)
 {
     GUI_CHARINFO *pInfo = _GetCharInfo(Char);
 
@@ -34,7 +34,7 @@ u_16 GUI_GetCharWidth(u_16 Char)
     return 0;
 }
 
-/* è·å–å½“å‰å­—ç¬¦ä¸²é•¿åº¦åƒç´ å€¼, ä¼šè¢«'\r', '\n', '\0'æˆªæ–­ */
+/* »ñÈ¡µ±Ç°×Ö·û´®³¤¶ÈÏñËØÖµ, »á±»'\r', '\n', '\0'½Ø¶Ï */
 int GUI_GetStringWidth(const char *Str)
 {
     int Width = 0;
@@ -46,15 +46,15 @@ int GUI_GetStringWidth(const char *Str)
 }
 
 #if GUI_DISP_FONT_MODE == 0
-/* å­—ç¬¦æ˜¾ç¤ºé€æ˜åº¦æ··åˆå‡½æ•° */
-static void _CharSetPixel(i_16 x, i_16 y, u_8 light, u_8 pp)
+/* ×Ö·ûÏÔÊ¾Í¸Ã÷¶È»ìºÏº¯Êı */
+static void _CharSetPixel(int x, int y, u_8 light, u_8 pp)
 {
     GUI_COLOR FontColor = GUI_Context.FontColor;
 
     pp = (1 << pp) - 1;
-    if (light == pp) { /* ä¸å¿…è®¡ç®—é€æ˜åº¦ */
+    if (light == pp) { /* ²»±Ø¼ÆËãÍ¸Ã÷¶È */
         GL_SetPixel(x, y, FontColor);
-    } else { /* æŠ—é”¯é½¿å­—ä½“è®¡ç®—é€æ˜åº¦ */
+    } else { /* ¿¹¾â³İ×ÖÌå¼ÆËãÍ¸Ã÷¶È */
         GUI_COLOR BGColor = GL_GetPixel(x, y);
         GUI_COLOR R = ((FontColor >> 16) & 0xFF) * light / pp;
         GUI_COLOR G = ((FontColor >> 8) & 0xFF) * light / pp;
@@ -68,22 +68,22 @@ static void _CharSetPixel(i_16 x, i_16 y, u_8 light, u_8 pp)
     }
 }
 
-/* æ˜¾ç¤ºå­—ç¬¦ */
-static void _DispChar(i_16 x0,    /* æ˜¾ç¤ºä½ç½® */
-    i_16 y0,                      /* æ˜¾ç¤ºä½ç½® */
-    u_16 x1,                      /* ä½å›¾é«˜åº¦ */
-    u_16 y1,                      /* ä½å›¾å®½åº¦ */
-    const unsigned char *pData,  /* ä½å›¾æ•°æ® */
-    u_8 PixBits,                 /* æ¯åƒç´ æ¯”ç‰¹æ•° */
-    u_16 BytesPerLine)           /* æ¯è¡Œçš„å­—èŠ‚æ•° */
+/* ÏÔÊ¾×Ö·û */
+static void _DispChar(int x0,    /* ÏÔÊ¾Î»ÖÃ */
+    int y0,                      /* ÏÔÊ¾Î»ÖÃ */
+    int x1,                      /* Î»Í¼¸ß¶È */
+    int y1,                      /* Î»Í¼¿í¶È */
+    const unsigned char *pData,  /* Î»Í¼Êı¾İ */
+    u_8 PixBits,                 /* Ã¿ÏñËØ±ÈÌØÊı */
+    int BytesPerLine)           /* Ã¿ĞĞµÄ×Ö½ÚÊı */
 {
     unsigned char data, light, bitCnt;
     u_8 BytePixels = 8 / PixBits, x0Shift, shift = 8 - PixBits;
-    i_16 x = x0, y = y0;
-    u_16 ySize, i, j;
+    int x = x0, y = y0;
+    int ySize, i, j;
     const unsigned char *ptab;
 
-    /* è£å‰ªè‡³æ˜¾ç¤ºåŒºåŸŸ */
+    /* ²Ã¼ôÖÁÏÔÊ¾ÇøÓò */
     CLIP_X(x0, x1);
     CLIP_Y(y0, y1);
     ySize = y1 - y0 + 1;
@@ -101,21 +101,21 @@ static void _DispChar(i_16 x0,    /* æ˜¾ç¤ºä½ç½® */
                 data = *(++ptab);
                 bitCnt = 8;
             }
-            if (light) { /* æ˜¾ç¤º */
+            if (light) { /* ÏÔÊ¾ */
                 _CharSetPixel(i, y0 + j, light, PixBits);
             }
         }
     }
 }
 #else
-/* è§£å‹ç‚¹é˜µå­—ç¬¦, åŠ é€Ÿæ—¶ä½¿ç”¨ */
+/* ½âÑ¹µãÕó×Ö·û, ¼ÓËÙÊ±Ê¹ÓÃ */
 static void _DecompressData(GUI_COLOR *Dst,
     const unsigned char *Src,
     u_8 PixBits,
     int BytesSize,
     GUI_COLOR Color)
 {
-    u_16 i, temp, code;
+    int i, temp, code;
     unsigned char scale = 255 / ((1 << PixBits) - 1);
     unsigned char BytePixs = 8 / PixBits;
     unsigned char shift = 8 - PixBits;
@@ -132,25 +132,25 @@ static void _DecompressData(GUI_COLOR *Dst,
     }
 }
 
-/* æ˜¾ç¤ºå­—ç¬¦ */
-static void _DispChar(i_16 x0,    /* æ˜¾ç¤ºä½ç½® */
-    i_16 y0,                      /* æ˜¾ç¤ºä½ç½® */
-    i_16 x1,                      /* ä½å›¾é«˜åº¦ */
-    i_16 y1,                      /* ä½å›¾å®½åº¦ */
-    const unsigned char *pData,   /* ä½å›¾æ•°æ® */
-    u_8 PixBits,                  /* æ¯åƒç´ æ¯”ç‰¹æ•° */
-    u_16 BytesPerLine)            /* æ¯è¡Œçš„å­—èŠ‚æ•° */
+/* ÏÔÊ¾×Ö·û */
+static void _DispChar(int x0,    /* ÏÔÊ¾Î»ÖÃ */
+    int y0,                      /* ÏÔÊ¾Î»ÖÃ */
+    int x1,                      /* Î»Í¼¸ß¶È */
+    int y1,                      /* Î»Í¼¿í¶È */
+    const unsigned char *pData,   /* Î»Í¼Êı¾İ */
+    u_8 PixBits,                  /* Ã¿ÏñËØ±ÈÌØÊı */
+    int BytesPerLine)            /* Ã¿ĞĞµÄ×Ö½ÚÊı */
 {
-    i_16 x = x0, y = y0;
+    int x = x0, y = y0;
 #if GUI_DISP_FONT_MODE == 1
-    i_16 i;
+    int i;
     static GUI_COLOR buf[GUI_MAX_FONT_WID];
 #else
     static GUI_COLOR buf[GUI_MAX_FONT_WID * GUI_MAX_FONT_HEI];
 #endif
     GUI_COLOR Color = GUI_Context.FontColor & 0x00FFFFFF;
 
-    /* è£å‰ªè‡³æ˜¾ç¤ºåŒºåŸŸ */
+    /* ²Ã¼ôÖÁÏÔÊ¾ÇøÓò */
     CLIP_X(x0, x1);
     CLIP_Y(y0, y1);
     pData += (y0 - y) * BytesPerLine;
@@ -168,11 +168,11 @@ static void _DispChar(i_16 x0,    /* æ˜¾ç¤ºä½ç½® */
 }
 #endif
 
-/* æ˜¾ç¤ºä¸€ä¸ªå­—ç¬¦(ç»å¯¹åæ ‡) */
-static u_16 _DispCharAbs(i_16 x, i_16 y, u_16 Char)
+/* ÏÔÊ¾Ò»¸ö×Ö·û(¾ø¶Ô×ø±ê) */
+static int _DispCharAbs(int x, int y, int Char)
 {
     u_8 PixBits = GUI_Context.Font->FontType;
-    u_16 Width, Height = GUI_GetCharHeight();
+    int Width, Height = GUI_GetCharHeight();
     GUI_CHARINFO *cInfo = _GetCharInfo(Char);
 
     if (cInfo) {
@@ -183,19 +183,19 @@ static u_16 _DispCharAbs(i_16 x, i_16 y, u_16 Char)
         Width = cInfo->XSize;
         GUI_Val2Rect(&r, x, y, Width, Height);
         GUI_DrawAreaInit(&r);
-        while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+        while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
             _DispChar(r.x0, r.y0, r.x1, r.y1, pData, PixBits, BytesPerLine);
         }
         return Width;
     }
-    return 0; /* å­—ä½“ä¸­æ²¡æœ‰è¯¥å­—ç¬¦ */
+    return 0; /* ×ÖÌåÖĞÃ»ÓĞ¸Ã×Ö·û */
 }
 
-/* åœ¨æŒ‡å®šçŸ©å½¢åŒºåŸŸå†…æ˜¾ç¤ºä¸€ä¸ªå­—ç¬¦(ç»å¯¹åæ ‡) */
-static u_16 _DispCharInRectAbs(GUI_RECT *pRect, u_16 Char)
+/* ÔÚÖ¸¶¨¾ØĞÎÇøÓòÄÚÏÔÊ¾Ò»¸ö×Ö·û(¾ø¶Ô×ø±ê) */
+static int _DispCharInRectAbs(GUI_RECT *pRect, int Char)
 {
     u_8 PixBits = GUI_Context.Font->FontType;
-    u_16 Width, Height = GUI_GetCharHeight();
+    int Width, Height = GUI_GetCharHeight();
     GUI_CHARINFO *cInfo = _GetCharInfo(Char);
 
     if (cInfo) {
@@ -207,24 +207,24 @@ static u_16 _DispCharInRectAbs(GUI_RECT *pRect, u_16 Char)
         GUI_Val2Rect(&r, pRect->x0, pRect->y0, Width, Height);
         if (GUI_RectOverlay(&r, pRect, &r) == TRUE) {
             GUI_DrawAreaInit(&r);
-            while (GUI_GetNextArea()) { /* éå†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+            while (GUI_GetNextArea()) { /* ±éÀúËùÓĞµÄÏÔÊ¾ÇøÓò */
                 _DispChar(pRect->x0, pRect->y0, pRect->x1,
                     pRect->y1, pData, PixBits, BytesPerLine);
             }
             return Width;
         }
     }
-    return 0; /* å­—ä½“ä¸­æ²¡æœ‰è¯¥å­—ç¬¦æˆ–è€…ä¸åœ¨æ˜¾ç¤ºèŒƒå›´å†… */
+    return 0; /* ×ÖÌåÖĞÃ»ÓĞ¸Ã×Ö·û»òÕß²»ÔÚÏÔÊ¾·¶Î§ÄÚ */
 }
 
-/* æ˜¾ç¤ºä¸€ä¸ªå­—ç¬¦ */
-u_16 GUI_DispChar(i_16 x, i_16 y, u_16 Char)
+/* ÏÔÊ¾Ò»¸ö×Ö·û */
+int GUI_DispChar(int x, int y, int Char)
 {
     return _DispCharAbs(x, y, Char);
 }
 
-/* åœ¨æŒ‡å®šçŸ©å½¢åŒºåŸŸå†…æ˜¾ç¤ºä¸€ä¸ªå­—ç¬¦ */
-u_16 GUI_DispCharInRect(GUI_RECT *pRect, u_16 Char)
+/* ÔÚÖ¸¶¨¾ØĞÎÇøÓòÄÚÏÔÊ¾Ò»¸ö×Ö·û */
+int GUI_DispCharInRect(GUI_RECT *pRect, int Char)
 {
     GUI_RECT r = *pRect;
 
@@ -232,8 +232,8 @@ u_16 GUI_DispCharInRect(GUI_RECT *pRect, u_16 Char)
     return _DispCharInRectAbs(&r, Char);
 }
 
-/* åœ¨å½“å‰çš„æ˜¾ç¤ºåŒºåŸŸä¸‹æ˜¾ç¤ºä¸€ä¸²å­—ç¬¦ä¸² */
-void GUI_DispString(i_16 x0, i_16 y0, const char *Str)
+/* ÔÚµ±Ç°µÄÏÔÊ¾ÇøÓòÏÂÏÔÊ¾Ò»´®×Ö·û´® */
+void GUI_DispString(int x0, int y0, const char *Str)
 {
     GUI_ClientToScreen(&x0, &y0);
     while (*Str) {
@@ -241,31 +241,31 @@ void GUI_DispString(i_16 x0, i_16 y0, const char *Str)
     }
 }
 
-/* åœ¨æŒ‡å®šçŸ©å½¢åŒºåŸŸå†…æ˜¾ç¤ºä¸€ä¸ªå­—ç¬¦ä¸² */
+/* ÔÚÖ¸¶¨¾ØĞÎÇøÓòÄÚÏÔÊ¾Ò»¸ö×Ö·û´® */
 void GUI_DispStringInRect(GUI_RECT *pRect, const char *Str, u_8 Align)
 {
     GUI_RECT r = *pRect;
-    u_16 Height = GUI_GetCharHeight();
+    int Height = GUI_GetCharHeight();
     int Width = GUI_GetStringWidth(Str);
 
     GUI_ClientToScreenRect(&r);
-    /* è®¡ç®—æ°´å¹³å¯¹é½æ–¹å¼, é»˜è®¤å·¦å¯¹é½ */
+    /* ¼ÆËãË®Æ½¶ÔÆë·½Ê½, Ä¬ÈÏ×ó¶ÔÆë */
     switch (Align & (GUI_ALIGN_LEFT | GUI_ALIGN_RIGHT | GUI_ALIGN_HCENTER)) {
-    case GUI_ALIGN_RIGHT: /* å³å¯¹é½ */
+    case GUI_ALIGN_RIGHT: /* ÓÒ¶ÔÆë */
         r.x0 = r.x1 - Width;
         break;
-    case GUI_ALIGN_HCENTER: /* æ°´å¹³å±…ä¸­ */
+    case GUI_ALIGN_HCENTER: /* Ë®Æ½¾ÓÖĞ */
         if (r.x1 - r.x0 + 1 > Width) {
             r.x0 = r.x0 + (r.x1 - r.x0 + 1 - Width) / 2;
             break;
         }
     }
-    /* è®¡ç®—å‚ç›´å¯¹é½æ–¹å¼, é»˜è®¤é¡¶å¯¹é½ */
+    /* ¼ÆËã´¹Ö±¶ÔÆë·½Ê½, Ä¬ÈÏ¶¥¶ÔÆë */
     switch (Align & (GUI_ALIGN_TOP | GUI_ALIGN_BOTTOM | GUI_ALIGN_VCENTER)) {
-    case GUI_ALIGN_BOTTOM: /* åº•å¯¹é½ */
+    case GUI_ALIGN_BOTTOM: /* µ×¶ÔÆë */
         r.y0 = r.y1 - Height;
         break;
-    case GUI_ALIGN_VCENTER: /* å‚ç›´å±…ä¸­ */
+    case GUI_ALIGN_VCENTER: /* ´¹Ö±¾ÓÖĞ */
         if (r.y1 - r.y0 + 1 > Height) {
             r.y0 = r.y0 + (r.y1 - r.y0 + 1 - Height) / 2;
             break;

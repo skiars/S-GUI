@@ -1,16 +1,16 @@
-ï»¿#ifndef __GUI_SURFACE_H
+#ifndef __GUI_SURFACE_H
 #define __GUI_SURFACE_H
 
 #include "GUI_Config.h"
 #include "GUI_Typedef.h"
 
 typedef struct {
-    void *FrameBuffer; /* å¸§ç¼“å†² */
-    GUI_POINT Pos;     /* ç›¸å¯¹åç§» */
-    u_16 Width;        /* å®½åº¦ */
-    u_16 Height;       /* é«˜åº¦ */
-    int BytesPerPixel; /* é¢œè‰²æ·±åº¦ */
-    int PixelFormat;   /* åƒç´ æ ¼å¼ */
+    void *FrameBuffer; /* Ö¡»º³å */
+    GUI_POINT Pos;     /* Ïà¶ÔÆ«ÒÆ */
+    int Width;        /* ¿í¶È */
+    int Height;       /* ¸ß¶È */
+    int BytesPerPixel; /* ÑÕÉ«Éî¶È */
+    int PixelFormat;   /* ÏñËØ¸ñÊ½ */
 } GUI_SURFACE;
 
 #endif

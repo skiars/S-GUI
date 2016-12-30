@@ -1,24 +1,24 @@
-ï»¿#include "GUI_KeyBoard.h"
+#include "GUI_KeyBoard.h"
 #include "GUI.h"
 
 /*
-*æŠŠé”®å€¼å‘é€åˆ°æ¶ˆæ¯é˜Ÿåˆ—
+*°Ñ¼üÖµ·¢ËÍµ½ÏûÏ¢¶ÓÁÐ
 */
 void GUI_SendKey(u_8 Key, u_8 Status)
 {
-    if (Status == GUI_KEYDOWN) { /* æŒ‰é”®æŒ‰ä¸‹ */
+    if (Status == GUI_KEYDOWN) { /* °´¼ü°´ÏÂ */
         WM_PostMessage(WM_GetActiveWindow(), WM_KEYDOWN, Key);
-    } else if (Status == GUI_KEYUP){ /* æŒ‰é”®æ¾å¼€ */
+    } else if (Status == GUI_KEYUP){ /* °´¼üËÉ¿ª */
         WM_PostMessage(WM_GetActiveWindow(), WM_KEYUP, Key);
     }
 }
 
-/* æŒ‰é”®å¤„ç† */
+/* °´¼ü´¦Àí */
 GUI_RESULT GUI_KeyMessageProc(GUI_MESSAGE *pMsg)
 {
     if (pMsg->MsgId == WM_KEYUP) {
         GUI_LOCK();
-        /* å½“çª—å£è¿˜æ˜¯æ´»åŠ¨çª—å£æ—¶ä¼ é€’é”®å€¼ */
+        /* µ±´°¿Ú»¹ÊÇ»î¶¯´°¿ÚÊ±´«µÝ¼üÖµ */
         if (pMsg->hWin == WM_GetActiveWindow()) {
             WM__SendMessage(pMsg->hWin, pMsg);
         }

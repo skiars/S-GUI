@@ -1,13 +1,13 @@
-ï»¿#include "GUI_WM.h"
+#include "GUI_WM.h"
 #include "GUI.h"
 
-/* æ‰¾åˆ°çª—å£Zåºæœ€å¤§çš„å­çª—å£ï¼ˆåŒ…æ‹¬å®ƒè‡ªå·±ï¼‰çš„ä¸‹ä¸€ä¸ªçª—å£ï¼Œæ³¨æ„çª—å£hä¸€å®šä¸èƒ½æ˜¯NULL */
+/* ÕÒµ½´°¿ÚZĞò×î´óµÄ×Ó´°¿Ú£¨°üÀ¨Ëü×Ô¼º£©µÄÏÂÒ»¸ö´°¿Ú£¬×¢Òâ´°¿ÚhÒ»¶¨²»ÄÜÊÇNULL */
 #define WM__FindChildEnd(h) \
     (((WM_Obj *)WM_GetTopChildWindow(h))->hNextLine)
 
 static int __InvalidWindowNum = 0;
 
-/* çª—å£ç®¡ç†å™¨åˆå§‹åŒ– */
+/* ´°¿Ú¹ÜÀíÆ÷³õÊ¼»¯ */
 GUI_RESULT WM_Init(void)
 {
     _hRootWin = GUI_Malloc(sizeof(WM_Obj));
@@ -19,14 +19,14 @@ GUI_RESULT WM_Init(void)
 }
 
 /*
-* å‘çª—å£ç®¡ç†å™¨çš„æŒ‡å®šçª—å£å‘é€æ¶ˆæ¯ã€‚
-* hWin:è¦æŒ‡å®šçª—å£çš„å¥æŸ„,ä¸ºNULLæ—¶å°†ç›´æ¥è¿”å›ã€‚
+* Ïò´°¿Ú¹ÜÀíÆ÷µÄÖ¸¶¨´°¿Ú·¢ËÍÏûÏ¢¡£
+* hWin:ÒªÖ¸¶¨´°¿ÚµÄ¾ä±ú,ÎªNULLÊ±½«Ö±½Ó·µ»Ø¡£
 **/
 void WM__SendMessage(WM_HWIN hWin, WM_MESSAGE *pMsg)
 {
     static u_8 __MseeageCount;
 
-    if (hWin == NULL) { /* hWinä¸èƒ½ä¸ºNULL */
+    if (hWin == NULL) { /* hWin²»ÄÜÎªNULL */
         return;
     }
     GUI_LOCK();
@@ -46,8 +46,8 @@ void WM__SendMessage(WM_HWIN hWin, WM_MESSAGE *pMsg)
     GUI_UNLOCK();
 }
 
-/* å‘çª—å£ç®¡ç†å™¨çš„æŒ‡å®šçª—å£å‘é€æ¶ˆæ¯ */
-void WM_SendMessage(WM_HWIN hWin, u_16 MsgId, GUI_PARAM Param)
+/* Ïò´°¿Ú¹ÜÀíÆ÷µÄÖ¸¶¨´°¿Ú·¢ËÍÏûÏ¢ */
+void WM_SendMessage(WM_HWIN hWin, int MsgId, GUI_PARAM Param)
 {
     WM_MESSAGE Msg;
 
@@ -56,15 +56,15 @@ void WM_SendMessage(WM_HWIN hWin, u_16 MsgId, GUI_PARAM Param)
     WM__SendMessage(hWin, &Msg);
 }
 
-/* å‘çª—å£ç®¡ç†å™¨çš„æŒ‡å®šçª—å£çš„çˆ¶çª—å£å‘é€æ¶ˆæ¯ */
+/* Ïò´°¿Ú¹ÜÀíÆ÷µÄÖ¸¶¨´°¿ÚµÄ¸¸´°¿Ú·¢ËÍÏûÏ¢ */
 void WM_SendMessageToParent(WM_HWIN hWin, GUI_MESSAGE *pMsg)
 {
     pMsg->hWinSrc = hWin;
     WM__SendMessage(((WM_Obj *)hWin)->hParent, pMsg);
 }
 
-/* å‘æ¶ˆæ¯é˜Ÿåˆ—å‘é€æ¶ˆæ¯ */
-GUI_RESULT WM_PostMessage(WM_HWIN hWin, u_16 MsgId, GUI_PARAM Param)
+/* ÏòÏûÏ¢¶ÓÁĞ·¢ËÍÏûÏ¢ */
+GUI_RESULT WM_PostMessage(WM_HWIN hWin, int MsgId, GUI_PARAM Param)
 {
     WM_MESSAGE Msg;
 
@@ -75,9 +75,9 @@ GUI_RESULT WM_PostMessage(WM_HWIN hWin, u_16 MsgId, GUI_PARAM Param)
 }
 
 /*
-* å°†ä¸€ä¸ªçŸ©å½¢è£å‰ªåˆ°çª—å£çš„å¯è§åŒºåŸŸä¸­ã€‚
-* è¿”å›å€¼:FALSE,è¯¥çŸ©å½¢ä¸çª—å£çš„å¯è§åŒºåŸŸä¸ç›¸äº¤ã€‚
-*       TRUE,è£å‰ªæˆåŠŸã€‚
+* ½«Ò»¸ö¾ØĞÎ²Ã¼ôµ½´°¿ÚµÄ¿É¼ûÇøÓòÖĞ¡£
+* ·µ»ØÖµ:FALSE,¸Ã¾ØĞÎÓë´°¿ÚµÄ¿É¼ûÇøÓò²»Ïà½»¡£
+*       TRUE,²Ã¼ô³É¹¦¡£
 **/
 static GUI_BOOL WM__ClipAtParent(GUI_RECT *pr, WM_Obj *pWin)
 {
@@ -89,7 +89,7 @@ static GUI_BOOL WM__ClipAtParent(GUI_RECT *pr, WM_Obj *pWin)
     return TRUE;
 }
 
-/* çª—å£éƒ¨åˆ†åŒºåŸŸæ— æ•ˆåŒ–ï¼Œå†…éƒ¨è°ƒç”¨ */
+/* ´°¿Ú²¿·ÖÇøÓòÎŞĞ§»¯£¬ÄÚ²¿µ÷ÓÃ */
 static void _Invalidate1Abs(WM_Obj *pWin, GUI_RECT *pr)
 {
     if (pWin->Status & WM_WS_INVAILD) {
@@ -101,19 +101,19 @@ static void _Invalidate1Abs(WM_Obj *pWin, GUI_RECT *pr)
     }
 }
 
-/* é‡ç»˜ä¸€ä¸ªçª—å£ */
+/* ÖØ»æÒ»¸ö´°¿Ú */
 static void _PaintOne(WM_Obj *pWin)
 {
     GUI_CONTEXT Context;
 
     if (GUI_StartPaint(pWin, &Context) == GUI_OK) {
-        /* é‡ç»˜çª—å£ */
+        /* ÖØ»æ´°¿Ú */
         WM_SendMessage(pWin, WM_PAINT, 0);
         GUI_EndPaint(&Context);
     }
 }
 
-/* ç»˜åˆ¶çª—å£çš„é€æ˜å­çª—å£ */
+/* »æÖÆ´°¿ÚµÄÍ¸Ã÷×Ó´°¿Ú */
 static void _PaintTransChild(WM_Obj *pWin)
 {
     GUI_RECT r = pWin->InvalidRect;
@@ -122,12 +122,12 @@ static void _PaintTransChild(WM_Obj *pWin)
         if ((pWin->Status & WM_WS_TRANS)
             && GUI_RectOverlay(&pWin->InvalidRect, &pWin->Rect, &r)) {
             _PaintOne(pWin);
-            _PaintTransChild(pWin); /* åœ¨ç»˜åˆ¶å®ƒçš„é€æ˜å­çª—å£ */
+            _PaintTransChild(pWin); /* ÔÚ»æÖÆËüµÄÍ¸Ã÷×Ó´°¿Ú */
         }
     }
 }
 
-/* ç»˜åˆ¶çª—å£ä¹‹ä¸Šçš„æ‰€æœ‰é€æ˜çª—å£ */
+/* »æÖÆ´°¿ÚÖ®ÉÏµÄËùÓĞÍ¸Ã÷´°¿Ú */
 static void _PaintTransTop(WM_Obj *pWin)
 {
     WM_Obj *pParent;
@@ -144,7 +144,7 @@ static void _PaintTransTop(WM_Obj *pWin)
     }
 }
 
-/* é‡ç»˜æ‰€æœ‰çª—å£ */
+/* ÖØ»æËùÓĞ´°¿Ú */
 static void _PaintAll(void)
 {
     WM_Obj *pWin = _pRootWin;
@@ -156,12 +156,12 @@ static void _PaintAll(void)
         if (_WaitScreen()) {
             return;
         }
-        /* éå†å¹¶é‡ç»˜çª—å£ */
+        /* ±éÀú²¢ÖØ»æ´°¿Ú */
         while (__InvalidWindowNum && pWin) {
             GUI_LOCK();
-            if (pWin->Status & WM_WS_INVAILD) { /* çª—å£éœ€è¦é‡ç»˜ */
+            if (pWin->Status & WM_WS_INVAILD) { /* ´°¿ÚĞèÒªÖØ»æ */
                 _PaintOne(pWin);
-                pWin->Status &= ~(WM_WS_INVAILD); /* æ¸…é™¤çª—å£æ— æ•ˆæ ‡å¿— */
+                pWin->Status &= ~(WM_WS_INVAILD); /* Çå³ı´°¿ÚÎŞĞ§±êÖ¾ */
                 --__InvalidWindowNum;
                 _PaintTransChild(pWin);
                 _PaintTransTop(pWin);
@@ -174,36 +174,36 @@ static void _PaintAll(void)
     }
 }
 
-/* æ´¾å‘æ¶ˆæ¯ */
+/* ÅÉ·¢ÏûÏ¢ */
 static void WM__DispatchMessage(WM_MESSAGE *pMsg)
 {
     GUI_RESULT res = GUI_ERR;
 
-    /* GUI_ERRä¸º1ï¼Œåªè¦ä¸‹é¢å‡ºç°GUI_OK resåœ¨ä¸èµ‹å€¼ä¹‹åå°±ä¼šå˜æˆ0 */
-    res &= GUI_TouchPadMessageProc(pMsg); /* å¤„ç†è§¦æ‘¸äº‹ä»¶ */
-    res &= GUI_KeyMessageProc(pMsg);      /* å¤„ç†é”®ç›˜äº‹ä»¶ */
+    /* GUI_ERRÎª1£¬Ö»ÒªÏÂÃæ³öÏÖGUI_OK resÔÚÓë¸³ÖµÖ®ºó¾Í»á±ä³É0 */
+    res &= GUI_TouchPadMessageProc(pMsg); /* ´¦Àí´¥ÃşÊÂ¼ş */
+    res &= GUI_KeyMessageProc(pMsg);      /* ´¦Àí¼üÅÌÊÂ¼ş */
     if (res == GUI_ERR) {
-        WM__SendMessage(pMsg->hWin, pMsg); /* ç›´æ¥å‘é€åˆ°çª—å£ */
+        WM__SendMessage(pMsg->hWin, pMsg); /* Ö±½Ó·¢ËÍµ½´°¿Ú */
     }
 }
 
-/* é€šè¿‡æ‰§è¡Œå›è°ƒé‡ç»˜æ— æ•ˆçª—å£(æ‰€æœ‰å·¥ä½œ) */
+/* Í¨¹ıÖ´ĞĞ»Øµ÷ÖØ»æÎŞĞ§´°¿Ú(ËùÓĞ¹¤×÷) */
 void WM_Exec(void)
 {
     WM_MESSAGE Msg;
 
-    /* WMæ¶ˆæ¯ç¯ */
+    /* WMÏûÏ¢»· */
     while (GUI_GetMessage(&Msg) == GUI_OK) {
-        WM__DispatchMessage(&Msg); /* æ´¾å‘æ¶ˆæ¯ */
+        WM__DispatchMessage(&Msg); /* ÅÉ·¢ÏûÏ¢ */
     }
-    GUI_TimerHandler(); /* å¤„ç†å®šæ—¶å™¨ */
-    _PaintAll(); /* é‡ç»˜æ‰€æœ‰çª—å£ */
+    GUI_TimerHandler(); /* ´¦Àí¶¨Ê±Æ÷ */
+    _PaintAll(); /* ÖØ»æËùÓĞ´°¿Ú */
 }
 
 /*
- * è·å–çª—å£æœ‰æ•ˆçš„åŒºåŸŸå¤§å°
- * -è¯¥å‡½æ•°é€šè¿‡å°†ç›®æ ‡çª—å£çš„ä¸å®ƒæ‰€æœ‰çš„ç¥–å…ˆçª—å£çš„ç”¨æˆ·åŒºå–å¹¶é›†å¾—åˆ°æœ‰æ•ˆåŒºåŸŸ
- * -hWinä¸èƒ½æ˜¯NULL
+ * »ñÈ¡´°¿ÚÓĞĞ§µÄÇøÓò´óĞ¡
+ * -¸Ãº¯ÊıÍ¨¹ı½«Ä¿±ê´°¿ÚµÄÓëËüËùÓĞµÄ×æÏÈ´°¿ÚµÄÓÃ»§ÇøÈ¡²¢¼¯µÃµ½ÓĞĞ§ÇøÓò
+ * -hWin²»ÄÜÊÇNULL
  **/
 void WM_GetWindowAreaRect(WM_HWIN hWin, GUI_RECT *pRect)
 {
@@ -216,7 +216,7 @@ void WM_GetWindowAreaRect(WM_HWIN hWin, GUI_RECT *pRect)
     GUI_UNLOCK();
 }
 
-/* è·å¾—è£å‰ªåçš„çª—å£æ— æ•ˆåŒºåŸŸå¤§å°ï¼ŒhWinä¸èƒ½æ˜¯NULL */
+/* »ñµÃ²Ã¼ôºóµÄ´°¿ÚÎŞĞ§ÇøÓò´óĞ¡£¬hWin²»ÄÜÊÇNULL */
 void WM_GetTaliorInvalidRect(WM_HWIN hWin, GUI_RECT *pRect)
 {
     GUI_LOCK();
@@ -225,12 +225,12 @@ void WM_GetTaliorInvalidRect(WM_HWIN hWin, GUI_RECT *pRect)
     GUI_UNLOCK();
 }
 
-/* è·å¾—æ¯”æŸä¸ªçª—å£Zåºå°1çš„çª—å£ */
+/* »ñµÃ±ÈÄ³¸ö´°¿ÚZĞòĞ¡1µÄ´°¿Ú */
 WM_HWIN WM_GetFrontWindow(WM_HWIN hWin)
 {
     WM_Obj *pWin = _pRootWin;
 
-    if (hWin == _hRootWin) { /* æ ¹çª—å£Zåºæœ€å° */
+    if (hWin == _hRootWin) { /* ¸ù´°¿ÚZĞò×îĞ¡ */
         return NULL;
     }
     GUI_LOCK();
@@ -242,8 +242,8 @@ WM_HWIN WM_GetFrontWindow(WM_HWIN hWin)
 }
 
 /* 
- @ è·å¾—æŸä¸ªçª—å£æœ€é¡¶éƒ¨çš„å­çª—å£.
- @ å¦‚æœçª—å£æ‹¥æœ‰å­çª—å£åˆ™è¿”å›æœ€é¡¶éƒ¨çš„å­çª—å£,å¦åˆ™è¿”å›çª—å£è‡ªå·±. */
+ @ »ñµÃÄ³¸ö´°¿Ú×î¶¥²¿µÄ×Ó´°¿Ú.
+ @ Èç¹û´°¿ÚÓµÓĞ×Ó´°¿ÚÔò·µ»Ø×î¶¥²¿µÄ×Ó´°¿Ú,·ñÔò·µ»Ø´°¿Ú×Ô¼º. */
 WM_HWIN WM_GetTopChildWindow(WM_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
@@ -263,13 +263,13 @@ WM_HWIN WM_GetTopChildWindow(WM_HWIN hWin)
     return pWin;
 }
 
-/* è·å–Zåºæœ€é«˜çš„çª—å£çš„å¥æŸ„ */
+/* »ñÈ¡ZĞò×î¸ßµÄ´°¿ÚµÄ¾ä±ú */
 WM_HWIN WM_GetTopWindow(void)
 {
     return WM_GetTopChildWindow(_hRootWin);
 }
 
-/* å°†ä¸€ä¸ªçª—å£æ·»åŠ åˆ°ç»™å®šçˆ¶çª—å£ä¸‹çš„æœ€é¡¶éƒ¨ */
+/* ½«Ò»¸ö´°¿ÚÌí¼Óµ½¸ø¶¨¸¸´°¿ÚÏÂµÄ×î¶¥²¿ */
 void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent)
 {
     WM_Obj *pWin = hWin, *pObj;
@@ -278,17 +278,17 @@ void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent)
         return;
     }
     GUI_LOCK();
-    WM_Invalidate(WM_GetForegroundWindow()); /* å…ˆå°†ä¹‹å‰çš„å‰æ™¯çª—å£æ— æ•ˆåŒ– */
-    if (hParent == NULL) { /* hParentä¸ºNULLæ—¶ä½œä¸ºæ ¹çª—å£çš„å­çª—å£ */
+    WM_Invalidate(WM_GetForegroundWindow()); /* ÏÈ½«Ö®Ç°µÄÇ°¾°´°¿ÚÎŞĞ§»¯ */
+    if (hParent == NULL) { /* hParentÎªNULLÊ±×÷Îª¸ù´°¿ÚµÄ×Ó´°¿Ú */
         pObj = _pRootWin;
     } else {
         pObj = hParent;
     }
     pWin->hNext = NULL;
     pWin->hParent = pObj;
-    if (pObj->hFirstChild == NULL) { /* çˆ¶çª—å£æ²¡æœ‰å­çª—å£ */
+    if (pObj->hFirstChild == NULL) { /* ¸¸´°¿ÚÃ»ÓĞ×Ó´°¿Ú */
         pObj->hFirstChild = pWin;
-    } else { /* çˆ¶çª—å£å·²ç»æœ‰å­çª—å£ */
+    } else { /* ¸¸´°¿ÚÒÑ¾­ÓĞ×Ó´°¿Ú */
         pObj = pObj->hFirstChild;
         if (pObj->Status & WM_WS_STICK) {
             pWin->hNext = pObj;
@@ -303,62 +303,62 @@ void WM_AttachWindow(WM_HWIN hWin, WM_HWIN hParent)
             }
             pWin->hNext = pObj->hNext;
             pObj->hNext = pWin;
-            /* å–è¿™ä¸ªçª—å£Zåºæœ€é«˜çš„å­çª—å£ */
+            /* È¡Õâ¸ö´°¿ÚZĞò×î¸ßµÄ×Ó´°¿Ú */
             pObj = WM_GetTopChildWindow(pObj);
         }
     }
-    /* è¿æ¥é“¾è¡¨ */
+    /* Á¬½ÓÁ´±í */
     pWin = WM_GetTopChildWindow(hWin);
     pWin->hNextLine = pObj->hNextLine;
     pObj->hNextLine = hWin;
     GUI_UNLOCK();
 }
 
-/* å°†ä¸€ä¸ªçª—å£ä»çª—å£æ ‘ä¸­ç§»é™¤ */
+/* ½«Ò»¸ö´°¿Ú´Ó´°¿ÚÊ÷ÖĞÒÆ³ı */
 void WM_RemoveWindow(WM_HWIN hWin)
 {
     WM_Obj *pWin = hWin, *pObj;
     
-    /* çª—å£ä¸èƒ½ä¸ºNULL,æ ¹çª—å£æ— éœ€ç§»é™¤ */
+    /* ´°¿Ú²»ÄÜÎªNULL,¸ù´°¿ÚÎŞĞèÒÆ³ı */
     if (hWin == NULL || pWin->hParent == NULL) {
         return;
     }
     pObj = pWin->hParent;
     GUI_LOCK();
-    if (pObj->hFirstChild == pWin) { /* å®ƒæ˜¯çˆ¶çª—å£çš„ç¬¬ä¸€ä¸ªå­çª—å£ */
+    if (pObj->hFirstChild == pWin) { /* ËüÊÇ¸¸´°¿ÚµÄµÚÒ»¸ö×Ó´°¿Ú */
         pObj->hFirstChild = pWin->hNext; 
     } else {
         pObj = pObj->hFirstChild;
-        while (pObj->hNext != pWin) { /* ç›´åˆ°ç›®æ ‡çª—å£çš„å·¦å…„å¼Ÿ */
+        while (pObj->hNext != pWin) { /* Ö±µ½Ä¿±ê´°¿ÚµÄ×óĞÖµÜ */
             pObj = pObj->hNext;
         }
         pObj->hNext = pWin->hNext;
         pObj = WM_GetFrontWindow(pWin);
     }
-    /* å­¤ç«‹èŠ‚ç‚¹ */
+    /* ¹ÂÁ¢½Úµã */
     pWin->hParent = NULL;
     pWin->hNext = NULL;
-    /* è¿æ¥é“¾è¡¨ */
+    /* Á¬½ÓÁ´±í */
     pWin = WM_GetTopChildWindow(pWin);
     pObj->hNextLine = pWin->hNextLine;
     pWin->hNextLine = NULL;
     GUI_UNLOCK();
 }
 
-/* åˆ é™¤çª—å£ */
+/* É¾³ı´°¿Ú */
 void WM_DeleteWindow(WM_HWIN hWin)
 {
     WM_Obj *pWin = hWin, *pObj, *pFront;
 
-    if (hWin == NULL) { /* hWinä¸èƒ½ä¸ºNULL */
+    if (hWin == NULL) { /* hWin²»ÄÜÎªNULL */
         return;
     }
     GUI_LOCK();
-    /* è¢«é®æŒ¡çš„çª—å£æ— æ•ˆåŒ– */
+    /* ±»ÕÚµ²µÄ´°¿ÚÎŞĞ§»¯ */
     WM_InvalidCoverWindow(pWin, &pWin->Rect);
     pFront = WM_GetFrontHandle(pWin);
-    WM_RemoveWindow(pWin); /* å…ˆç§»é™¤çª—å£ */
-    GUI_ClipWindows(pFront); /* é‡æ–°è®¡ç®—å‰ªåˆ‡åŸŸ */
+    WM_RemoveWindow(pWin); /* ÏÈÒÆ³ı´°¿Ú */
+    GUI_ClipWindows(pFront); /* ÖØĞÂ¼ÆËã¼ôÇĞÓò */
     while (pWin) {
         pObj = pWin;
         pWin = pWin->hNextLine;
@@ -367,15 +367,15 @@ void WM_DeleteWindow(WM_HWIN hWin)
         GUI_DeleteWindowClipArea(pObj);
         GUI_Free(pObj);
     }
-    if (GUI_Context.hActive == hWin) { /* è¢«åˆ é™¤çš„æ˜¯æ´»åŠ¨çª—å£ */
+    if (GUI_Context.hActive == hWin) { /* ±»É¾³ıµÄÊÇ»î¶¯´°¿Ú */
         GUI_Context.hActive = NULL;
-        WM_SetActiveWindow(pFront); /* é‡æ–°è®¾ç½®æ´»åŠ¨çª—å£ */
-        WM_SetWindowFocus(pFront); /* è®¾ç½®ç„¦ç‚¹çª—å£ */
+        WM_SetActiveWindow(pFront); /* ÖØĞÂÉèÖÃ»î¶¯´°¿Ú */
+        WM_SetWindowFocus(pFront); /* ÉèÖÃ½¹µã´°¿Ú */
     }
     GUI_UNLOCK();
 }
 
-/* è®¾ç½®çª—å£çš„è¾“å…¥ç„¦ç‚¹ */
+/* ÉèÖÃ´°¿ÚµÄÊäÈë½¹µã */
 GUI_RESULT WM_SetWindowFocus(WM_HWIN hWin)
 {
     WM_HWIN hFocus;
@@ -385,10 +385,10 @@ GUI_RESULT WM_SetWindowFocus(WM_HWIN hWin)
         return GUI_ERR;
     }
     GUI_LOCK();
-    hFocus = WM_GetWindowFocus(); /* è·å–çª—å£ç„¦ç‚¹ */
+    hFocus = WM_GetWindowFocus(); /* »ñÈ¡´°¿Ú½¹µã */
     if (hWin != hFocus) {
-        WM_SendMessage(hFocus, WM_KILL_FOCUS, 0); /* å¤±å»ç„¦ç‚¹äº‹ä»¶ */
-        /* è®¾ç½®å½“å‰çª—å£ä¸ºè¾“å…¥ç„¦ç‚¹ */
+        WM_SendMessage(hFocus, WM_KILL_FOCUS, 0); /* Ê§È¥½¹µãÊÂ¼ş */
+        /* ÉèÖÃµ±Ç°´°¿ÚÎªÊäÈë½¹µã */
         Msg.hWinSrc = hWin;
         Msg.MsgId = WM_SET_FOCUS;
         Msg.Param = 1;
@@ -398,7 +398,7 @@ GUI_RESULT WM_SetWindowFocus(WM_HWIN hWin)
     return GUI_OK;
 } 
 
-/* è·å–çª—å£çš„è¾“å…¥ç„¦ç‚¹ */
+/* »ñÈ¡´°¿ÚµÄÊäÈë½¹µã */
 WM_HWIN WM_GetWindowFocus(void)
 {
     WM_MESSAGE Msg;
@@ -409,7 +409,7 @@ WM_HWIN WM_GetWindowFocus(void)
     return Msg.hWin;
 }
 
-/* è®¾ç½®æ´»åŠ¨çª—å£ */
+/* ÉèÖÃ»î¶¯´°¿Ú */
 GUI_RESULT WM_SetActiveWindow(WM_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
@@ -418,31 +418,31 @@ GUI_RESULT WM_SetActiveWindow(WM_HWIN hWin)
         return GUI_ERR;
     }
     GUI_LOCK();
-    if (GUI_Context.hActive != pWin) { /* æ´»åŠ¨çª—å£å‘ç”Ÿå˜æ›´ */
-        WM_SetForegroundWindow(pWin); /* è®¾ç½®ä¸ºå‰æ™¯çª—å£ */
-        WM_SendMessage(GUI_Context.hActive, WM_KILL_FOCUS, 0); /* å¤±å»ç„¦ç‚¹ */
-        if (pWin->hParent) { /* æ ¹çª—å£æˆ–è€…æ ¹çª—å£çš„ä¸€çº§å­çª—å£ */
+    if (GUI_Context.hActive != pWin) { /* »î¶¯´°¿Ú·¢Éú±ä¸ü */
+        WM_SetForegroundWindow(pWin); /* ÉèÖÃÎªÇ°¾°´°¿Ú */
+        WM_SendMessage(GUI_Context.hActive, WM_KILL_FOCUS, 0); /* Ê§È¥½¹µã */
+        if (pWin->hParent) { /* ¸ù´°¿Ú»òÕß¸ù´°¿ÚµÄÒ»¼¶×Ó´°¿Ú */
             while (pWin->hParent != _hRootWin) {
                 pWin = pWin->hParent;
             }
         }
         GUI_Context.hActive = pWin;
-        WM_Invalidate(GUI_Context.hActive); /* æ´»åŠ¨çª—å£æ— æ•ˆåŒ– */
+        WM_Invalidate(GUI_Context.hActive); /* »î¶¯´°¿ÚÎŞĞ§»¯ */
     }
     GUI_UNLOCK();
     return GUI_OK;
 }
 
-/* è·å–æ´»åŠ¨çª—å£å¥æŸ„ */
+/* »ñÈ¡»î¶¯´°¿Ú¾ä±ú */
 WM_HWIN WM_GetActiveWindow(void)
 {
     return GUI_Context.hActive;
 }
 
 /*
- * è®¾ç½®å‰æ™¯çª—å£
- * hWin:è¦è®¾ç½®çš„çª—å£å¥æŸ„
- * è¿”å›å€¼:GUI_OK,æ­£å¸¸;GUI_ERR,é”™è¯¯,æ²¡æœ‰è¯¥çª—å£æˆ–çª—å£ä¸ºæ ¹çª—å£
+ * ÉèÖÃÇ°¾°´°¿Ú
+ * hWin:ÒªÉèÖÃµÄ´°¿Ú¾ä±ú
+ * ·µ»ØÖµ:GUI_OK,Õı³£;GUI_ERR,´íÎó,Ã»ÓĞ¸Ã´°¿Ú»ò´°¿ÚÎª¸ù´°¿Ú
  **/
 GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin)
 {
@@ -452,7 +452,7 @@ GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin)
         return GUI_ERR;
     }
     GUI_LOCK();
-    /* å…ˆæ‰¾åˆ°å®ƒä½äºæ ¹çª—å£ä¸‹çš„ç¥–å…ˆ */
+    /* ÏÈÕÒµ½ËüÎ»ÓÚ¸ù´°¿ÚÏÂµÄ×æÏÈ */
     while (pWin && pWin->hParent != _pRootWin) {
         pWin = pWin->hParent;
     }
@@ -461,14 +461,14 @@ GUI_RESULT WM_SetForegroundWindow(WM_HWIN hWin)
     return GUI_OK;
 }
 
-/* è·å–å‰æ™¯çª—å£çš„å¥æŸ„ */
+/* »ñÈ¡Ç°¾°´°¿ÚµÄ¾ä±ú */
 WM_HWIN WM_GetForegroundWindow(void)
 {
     WM_Obj *pWin = _RootWin.hFirstChild;
 
     if (pWin) {
         GUI_LOCK();
-        while (pWin->hNext != NULL) { /* éå†åŒå±èŠ‚ç‚¹ */
+        while (pWin->hNext != NULL) { /* ±éÀúÍ¬Êô½Úµã */
             pWin = pWin->hNext;
         }
         GUI_UNLOCK();
@@ -477,8 +477,8 @@ WM_HWIN WM_GetForegroundWindow(void)
 }
 
 /*
- @ å°†ä¸€ä¸ªçª—å£ç§»åŠ¨åˆ°æœ€çˆ¶çª—å£ä¸‹çš„æœ€åº•éƒ¨.
- @ è°ƒç”¨æ­¤å‡½æ•°ä¸ä¼šä½¿çª—å£å¤±å»æ´»åŠ¨å±æ€§(å¦‚æœæœ‰çš„è¯).
+ @ ½«Ò»¸ö´°¿ÚÒÆ¶¯µ½×î¸¸´°¿ÚÏÂµÄ×îµ×²¿.
+ @ µ÷ÓÃ´Ëº¯Êı²»»áÊ¹´°¿ÚÊ§È¥»î¶¯ÊôĞÔ(Èç¹ûÓĞµÄ»°).
  */
 void WM_MoveToBottom(WM_HWIN hWin)
 {
@@ -491,31 +491,31 @@ void WM_MoveToBottom(WM_HWIN hWin)
     pObj = pParent->hFirstChild;
     if (pObj->Status & WM_WS_BACKGND
         || pWin->Status & (WM_WS_BACKGND | WM_WS_STICK)) {
-        return; /* å·²æœ‰é”å®šå±æ€§, æ— æ³•å†æŠŠçª—å£ç§»åŠ¨åˆ°æœ€åº•éƒ¨ */
+        return; /* ÒÑÓĞËø¶¨ÊôĞÔ, ÎŞ·¨ÔÙ°Ñ´°¿ÚÒÆ¶¯µ½×îµ×²¿ */
     }
     GUI_LOCK();
-    WM_InvalidCoverWindow(pWin, &pWin->Rect); /* è¢«é®æŒ¡çš„çª—å£æ— æ•ˆåŒ– */
+    WM_InvalidCoverWindow(pWin, &pWin->Rect); /* ±»ÕÚµ²µÄ´°¿ÚÎŞĞ§»¯ */
     pFront = WM_GetFrontHandle(hWin);
-    WM_RemoveWindow(pWin); /* å…ˆç§»é™¤çª—å£ */
+    WM_RemoveWindow(pWin); /* ÏÈÒÆ³ı´°¿Ú */
     pObj = pParent->hFirstChild;
-    /* è¿æ¥çˆ¶çª—å£ */
+    /* Á¬½Ó¸¸´°¿Ú */
     pParent->hFirstChild = pWin;
     pParent->hNextLine = pWin;
     pWin->hParent = pParent;
-    /* è¿æ¥å…„å¼Ÿ */
+    /* Á¬½ÓĞÖµÜ */
     pWin->hNext = pObj;
     pWin = WM_GetTopChildWindow(pWin);
     pWin->hNextLine = pObj;
-    GUI_ClipWindows(hWin); /* é‡æ–°è®¡ç®—å‰ªåˆ‡åŸŸ */
-    WM_InvalidTree(hWin); /* çª—å£åŠå…¶æ‰€æœ‰çš„å­çª—å£æ— æ•ˆåŒ– */
-    GUI_ClipWindows(pFront); /* é‡æ–°è®¡ç®—å‰ªåˆ‡åŸŸ */
-    WM_InvalidTree(pWin); /* ä¹‹å‰è¢«é®æŒ¡çš„çª—å£é‡æ–°è®¡ç®—å‰ªåˆ‡åŸŸ */
+    GUI_ClipWindows(hWin); /* ÖØĞÂ¼ÆËã¼ôÇĞÓò */
+    WM_InvalidTree(hWin); /* ´°¿Ú¼°ÆäËùÓĞµÄ×Ó´°¿ÚÎŞĞ§»¯ */
+    GUI_ClipWindows(pFront); /* ÖØĞÂ¼ÆËã¼ôÇĞÓò */
+    WM_InvalidTree(pWin); /* Ö®Ç°±»ÕÚµ²µÄ´°¿ÚÖØĞÂ¼ÆËã¼ôÇĞÓò */
     GUI_UNLOCK();
 }
 
 /* 
- @ å°†ä¸€ä¸ªçª—å£ç§»åŠ¨åˆ°çˆ¶çª—å£ä¸‹çš„æœ€é¡¶éƒ¨
- @ è°ƒç”¨æ­¤å‡½æ•°ä¸ä¼šæ”¹å˜çª—å£åŸæœ‰çš„æ´»åŠ¨å±æ€§.
+ @ ½«Ò»¸ö´°¿ÚÒÆ¶¯µ½¸¸´°¿ÚÏÂµÄ×î¶¥²¿
+ @ µ÷ÓÃ´Ëº¯Êı²»»á¸Ä±ä´°¿ÚÔ­ÓĞµÄ»î¶¯ÊôĞÔ.
  */
 void WM_MoveToTop(WM_HWIN hWin)
 {
@@ -528,15 +528,15 @@ void WM_MoveToTop(WM_HWIN hWin)
     if (pWin->hNext
         && !(pWin->Status & (WM_WS_STICK | WM_WS_BACKGND))) {
         pParent = pWin->hParent;
-        WM_RemoveWindow(pWin); /* å…ˆç§»é™¤çª—å£ */
-        WM_AttachWindow(pWin, pParent); /* æ’å…¥çª—å£åˆ°æœ€å */
-        GUI_ClipWindows(pWin); /* é‡æ–°è®¡ç®—å‰ªåˆ‡åŸŸ */
-        WM_InvalidTree(pWin); /* çª—å£åŠå…¶æ‰€æœ‰çš„å­çª—å£æ— æ•ˆåŒ– */
+        WM_RemoveWindow(pWin); /* ÏÈÒÆ³ı´°¿Ú */
+        WM_AttachWindow(pWin, pParent); /* ²åÈë´°¿Úµ½×îºó */
+        GUI_ClipWindows(pWin); /* ÖØĞÂ¼ÆËã¼ôÇĞÓò */
+        WM_InvalidTree(pWin); /* ´°¿Ú¼°ÆäËùÓĞµÄ×Ó´°¿ÚÎŞĞ§»¯ */
     }
     GUI_UNLOCK();
 }
 
-/* å°†çª—å£ç½®é¡¶, åŒæ—¶ä¼šè®©çª—å£å˜ä¸ºæ´»åŠ¨çª—å£ */
+/* ½«´°¿ÚÖÃ¶¥, Í¬Ê±»áÈÃ´°¿Ú±äÎª»î¶¯´°¿Ú */
 void WM_SetStickWindow(WM_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
@@ -551,7 +551,7 @@ void WM_SetStickWindow(WM_HWIN hWin)
     GUI_UNLOCK();
 }
 
-/* å–æ¶ˆç½®é¡¶çª—å£ */
+/* È¡ÏûÖÃ¶¥´°¿Ú */
 void WM_ResetStickWindow(WM_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
@@ -566,9 +566,9 @@ void WM_ResetStickWindow(WM_HWIN hWin)
 }
 
 /*
- @ å°†çª—å£è®¾ç½®ä¸ºèƒŒæ™¯çª—å£, çª—å£å¿…é¡»æ˜¯æ ¹çª—å£çš„ä¸€çº§å­çª—å£. æ¯ä¸€çº§çª—å£ä¸­
- @ æœ€å¤šåªå­˜åœ¨ä¸€ä¸ªèƒŒæ™¯çª—å£, è°ƒç”¨æœ¬å‡½æ•°ä¼šæ›¿æ¢å·²ç»å­˜åœ¨çš„èƒŒæ™¯çª—å£(å¦‚æœå­˜åœ¨).
- @ èƒŒæ™¯çª—å£å°†ä¸€ç›´ç½®äºåŒçº§åˆ«çª—å£çš„åº•éƒ¨. 
+ @ ½«´°¿ÚÉèÖÃÎª±³¾°´°¿Ú, ´°¿Ú±ØĞëÊÇ¸ù´°¿ÚµÄÒ»¼¶×Ó´°¿Ú. Ã¿Ò»¼¶´°¿ÚÖĞ
+ @ ×î¶àÖ»´æÔÚÒ»¸ö±³¾°´°¿Ú, µ÷ÓÃ±¾º¯Êı»áÌæ»»ÒÑ¾­´æÔÚµÄ±³¾°´°¿Ú(Èç¹û´æÔÚ).
+ @ ±³¾°´°¿Ú½«Ò»Ö±ÖÃÓÚÍ¬¼¶±ğ´°¿ÚµÄµ×²¿. 
  */
 void WM_SetBackgroundWindow(WM_HWIN hWin)
 {
@@ -590,27 +590,27 @@ void WM_SetBackgroundWindow(WM_HWIN hWin)
 }
 
 /*
- * åˆ›å»ºä¸€ä¸ªçª—å£ä½œä¸ºæŒ‡å®šçª—å£çš„å­çª—å£
- * å½“hParentä¸ºNULLæ—¶,çª—å£å°†æ˜¯RootWindowçš„å­çª—å£
+ * ´´½¨Ò»¸ö´°¿Ú×÷ÎªÖ¸¶¨´°¿ÚµÄ×Ó´°¿Ú
+ * µ±hParentÎªNULLÊ±,´°¿Ú½«ÊÇRootWindowµÄ×Ó´°¿Ú
  **/
-WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* æ©«åæ ‡ */
-                               i_16 y0,             /* çºµåæ ‡ */
-                               u_16 xSize,          /* å®½åº¦ */
-                               u_16 ySize,          /* é«˜åº¦ */
-                               WM_HWIN hParent,     /* çˆ¶çª—å£å¥æŸ„ */
-                               u_16 Style,          /* çª—å£é£æ ¼ */
-                               u_16 Id,             /* çª—å£ID */
-                               WM_CALLBACK *WinCb,  /* çª—å£åŠŸèƒ½å›è°ƒå‡½æ•° */
-                               u_32 bytes)          /* çª—å£ç»“æ„ä½“å¤šå‡ºçš„å­—èŠ‚ */
+WM_HWIN WM_CreateWindowAsChild(int x0,             /* ™M×ø±ê */
+                               int y0,             /* ×İ×ø±ê */
+                               int xSize,          /* ¿í¶È */
+                               int ySize,          /* ¸ß¶È */
+                               WM_HWIN hParent,     /* ¸¸´°¿Ú¾ä±ú */
+                               int Style,          /* ´°¿Ú·ç¸ñ */
+                               int Id,             /* ´°¿ÚID */
+                               WM_CALLBACK *WinCb,  /* ´°¿Ú¹¦ÄÜ»Øµ÷º¯Êı */
+                               u_32 bytes)          /* ´°¿Ú½á¹¹Ìå¶à³öµÄ×Ö½Ú */
 {
     WM_Obj *pObj, *pParent = hParent;
 
     GUI_LOCK();
-    /* æ£€æŸ¥çª—å£IDæ˜¯å¦å·²ç»æ³¨å†Œ */
+    /* ¼ì²é´°¿ÚIDÊÇ·ñÒÑ¾­×¢²á */
     pObj = WM_GetWindowHandle(Id);
     if (pObj != NULL) {
-        WM_SetActiveWindow(pObj); /* å°†å·²ç»æ³¨å†Œçš„çª—å£æ”¾åˆ°æœ€å‰ */
-        WM_SetWindowFocus(pObj); /* è®¾ç½®çª—å£ç„¦ç‚¹ */
+        WM_SetActiveWindow(pObj); /* ½«ÒÑ¾­×¢²áµÄ´°¿Ú·Åµ½×îÇ° */
+        WM_SetWindowFocus(pObj); /* ÉèÖÃ´°¿Ú½¹µã */
         GUI_UNLOCK();
         return NULL;
     }
@@ -632,9 +632,9 @@ WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* æ©«åæ ‡ */
     pObj->Rect.y0 = y0;
     pObj->Rect.x1 = x0 + xSize - 1;
     pObj->Rect.y1 = y0 + ySize - 1;
-    WM_AttachWindow(pObj, pParent); /* æ³¨å†Œåˆ°çˆ¶çª—å£ */
-    GUI_ClipNewWindow(pObj); /* æ›´æ–°å‰ªåˆ‡åŸŸ */
-    WM_SetActiveWindow(pObj); /* è®¾ç½®ä¸ºæ´»åŠ¨çª—å£ */
+    WM_AttachWindow(pObj, pParent); /* ×¢²áµ½¸¸´°¿Ú */
+    GUI_ClipNewWindow(pObj); /* ¸üĞÂ¼ôÇĞÓò */
+    WM_SetActiveWindow(pObj); /* ÉèÖÃÎª»î¶¯´°¿Ú */
     WM_Invalidate(pObj);
     if (Style & WM_WS_STICK) {
         WM_SetStickWindow(pObj);
@@ -645,7 +645,7 @@ WM_HWIN WM_CreateWindowAsChild(i_16 x0,             /* æ©«åæ ‡ */
     return pObj;
 }
 
-/* é€æ˜çª—å£æ— æ•ˆåŒ– */
+/* Í¸Ã÷´°¿ÚÎŞĞ§»¯ */
 static void _InvalidateTrans(WM_Obj *pWin, GUI_RECT *pr)
 {
     int Status;
@@ -661,19 +661,19 @@ static void _InvalidateTrans(WM_Obj *pWin, GUI_RECT *pr)
         return;
     }
     if (Status & WM_WS_TRANS) {
-        _InvalidateTrans(pParent, pr); /* çˆ¶çª—å£æ˜¯é€æ˜çª—å£ */
+        _InvalidateTrans(pParent, pr); /* ¸¸´°¿ÚÊÇÍ¸Ã÷´°¿Ú */
     } else {
-        _Invalidate1Abs(pParent, pr); /* å…ˆæŠŠçˆ¶çª—å£æ— æ•ˆåŒ– */
+        _Invalidate1Abs(pParent, pr); /* ÏÈ°Ñ¸¸´°¿ÚÎŞĞ§»¯ */
     }
-    /* çˆ¶çª—å£æ‰€æœ‰çš„å­çª—å£æ— æ•ˆåŒ– */
+    /* ¸¸´°¿ÚËùÓĞµÄ×Ó´°¿ÚÎŞĞ§»¯ */
     for (pWin = pParent->hFirstChild; pWin && pWin != pStop;) {
         ri = r;
         if (WM__ClipAtParent(&ri, pWin)) {
-            if (!(pWin->Status & WM_WS_TRANS)) { /* é€æ˜çª—å£ä¸ç®¡ */
+            if (!(pWin->Status & WM_WS_TRANS)) { /* Í¸Ã÷´°¿Ú²»¹Ü */
                 _Invalidate1Abs(pWin, &ri);
             }
             pWin = pWin->hNextLine;
-        } else { /* è¯¥çª—å£ä¸æ— æ•ˆåŒºåŸŸä¸ç›¸äº¤ï¼Œæ— éœ€è®¡ç®—å®ƒçš„å­çª—å£ */
+        } else { /* ¸Ã´°¿ÚÓëÎŞĞ§ÇøÓò²»Ïà½»£¬ÎŞĞè¼ÆËãËüµÄ×Ó´°¿Ú */
             if (pWin->hNext) {
                 pWin = pWin->hNext;
             } else {
@@ -683,7 +683,7 @@ static void _InvalidateTrans(WM_Obj *pWin, GUI_RECT *pr)
     }
 }
 
-/* çª—å£éƒ¨åˆ†åŒºåŸŸæ— æ•ˆåŒ– */
+/* ´°¿Ú²¿·ÖÇøÓòÎŞĞ§»¯ */
 void WM_InvalidateRect(WM_HWIN hWin, GUI_RECT *pRect)
 {
     WM_Obj *pWin;
@@ -697,7 +697,7 @@ void WM_InvalidateRect(WM_HWIN hWin, GUI_RECT *pRect)
         } else {
             r = *pRect;
         }
-        if (WM__ClipAtParent(&r, pWin)) { /* æ— æ•ˆåŒºåŸŸè£å‰ªä¸ºçª—å£å¯è§åŒºåŸŸ */
+        if (WM__ClipAtParent(&r, pWin)) { /* ÎŞĞ§ÇøÓò²Ã¼ôÎª´°¿Ú¿É¼ûÇøÓò */
             if (pWin->Status & WM_WS_TRANS) {
                 _InvalidateTrans(pWin, &r);
             } else {
@@ -708,13 +708,13 @@ void WM_InvalidateRect(WM_HWIN hWin, GUI_RECT *pRect)
     }
 }
 
-/* æ•´ä¸ªçª—å£æ— æ•ˆåŒ– */
+/* Õû¸ö´°¿ÚÎŞĞ§»¯ */
 void WM_Invalidate(WM_HWIN hWin)
 {
     WM_InvalidateRect(hWin, NULL);
 }
 
-/* å°†ä¸€ä¸ªçª—å£åŠå…¶å­çª—å£æ— æ•ˆåŒ– */
+/* ½«Ò»¸ö´°¿Ú¼°Æä×Ó´°¿ÚÎŞĞ§»¯ */
 GUI_RESULT WM_InvalidTree(WM_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
@@ -723,7 +723,7 @@ GUI_RESULT WM_InvalidTree(WM_HWIN hWin)
         return GUI_ERR;
     }
     GUI_LOCK();
-    /* æ‰¾åˆ°éå†å­çª—å£çš„ç»ˆç‚¹ */
+    /* ÕÒµ½±éÀú×Ó´°¿ÚµÄÖÕµã */
     hWin = WM__FindChildEnd(pWin);
     while (pWin && pWin != hWin) {
         WM_InvalidateRect(pWin, NULL);
@@ -733,22 +733,22 @@ GUI_RESULT WM_InvalidTree(WM_HWIN hWin)
     return GUI_OK;
 }
 
-/* è·å–çª—å£çš„å°ºå¯¸ */
+/* »ñÈ¡´°¿ÚµÄ³ß´ç */
 GUI_RECT * WM_GetWindowRect(WM_HWIN hWin)
 {
     return &((WM_Obj*)hWin)->Rect;
 }
 
-/* è·å–çª—å£æ— æ•ˆåŒºåŸŸ */
+/* »ñÈ¡´°¿ÚÎŞĞ§ÇøÓò */
 GUI_RECT * WM_GetWindowInvalidRect(WM_HWIN hWin)
 {
     return &((WM_Obj*)hWin)->InvalidRect;
 }
 
 /*
- * åœ¨çª—å£æ ‘ä¸­å¯»æ‰¾ä¸€ä¸ªçª—å£
- * è¿”å›å€¼:0,æ²¡æœ‰è¿™ä¸ªçª—å£;1,æœ‰è¿™ä¸ªçª—å£
- * å¤–éƒ¨è°ƒç”¨
+ * ÔÚ´°¿ÚÊ÷ÖĞÑ°ÕÒÒ»¸ö´°¿Ú
+ * ·µ»ØÖµ:0,Ã»ÓĞÕâ¸ö´°¿Ú;1,ÓĞÕâ¸ö´°¿Ú
+ * Íâ²¿µ÷ÓÃ
  **/
 GUI_RESULT WM_FindWindow(WM_HWIN hWin)
 {
@@ -756,30 +756,30 @@ GUI_RESULT WM_FindWindow(WM_HWIN hWin)
     
     if (pWin) {
         GUI_LOCK();
-        while (pWin && pWin != hWin) { /* éå†çª—å£æ ‘ */
+        while (pWin && pWin != hWin) { /* ±éÀú´°¿ÚÊ÷ */
             pWin = pWin->hNextLine;
         }
         GUI_UNLOCK();
         if (pWin == hWin) {
-            return GUI_OK; /* æ‰¾åˆ°äº†çª—å£ */
+            return GUI_OK; /* ÕÒµ½ÁË´°¿Ú */
         }
     }
-    return GUI_ERR; /* ä¸å­˜åœ¨è¯¥çª—å£ */
+    return GUI_ERR; /* ²»´æÔÚ¸Ã´°¿Ú */
 }
 
-/* è·å¾—æŒ‡å®šIDçš„å­çª—å£å¥æŸ„ */
-WM_HWIN WM_GetDialogItem(WM_HWIN hWin, u_16 Id)
+/* »ñµÃÖ¸¶¨IDµÄ×Ó´°¿Ú¾ä±ú */
+WM_HWIN WM_GetDialogItem(WM_HWIN hWin, int Id)
 {
     WM_Obj *pWin = hWin;
 
-    /* WM_NULL_IDä¸å¯å¯»æ‰¾ */
+    /* WM_NULL_ID²»¿ÉÑ°ÕÒ */
     if (Id == WM_NULL_ID) {
         return NULL;
     }
     GUI_LOCK();
     if (pWin && pWin->hFirstChild) {
-        pWin = pWin->hFirstChild; /* ä»å­çª—å£å¼€å§‹å¯»æ‰¾ */
-        /* æ‰¾åˆ°éå†å­çª—å£çš„ç»ˆç‚¹ */
+        pWin = pWin->hFirstChild; /* ´Ó×Ó´°¿Ú¿ªÊ¼Ñ°ÕÒ */
+        /* ÕÒµ½±éÀú×Ó´°¿ÚµÄÖÕµã */
         hWin = WM__FindChildEnd(hWin);
         while (pWin && pWin->Id != Id && pWin != hWin) {
             pWin = pWin->hNextLine;
@@ -791,25 +791,25 @@ WM_HWIN WM_GetDialogItem(WM_HWIN hWin, u_16 Id)
     return pWin;
 }
 
-/* è·å¾—æŒ‡å®šIDçš„çª—å£å¥æŸ„ */
-WM_HWIN WM_GetWindowHandle(u_16 Id)
+/* »ñµÃÖ¸¶¨IDµÄ´°¿Ú¾ä±ú */
+WM_HWIN WM_GetWindowHandle(int Id)
 {
     WM_Obj *pWin = _pRootWin;
 
-    /* WM_NULL_IDä¸å¯å¯»æ‰¾ */
+    /* WM_NULL_ID²»¿ÉÑ°ÕÒ */
     if (Id == WM_NULL_ID) {
         return NULL;
     }
     GUI_LOCK();
-    while (pWin && pWin->Id != Id) { /* éå†çª—å£ */
+    while (pWin && pWin->Id != Id) { /* ±éÀú´°¿Ú */
         pWin = pWin->hNextLine;
     }
     GUI_UNLOCK();
     return pWin;
 }
 
-/* è·å–æ§ä»¶ID */
-u_16 WM_GetDialogId(WM_HWIN hWin)
+/* »ñÈ¡¿Ø¼şID */
+int WM_GetDialogId(WM_HWIN hWin)
 {
     if (hWin) {
         return ((WM_Obj*)(hWin))->Id;
@@ -818,47 +818,47 @@ u_16 WM_GetDialogId(WM_HWIN hWin)
 }
 
 /*
- * è·å¾—åœ¨è¾“å…¥åæ ‡ä¸‹æš´éœ²çš„çª—å£(è¢«æŒ‡å®šåæ ‡é€‰ä¸­çš„çª—å£).
- * è¿”å›å€¼:é€‰ä¸­çª—å£çš„å¥æŸ„.
+ * »ñµÃÔÚÊäÈë×ø±êÏÂ±©Â¶µÄ´°¿Ú(±»Ö¸¶¨×ø±êÑ¡ÖĞµÄ´°¿Ú).
+ * ·µ»ØÖµ:Ñ¡ÖĞ´°¿ÚµÄ¾ä±ú.
  **/
-WM_HWIN WM_GetExposedWindow(u_16 x, u_16 y)
+WM_HWIN WM_GetExposedWindow(int x, int y)
 {
     WM_Obj *p1 = _pRootWin, *p2 = NULL, *pWin = NULL;
-    GUI_RECT r, rParent = p1->Rect; /* æ ¹çª—å£çš„çŸ©å½¢ */
+    GUI_RECT r, rParent = p1->Rect; /* ¸ù´°¿ÚµÄ¾ØĞÎ */
 
     GUI_LOCK(); 
-    /* æ‰¾åˆ°åŒçº§åˆ«ä¸­Zåºæœ€é«˜çš„é€‰ä¸­çª—å£ï¼Œç„¶åæ£€æŸ¥å®ƒçš„æ˜¯å¦æœ‰å­©å­æˆ–å­©å­ä¸­æ˜¯å¦æœ‰é€‰ä¸­çª—å£ï¼Œ
-       å¦‚æœå®ƒæ²¡æœ‰å­©å­æˆ–å­©å­ä¸­æ²¡æœ‰é€‰ä¸­çª—å£åˆ™è¿”å›è¿™ä¸ªçª—å£ï¼Œæœ‰åˆ™ç»§ç»­å‘çª—å£æ ‘æ·±å¤„å¯»æ‰¾. */
+    /* ÕÒµ½Í¬¼¶±ğÖĞZĞò×î¸ßµÄÑ¡ÖĞ´°¿Ú£¬È»ºó¼ì²éËüµÄÊÇ·ñÓĞº¢×Ó»òº¢×ÓÖĞÊÇ·ñÓĞÑ¡ÖĞ´°¿Ú£¬
+       Èç¹ûËüÃ»ÓĞº¢×Ó»òº¢×ÓÖĞÃ»ÓĞÑ¡ÖĞ´°¿ÚÔò·µ»ØÕâ¸ö´°¿Ú£¬ÓĞÔò¼ÌĞøÏò´°¿ÚÊ÷Éî´¦Ñ°ÕÒ. */
     do {
-        while (p1) { /* éå†åŒçº§çª—å£ */
-            /* è®¡ç®—çª—å£åœ¨è¢«ç¥–å…ˆçª—å£è£å‰ªä¹‹åçš„çŸ©å½¢ï¼ˆæš´éœ²çŸ©å½¢ï¼‰ï¼Œ
-               ç„¶åæ£€æŸ¥è¿™ä¸ªçª—å£æ˜¯å¦è¢«è¾“å…¥åæ ‡é€‰ä¸­. */
+        while (p1) { /* ±éÀúÍ¬¼¶´°¿Ú */
+            /* ¼ÆËã´°¿ÚÔÚ±»×æÏÈ´°¿Ú²Ã¼ôÖ®ºóµÄ¾ØĞÎ£¨±©Â¶¾ØĞÎ£©£¬
+               È»ºó¼ì²éÕâ¸ö´°¿ÚÊÇ·ñ±»ÊäÈë×ø±êÑ¡ÖĞ. */
             if (GUI_RectOverlay(&r, &p1->Rect, &rParent)) {
                 if (GUI_CheckPointAtRect(x, y, &r)) {
-                    p2 = p1; /* è®°å½•é€‰ä¸­çª—å£ */
+                    p2 = p1; /* ¼ÇÂ¼Ñ¡ÖĞ´°¿Ú */
                 }
             }
             p1 = p1->hNext;
-        } /* å¾ªç¯ç»“æŸä¹‹åp2å³ä¸ºZåºæœ€é«˜çš„è¢«é€‰ä¸­çª—å£ */
-        if (p2 == pWin) { /* å­çª—å£æ²¡ä¸­æ²¡æœ‰é€‰ä¸­çª—å£ */
+        } /* Ñ­»·½áÊøÖ®ºóp2¼´ÎªZĞò×î¸ßµÄ±»Ñ¡ÖĞ´°¿Ú */
+        if (p2 == pWin) { /* ×Ó´°¿ÚÃ»ÖĞÃ»ÓĞÑ¡ÖĞ´°¿Ú */
             break;
         }
-        pWin = p2; /* è®°å½•ç›®å‰Zåºæœ€é«˜çš„é€‰ä¸­çª—å£ */
-        p1 = pWin->hFirstChild; /* æ¥ä¸‹æ¥æ£€æŸ¥é€‰ä¸­çª—å£çš„å­çª—å£ */
-        /* ä¸‹ä¸€çº§çª—å£çš„æš´éœ²çŸ©å½¢ç”¨å½“å‰é€‰ä¸­çª—å£çš„æš´éœ²çŸ©å½¢æ¥è®¡ç®— */
+        pWin = p2; /* ¼ÇÂ¼Ä¿Ç°ZĞò×î¸ßµÄÑ¡ÖĞ´°¿Ú */
+        p1 = pWin->hFirstChild; /* ½ÓÏÂÀ´¼ì²éÑ¡ÖĞ´°¿ÚµÄ×Ó´°¿Ú */
+        /* ÏÂÒ»¼¶´°¿ÚµÄ±©Â¶¾ØĞÎÓÃµ±Ç°Ñ¡ÖĞ´°¿ÚµÄ±©Â¶¾ØĞÎÀ´¼ÆËã */
         GUI_RectOverlay(&rParent, &rParent, &pWin->Rect);
-    } while (p1); /* é€‰ä¸­çª—å£æ²¡æœ‰å­çª—å£ï¼Œç»“æŸå¾ªç¯ */
+    } while (p1); /* Ñ¡ÖĞ´°¿ÚÃ»ÓĞ×Ó´°¿Ú£¬½áÊøÑ­»· */
     GUI_UNLOCK();
     return pWin;
 }
 
-/* è·å–çˆ¶çª—å£å¥æŸ„ */
+/* »ñÈ¡¸¸´°¿Ú¾ä±ú */
 WM_HWIN WM_GetParentHandle(WM_HWIN hWin)
 {
     return ((WM_Obj*)hWin)->hParent;
 }
 
-/* è·å–æŸä¸ªçª—å£çš„æ¡Œé¢çª—å£ */
+/* »ñÈ¡Ä³¸ö´°¿ÚµÄ×ÀÃæ´°¿Ú */
 WM_HWIN WM_GetDsektopWindow(WM_HWIN hWin)
 {
     WM_Obj *pWin = hWin;
@@ -872,7 +872,7 @@ WM_HWIN WM_GetDsektopWindow(WM_HWIN hWin)
     return pWin;
 }
 
-/* è·å–çª—å£çš„å‰ä¸€ä¸ªèŠ‚ç‚¹ */
+/* »ñÈ¡´°¿ÚµÄÇ°Ò»¸ö½Úµã */
 WM_HWIN WM_GetFrontHandle(WM_HWIN hWin)
 {
     WM_Obj *pObj = hWin;
@@ -889,56 +889,56 @@ WM_HWIN WM_GetFrontHandle(WM_HWIN hWin)
     return pObj;
 }
 
-/* å°†è¢«ä¸€ä¸ªçª—å£é®ç›–çš„çª—å£åŠå…¶å­çª—å£æ— æ•ˆåŒ–ï¼Œ
- * ä¾‹å¦‚åœ¨åˆ é™¤çª—å£æ—¶éœ€è¦æŠŠå°†è¦è¢«åˆ é™¤çš„çª—å£é®æŒ¡çš„çª—å£æ— æ•ˆåŒ– 
+/* ½«±»Ò»¸ö´°¿ÚÕÚ¸ÇµÄ´°¿Ú¼°Æä×Ó´°¿ÚÎŞĞ§»¯£¬
+ * ÀıÈçÔÚÉ¾³ı´°¿ÚÊ±ĞèÒª°Ñ½«Òª±»É¾³ıµÄ´°¿ÚÕÚµ²µÄ´°¿ÚÎŞĞ§»¯ 
  **/
 void WM_InvalidCoverWindow(WM_HWIN hWin, GUI_RECT *pRect)
 {
     WM_Obj *p = hWin;
 
-    /* hWinä¸èƒ½ä¸ºNULL,ä¹Ÿä¸èƒ½æ˜¯RootWindow */
+    /* hWin²»ÄÜÎªNULL,Ò²²»ÄÜÊÇRootWindow */
     if (p == NULL && p->hParent == NULL) { 
         return;
     }
-    /* ç©ºçŸ©å½¢ç›´æ¥è¿”å› */
+    /* ¿Õ¾ØĞÎÖ±½Ó·µ»Ø */
     if (GUI_CheckRectNull(pRect) == FALSE) {
         return;
     }
     GUI_LOCK();
-    /*è¿™ä¸ªçª—å£æœ€å¤šåªèƒ½é®ç›–åˆ°å®ƒçš„çˆ¶çª—å£*/
+    /*Õâ¸ö´°¿Ú×î¶àÖ»ÄÜÕÚ¸Çµ½ËüµÄ¸¸´°¿Ú*/
     for (p = p->hParent;  p && p != hWin; p = p->hNextLine) {
             WM_InvalidateRect(p, pRect);
     }
     GUI_UNLOCK();
 }
 
-/* ç§»åŠ¨çª—å£åŠå®ƒæ‰€æœ‰çš„å­çª—å£ */
-void WM_MoveWindow(WM_HWIN hWin, i_16 dx, i_16 dy)
+/* ÒÆ¶¯´°¿Ú¼°ËüËùÓĞµÄ×Ó´°¿Ú */
+void WM_MoveWindow(WM_HWIN hWin, int dx, int dy)
 {
     WM_Obj *p = hWin, *pEnd;
     
     GUI_LOCK();
     if (p && p->Status & WM_WS_MOVE && (dx || dy)) {
-        /* å…ˆå°†è¢«é®æŒ¡çš„çª—å£æ— æ•ˆåŒ– */
+        /* ÏÈ½«±»ÕÚµ²µÄ´°¿ÚÎŞĞ§»¯ */
         WM_InvalidCoverWindow(p, &p->Rect);
-        /* æ‰¾åˆ°éå†å­çª—å£çš„ç»ˆç‚¹ */
+        /* ÕÒµ½±éÀú×Ó´°¿ÚµÄÖÕµã */
         pEnd = WM__FindChildEnd(p);
-        for (; p != pEnd; p = p->hNextLine) { /* éå†å­çª—å£ */
+        for (; p != pEnd; p = p->hNextLine) { /* ±éÀú×Ó´°¿Ú */
             GUI_MoveRect(&p->Rect, dx, dy);
-            WM_Invalidate(p); /* çª—å£æ— æ•ˆåŒ– */
+            WM_Invalidate(p); /* ´°¿ÚÎŞĞ§»¯ */
         }
     }
     GUI_ClipWindows(hWin);
     GUI_UNLOCK();
 }
 
-/* è®¾ç½®å¯ç§»åŠ¨çš„çª—å£ */
+/* ÉèÖÃ¿ÉÒÆ¶¯µÄ´°¿Ú */
 void WM_SetMoveWindow(WM_HWIN hWin)
 {
     ((WM_Obj*)hWin)->Status |= WM_WS_MOVE;
 }
 
-/* è·å–çª—å£å®¢æˆ·åŒºå¥æŸ„ */
+/* »ñÈ¡´°¿Ú¿Í»§Çø¾ä±ú */
 WM_HWIN WM_GetClientWindow(WM_HWIN hWin)
 {
     GUI_MESSAGE Msg;
@@ -949,7 +949,7 @@ WM_HWIN WM_GetClientWindow(WM_HWIN hWin)
     return (WM_HWIN)(Msg.Param);
 }
 
-/* è·å–çª—å£å®¢æˆ·åŒºçŸ©å½¢ */
+/* »ñÈ¡´°¿Ú¿Í»§Çø¾ØĞÎ */
 GUI_RECT * WM_GetClientRect(WM_HWIN hWin)
 {
     WM_Obj *pClient;
@@ -958,12 +958,12 @@ GUI_RECT * WM_GetClientRect(WM_HWIN hWin)
     return &pClient->Rect;
 }
 
-/* GUIæŒ‰é”®é»˜è®¤å¤„ç†å‡½æ•° */
+/* GUI°´¼üÄ¬ÈÏ´¦Àíº¯Êı */
 GUI_BOOL WM_DefaultKeyProc(GUI_MESSAGE *pMsg)
 {
     if (pMsg->MsgId == WM_KEYDOWN) {
         switch (pMsg->Param) {
-        case KEY_TAB: /* TABé”®åˆ‡æ¢ç„¦ç‚¹ */
+        case KEY_TAB: /* TAB¼üÇĞ»»½¹µã */
             pMsg->MsgId = WM_SET_FOCUS;
             pMsg->Param = 0;
             WM_SendMessage(pMsg->hWin, WM_SET_FOCUS, 0);
@@ -976,36 +976,36 @@ GUI_BOOL WM_DefaultKeyProc(GUI_MESSAGE *pMsg)
     return FALSE;
 }
 
-/* é»˜è®¤æ¶ˆæ¯å¤„ç†å‡½æ•° */
+/* Ä¬ÈÏÏûÏ¢´¦Àíº¯Êı */
 void WM_DefaultProc(GUI_MESSAGE *pMsg)
 {
-    /* å¤„ç†æ¶ˆæ¯ */
+    /* ´¦ÀíÏûÏ¢ */
     switch (pMsg->MsgId) {
     case WM_TP_CHECKED:
-        WM_SetActiveWindow(pMsg->hWin); /* è®¾ç½®ä¸ºæ´»åŠ¨çª—å£ */
-        WM_SetWindowFocus(pMsg->hWin); /* è®¾ç½®ä¸ºç„¦ç‚¹çª—å£ */
+        WM_SetActiveWindow(pMsg->hWin); /* ÉèÖÃÎª»î¶¯´°¿Ú */
+        WM_SetWindowFocus(pMsg->hWin); /* ÉèÖÃÎª½¹µã´°¿Ú */
         break;
-    case WM_TP_PRESS: /* ç§»åŠ¨çª—å£ */
+    case WM_TP_PRESS: /* ÒÆ¶¯´°¿Ú */
         WM_MoveWindow(pMsg->hWin,
             ((GUI_POINT*)pMsg->Param)[1].x,
             ((GUI_POINT*)pMsg->Param)[1].y);
         break;
-    case WM_TP_LEAVE: /* ç§»åŠ¨çª—å£ */
+    case WM_TP_LEAVE: /* ÒÆ¶¯´°¿Ú */
         WM_MoveWindow(pMsg->hWin,
             ((GUI_POINT*)pMsg->Param)[1].x,
             ((GUI_POINT*)pMsg->Param)[1].y);
         break;
-    case WM_SET_FOCUS: /* è®¾ç½®è¾“å…¥ç„¦ç‚¹ */
+    case WM_SET_FOCUS: /* ÉèÖÃÊäÈë½¹µã */
         WM_SendMessageToParent(pMsg->hWin, pMsg);
         break;
-    case WM_GET_FOCUS: /* è·å–è¾“å…¥ç„¦ç‚¹ */
+    case WM_GET_FOCUS: /* »ñÈ¡ÊäÈë½¹µã */
         WM_SendMessageToParent(pMsg->hWin, pMsg);
         break;
     case WM_KILL_FOCUS:
         WM_Invalidate(pMsg->hWin);
         break;
     case WM_KEYDOWN:
-        if (pMsg->Param == KEY_TAB) { /* TABé”®åˆ‡æ¢ç„¦ç‚¹ */
+        if (pMsg->Param == KEY_TAB) { /* TAB¼üÇĞ»»½¹µã */
             pMsg->MsgId = WM_SET_FOCUS;
             pMsg->Param = 0;
             WM__SendMessage(pMsg->hWin, pMsg);
@@ -1016,7 +1016,7 @@ void WM_DefaultProc(GUI_MESSAGE *pMsg)
     }
 }
 
-/* å°†ä¸€ä¸ªçª—å£çš„å±æ€§è®¾ç½®ä¸ºé€æ˜ */
+/* ½«Ò»¸ö´°¿ÚµÄÊôĞÔÉèÖÃÎªÍ¸Ã÷ */
 void WM_SetTransWindow(WM_HWIN hWin, u_8 Status)
 {
     WM_Obj *pWin = hWin;
@@ -1025,14 +1025,14 @@ void WM_SetTransWindow(WM_HWIN hWin, u_8 Status)
         if (Status) {
             if (!(pWin->Status & WM_WS_TRANS)) {
                 pWin->Status |= WM_WS_TRANS;
-                GUI_WindowClipArea(pWin); /* ä¹‹å‰æ˜¯éé€æ˜çª—å£çš„é‡æ–°è®¡ç®—å‰ªåˆ‡åŸŸ */
+                GUI_WindowClipArea(pWin); /* Ö®Ç°ÊÇ·ÇÍ¸Ã÷´°¿ÚµÄÖØĞÂ¼ÆËã¼ôÇĞÓò */
             }
         } else {
             if (pWin->Status & WM_WS_TRANS) {
                 pWin->Status &= ~WM_WS_TRANS;
-                GUI_WindowClipArea(pWin); /* ä¹‹å‰æ˜¯é€æ˜çª—å£çš„é‡æ–°è®¡ç®—å‰ªåˆ‡åŸŸ */
+                GUI_WindowClipArea(pWin); /* Ö®Ç°ÊÇÍ¸Ã÷´°¿ÚµÄÖØĞÂ¼ÆËã¼ôÇĞÓò */
             }
         }
-        WM_Invalidate(hWin); /* çª—å£æ— æ•ˆåŒ– */
+        WM_Invalidate(hWin); /* ´°¿ÚÎŞĞ§»¯ */
     }
 }

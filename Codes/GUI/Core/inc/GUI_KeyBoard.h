@@ -1,4 +1,4 @@
-ï»¿#ifndef __GUI_KEYBOARD_H
+#ifndef __GUI_KEYBOARD_H
 #define __GUI_KEYBOARD_H
 
 #include "GUI_Typedef.h"
@@ -7,27 +7,27 @@
 #define GUI_KEYUP        0x00
 #define GUI_KEYDOWN      0x01
 
-/* 0x00 ~ 0x7Fä¸ºæ ‡å‡†ASCIIç è¡¨ */
-#define KEY_BACK         0x08 /* é€€æ ¼é”® */
-#define KEY_TAB          0x09 /* TABé”® */
-#define KEY_ENTER        0x0D /* å›è½¦ */
-#define KEY_SHIFT        0x10 /* Shifté”® */
-#define KEY_SPACE        0x20 /* ç©ºæ ¼ */
-/* 0x80 ~ 0xFFä¸ºæ‰©å±•é”®å€¼ */
-#define KEY_ESC          0x80 /* ESCé”® */
-#define KEY_DELETE       0x81 /* Deleteé”® */
-#define KEY_INSERT       0x82 /* Inserté”® */
-#define KEY_PGUP         0x83 /* Page Upé”® */
-#define KEY_PGDN         0x84 /* Page Downé”® */
-#define KEY_END          0x85 /* Endé”® */
-#define KEY_HOME         0x86 /* Homeé”® */
-#define KEY_LEFT         0x90 /* å·¦ */
-#define KEY_UP           0x91 /* ä¸Š */
-#define KEY_RIGHT        0x92 /* å³ */
-#define KEY_DOWN         0x93 /* ä¸‹ */
-#define KEY_LBUTTON      0x94 /* é¼ æ ‡å·¦é”® */
-#define KEY_RBUTTON      0x95 /* é¼ æ ‡å³é”® */
-#define KEY_MBUTTON      0x96 /* é¼ æ ‡ä¸­é”® */
+/* 0x00 ~ 0x7FÎª±ê×¼ASCIIÂë±í */
+#define KEY_BACK         0x08 /* ÍË¸ñ¼ü */
+#define KEY_TAB          0x09 /* TAB¼ü */
+#define KEY_ENTER        0x0D /* »Ø³µ */
+#define KEY_SHIFT        0x10 /* Shift¼ü */
+#define KEY_SPACE        0x20 /* ¿Õ¸ñ */
+/* 0x80 ~ 0xFFÎªÀ©Õ¹¼üÖµ */
+#define KEY_ESC          0x80 /* ESC¼ü */
+#define KEY_DELETE       0x81 /* Delete¼ü */
+#define KEY_INSERT       0x82 /* Insert¼ü */
+#define KEY_PGUP         0x83 /* Page Up¼ü */
+#define KEY_PGDN         0x84 /* Page Down¼ü */
+#define KEY_END          0x85 /* End¼ü */
+#define KEY_HOME         0x86 /* Home¼ü */
+#define KEY_LEFT         0x90 /* ×ó */
+#define KEY_UP           0x91 /* ÉÏ */
+#define KEY_RIGHT        0x92 /* ÓÒ */
+#define KEY_DOWN         0x93 /* ÏÂ */
+#define KEY_LBUTTON      0x94 /* Êó±ê×ó¼ü */
+#define KEY_RBUTTON      0x95 /* Êó±êÓÒ¼ü */
+#define KEY_MBUTTON      0x96 /* Êó±êÖĞ¼ü */
 
 void GUI_SendKey(u_8 Key, u_8 Status);
 GUI_RESULT GUI_KeyMessageProc(GUI_MESSAGE *pMsg);

@@ -1,4 +1,4 @@
-ï»¿#ifndef __GUI_DEVICE_H
+#ifndef __GUI_DEVICE_H
 #define __GUI_DEVICE_H
 
 #include "GUI_Config.h"
@@ -16,10 +16,10 @@
 #define GL_DrawVLine      _GL_DrawVLine
 #define GL_FillRect	      GUI_glAPI.FillRect
 
-/* ç»˜å›¾æŒ‡ä»¤ */
+/* »æÍ¼Ö¸Áî */
 typedef struct {
-    i_16 x0, y0, x1, y1;
-    u_16 xSize, ySize;
+    int x0, y0, x1, y1;
+    int xSize, ySize;
     u_32 Offset;
     GUI_COLOR Color;
     const LCD_LOGPALETTE *pLog;
@@ -28,35 +28,35 @@ typedef struct {
     u_8 SrcFormat, DstFormat;
 }GUI_FLIPOUT;
 
-/* å›¾å½¢è®¾å¤‡é©±åŠ¨å‡½æ•° */
+/* Í¼ĞÎÉè±¸Çı¶¯º¯Êı */
 typedef struct GUI_GDEV {
-    u_16 Width, Height; /* æ˜¾ç¤ºè®¾å¤‡çš„å®½åº¦å’Œé«˜åº¦é«˜åº¦ */
-    unsigned char Id;   /* è®¾å¤‡ID */
-    int PixelFormat;    /* åƒç´ é¢œè‰²æ ¼å¼ */
-    void (*SetPixel)(u_16, u_16, GUI_COLOR); /* æ˜¾ç¤ºæŸä¸ªåƒç´  */
-    GUI_COLOR (*GetPixel)(u_16, u_16);       /* è¯»å–æŸä¸ªåƒç´  */
-    void (*DrawHLine)(u_16, u_16, u_16, GUI_COLOR);
-    void (*DrawVLine)(u_16, u_16, u_16, GUI_COLOR);
+    int Width, Height; /* ÏÔÊ¾Éè±¸µÄ¿í¶ÈºÍ¸ß¶È¸ß¶È */
+    unsigned char Id;   /* Éè±¸ID */
+    int PixelFormat;    /* ÏñËØÑÕÉ«¸ñÊ½ */
+    void (*SetPixel)(int, int, GUI_COLOR); /* ÏÔÊ¾Ä³¸öÏñËØ */
+    GUI_COLOR (*GetPixel)(int, int);       /* ¶ÁÈ¡Ä³¸öÏñËØ */
+    void (*DrawHLine)(int, int, int, GUI_COLOR);
+    void (*DrawVLine)(int, int, int, GUI_COLOR);
     void (*FillRect)(GUI_FLIPOUT *);
     void(*DrawBitmap)(GUI_FLIPOUT *);
     struct GUI_GDEV *pNext;
 } GUI_GDEV;
 
-/* ç»˜å›¾APIå®šä¹‰ */
+/* »æÍ¼API¶¨Òå */
 typedef struct {
-    void (*SetPixelClip)(i_16, i_16);
-    void (*DrawHLine)(i_16, i_16, i_16);
-    void (*FillRect)(i_16, i_16, i_16, i_16);
+    void (*SetPixelClip)(int, int);
+    void (*DrawHLine)(int, int, int);
+    void (*FillRect)(int, int, int, int);
 } GUI_GLAPI;
 
 extern GUI_GDEV   *GUI_GDev;
 extern GUI_GLAPI   GUI_glAPI;
 
-void _GL_SetPixel(i_16 x, i_16 y, GUI_COLOR);
-GUI_COLOR _GL_GetPixel(i_16 x, i_16 y);
-void _GL_DrawVLine(i_16 x0, i_16 y0, i_16 y1);
+void _GL_SetPixel(int x, int y, GUI_COLOR);
+GUI_COLOR _GL_GetPixel(int x, int y);
+void _GL_DrawVLine(int x0, int y0, int y1);
 void _GL_DrawBitmap(u_8 PixelFormat, const unsigned char *pPixel,
-    i_16 x0, i_16 y0, u_16 xSize, u_16 ySize, int Offset,
+    int x0, int y0, int xSize, int ySize, int Offset,
     const LCD_LOGPALETTE *pLog);
 void GUI_DeviceInit(void);
 GUI_RESULT GUI_SelectDevice(unsigned char id);

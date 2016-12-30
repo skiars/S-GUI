@@ -1,4 +1,4 @@
-ï»¿#ifndef __GUI_CORE_H
+#ifndef __GUI_CORE_H
 #define __GUI_CORE_H
 
 #include "GUI_Config.h"
@@ -8,15 +8,15 @@
 #include "GUI_Font.h"
 #include "GUI_Surface.h"
 
-#define GUI_ALIGN_TOP     0x01 /* é¡¶éƒ¨å¯¹é½ */
-#define GUI_ALIGN_BOTTOM  0x02 /* åº•éƒ¨å¯¹é½ */
-#define GUI_ALIGN_VCENTER 0x04 /* å‚ç›´ä¸­å¿ƒå¯¹é½ */
-#define GUI_ALIGN_LEFT    0x08 /* å·¦å¯¹é½ */
-#define GUI_ALIGN_RIGHT   0x10 /* å³å¯¹é½ */
-#define GUI_ALIGN_HCENTER 0x20 /* æ°´å¹³å¯¹é½ */
+#define GUI_ALIGN_TOP     0x01 /* ¶¥²¿¶ÔÆë */
+#define GUI_ALIGN_BOTTOM  0x02 /* µ×²¿¶ÔÆë */
+#define GUI_ALIGN_VCENTER 0x04 /* ´¹Ö±ÖĞĞÄ¶ÔÆë */
+#define GUI_ALIGN_LEFT    0x08 /* ×ó¶ÔÆë */
+#define GUI_ALIGN_RIGHT   0x10 /* ÓÒ¶ÔÆë */
+#define GUI_ALIGN_HCENTER 0x20 /* Ë®Æ½¶ÔÆë */
 
-#define GUI_HEAP_FAST     0 /* å¿«é€Ÿçš„å †(MCUå†…éƒ¨çš„SRAM)é¡µé¢ */
-#define GUI_HEAP_HCAP     1 /* å¤§å®¹é‡çš„å †(æ¯”å¦‚SDRAM)é¡µé¢ */
+#define GUI_HEAP_FAST     0 /* ¿ìËÙµÄ¶Ñ(MCUÄÚ²¿µÄSRAM)Ò³Ãæ */
+#define GUI_HEAP_HCAP     1 /* ´óÈİÁ¿µÄ¶Ñ(±ÈÈçSDRAM)Ò³Ãæ */
 
 #define _hRootWin   GUI_RootWin
 
@@ -24,31 +24,31 @@
 
 #define GUI_DEBUG_OUT(s) GUI_DebugOut(s);
 
-/* çŸ©å½¢é“¾è¡¨ */
+/* ¾ØĞÎÁ´±í */
 typedef struct AREA_NODE {
     GUI_RECT Rect;
     struct AREA_NODE *pNext;
 } AREA_NODE, *GUI_AREA;
 
-/* GUIä¸Šä¸‹æ–‡ç»“æ„ä½“ */
+/* GUIÉÏÏÂÎÄ½á¹¹Ìå */
 typedef struct {
-    GUI_HWIN hWin;          /* å½“å‰ç»˜åˆ¶çª—å£ */
-    GUI_POINT WinPos;       /* çª—å£åŸç‚¹ç»å¯¹åæ ‡ */
-    GUI_HWIN hActive;       /* å½“å‰æ´»åŠ¨çª—å£ */
-    GUI_RECT *InvalidRect;  /* å½“å‰çª—å£çš„çš„æ— æ•ˆçŸ©å½¢ */
-    GUI_RECT DrawRect;      /* å½“å‰è¦ç»˜åˆ¶å›¾å½¢èŒƒå›´çš„çŸ©å½¢ */
-    GUI_RECT ClipRect;      /* å½“å‰å±å¹•ä¸Šçš„è£å‰ªçŸ©å½¢ */
-    GUI_AREA Area;          /* å½“å‰ç»˜åˆ¶çª—å£çš„å‰ªåˆ‡åŸŸ */
-    GUI_AREA pAreaNode;     /* å½“å‰çš„å‰ªåˆ‡åŸŸèŠ‚ç‚¹ */
-    GUI_FONT *Font;         /* å½“å‰å­—ä½“ */
-    GUI_COLOR FGColor;      /* å½“å‰å‰æ™¯è‰² */
-    GUI_COLOR BGColor;      /* å½“å‰èƒŒæ™¯è‰² */
-    GUI_COLOR FontColor;    /* å½“å‰å­—ä½“é¢œè‰² */
-    int PenSize;            /* ç»˜åˆ¶çº¿å®½ */
-	int AAFactor;           /* æŠ—é”¯é½¿å› å­ */
-	int AAEnable;           /* æŠ—é”¯é½¿æ¨¡å¼å·²ç»å¼€å¯ */
-	int AAHL;               /* ä½¿ç”¨é«˜åˆ†è¾¨ç‡åæ ‡ */
-    GUI_SURFACE *Surface;   /* å½“å‰ç»˜åˆ¶é¢æ¿ */
+    GUI_HWIN hWin;          /* µ±Ç°»æÖÆ´°¿Ú */
+    GUI_POINT WinPos;       /* ´°¿ÚÔ­µã¾ø¶Ô×ø±ê */
+    GUI_HWIN hActive;       /* µ±Ç°»î¶¯´°¿Ú */
+    GUI_RECT *InvalidRect;  /* µ±Ç°´°¿ÚµÄµÄÎŞĞ§¾ØĞÎ */
+    GUI_RECT DrawRect;      /* µ±Ç°Òª»æÖÆÍ¼ĞÎ·¶Î§µÄ¾ØĞÎ */
+    GUI_RECT ClipRect;      /* µ±Ç°ÆÁÄ»ÉÏµÄ²Ã¼ô¾ØĞÎ */
+    GUI_AREA Area;          /* µ±Ç°»æÖÆ´°¿ÚµÄ¼ôÇĞÓò */
+    GUI_AREA pAreaNode;     /* µ±Ç°µÄ¼ôÇĞÓò½Úµã */
+    GUI_FONT *Font;         /* µ±Ç°×ÖÌå */
+    GUI_COLOR FGColor;      /* µ±Ç°Ç°¾°É« */
+    GUI_COLOR BGColor;      /* µ±Ç°±³¾°É« */
+    GUI_COLOR FontColor;    /* µ±Ç°×ÖÌåÑÕÉ« */
+    int PenSize;            /* »æÖÆÏß¿í */
+	int AAFactor;           /* ¿¹¾â³İÒò×Ó */
+	int AAEnable;           /* ¿¹¾â³İÄ£Ê½ÒÑ¾­¿ªÆô */
+	int AAHL;               /* Ê¹ÓÃ¸ß·Ö±æÂÊ×ø±ê */
+    GUI_SURFACE *Surface;   /* µ±Ç°»æÖÆÃæ°å */
 }GUI_CONTEXT;
 
 extern GUI_CONTEXT GUI_Context;
@@ -57,9 +57,9 @@ extern GUI_AREA GUI_AreaHeap;
 
 GUI_RESULT GUI_Init(void);
 void GUI_Unload(void);
-void GUI_ScreenSize(u_16 *xSize, u_16 *ySize);
-u_16 GUI_GetScreenWidth(void);
-u_16 GUI_GetScreenHeight(void);
+void GUI_ScreenSize(int *xSize, int *ySize);
+int GUI_GetScreenWidth(void);
+int GUI_GetScreenHeight(void);
 void GUI_Delay(GUI_TIME tms);
 void GUI_LOCK(void);
 void GUI_UNLOCK(void);
@@ -70,8 +70,8 @@ GUI_HWIN GUI_GetPaintWindow(void);
 GUI_AREA GUI_GetClipArea(void);
 void GUI_DrawAreaInit(GUI_RECT *p);
 GUI_BOOL GUI_GetNextArea(void);
-void GUI_ClientToScreen(i_16 *x, i_16 *y);
-void GUI_ScreenToClient(i_16 *x, i_16 *y);
+void GUI_ClientToScreen(int *x, int *y);
+void GUI_ScreenToClient(int *x, int *y);
 void GUI_ClientToScreenRect(GUI_RECT *pRect);
 void GUI_GetClientRect(GUI_RECT *pRect);
 void GUI_SetFont(GUI_FONT *Font);

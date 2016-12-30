@@ -28,6 +28,7 @@
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_KeyBoard.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Malloc.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Math.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_MemDev.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Queue.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Rect.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_String.c" />
@@ -40,6 +41,7 @@
     <ClCompile Include="..\..\Codes\GUI\Fonts\ASCII_8x16.c" />
     <ClCompile Include="..\..\Codes\GUI\Fonts\UI17_4pp.c" />
     <ClCompile Include="..\..\Codes\GUI\Widget\BUTTON.c" />
+    <ClCompile Include="..\..\Codes\GUI\Widget\CHECKBOX.c" />
     <ClCompile Include="..\..\Codes\GUI\Widget\WIDGET.c" />
     <ClCompile Include="..\..\Codes\GUI\Widget\WINDOW.c" />
   </ItemGroup>
@@ -63,6 +65,7 @@
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_KeyBoard.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Malloc.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Math.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_MemDev.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Queue.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Rect.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_String.h" />

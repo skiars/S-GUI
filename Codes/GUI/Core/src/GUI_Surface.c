@@ -1,10 +1,10 @@
-﻿#include "GUI_Surface.h"
+#include "GUI_Surface.h"
 #include "GUI.h"
 
-GUI_SURFACE * GUI_SurfaceCreate(i_16 x0,
-    i_16 y0,
-    u_16 Width,
-    u_16 Height)
+GUI_SURFACE * GUI_SurfaceCreate(int x0,
+    int y0,
+    int Width,
+    int Height)
 {
     return NULL;
 }
@@ -27,7 +27,7 @@ void GUI_FlipSurface(void)
 #endif
 }
 
-void GUI_FlipSurfaceAt(i_16 xPos, i_16 yPos)
+void GUI_FlipSurfaceAt(int xPos, int yPos)
 {
 #if 0
     GUI_SURFACE *pSrfc;

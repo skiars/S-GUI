@@ -132,6 +132,12 @@
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Surface.c">
       <Filter>S-GUI\Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_MemDev.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Widget\CHECKBOX.c">
+      <Filter>S-GUI\Widget\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI.h">
@@ -228,6 +234,9 @@
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Surface.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_MemDev.h">
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
   </ItemGroup>

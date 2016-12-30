@@ -1,23 +1,23 @@
-ï»¿#ifndef __GUI_Malloc_H
+#ifndef __GUI_Malloc_H
 #define __GUI_Malloc_H
 
 #include "GUI_Config.h"
 #include "GUI_Typedef.h"
 #include <stdio.h>
 
-/* å†…å­˜æ± å †èŠ‚ç‚¹ */
+/* ÄÚ´æ³Ø¶Ñ½Úµã */
 typedef struct MEM_NODE {
-    size_t Tag;             /* è¢«ä½¿ç”¨çš„å †èŠ‚ç‚¹æ ‡è®° */
-    size_t Size;            /* å †èŠ‚ç‚¹å­—èŠ‚æ•° */
-    struct MEM_NODE *pLast; /* æŒ‡å‘ä¸Šä¸€ä¸ªå †èŠ‚ç‚¹ */
-    struct MEM_NODE *pNext; /* æŒ‡å‘ä¸‹ä¸€ä¸ªå †èŠ‚ç‚¹ */
+    size_t Tag;             /* ±»Ê¹ÓÃµÄ¶Ñ½Úµã±ê¼Ç */
+    size_t Size;            /* ¶Ñ½Úµã×Ö½ÚÊı */
+    struct MEM_NODE *pLast; /* Ö¸ÏòÉÏÒ»¸ö¶Ñ½Úµã */
+    struct MEM_NODE *pNext; /* Ö¸ÏòÏÂÒ»¸ö¶Ñ½Úµã */
 } MEM_NODE;
 
-/* å†…å­˜æ± å¯¹è±¡ */
+/* ÄÚ´æ³Ø¶ÔÏó */
 typedef struct MEM_HEAP {
     size_t Size;
-    struct MEM_HEAP *pNext; /* æŒ‡å‘ä¸‹ä¸€ä¸ªå†…å­˜æ±  */
-    MEM_NODE MemPool;       /* å†…å­˜æ± å †ç©ºé—´, å¿…é¡»ä½œä¸ºæœ€åçš„æˆå‘˜ */
+    struct MEM_HEAP *pNext; /* Ö¸ÏòÏÂÒ»¸öÄÚ´æ³Ø */
+    MEM_NODE MemPool;       /* ÄÚ´æ³Ø¶Ñ¿Õ¼ä, ±ØĞë×÷Îª×îºóµÄ³ÉÔ± */
 } MEM_HEAP;
 
 GUI_RESULT GUI_MemoryManagementInit(void);

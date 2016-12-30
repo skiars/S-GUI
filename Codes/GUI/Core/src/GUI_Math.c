@@ -1,4 +1,4 @@
-﻿#include "GUI_Math.h"
+#include "GUI_Math.h"
 #include "GUI.h"
 
 /*********************************************************************
@@ -8,7 +8,7 @@
 *  Angle : 90/1024?
 *  Data  : 1/1024
 */
-static const u_16 aSin[] = {
+static const int aSin[] = {
 	0,       /*  1/16 *90?*/
 	100,     /*  1/16 *90?*/
 	200,     /*  2/16 *90?*/
@@ -32,7 +32,7 @@ int GUI_sin(int angle)
 {
 	char IsNeg = 0;
 	int i;
-	u_16 Faktor;
+	int Faktor;
 	u_32 t;
 
 	angle &= ((1 << 12) - 1);  /* reduce to 0-360 degrees */
@@ -46,7 +46,7 @@ int GUI_sin(int angle)
 	/* Now angle is reduced to 0?<= <= 90?*/
 	i = angle >> 6;
 	{
-		Faktor = (u_16)((1 << 6) - (angle&((1 << 6) - 1)));
+		Faktor = (int)((1 << 6) - (angle&((1 << 6) - 1)));
 		t = aSin[i] * (u_32)Faktor;
 		if (Faktor != (1 << 6)) {
 			t += aSin[i + 1] * ((1 << 6) - Faktor);

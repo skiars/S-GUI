@@ -1,10 +1,10 @@
-ï»¿#include "linked_list.h"
+#include "linked_list.h"
 #include "GUI.h"
 
 #define MALLOC(x)  GUI_Malloc(x)
 #define FREE(x)    GUI_Free(x);
 
-/* æŸ¥æ‰¾é“¾è¡¨plä¸­èŠ‚ç‚¹ptçš„å‰é©± */
+/* ²éÕÒÁ´±íplÖĞ½ÚµãptµÄÇ°Çı */
 static LIST FindPrecious(LIST pl, LIST pt)
 {
     LIST p;
@@ -16,7 +16,7 @@ static LIST FindPrecious(LIST pl, LIST pt)
     return p;
 }
 
-/* åˆ é™¤ptæŒ‡å‘çš„èŠ‚ç‚¹ */
+/* É¾³ıptÖ¸ÏòµÄ½Úµã */
 void List_DeleteNode(LIST pl, LIST pt)
 {
     LIST p;
@@ -25,7 +25,7 @@ void List_DeleteNode(LIST pl, LIST pt)
         p = FindPrecious(pl, pt);
         if (pl != pt) {
             p->pNext = pt->pNext;
-            if (pt->DataLen) { /* ä¸æ˜¯æŒ‡é’ˆé“¾è¡¨ */
+            if (pt->DataLen) { /* ²»ÊÇÖ¸ÕëÁ´±í */
                 FREE(pt->pData);
             }
             FREE(pt);
@@ -33,7 +33,7 @@ void List_DeleteNode(LIST pl, LIST pt)
     }
 }
 
-/* å°†xæŒ‡å‘çš„æ•°æ®æ’å…¥åˆ°plæŒ‡å‘çš„èŠ‚ç‚¹å */
+/* ½«xÖ¸ÏòµÄÊı¾İ²åÈëµ½plÖ¸ÏòµÄ½Úµãºó */
 GUI_RESULT List_InsertNode(LIST pl, void * x, int len)
 {
     LIST l;
@@ -45,16 +45,16 @@ GUI_RESULT List_InsertNode(LIST pl, void * x, int len)
     if (l == NULL) {
         return GUI_ERR;
     }
-    if (len) { /* ç”³è¯·ç©ºé—´ */
+    if (len) { /* ÉêÇë¿Õ¼ä */
         l->pData = MALLOC(len);
         if (l->pData == NULL) {
             FREE(l);
             return GUI_ERR;
         }
-        while (len--) { /* å¤åˆ¶å†…å®¹ */
+        while (len--) { /* ¸´ÖÆÄÚÈİ */
             ((char *)(l->pData))[len] = ((char *)x)[len];
         }
-    } else { /* æŒ‡é’ˆé“¾è¡¨ */
+    } else { /* Ö¸ÕëÁ´±í */
         l->pData = x;
     }
     l->DataLen = len;
@@ -63,7 +63,7 @@ GUI_RESULT List_InsertNode(LIST pl, void * x, int len)
     return GUI_OK;
 }
 
-/* å°†ä¸€ä¸ªèŠ‚ç‚¹æ’å…¥åˆ°é“¾è¡¨æœ«å°¾ */
+/* ½«Ò»¸ö½Úµã²åÈëµ½Á´±íÄ©Î² */
 GUI_RESULT List_InsertEnd(LIST pl, void * x, int len)
 {
     if (pl == NULL) {
@@ -75,7 +75,7 @@ GUI_RESULT List_InsertEnd(LIST pl, void * x, int len)
     return List_InsertNode(pl, x, len);
 }
 
-/* åˆ›å»ºä¸€ä¸ªé“¾è¡¨ï¼Œè¿™ä¸ªé“¾è¡¨æœ‰ä¸€ä¸ªç©ºè¡¨å¤´ */
+/* ´´½¨Ò»¸öÁ´±í£¬Õâ¸öÁ´±íÓĞÒ»¸ö¿Õ±íÍ· */
 LIST List_Init(void)
 {
     LIST Front;
@@ -90,14 +90,14 @@ LIST List_Init(void)
     return Front;
 }
 
-/* åˆ é™¤é“¾è¡¨ */
+/* É¾³ıÁ´±í */
 void List_Delete(LIST L)
 {
     LIST l;
 
     while (L != NULL) {
         l = L->pNext;
-        if (L->DataLen) { /* ä¸æ˜¯æŒ‡é’ˆé“¾è¡¨ */
+        if (L->DataLen) { /* ²»ÊÇÖ¸ÕëÁ´±í */
             FREE(L->pData);
         }
         FREE(L);
@@ -105,7 +105,7 @@ void List_Delete(LIST L)
     }
 }
 
-/* è·å–é“¾è¡¨é•¿åº¦ */
+/* »ñÈ¡Á´±í³¤¶È */
 int List_GetSize(LIST pl)
 {
     int i = 0;
@@ -118,7 +118,7 @@ int List_GetSize(LIST pl)
     return i;
 }
 
-/* å¾—åˆ°ç¬¬nä¸ªé“¾èŠ‚çš„åœ°å€ */
+/* µÃµ½µÚn¸öÁ´½ÚµÄµØÖ· */
 LIST List_GetNodePtr(LIST pl, int n)
 {
     int i;
@@ -132,7 +132,7 @@ LIST List_GetNodePtr(LIST pl, int n)
     return pl;
 }
 
-/* è·å–ç¬¬nä¸ªé“¾èŠ‚çš„æ•°æ®æŒ‡é’ˆ */
+/* »ñÈ¡µÚn¸öÁ´½ÚµÄÊı¾İÖ¸Õë */
 void * List_GetNodeData(LIST pl, int n)
 {
     LIST p;
@@ -145,7 +145,7 @@ void * List_GetNodeData(LIST pl, int n)
     }
 }
 
-/* è·å–é“¾è¡¨plä¸­ptæŒ‡å‘çš„é“¾èŠ‚ç´¢å¼• */
+/* »ñÈ¡Á´±íplÖĞptÖ¸ÏòµÄÁ´½ÚË÷Òı */
 int List_GetNodeIndex(LIST pl, LIST pt)
 {
     int i = 0;
@@ -158,7 +158,7 @@ int List_GetNodeIndex(LIST pl, LIST pt)
     return i;
 }
 
-/* æŸ¥æ‰¾å­—ç¬¦ä¸²èŠ‚ç‚¹ï¼Œä»…å½“é“¾è¡¨èŠ‚ç‚¹ä¸ºå­—ç¬¦ä¸²æ—¶å¯ä»¥ä½¿ç”¨,ä¸åŒºåˆ†å¤§å°å†™ */
+/* ²éÕÒ×Ö·û´®½Úµã£¬½öµ±Á´±í½ÚµãÎª×Ö·û´®Ê±¿ÉÒÔÊ¹ÓÃ,²»Çø·Ö´óĞ¡Ğ´ */
 int List_FindStr(LIST pl, char *pd)
 {
     int i = 1;
@@ -166,7 +166,7 @@ int List_FindStr(LIST pl, char *pd)
     if (pl) {
         while (pl->pNext != NULL) {
             pl = pl->pNext;
-            if (GUI_Stricmp(pd, pl->pData) == 0) { /* å¿½ç•¥å¤§å°å†™æ¯”è¾ƒ */
+            if (GUI_Stricmp(pd, pl->pData) == 0) { /* ºöÂÔ´óĞ¡Ğ´±È½Ï */
                 return i;
             }
             ++i;

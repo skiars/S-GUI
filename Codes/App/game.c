@@ -1,17 +1,18 @@
-ï»¿#include "game.h"
+#include "game.h"
 #include <stdlib.h>
 
 #define GAME_WIN (WM_USER_ID + 0x90)
 
 static GUI_COLOR FgColor = 0x00FF00FF;
-static i_16 CubeX[40], UserX = 0;
+static int CubeX[40], UserX = 0;
 static int CubeNum = 40, Star = 0, daid = 0;
 static char StarStr[50] = "";
 static u_32 KeyVal = 0;
 
 void Game_Paint(WM_HWIN hWin)
 {
-    u_16 xSize, ySize, len, x0, y0;
+    int xSize, ySize, len;
+	int x0, y0;
     int i;
     GUI_RECT r;
 
@@ -52,7 +53,7 @@ void GameCb(WM_MESSAGE *pMsg)
         Game_Paint(pMsg->hWin);
         break;
     case WM_TIMER:
-#ifdef _MSC_VER
+#if   _MSC_VER > 1500
         sprintf_s(StarStr, sizeof(StarStr), "Star:%d", Star);
 #else
         sprintf(StarStr, "%d", Star);
@@ -93,7 +94,7 @@ void GameCb(WM_MESSAGE *pMsg)
         KeyVal = 0;
         break;
     default:
-        WM_DefaultProc(pMsg); /* é»˜è®¤æ¶ˆæ¯å¤„ç† */
+        WM_DefaultProc(pMsg); /* Ä¬ÈÏÏûÏ¢´¦Àí */
     }
 }
 

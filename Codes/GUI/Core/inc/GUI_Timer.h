@@ -1,11 +1,11 @@
-Ôªø#ifndef __GUI_TIMER_H
+#ifndef __GUI_TIMER_H
 #define __GUI_TIMER_H
 
 #include "GUI_Config.h"
 #include "GUI_Typedef.h"
 
-#define GUI_TMR_ONE      0 /* ÂçïÊ¨°Ëß¶Âèë */
-#define GUI_TMR_AUTO     1 /* Ëá™Âä®ÈáçËΩΩ */
+#define GUI_TMR_ONE      0 /* µ•¥Œ¥•∑¢ */
+#define GUI_TMR_AUTO     1 /* ◊‘∂Ø÷ÿ‘ÿ */
 
 typedef GUI_HWIN GUI_HTMR;
 
@@ -13,8 +13,8 @@ typedef struct GUI_TIMER {
     GUI_HWIN hWin;
     int      Id;
     u_8      Mode;
-    GUI_TIME Period;    /* Êó∂Èó¥Èó¥Èöî */
-    GUI_TIME SetTime;   /* ËÆæÂÆöÊó∂Èó¥ */
+    GUI_TIME Period;    /*  ±º‰º‰∏Ù */
+    GUI_TIME SetTime;   /* …Ë∂® ±º‰ */
     struct GUI_TIMER *pNext;
 } GUI_TIMER;
 
@@ -22,7 +22,7 @@ void GUI_TimerHandler(void);
 GUI_HTMR GUI_TimerCreate(GUI_HWIN hWin, int Id, int Period, u_8 Mode);
 void GUI_TimerDetete(GUI_HTMR hTimer);
 void GUI_TimerDeleteAtWindow(GUI_HWIN hWin);
-u_16 GUI_GetTimerId(GUI_HTMR hTimer);
+int GUI_GetTimerId(GUI_HTMR hTimer);
 void GUI_ResetTimer(GUI_HTMR hTimer, int Period);
 
 #endif /* __GUI_TIMER_H */

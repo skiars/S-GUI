@@ -1,7 +1,7 @@
-ï»¿#include "GUI_Bitmap.h"
+#include "GUI_Bitmap.h"
 #include "GUI.h"
 
-static void _ClientToScreen(i_16 *x, i_16 *y)
+static void _ClientToScreen(int *x, int *y)
 {
     int xPos = GUI_Context.WinPos.x;
     int yPos = GUI_Context.WinPos.y;
@@ -16,25 +16,25 @@ static void _ClientToScreen(i_16 *x, i_16 *y)
     *y += yPos;
 }
 
-/* ç»˜åˆ¶ä½å›¾ï¼Œä¸æ”¯æŒé€æ˜Žæ•ˆæžœ */
-void GUI_DrawBitmap24b(i_16 x0,
-    i_16 y0,
-    u_16 xSize,
-    u_16 ySize,
+/* »æÖÆÎ»Í¼£¬²»Ö§³ÖÍ¸Ã÷Ð§¹û */
+void GUI_DrawBitmap24b(int x0,
+    int y0,
+    int xSize,
+    int ySize,
     const unsigned char *pPixel,
     const LCD_LOGPALETTE *pLogPal,
     int xMag,
     int yMag)
 {
-    i_16 x1, y1, x = x0, y = y0;
+    int x1, y1, x = x0, y = y0;
     u_32 Offset;
     GUI_RECT r1;
 
-    xSize = (u_16)GUI_MIN(xSize, xMag); /* å›¾ç‰‡å®½åº¦ */
-    ySize = (u_16)GUI_MIN(ySize, yMag); /* å›¾ç‰‡é«˜åº¦ */
+    xSize = GUI_MIN((int)xSize, (int)xMag); /* Í¼Æ¬¿í¶È */
+    ySize = GUI_MIN((int)ySize, (int)yMag); /* Í¼Æ¬¸ß¶È */
     GUI_Val2Rect(&r1, x0, y0, xSize, ySize);
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea()) { /* éåŽ†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+    while (GUI_GetNextArea()) { /* ±éÀúËùÓÐµÄÏÔÊ¾ÇøÓò */
         x0 = r1.x0;
         y0 = r1.y0;
         x1 = r1.x1;
@@ -48,25 +48,25 @@ void GUI_DrawBitmap24b(i_16 x0,
     }
 }
 
-/* ç»˜åˆ¶ä½å›¾ï¼Œä¸æ”¯æŒé€æ˜Žæ•ˆæžœ */
-void GUI_DrawBitmap16b(i_16 x0,
-    i_16 y0,
-    u_16 xSize,
-    u_16 ySize,
+/* »æÖÆÎ»Í¼£¬²»Ö§³ÖÍ¸Ã÷Ð§¹û */
+void GUI_DrawBitmap16b(int x0,
+    int y0,
+    int xSize,
+    int ySize,
     const unsigned char *pPixel,
     const LCD_LOGPALETTE *pLogPal,
     int xMag,
     int yMag)
 {
-    i_16 x = x0, y = y0, x1, y1;
+    int x = x0, y = y0, x1, y1;
     u_32 Offset, PixelBytes = 2;
     GUI_RECT r1;
 
-    xSize = (u_16)GUI_MIN(xSize, xMag); /* å›¾ç‰‡å®½åº¦ */
-    ySize = (u_16)GUI_MIN(ySize, yMag); /* å›¾ç‰‡é«˜åº¦ */
+    xSize = GUI_MIN((int)xSize, (int)xMag); /* Í¼Æ¬¿í¶È */
+    ySize = GUI_MIN((int)ySize, (int)yMag); /* Í¼Æ¬¸ß¶È */
     GUI_Val2Rect(&r1, x0, y0, xSize, ySize);
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea()) { /* éåŽ†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+    while (GUI_GetNextArea()) { /* ±éÀúËùÓÐµÄÏÔÊ¾ÇøÓò */
         x0 = r1.x0;
         y0 = r1.y0;
         x1 = r1.x1;
@@ -82,24 +82,24 @@ void GUI_DrawBitmap16b(i_16 x0,
     }
 }
 
-void GUI_DrawGif(i_16 x0,
-    i_16 y0,
-    u_16 xSize,
-    u_16 ySize,
+void GUI_DrawGif(int x0,
+    int y0,
+    int xSize,
+    int ySize,
     const unsigned char *pPixel,
     const LCD_LOGPALETTE *pLogPal,
     int xMag,
     int yMag)
 {
-    i_16 x = x0, y = y0, x1, y1;
+    int x = x0, y = y0, x1, y1;
     u_32 Offset, PixelBytes = 1;
     GUI_RECT r1;
 
-    xSize = (u_16)GUI_MIN(xSize, xMag); /* å›¾ç‰‡å®½åº¦ */
-    ySize = (u_16)GUI_MIN(ySize, yMag); /* å›¾ç‰‡é«˜åº¦ */
+    xSize = GUI_MIN((int)xSize, (int)xMag); /* Í¼Æ¬¿í¶È */
+    ySize = GUI_MIN((int)ySize, (int)yMag); /* Í¼Æ¬¸ß¶È */
     GUI_Val2Rect(&r1, x0, y0, xSize, ySize);
     GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea()) { /* éåŽ†æ‰€æœ‰çš„æ˜¾ç¤ºåŒºåŸŸ */
+    while (GUI_GetNextArea()) { /* ±éÀúËùÓÐµÄÏÔÊ¾ÇøÓò */
         x0 = r1.x0;
         y0 = r1.y0;
         x1 = r1.x1;
@@ -114,10 +114,10 @@ void GUI_DrawGif(i_16 x0,
     }
 }
 
-void GUI_DrawBitmap(i_16 x0,
-    i_16 y0,
-    u_16 xSize,
-    u_16 ySize,
+void GUI_DrawBitmap(int x0,
+    int y0,
+    int xSize,
+    int ySize,
     const GUI_BITMAP *Bmp)
 {
     if (Bmp->pDraw) {

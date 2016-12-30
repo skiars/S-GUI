@@ -1,4 +1,4 @@
-﻿#ifndef __GUI_H
+#ifndef __GUI_H
 #define __GUI_H
 
 #include "GUI_Config.h"

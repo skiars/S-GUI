@@ -1,4 +1,4 @@
-﻿#ifndef __GUI_GL_H
+#ifndef __GUI_GL_H
 #define __GUI_GL_H
 
 #include "GUI_Typedef.h"
@@ -25,17 +25,17 @@
 #define CHECK_Y(Y) \
     { if ((Y) > _ClipRect.y1 || (Y) < _ClipRect.y0) return; }
 
-void GUI_DrawPoint(i_16 x, i_16 y);
-void GUI_VertLine(i_16 x0, i_16 y0, u_16 len);
-void GUI_HoriLine(i_16 x0, i_16 y0, u_16 len);
-void GUI_DrawRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize);
-void GUI_FillRect(i_16 x0, i_16 y0, u_16 xSize, u_16 ySize);
-void GUI_DrawLine(i_16 x0, i_16 y0, i_16 x1, i_16 y1);
-void GUI_DrawCircle(i_16 x0, i_16 y0, u_16 r);
-void GUI_FillCircle(i_16 x0, i_16 y0, i_16 r);
+void GUI_DrawPoint(int x, int y);
+void GUI_VertLine(int x0, int y0, int len);
+void GUI_HoriLine(int x0, int y0, int len);
+void GUI_DrawRect(int x0, int y0, int xSize, int ySize);
+void GUI_FillRect(int x0, int y0, int xSize, int ySize);
+void GUI_DrawLine(int x0, int y0, int x1, int y1);
+void GUI_DrawCircle(int x0, int y0, int r);
+void GUI_FillCircle(int x0, int y0, int r);
 void GUI_DrawPolygon(GUI_POINT *Points, int cnt);
 void GUI_FillPolygon(GUI_POINT *Points, int cnt);
 void GUI_GetPolyArea(GUI_RECT *r, GUI_POINT *Points, int cnt);
-void GUI_DrawLines(i_16 x, i_16 y, GUI_POINT *Points, int cnt);
+void GUI_DrawLines(int x, int y, GUI_POINT *Points, int cnt);
 
 #endif /* __GUI_2D_H */

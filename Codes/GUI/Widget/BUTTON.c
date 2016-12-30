@@ -1,10 +1,10 @@
-ï»¿#include "BUTTON.h"
+#include "BUTTON.h"
 #include "GUI.h"
 
-/* æŒ‰é”®æŽ§ä»¶è‡ªç»˜å‡½æ•° */
+/* °´¼ü¿Ø¼þ×Ô»æº¯Êý */
 static void __Paint(WM_HWIN hWin)
 {
-    u_16 xSize, ySize;
+    int xSize, ySize;
     GUI_RECT Rect;
     BUTTON_Obj *pObj = hWin;
     GUI_HWIN hFocus = WM_GetWindowFocus();
@@ -17,7 +17,7 @@ static void __Paint(WM_HWIN hWin)
     } else {
         GUI_SetFGColor(0x00708090);
     }
-    /* ç»˜åˆ¶è¾¹æ¡† */
+    /* »æÖÆ±ß¿ò */
     GUI_DrawRect(0, 0, xSize, ySize);
     if (!pObj->Check && hFocus == pObj) {
         GUI_SetFGColor(0x002060FF);
@@ -31,13 +31,13 @@ static void __Paint(WM_HWIN hWin)
         GUI_SetFontColor(0X00000000);
         pObj->Check = 0;
     }
-    /* ç»˜åˆ¶æŒ‰é”®å†…éƒ¨ */
+    /* »æÖÆ°´¼üÄÚ²¿ */
     if (!pObj->Check && hFocus == pObj) {
         GUI_FillRect(2, 2, xSize - 4, ySize - 4);
     } else {
         GUI_FillRect(1, 1, xSize - 2, ySize - 2);
     }
-    /* ç»˜åˆ¶æ ‡é¢˜ */
+    /* »æÖÆ±êÌâ */
     GUI_SetFont(WIDGET_GetFont(pObj));
     GUI_Val2Rect(&Rect, 1, 1, xSize - 2, ySize - 2);
     GUI_DispStringInRect(&Rect, pObj->Title,
@@ -52,8 +52,8 @@ static void _BUTTON_Callback(WM_MESSAGE *pMsg)
             break;
         case WM_TP_CHECKED :
             BUTTON_Check(pMsg->hWin, 1);
-            WM_SetActiveWindow(pMsg->hWin); /* è®¾ç½®ä¸ºæ´»åŠ¨çª—å£ */
-            WM_SetWindowFocus(pMsg->hWin); /* è®¾ç½®ä¸ºç„¦ç‚¹çª—å£ */
+            WM_SetActiveWindow(pMsg->hWin); /* ÉèÖÃÎª»î¶¯´°¿Ú */
+            WM_SetWindowFocus(pMsg->hWin); /* ÉèÖÃÎª½¹µã´°¿Ú */
             pMsg->MsgId = WM_BUTTON_CLICKED;
             WM_SendMessageToParent(pMsg->hWin, pMsg);
             break;
@@ -91,13 +91,13 @@ static void _BUTTON_Callback(WM_MESSAGE *pMsg)
     }
 }
 
-/* åˆ›å»ºæŒ‰é”®æŽ§ä»¶ */
-WM_HWIN BUTTON_Create(i_16 x0,
-    i_16 y0,
-    u_16 xSize,
-    u_16 ySize,
+/* ´´½¨°´¼ü¿Ø¼þ */
+WM_HWIN BUTTON_Create(int x0,
+    int y0,
+    int xSize,
+    int ySize,
     WM_HWIN hParent,
-    u_16 Id,
+    int Id,
     u_8 Style)
 {
     BUTTON_Obj *pObj;
@@ -107,9 +107,9 @@ WM_HWIN BUTTON_Create(i_16 x0,
     if (pObj == NULL) {
         return NULL;
     }
-    pObj->Check = 0;                /* æ²¡æœ‰æŒ‰ä¸‹ */
+    pObj->Check = 0;                /* Ã»ÓÐ°´ÏÂ */
     WIDGET_SetPaintFunction(pObj, __Paint);
-    BUTTON_SetTitle(pObj, "");      /* è®¾ç½®åˆå§‹å­—ç¬¦ä¸² */
+    BUTTON_SetTitle(pObj, "");      /* ÉèÖÃ³õÊ¼×Ö·û´® */
     BUTTON_SetFont(pObj, &GUI_DEF_FONT);
     return pObj;
 }
@@ -124,7 +124,7 @@ void BUTTON_SetFont(WM_HWIN hWin, GUI_FONT *Font)
     WIDGET_SetFont(hWin, Font);
 }
 
-/* æŒ‰é”®æŒ‰ä¸‹API */
+/* °´¼ü°´ÏÂAPI */
 void BUTTON_Check(WM_HWIN hWin, u_8 NewStatus)
 {
     BUTTON_Obj *pObj = hWin;
@@ -133,7 +133,7 @@ void BUTTON_Check(WM_HWIN hWin, u_8 NewStatus)
     WM_Invalidate(hWin);
 }
 
-/* èŽ·å–æŒ‰é”®çŠ¶æ€ */
+/* »ñÈ¡°´¼ü×´Ì¬ */
 u_8 BUTTON_GetStatus(WM_HWIN hWin)
 {
     return ((BUTTON_Obj *)hWin)->Check;

@@ -1,4 +1,4 @@
-ï»¿#ifndef __GUI_QUEUE_H
+#ifndef __GUI_QUEUE_H
 #define __GUI_QUEUE_H
 
 #include "GUI_Config.h"
@@ -6,24 +6,24 @@
 
 typedef u_32 GUI_PARAM;
 
-/* æ¶ˆæ¯ç»“æ„ä½“å®šä¹‰ */
+/* ÏûÏ¢½á¹¹Ìå¶¨Òå */
 typedef struct {
-    u_16 MsgId;       /* æ¶ˆæ¯ç¼–å· */
-    GUI_HWIN hWin;    /* ç›®æ ‡çª—å£å¥æŸ„ */
-    GUI_HWIN hWinSrc; /* æºçª—å£å¥æŸ„  */
-    GUI_PARAM Param;  /* å‚æ•° */
+    int MsgId;       /* ÏûÏ¢±àºÅ */
+    GUI_HWIN hWin;    /* Ä¿±ê´°¿Ú¾ä±ú */
+    GUI_HWIN hWinSrc; /* Ô´´°¿Ú¾ä±ú  */
+    GUI_PARAM Param;  /* ²ÎÊı */
 } GUI_MESSAGE;
 
-/* é˜Ÿåˆ—ç»“æ„å®šä¹‰ */
+/* ¶ÓÁĞ½á¹¹¶¨Òå */
 typedef struct {
-    GUI_MESSAGE *pArray; /* é˜Ÿåˆ—æŒ‡é’ˆ */
-    u_16 Capacity;       /* é˜Ÿåˆ—æ•°ç»„å®¹é‡ */
-    u_16 size;           /* é˜Ÿåˆ—ç›®å‰æ•°æ®å•å…ƒæ•°é‡ */
-    u_16 front;          /* é˜Ÿå¤´ */
-    u_16 rear;           /* é˜Ÿå°¾ */
+    GUI_MESSAGE *pArray; /* ¶ÓÁĞÖ¸Õë */
+    int Capacity;       /* ¶ÓÁĞÊı×éÈİÁ¿ */
+    int size;           /* ¶ÓÁĞÄ¿Ç°Êı¾İµ¥ÔªÊıÁ¿ */
+    int front;          /* ¶ÓÍ· */
+    int rear;           /* ¶ÓÎ² */
 } GUI_QUEUE;
 
-GUI_QUEUE * GUI_QueueInit(u_16 Capacity);
+GUI_QUEUE * GUI_QueueInit(int Capacity);
 void GUI_QueueDelete(GUI_QUEUE *pQue);
 GUI_RESULT GUI_GetMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg);
 GUI_RESULT GUI_PostMessageQueue(GUI_QUEUE *pQue, GUI_MESSAGE *pMsg);

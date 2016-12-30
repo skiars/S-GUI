@@ -1,4 +1,4 @@
-ï»¿#include "sdlscreen.h"
+#include "sdlscreen.h"
 #include "SDL/SDL.h"
 #include "GUI.h"
 #include "GUI_Test.h"
@@ -11,7 +11,7 @@ void MessageLoop(void);
 Uint32 TimerCb(Uint32 interval, void *param);
 void Key_Send(int KeyVal, char Status);
 
-/* åˆå§‹åŒ– */
+/* ³õÊ¼»¯ */
 void sdl_init(void)
 {
     SDL_Thread *guiThread;
@@ -36,14 +36,14 @@ void sdl_init(void)
     SDL_Quit();
 }
 
-/* GUIçº¿ç¨‹ */
+/* GUIÏß³Ì */
 int GUIThread(void *p)
 {
     GUI_Test();
     return 0;
 }
 
-/* å®šæ—¶å™¨ */
+/* ¶¨Ê±Æ÷ */
 Uint32 TimerCb(Uint32 interval, void *param)
 {
     static int x, y;
@@ -51,14 +51,14 @@ Uint32 TimerCb(Uint32 interval, void *param)
     //SDL_Flip(screen);
     if (MouseDownFlag) {
         SDL_GetMouseState(&x, &y);
-        GUI_TouchPadSendValue((u_16)x, (u_16)y, GUI_TP_CHECKED);
+        GUI_TouchPadSendValue((int)x, (int)y, GUI_TP_CHECKED);
     } else {
-        GUI_TouchPadSendValue((u_16)x, (u_16)y, GUI_TP_REMOVED);
+        GUI_TouchPadSendValue((int)x, (int)y, GUI_TP_REMOVED);
     }
-    return 20; /* å®šæ—¶å™¨å‘¨æœŸ(ms) */
+    return 20; /* ¶¨Ê±Æ÷ÖÜÆÚ(ms) */
 }
 
-/* æ¶ˆæ¯å¾ªç¯ */
+/* ÏûÏ¢Ñ­»· */
 void MessageLoop(void)
 {
     int quit = 1;
@@ -104,7 +104,7 @@ void MessageLoop(void)
     }
 }
 
-/* é”®ç›˜å€¼ä¼ é€’ï¼Œä½œç”¨ï¼šå°†Win32é”®ç›˜è¾“å…¥é”®å€¼ä¼ é€’åˆ°S-GUI */
+/* ¼üÅÌÖµ´«µİ£¬×÷ÓÃ£º½«Win32¼üÅÌÊäÈë¼üÖµ´«µİµ½S-GUI */
 void Key_Send(int KeyVal, char Status)
 {
     static char lastStatus = 2;
@@ -116,7 +116,7 @@ void Key_Send(int KeyVal, char Status)
     }
     lastVal = KeyVal;
     lastStatus = Status;
-    /* é”®å€¼è½¬æ¢ */
+    /* ¼üÖµ×ª»» */
     switch (KeyVal) {
     case SDLK_UP:
         Key = KEY_UP;
@@ -131,18 +131,18 @@ void Key_Send(int KeyVal, char Status)
         Key = KEY_RIGHT;
         break;
     case SDLK_LSHIFT:
-        /* ç¬¬äºŒåŠŸèƒ½é”®å¤„ç† */
+        /* µÚ¶ş¹¦ÄÜ¼ü´¦Àí */
         Key = KEY_SHIFT;
         break;
     case SDLK_RSHIFT:
-        /* ç¬¬äºŒåŠŸèƒ½é”®å¤„ç† */
+        /* µÚ¶ş¹¦ÄÜ¼ü´¦Àí */
         Key = KEY_SHIFT;
         break;
     case SDLK_ESCAPE:
         Key = KEY_ESC;
         break;
     default:
-        Key = (u_8)KeyVal; /* å…¶ä»–é”®ç›´æ¥èµ‹å€¼ */
+        Key = (u_8)KeyVal; /* ÆäËû¼üÖ±½Ó¸³Öµ */
     }
     if (Status == 1) {
         GUI_SendKey(Key, GUI_KEYDOWN);
@@ -151,7 +151,7 @@ void Key_Send(int KeyVal, char Status)
     }
 }
 
-/* å†™åƒç´ ï¼Œå†…éƒ¨è°ƒç”¨ */
+/* Ğ´ÏñËØ£¬ÄÚ²¿µ÷ÓÃ */
 static void SDL_PixelNolock(SDL_Surface *surface, int x, int y, Uint32 color)
 {
     int bpp = surface->format->BytesPerPixel;
@@ -162,26 +162,26 @@ static void SDL_PixelNolock(SDL_Surface *surface, int x, int y, Uint32 color)
         *(Uint32 *)p = color;
         break;
     case 1:
-        *p = color;
+        *p = 0;
         break;
     case 2:
         *(Uint16 *)p = (Uint16)color;
         break;
     case 3:
         if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-            p[0] = (color >> 16) & 0xff;
-            p[1] = (color >> 8) & 0xff;
-            p[2] = color & 0x0f;
+            p[0] = (Uint8)((color >> 16) & 0xff);
+            p[1] = (Uint8)((color >> 8) & 0xff);
+            p[2] = (Uint8)(color & 0x0f);
         } else {
-            p[0] = color & 0x0f;
-            p[1] = (color >> 8) & 0xff;
-            p[2] = (color >> 16) & 0xff;
+            p[0] = (Uint8)(color & 0x0f);
+            p[1] = (Uint8)((color >> 8) & 0xff);
+            p[2] = (Uint8)(color >> 16) & 0xff;
         }
         break;
     }
 }
 
-/* å†™åƒç´ ï¼Œå†…éƒ¨è°ƒç”¨ */
+/* Ğ´ÏñËØ£¬ÄÚ²¿µ÷ÓÃ */
 static void SDL_PixelColor(SDL_Surface *surface, int x, int y, Uint32 color)
 {
     if (SDL_MUSTLOCK(surface)) {
@@ -192,13 +192,13 @@ static void SDL_PixelColor(SDL_Surface *surface, int x, int y, Uint32 color)
     SDL_PixelNolock(surface, x, y, color);
 }
 
-/* å†™åƒç´  */
+/* Ğ´ÏñËØ */
 void HAL_SetPixel(int x, int y, UINT32 Color)
 {
     SDL_PixelColor(screen, x, y, Color);
 }
 
-/* è¯»å–åƒç´  */
+/* ¶ÁÈ¡ÏñËØ */
 UINT32 HAL_GetPixel(int x, int y)
 {
     int bpp = screen->format->BytesPerPixel;
@@ -207,7 +207,7 @@ UINT32 HAL_GetPixel(int x, int y)
     return *(UINT32 *)p;
 }
 
-/* å¡«å……çŸ©å½¢ */
+/* Ìî³ä¾ØĞÎ */
 void HAL_FillRect(int x0, int y0, int x1, int y1, UINT32 Color)
 {
     SDL_Rect r;
@@ -229,7 +229,7 @@ void HAL_FillRect(int x0, int y0, int x1, int y1, UINT32 Color)
     }
 }
 
-/* ç»˜åˆ¶RGB888ä½å›¾ */
+/* »æÖÆRGB888Î»Í¼ */
 void _drawBitmap24b(const unsigned char *pPixel,
     int x0, int y0, int xSize, int ySize, int Offset)
 {
@@ -241,7 +241,7 @@ void _drawBitmap24b(const unsigned char *pPixel,
         return;
     }
     Offset *= 3;
-    pLCD += y0 * win_w + x0; /* åç§»åˆ°ç¬¬ä¸€ä¸ªè¦æ˜¾ç¤ºçš„ç‚¹çš„ä½ç½® */
+    pLCD += y0 * win_w + x0; /* Æ«ÒÆµ½µÚÒ»¸öÒªÏÔÊ¾µÄµãµÄÎ»ÖÃ */
     while (ySize--) {
         for (i = 0; i < xSize; ++i) {
             Color = *pPixel++;
@@ -254,7 +254,7 @@ void _drawBitmap24b(const unsigned char *pPixel,
     }
 }
 
-/* ç»˜åˆ¶ä½å›¾ */
+/* »æÖÆÎ»Í¼ */
 void HAL_DrawBitmap(int ColorFormat, const unsigned char *pPixel,
     int x0, int y0, int xSize, int ySize, int Offset)
 {

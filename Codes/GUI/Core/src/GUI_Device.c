@@ -1,28 +1,28 @@
-ï»¿#include "GUI_Device.h"
+#include "GUI_Device.h"
 #include "GUI.h"
 
-GUI_GDEV        *GUI_GDev;       /* å½“å‰ä½¿ç”¨çš„å›¾å½¢è®¾å¤‡ */
-GUI_GDEV         GUI_Screen;     /* å±å¹•è®¾å¤‡ */
-GUI_GLAPI        GUI_glAPI;      /* åŸºæœ¬çš„ç»˜å›¾å‡½æ•° */
-static GUI_GDEV *GUI_GDevList;   /* å›¾å½¢è®¾å¤‡åˆ—è¡¨ */
+GUI_GDEV        *GUI_GDev;       /* µ±Ç°Ê¹ÓÃµÄÍ¼ĞÎÉè±¸ */
+GUI_GDEV         GUI_Screen;     /* ÆÁÄ»Éè±¸ */
+GUI_GLAPI        GUI_glAPI;      /* »ù±¾µÄ»æÍ¼º¯Êı */
+static GUI_GDEV *GUI_GDevList;   /* Í¼ĞÎÉè±¸ÁĞ±í */
 
 #define HL_SetPixel GUI_GDev->SetPixel
 #define HL_GetPixel GUI_GDev->GetPixel
 
-/* é»˜è®¤ç”»ç‚¹å‡½æ•° */
-static void _SetPixel(u_16 x, u_16 y, GUI_COLOR Color)
+/* Ä¬ÈÏ»­µãº¯Êı */
+static void _SetPixel(int x, int y, GUI_COLOR Color)
 {
 
 }
 
-/* é»˜è®¤è¯»å–åƒç´ å‡½æ•° */
-static GUI_COLOR _GetPixel(u_16 x, u_16 y)
+/* Ä¬ÈÏ¶ÁÈ¡ÏñËØº¯Êı */
+static GUI_COLOR _GetPixel(int x, int y)
 {
     return 0;
 }
 
-/* åœ¨è®¾å¤‡ä¸Šç”»æ°´å¹³çº¿ */
-static void _DrawHLine(u_16 x0, u_16 y0, u_16 x1, GUI_COLOR Color)
+/* ÔÚÉè±¸ÉÏ»­Ë®Æ½Ïß */
+static void _DrawHLine(int x0, int y0, int x1, GUI_COLOR Color)
 {
     while (x0 <= x1) {
         HL_SetPixel(x0, y0, Color);
@@ -30,8 +30,8 @@ static void _DrawHLine(u_16 x0, u_16 y0, u_16 x1, GUI_COLOR Color)
     }
 }
 
-/* åœ¨è®¾å¤‡ä¸Šç”»å‚ç›´çº¿ */
-static void _DrawVLine(u_16 x0, u_16 y0, u_16 y1, GUI_COLOR Color)
+/* ÔÚÉè±¸ÉÏ»­´¹Ö±Ïß */
+static void _DrawVLine(int x0, int y0, int y1, GUI_COLOR Color)
 {
     while (y0 <= y1) {
         HL_SetPixel(x0, y0, Color);
@@ -39,10 +39,10 @@ static void _DrawVLine(u_16 x0, u_16 y0, u_16 y1, GUI_COLOR Color)
     }
 }
 
-/* åœ¨è®¾å¤‡ä¸Šå¡«å……åŒºåŸŸ */
+/* ÔÚÉè±¸ÉÏÌî³äÇøÓò */
 static void _FillRect(GUI_FLIPOUT *Cmd)
 {
-    u_16 x0 = Cmd->x0, y0 = Cmd->y0, x1 = Cmd->x1, y1 = Cmd->y1;
+    int x0 = Cmd->x0, y0 = Cmd->y0, x1 = Cmd->x1, y1 = Cmd->y1;
     GUI_COLOR Color = Cmd->Color;
 
     while (y0 <= y1) {
@@ -50,16 +50,16 @@ static void _FillRect(GUI_FLIPOUT *Cmd)
     }
 }
 
-/* ç»˜åˆ¶æŸ¥è‰²è¡¨ä½å›¾ */
+/* »æÖÆ²éÉ«±íÎ»Í¼ */
 static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
 {
     int i, j;
-    i_16 x0 = Cmd->x0, y0 = Cmd->y0;
+    int x0 = Cmd->x0, y0 = Cmd->y0;
     const u_8 *pSrc = Cmd->pSrc;
     const GUI_COLOR *pLog = Cmd->pLog->pPalEntries;
 
-    for (j = 0; j < Cmd->ySize; ++j) {
-        for (i = 0; i < Cmd->xSize; ++i) {
+    for (j = 0; j < (int)Cmd->ySize; ++j) {
+        for (i = 0; i < (int)Cmd->xSize; ++i) {
             HL_SetPixel(x0 + i, y0 + j, pLog[*pSrc]);
             pSrc += 1;
         }
@@ -67,11 +67,11 @@ static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
     }
 }
 
-/* ç»˜åˆ¶ä½å›¾ */
+/* »æÖÆÎ»Í¼ */
 static void _DrawBitmap(GUI_FLIPOUT *Cmd)
 {
     int i, j, pixBytes = 1;
-    i_16 x0 = Cmd->x0, y0 = Cmd->y0;
+    int x0 = Cmd->x0, y0 = Cmd->y0;
     const u_8 *pSrc = (const u_8 *)Cmd->pSrc;
 
     if (Cmd->SrcFormat == GUI_RGB565) {
@@ -83,8 +83,8 @@ static void _DrawBitmap(GUI_FLIPOUT *Cmd)
         return;
     }
     Cmd->Offset *= pixBytes;
-    for (j = 0; j < Cmd->ySize; ++j) {
-        for (i = 0; i < Cmd->xSize; ++i) {
+    for (j = 0; j < (int)Cmd->ySize; ++j) {
+        for (i = 0; i < (int)Cmd->xSize; ++i) {
             HL_SetPixel(x0 + i, y0 +j, GUI_RGB565To888(*(u_16 *)pSrc));
             pSrc += pixBytes;
         }
@@ -92,28 +92,28 @@ static void _DrawBitmap(GUI_FLIPOUT *Cmd)
     }
 }
 
-/* ç»˜åˆ¶åƒç´  */
-void _GL_SetPixel(i_16 x, i_16 y, GUI_COLOR Color)
+/* »æÖÆÏñËØ */
+void _GL_SetPixel(int x, int y, GUI_COLOR Color)
 {
     HL_SetPixel(x, y, Color);
 }
 
-/* è¯»å–åƒç´  */
-GUI_COLOR _GL_GetPixel(i_16 x, i_16 y)
+/* ¶ÁÈ¡ÏñËØ */
+GUI_COLOR _GL_GetPixel(int x, int y)
 {
     return HL_GetPixel(x, y);
 }
 
-/* è£å‰ªç»˜åˆ¶åƒç´  */
-static void _glSetPixelClip(i_16 x, i_16 y)
+/* ²Ã¼ô»æÖÆÏñËØ */
+static void _glSetPixelClip(int x, int y)
 {
     CHECK_X(x);
     CHECK_Y(y);
     HL_SetPixel(x, y, GUI_Context.FGColor);
 }
 
-/* ç»˜åˆ¶æ°´å¹³çº¿ */
-static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1)
+/* »æÖÆË®Æ½Ïß */
+static void _glDrawHLine(int x0, int y0, int x1)
 {
     CLIP_X(x0, x1);
     CHECK_Y(y0);
@@ -122,8 +122,8 @@ static void _glDrawHLine(i_16 x0, i_16 y0, i_16 x1)
     }
 }
 
-/* ç»˜åˆ¶å‚ç›´çº¿ */
-void _GL_DrawVLine(i_16 x0, i_16 y0, i_16 y1)
+/* »æÖÆ´¹Ö±Ïß */
+void _GL_DrawVLine(int x0, int y0, int y1)
 {
     CLIP_Y(y0, y1);
     CHECK_X(x0);
@@ -132,8 +132,8 @@ void _GL_DrawVLine(i_16 x0, i_16 y0, i_16 y1)
     }
 }
 
-/* å¡«å……çŸ©å½¢ */
-static void _glFillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
+/* Ìî³ä¾ØĞÎ */
+static void _glFillRect(int x0, int y0, int x1, int y1)
 {
     GUI_FLIPOUT Cmd;
 
@@ -147,13 +147,13 @@ static void _glFillRect(i_16 x0, i_16 y0, i_16 x1, i_16 y1)
     GUI_GDev->FillRect(&Cmd);
 }
 
-/* ç»˜åˆ¶ä½å›¾ */
+/* »æÖÆÎ»Í¼ */
 void _GL_DrawBitmap(u_8 PixelFormat,
     const unsigned char *pPixel,
-    i_16 x0,
-    i_16 y0,
-    u_16 xSize,
-    u_16 ySize,
+    int x0,
+    int y0,
+    int xSize,
+    int ySize,
     int Offset,
     const LCD_LOGPALETTE *pLog)
 {
@@ -170,7 +170,7 @@ void _GL_DrawBitmap(u_8 PixelFormat,
     GUI_GDev->DrawBitmap(&Cmd);
 }
 
-/* LCDåˆå§‹åŒ– */
+/* LCD³õÊ¼»¯ */
 void GUI_DeviceInit(void)
 {
     GUI_glAPI.SetPixelClip = _glSetPixelClip;
@@ -186,10 +186,10 @@ void GUI_DeviceInit(void)
     GUI_GDev->DrawVLine = _DrawVLine;
     GUI_GDev->FillRect = _FillRect;
     GUI_GDev->DrawBitmap = _DrawBitmap;
-    GUI_UserConfig(GUI_GDev); /* æ‰§è¡Œç”¨æˆ·çš„åˆå§‹åŒ–å‡½æ•° */
+    GUI_UserConfig(GUI_GDev); /* Ö´ĞĞÓÃ»§µÄ³õÊ¼»¯º¯Êı */
 }
 
-/* é€‰ä¸­æŸä¸ªå›¾å½¢è®¾å¤‡ */
+/* Ñ¡ÖĞÄ³¸öÍ¼ĞÎÉè±¸ */
 GUI_RESULT GUI_SelectDevice(unsigned char id)
 {
     GUI_GDEV *pNode;
@@ -206,22 +206,22 @@ GUI_RESULT GUI_SelectDevice(unsigned char id)
     return GUI_ERR;
 }
 
-/* è·å–ä¸€ä¸ªå›¾å½¢è®¾å¤‡çš„æŒ‡é’ˆ,å¦‚æœè®¾å¤‡ä¸å­˜åœ¨å°±åˆ›å»ºä¸€ä¸ª */
+/* »ñÈ¡Ò»¸öÍ¼ĞÎÉè±¸µÄÖ¸Õë,Èç¹ûÉè±¸²»´æÔÚ¾Í´´½¨Ò»¸ö */
 GUI_GDEV * GUI_GetDevice(unsigned char id)
 {
     GUI_GDEV *pNode;
 
     GUI_LOCK();
     pNode = GUI_GDevList;
-    if (pNode == NULL) { /* é“¾è¡¨ä¸ºç©ºåˆ™åˆ›å»º */
+    if (pNode == NULL) { /* Á´±íÎª¿ÕÔò´´½¨ */
         pNode = GUI_Malloc(sizeof(GUI_GDEV));
         pNode->Id = id;
         pNode->pNext = NULL;
     } else {
-        while (pNode->pNext && pNode->Id != id) { /* å¯»æ‰¾IDä¸ºidçš„è®¾å¤‡ */
+        while (pNode->pNext && pNode->Id != id) { /* Ñ°ÕÒIDÎªidµÄÉè±¸ */
             pNode = pNode->pNext;
         }
-        if (pNode->Id != id) { /* ä¸å­˜åœ¨è®¾å¤‡ */
+        if (pNode->Id != id) { /* ²»´æÔÚÉè±¸ */
             pNode->pNext = GUI_Malloc(sizeof(GUI_GDEV));
             pNode = pNode->pNext;
             pNode->Id = id;
@@ -232,12 +232,12 @@ GUI_GDEV * GUI_GetDevice(unsigned char id)
     return pNode;
 }
 
-/* åˆ é™¤å›¾å½¢è®¾å¤‡ */
+/* É¾³ıÍ¼ĞÎÉè±¸ */
 void GUI_DeleteDevice(unsigned char id)
 {
     GUI_GDEV *pNode;
 
-    if (id == GUI_DEF_SCREEN) { /* é»˜è®¤è®¾å¤‡ä¸å¯åˆ é™¤ */
+    if (id == GUI_DEF_SCREEN) { /* Ä¬ÈÏÉè±¸²»¿ÉÉ¾³ı */
         return;
     }
     GUI_LOCK();
@@ -245,12 +245,12 @@ void GUI_DeleteDevice(unsigned char id)
     if (pNode->Id == id) {
         GUI_GDevList = pNode->pNext;
         GUI_Free(pNode);
-    } else if (pNode) { /* é“¾è¡¨ä¸ä¸ºç©º */
-        while (pNode->pNext && pNode->pNext->Id != id) { /* åˆ°è¦åˆ é™¤çš„å‰ä¸€ä¸ªé“¾èŠ‚ */
+    } else if (pNode) { /* Á´±í²»Îª¿Õ */
+        while (pNode->pNext && pNode->pNext->Id != id) { /* µ½ÒªÉ¾³ıµÄÇ°Ò»¸öÁ´½Ú */
             pNode = pNode->pNext;
         }
         if (pNode->pNext && pNode->pNext->Id == id) {
-            if (GUI_GDev->Id == id) { /* ä½¿ç”¨é»˜è®¤è®¾å¤‡ */
+            if (GUI_GDev->Id == id) { /* Ê¹ÓÃÄ¬ÈÏÉè±¸ */
                 GUI_GDev = GUI_GetDevice(GUI_DEF_SCREEN);
             }
             pNode->pNext = pNode->pNext->pNext;
@@ -260,7 +260,7 @@ void GUI_DeleteDevice(unsigned char id)
     GUI_UNLOCK();
 }
 
-/* åˆ é™¤å›¾å½¢è®¾å¤‡è¡¨, æ­¤å‡½æ•°è°ƒç”¨ä¹‹åä¸èƒ½å†ä½¿ç”¨S-GUI */
+/* É¾³ıÍ¼ĞÎÉè±¸±í, ´Ëº¯Êıµ÷ÓÃÖ®ºó²»ÄÜÔÙÊ¹ÓÃS-GUI */
 void GUI_DeleteDeviceList(void)
 {
     GUI_GDEV *pNode, *pNext;
