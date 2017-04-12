@@ -1,0 +1,101 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="format.css">
+  <title>GUI_Config.h</title>
+</head>
+
+<body>
+<section class= "page-header">
+  <h1>移植S-GUI</h1>
+</section>
+
+<section class= "main-content">
+  <div>
+    <p>移植S-GUI的主要工作是修改GUI_Buttom.c文件。移植需要用户完成以下工作:</p>
+    <ol>
+      <li><a href="#heap_init">堆初始化</a></li>
+      <li><a href="#gdev_cfg">提供图形设备接口</a></li>
+      <li><a href="#time_server">提供时间服务函数</a></li>
+      <li><a href="#task">多任务支持</a></li>
+    </ol>
+  </div>
+
+  <div>
+    <h2 id="heap_init">堆初始化</h2>
+    <p>S-GUI的内存管理单元需要用户自行提供合适的内存空间。为此，用户需要填充以下函数：</p>
+    <h3><code>void * _GUI_GetHeapBuffer(int Page, u_32 *Size)</code></h3>
+    <p>该函数会在S-GUI初始化时被调用，它的各参数作用如下：</p>
+    <h4><code>Page</code></h4>
+    <p>该参数指定内存页码，S-GUI在调用此函数时会依次使用1, 2, 3 ...的内存页代码。这个参数由S-GUI提供，用户针对每个内存页返回对应的内存池首地址和内存池打小即可。如果内存池不存在，用户应该返回值为<code>NULL</code>的内存池首地址。</p>
+    <h4><code>Size</code></h4>
+    <p>该参数用于返回当前页码下内存池的大小，单位是字节(Byte)。</p>
+    <h4>返回值</h4>
+    <p>该参数返回当前内存页码下的内存池首地址。如果返回<code>NULL</code>，S-GUI就会认为内存池的初始化过程结束，并不再执行<code>_GUI_GetHeapBuffer()</code>函数，因此，如果内存池只有2个，用户就应该在<code>Page</code>值为2时返回<code>NULL</code>来终止内存池的初始化。</p>
+    <p>S-GUI一般需要大于1kB的动态内存空间才能正常运行，因此，用户应至少提供一个1kB的内存池。所有的内存池都要求首地址4字节对齐，即<code>_GUI_GetHeapBuffer()</code>函数的返回值应为4的整倍数。用户可以使用<code>u_32</code>型变量或使用编译器提供的字节对齐功能来定义内存池数组，以确保内存池首地址是4字节对齐的。</p>
+  </div>
+
+  <div>
+    <h2 id="gdev_cfg">提供图形设备接口</h2>
+    <p>用户需要为S-GUI提供图形设备的接口，这些接口在函数<code><span class="Type">void</span> GUI_UserConfig(<span class="UserType">GUI_GDEV</span> *phy)</code>中连接。<span class="UserType">GUI_GDEV</span>是一个图形设备的抽象结构，它的定义如下：</p>
+<pre class="edge">
+<span class="LineNr"> 1 </span><span class="Structure">typedef</span> <span class="Structure">struct</span> <span class="UserType">GUI_GDEV</span> {
+<span class="LineNr"> 2 </span>    <span class="Type">int</span> Width, Height;                           <span class="Comment">/*</span><span class="Comment"> 显示设备的宽度和高度高度 </span><span class="Comment">*/</span>
+<span class="LineNr"> 3 </span>    <span class="Type">unsigned</span> <span class="Type">char</span> Id;                            <span class="Comment">/*</span><span class="Comment"> 设备ID </span><span class="Comment">*/</span>
+<span class="LineNr"> 4 </span>    <span class="Type">int</span> PixelFormat;                             <span class="Comment">/*</span><span class="Comment"> 像素颜色格式 </span><span class="Comment">*/</span>
+<span class="LineNr"> 5 </span>    <span class="Type">void</span> (*SetPixel)(<span class="Type">int</span>, <span class="Type">int</span>, <span class="UserType">GUI_COLOR</span>);       <span class="Comment">/*</span><span class="Comment"> 显示某个像素 </span><span class="Comment">*/</span>
+<span class="LineNr"> 6 </span>    <span class="UserType">GUI_COLOR</span> (*GetPixel)(<span class="Type">int</span>, <span class="Type">int</span>);             <span class="Comment">/*</span><span class="Comment"> 读取某个像素 </span><span class="Comment">*/</span>
+<span class="LineNr"> 7 </span>    <span class="Type">void</span> (*DrawHLine)(<span class="Type">int</span>, <span class="Type">int</span>, <span class="Type">int</span>, <span class="UserType">GUI_COLOR</span>); <span class="Comment">/*</span><span class="Comment"> 绘制水平线 </span><span class="Comment">*/</span>
+<span class="LineNr"> 8 </span>    <span class="Type">void</span> (*DrawVLine)(<span class="Type">int</span>, <span class="Type">int</span>, <span class="Type">int</span>, <span class="UserType">GUI_COLOR</span>); <span class="Comment">/*</span><span class="Comment"> 绘制垂直线 </span><span class="Comment">*/</span>
+<span class="LineNr"> 9 </span>    <span class="Type">void</span> (*FillRect)(<span class="UserType">GUI_FLIPOUT</span> *);             <span class="Comment">/*</span><span class="Comment"> 填充矩形 </span><span class="Comment">*/</span>
+<span class="LineNr">10 </span>    <span class="Type">void</span>(*DrawBitmap)(<span class="UserType">GUI_FLIPOUT</span> *);            <span class="Comment">/*</span><span class="Comment"> 绘制位图 </span><span class="Comment">*/</span>
+<span class="LineNr">11 </span>    <span class="Structure">struct</span> <span class="UserType">GUI_GDEV</span> *pNext;
+<span class="LineNr">12 </span>} <span class="UserType">GUI_GDEV</span>;
+</pre>
+    <p>用户在<code>GUI_UserConfig()</code>函数中填充这个<code><span class="UserType">GUI_GDEV</span></code>类型的结构体。要使S-GUI正常显示，用户必须指定以下<code><span class="UserType">GUI_GDEV</span></code>成员：</p>
+    <h4><code>Width</code></h4>
+    <p>它定义了图形设备的宽度(像素数)。</p>
+    <h4><code>Height</code></h4>
+    <p>它定义了图形设备的高度(像素数)。</p>
+    <h4><code>SetPixel</code></h4>
+    <p>函数指针原型为<code><span class="Type">void</span> (*SetPixel)(<span class="Type">int</span> x, <span class="Type">int</span> y, <span class="UserType">GUI_COLOR</span> Color)</code>，该函数的作用是在屏幕上的指定坐标的一个像素颜色设置为<code>Color</code>。</p>
+    <h4><code>GetPixel</code></h4>
+    <p>函数指针原型为<code><span class="UserType">GUI_COLOR</span> (*GetPixel)(<span class="Type">int</span> x, <span class="Type">int</span> y)</code>，该函数返回指定坐标下的像素颜色。</p>
+    <p><code><code>DrawHLine</code>, <code>DrawVLine</code>, FillRect</code>和<code>DrawBitmap</code>等成员可以不指定，因为S-GUI内部已经实现了这些功能。不过，建议用户用更高效的函数来覆盖它们，因为S-GUI内部实际上是使用<code>SetPixel()</code>来实现这些函数，效率低下。</p>
+  </div>
+
+  <div>
+    <h2 id="time_server">提供时间服务函数</h2>
+    <h3><code>GUI_TIME GUI_GetTime(void)</code></h3>
+    <p>此函数用于获取时间（单位为ms）。如果不许需要在S-GUI中获取时间，可以不填充此函数</p>
+    <h3><code>void _GUI_Delay_ms(GUI_TIME tms)</code></h3>
+    <p>填充此函数来使S-GUI支持延时操作，这个函数的延时时间单位为ms，如果用户不使用<code>GUI_Delay()</code>函数，则可以不实现<code>_GUI_Delay_ms</code>函数。</p>
+  </div>
+
+  <div>
+    <h2 id="task">多任务支持</h2>
+    <p>当用户需要S-GUI运行在多任务环境下时，需要在底层实现多任务的相关接口。多任务支持一般是通过类似线程锁的机制来实现的，在大多数操作系统下可以使用信号量来实现这一功能。在S-GUI中，使用四个函数来实现锁的底层操作：</p>
+    <h3><code>void * GUI_TaskCreateLock(void)</code></h3>
+    <p>该函数用于创建一个锁，它返回一个指向锁的指针。</p>
+    <h3><code>void GUI_TaskLock(void *pLock)</code></h3>
+    <p>该函数实现加锁功能，<code>pLock</code>指向需要加锁的锁。</p>
+    <h3><code>void GUI_TaskUnlock(void *pLock)</code></h3>
+    <p>该函数实现解锁功能，<code>pLock</code>指向需要解锁的锁。</p>
+    <h3><code>u_32 GUI_TaskGetId(void)</code></h3>
+    <p>该函数获取任务ID，大部分多任务系统直接提供这个ID值，还有些多任务系统不提供任务的ID值，此时可以尝试使用其他的可以唯一标识任务的信息来作为该函数的返回值。</p>
+  </div>
+
+  <div>
+    <p>您可以参考示例中的Codes/GUI/Config/GUI_Bottom.c文件。该文件在SDL环境下使用，如果要在嵌入式系统中使用需做适当的修改。S-GUI移植成功的环境有：</p>
+      <ul>
+        <li>x86 Windows XP/7/10 Visual Studio 2015, GCC</li>
+        <li>x86 Linux GCC</li>
+        <li>STM32F103 Keil</li>
+        <li>STM32F429 uC/OS-II FreeRTOS Keil</li>
+        <li>STM32F746 FreeRTOS Keil</li>
+      </ul>
+  </div>
+
+<footer>
+  <a class= "btn" href="javascript:history.go(-1);">◂返回上一页</a>
+  <a class= "btn" href="../doc_cn.html">◂Home</a>
+</footer>
+<section>
