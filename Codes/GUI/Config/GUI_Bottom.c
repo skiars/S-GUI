@@ -69,7 +69,7 @@ void Phy_FillRect(GUI_FLIPOUT *Cmd);
 void Phy_DrawBitmap(GUI_FLIPOUT *Cmd);
 
 /* 图形硬件初始化 */
-void GUI_HAL_Init(GUI_GDEV *phy)
+void GUI_UserConfig(GUI_GDEV *phy)
 {
     phy->Width = HAL_SCREEN_W;
     phy->Height = HAL_SCREEN_H;
@@ -77,7 +77,6 @@ void GUI_HAL_Init(GUI_GDEV *phy)
     phy->SetPixel = Phy_SetPixel;
     phy->FillRect = Phy_FillRect;
     phy->DrawBitmap = Phy_DrawBitmap;
-    phy->FlipScreen = HAL_FlipScreen;
 }
 
 /* 读取屏幕上的点 */
@@ -105,8 +104,8 @@ static void _DrawLogBitmap(GUI_FLIPOUT *Cmd)
     const u_8 *pSrc = Cmd->pSrc;
     const GUI_COLOR *pLog = Cmd->pLog->pPalEntries;
 
-    for (j = 0; j < Cmd->ySize; ++j) {
-        for (i = 0; i < Cmd->xSize; ++i) {
+    for (j = 0; j < (int)Cmd->ySize; ++j) {
+        for (i = 0; i < (int)Cmd->xSize; ++i) {
             Phy_SetPixel(x0 + i, y0 + j, pLog[*pSrc]);
             pSrc += 1;
         }

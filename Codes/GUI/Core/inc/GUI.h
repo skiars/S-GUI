@@ -10,7 +10,7 @@
 #include "GUI_Bitmap.h"
 #include "GUI_WM.h"
 #include "GUI_Rect.h"
-#include "GUI_Botton.h"
+#include "GUI_Bottom.h"
 #include "GUI_Queue.h"
 #include "GUI_Timer.h"
 #include "GUI_KeyBoard.h"

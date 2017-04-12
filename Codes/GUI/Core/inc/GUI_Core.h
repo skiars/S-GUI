@@ -3,7 +3,7 @@
 
 #include "GUI_Config.h"
 #include "GUI_Typedef.h"
-#include "GUI_Botton.h"
+#include "GUI_Bottom.h"
 #include "GUI_Queue.h"
 #include "GUI_Font.h"
 #include "GUI_Surface.h"
