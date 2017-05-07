@@ -2,8 +2,7 @@
 #define __GUI_CLIPAREA_H
 
 #include "GUI_Config.h"
-#include "GUI_Typedef.h"
-#include "GUI_Core.h"
+#include "GUI_ClipAreaHeap.h"
 
 GUI_AREA GUI_ClipExcludeRect(GUI_AREA Area, GUI_RECT *Rect);
 void GUI_ClipNewWindow(GUI_HWIN hWin);

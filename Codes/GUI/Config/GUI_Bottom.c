@@ -50,7 +50,7 @@ void _GUI_Delay_ms(GUI_TIME tms)
 void * _GUI_GetHeapBuffer(int Page, u_32 *Size)
 {
     static u_32 heap0[1024 * 1 / 4];
-    static u_32 heap1[1024 * 5 / 4];
+    static u_32 heap1[8192 * 5 / 4];
 
     if (Page == 0) {
         *Size = sizeof(heap0);
@@ -71,12 +71,12 @@ void Phy_DrawBitmap(GUI_FLIPOUT *Cmd);
 /* 图形硬件初始化 */
 void GUI_UserConfig(GUI_GDEV *phy)
 {
-    phy->Width = HAL_SCREEN_W;
-    phy->Height = HAL_SCREEN_H;
-    phy->GetPixel = Phy_GetPixel;
-    phy->SetPixel = Phy_SetPixel;
-    phy->FillRect = Phy_FillRect;
-    phy->DrawBitmap = Phy_DrawBitmap;
+    phy->width = HAL_SCREEN_W;
+    phy->height = HAL_SCREEN_H;
+    phy->getPixel = Phy_GetPixel;
+    phy->setPixel = Phy_SetPixel;
+    phy->fillRect = Phy_FillRect;
+    phy->drawBitmap = Phy_DrawBitmap;
 }
 
 /* 读取屏幕上的点 */

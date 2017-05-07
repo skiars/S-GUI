@@ -1,19 +1,16 @@
 #include "GUI_Bitmap.h"
 #include "GUI.h"
 
-static void _ClientToScreen(int *x, int *y)
-{
-    int xPos = GUI_Context.WinPos.x;
-    int yPos = GUI_Context.WinPos.y;
+#define CLIP_X(X0, X1) \
+{ \
+    X0 = X0 > GUI_CurrentClipRect()->x0 ? X0 : GUI_CurrentClipRect()->x0; \
+    X1 = X1 < GUI_CurrentClipRect()->x1 ? X1 : GUI_CurrentClipRect()->x1; \
+}
 
-    if (GUI_Context.AAEnable) {
-        int factor = GUI_Context.AAFactor;
-
-        xPos *= factor;
-        yPos *= factor;
-    }
-    *x += xPos;
-    *y += yPos;
+#define CLIP_Y(Y0, Y1) \
+{ \
+    Y0 = Y0 > GUI_CurrentClipRect()->y0 ? Y0 : GUI_CurrentClipRect()->y0; \
+    Y1 = Y1 < GUI_CurrentClipRect()->y1 ? Y1 : GUI_CurrentClipRect()->y1; \
 }
 
 /* 绘制位图，不支持透明效果 */
@@ -33,8 +30,8 @@ void GUI_DrawBitmap24b(int x0,
     xSize = GUI_MIN((int)xSize, (int)xMag); /* 图片宽度 */
     ySize = GUI_MIN((int)ySize, (int)yMag); /* 图片高度 */
     GUI_Val2Rect(&r1, x0, y0, xSize, ySize);
-    GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
+    GUI_PaintAreaInit(&r1);
+    while (GUI_NextPaintArea()) { /* 遍历所有的显示区域 */
         x0 = r1.x0;
         y0 = r1.y0;
         x1 = r1.x1;
@@ -65,8 +62,8 @@ void GUI_DrawBitmap16b(int x0,
     xSize = GUI_MIN((int)xSize, (int)xMag); /* 图片宽度 */
     ySize = GUI_MIN((int)ySize, (int)yMag); /* 图片高度 */
     GUI_Val2Rect(&r1, x0, y0, xSize, ySize);
-    GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
+    GUI_PaintAreaInit(&r1);
+    while (GUI_NextPaintArea()) { /* 遍历所有的显示区域 */
         x0 = r1.x0;
         y0 = r1.y0;
         x1 = r1.x1;
@@ -98,8 +95,8 @@ void GUI_DrawGif(int x0,
     xSize = GUI_MIN((int)xSize, (int)xMag); /* 图片宽度 */
     ySize = GUI_MIN((int)ySize, (int)yMag); /* 图片高度 */
     GUI_Val2Rect(&r1, x0, y0, xSize, ySize);
-    GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
+    GUI_PaintAreaInit(&r1);
+    while (GUI_NextPaintArea()) { /* 遍历所有的显示区域 */
         x0 = r1.x0;
         y0 = r1.y0;
         x1 = r1.x1;
@@ -121,7 +118,7 @@ void GUI_DrawBitmap(int x0,
     const GUI_BITMAP *Bmp)
 {
     if (Bmp->pDraw) {
-        _ClientToScreen(&x0, &y0);
+        GUI_ClientToScreen(&x0, &y0);
         Bmp->pDraw(x0, y0, xSize, ySize,
             Bmp->pData, Bmp->pPal, Bmp->xSize, Bmp->ySize);
     }

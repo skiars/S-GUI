@@ -1,10 +1,10 @@
 #include "GUI_Test.h"
 #include "GUI.h"
-#include "GUI_GL_AA.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "GUI_AntiAliasing.h"
 
 #include "Bitmap.h"
 #include "game.h"
@@ -31,7 +31,7 @@ static u_8 _CPUUsage; /* CPU占用率 */
 static void _RootWinPaint(WM_HWIN hWin)
 {
     /* 绘制背景 */
-    GUI_SetFGColor(0x00C0C0C0);
+    GUI_SetForeground(0x00C0C0C0);
     //GUI_FillRect(0, 0, GUI_GetScreenWidth(), GUI_GetScreenHeight());
     GUI_DrawBitmap(0, 0, 480, 320, &bmpic_rootwin);
     GUI_DispString(10, 300, _Str);
@@ -47,8 +47,8 @@ static void _RootWinTimer(WM_HWIN hWin)
     sprintf(_Str, "FPS: %d, CPU: %d%%", _FpsVal, _CPUUsage);
 #endif // _WIN32
     
-    //WM_InvalidateRect(_hRootWin, &Rect);
-    WM_Invalidate(_hRootWin);
+    //WM_InvalidateRect(gui_rootwin, &Rect);
+    WM_Invalidate(gui_rootwin);
     _FpsVal = 0; /* 帧率清零 */
     printf("Mem usage: %d bytes\n", GUI_GetMemUsage());
 }
@@ -112,6 +112,39 @@ void Create_Window3(void)
         GUI_GetScreenHeight(), NULL, WINDOW3, WM_WS_MOVE, GameWin_Cb);
 }
 
+void Window4_Cb(WM_MESSAGE *pMsg)
+{
+    switch (pMsg->MsgId) {
+    case WM_PAINT:
+    {
+        Rasterizer *ras = render_init();
+
+        GUI_SetForeground(0x00FF00FF);
+        ras->min_ex = 10;
+        ras->max_ex = 60;
+        ras->min_ey = 20;
+        ras->max_ey = 90;
+        GUI_MoveTo(ras, 10 * 256, 20 * 256);
+        GUI_LineTo(ras, 60 * 256, 80 * 256);
+        GUI_LineTo(ras, 100 * 256, 83 * 256);
+        GUI_LineTo(ras, 50 * 256, 30 * 256);
+        GUI_LineTo(ras, 40 * 256, 40 * 256);
+        GUI_LineTo(ras, 10 * 256, 20 * 256);
+        sweep_scanlines(ras);
+        render_free(ras);
+    }
+    }
+}
+
+void Create_Window4(void)
+{
+    WM_HWIN hWin;
+
+    hWin = WINDOW_Create(100, 100, 200,
+        200, NULL, WINDOW4, WM_WS_MOVE, Window4_Cb);
+    WINDOW_SetTitle(hWin, "AntiAliasing Test");
+}
+
 void Window1_Cb(WM_MESSAGE *pMsg)
 {
     WM_HWIN hItem, hWin = pMsg->hWin, hClient;
@@ -146,4 +179,5 @@ void Create_Window1(void)
     hWin = WINDOW_Create(20, 20, 120, 80, NULL, WINDOW1, WM_WS_MOVE, Window1_Cb);
     WINDOW_SetTitle(hWin, "S-GUI Demo");
     WINDOW_SetFont(hWin, &GUI_FontUI17_4pp);
+    Create_Window4();
 }

@@ -13,7 +13,7 @@
 /* 标准窗体边框颜色定义 */
 #define WINDOW_EDGE_COLOR           0x002A3033  /* 边线颜色 */
 
-static WM_HWIN __GetClient(WINDOW_Obj *pObj)
+static GUI_HWIN __GetClient(WINDOW_Obj *pObj)
 {
     return pObj->hClient;
 }
@@ -31,10 +31,10 @@ static void __Paint(WM_HWIN hWin)
     
     /* 绘制标题栏 */
     if (pObj != WM_GetActiveWindow()) {
-        GUI_SetFGColor(WINDOW_CAPTION_COLOR2);
+        GUI_SetForeground(WINDOW_CAPTION_COLOR2);
         GUI_SetFontColor(WINDOW_TITLE_COLOR2);
     } else {
-        GUI_SetFGColor(WINDOW_CAPTION_COLOR1);
+        GUI_SetForeground(WINDOW_CAPTION_COLOR1);
         GUI_SetFontColor(WINDOW_TITLE_COLOR1);
     }
     GUI_FillRect(1, 1, xSize - 2, pObj->CaptionHeight - 1);
@@ -44,9 +44,9 @@ static void __Paint(WM_HWIN hWin)
     GUI_DispStringInRect(&Rect, pObj->Title, GUI_ALIGN_VCENTER); /* 垂直居中 */
     /* 绘制边框 */
     if (pObj != WM_GetActiveWindow()) {
-        GUI_SetFGColor(WINDOW_TITLE_COLOR2);
+        GUI_SetForeground(WINDOW_TITLE_COLOR2);
     } else {
-        GUI_SetFGColor(WINDOW_CAPTION_COLOR1);
+        GUI_SetForeground(WINDOW_CAPTION_COLOR1);
     }
     GUI_DrawRect(0, 0, xSize, ySize);
 }
@@ -71,7 +71,7 @@ static void WINDOW_ChangeFocus(WINDOW_Obj *pObj)
     if (pFocus && pFocus->hNext) {
         pFocus = pFocus->hNext;
     } else {
-        pFocus = ((WM_Obj *)(pObj->hClient))->hFirstChild;
+        pFocus = WM_HandleToPtr(pObj->hClient)->hFirstChild;
     }
     if (pFocus) {
         WM_SetWindowFocus(pFocus);
@@ -134,7 +134,7 @@ static void __PaintClient(WM_HWIN hWin)
 
     GUI_GetClientRect(&Rect);
     /* 绘制背景 */
-    GUI_SetFGColor(WINDOW_BODY_BKC);
+    GUI_SetForeground(WINDOW_BODY_BKC);
     GUI_FillRect(0, 0, Rect.x1 + 1, Rect.y1 + 1);
 }
 
@@ -178,11 +178,11 @@ static void __BtnPaint(GUI_HWIN hWin)
     if (WM_GetActiveWindow() != WM_GetDsektopWindow(hWin)) {
 		lColor = WINDOW_TITLE_COLOR2;
     } else if (BUTTON_GetStatus(hWin)) { /* 按下 */
-		GUI_SetFGColor(0x00D04040);
+		GUI_SetForeground(0x00D04040);
         GUI_FillRect(0, 0, Rect.x1 + 1, Rect.y1 + 1);
     }
     /* 绘制'X' */
-	GUI_SetFGColor(lColor);
+	GUI_SetForeground(lColor);
 	x0 = Rect.x0 + (Rect.x1 - Rect.x0 - 9) / 2;
 	y0 = Rect.y0 + (Rect.y1 - Rect.y0 - 9) / 2;
 	GUI_DrawLine(x0, y0, x0 + 9, y0 + 9);
@@ -193,7 +193,7 @@ static void __BtnPaint(GUI_HWIN hWin)
 static void __CreateClient(WINDOW_Obj *pObj)
 {
     int xSize, ySize;
-    GUI_RECT *pr = &pObj->Widget.Win.Rect;
+    GUI_RECT *pr = &pObj->Widget.Win.rect;
 
     xSize = pr->x1 - pr->x0 - 1;
     ySize = pr->y1 - pr->y0 - pObj->CaptionHeight;
@@ -205,7 +205,7 @@ static void __CreateClient(WINDOW_Obj *pObj)
 void __CreateBtn(WINDOW_Obj *pObj)
 {
 	int xSize, ySize;
-	GUI_RECT *r = &pObj->Widget.Win.Rect;
+	GUI_RECT *r = &pObj->Widget.Win.rect;
 
 	xSize = r->x1 - r->x0 + 1;
 	ySize = pObj->CaptionHeight - 2;
@@ -216,15 +216,15 @@ void __CreateBtn(WINDOW_Obj *pObj)
 }
 
 /*
- * 创建窗口控件
- * x0:WINDOW控件的最左像素(相对于父窗口)
- * y0:WINDOW控件的最右像素(相对于父窗口)
- * xSize:WINDOW控件的水平宽度
- * ySize:WINDOW控件的竖直高度
- * hParent:父窗口句柄
- * Id:窗口ID
- * Flag:窗口状态
- * cb:用户回调历程指针
+ @ 创建窗口控件
+ @ x0:WINDOW控件的最左像素(相对于父窗口)
+ @ y0:WINDOW控件的最右像素(相对于父窗口)
+ @ xSize:WINDOW控件的水平宽度
+ @ ySize:WINDOW控件的竖直高度
+ @ hParent:父窗口句柄
+ @ Id:窗口ID
+ @ Flag:窗口状态
+ @ cb:用户回调历程指针
  **/
 WM_HWIN WINDOW_Create(int x0,
     int y0,
@@ -254,7 +254,7 @@ WM_HWIN WINDOW_Create(int x0,
     __CreateBtn(pObj);
     WM_SendMessage(pObj, WM_CREATED, (GUI_PARAM)NULL);
     /* 设置输入焦点 */
-    pObj->hFocus = ((WM_Obj *)pObj->hClient)->hFirstChild;
+    pObj->hFocus = WM_HandleToPtr(pObj->hClient)->hFirstChild;
     GUI_UNLOCK();
     return pObj;
 }

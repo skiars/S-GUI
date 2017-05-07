@@ -13,21 +13,21 @@ static void __Paint(WM_HWIN hWin)
     xSize = Rect.x1 + 1;
     ySize = Rect.y1 + 1;
     if (pObj->Check) {
-        GUI_SetFGColor(0x002060FF);
+        GUI_SetForeground(0x002060FF);
     } else {
-        GUI_SetFGColor(0x00708090);
+        GUI_SetForeground(0x00708090);
     }
     /* »æÖÆ±ß¿ò */
     GUI_DrawRect(0, 0, xSize, ySize);
     if (!pObj->Check && hFocus == pObj) {
-        GUI_SetFGColor(0x002060FF);
+        GUI_SetForeground(0x002060FF);
         GUI_DrawRect(1, 1, xSize - 2, ySize - 2);
     }
     if (pObj->Check && hFocus == pObj) {
-        GUI_SetFGColor(0X00B0E2FF);
+        GUI_SetForeground(0X00B0E2FF);
         GUI_SetFontColor(0X00000000);
     } else {
-        GUI_SetFGColor(0X00E5E5E5);
+        GUI_SetForeground(0X00E5E5E5);
         GUI_SetFontColor(0X00000000);
         pObj->Check = 0;
     }

@@ -3,6 +3,7 @@
 #include "GUI_Rect.h"
 #include "GUI_Malloc.h"
 #include "GUI_Color.h"
+#include "GUI_Core.h"
 
 static GUI_MEMDEV *_MemDevList, *_CurMemDev;
 
@@ -29,7 +30,7 @@ void GUI_MemDevCreate(GUI_HWIN hWin, u_8 PixelFormat)
         }
         pNode->pNext = NULL;
         pNode->hWin = hWin;
-        ((WM_Obj *)hWin)->Status |= WM_WS_MEMDEV;
+        WM_HandleToPtr(hWin)->status |= WM_WS_MEMDEV;
         r = WM_GetWindowRect(hWin);
         pNode->x0 = r->x0;
         pNode->y0 = r->y0;
@@ -63,7 +64,7 @@ void GUI_MemDevDelete(GUI_HWIN hWin)
 
 void GUI_SelectMemDev(GUI_HWIN hWin)
 {
-    if (((WM_Obj *)hWin)->Status & WM_WS_MEMDEV) {
+    if (WM_HandleToPtr(hWin)->status & WM_WS_MEMDEV) {
 
     }
 }

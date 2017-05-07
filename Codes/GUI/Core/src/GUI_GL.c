@@ -3,175 +3,69 @@
  *****************************************************************************/
 
 #include "GUI_GL.h"
+#include "GUI_DrawBase.h"
 #include "GUI.h"
 #include "GUI_Math.h"
-#include "GUI_GL_AA.h"
 
 /* 全透明直接返回 */
 #define RETURN_TRANSPARENT() \
-    if (GUI_Context.FGColor >> 24 == 0xff) return;
-
-#define FG_COLOR (GUI_Context.FGColor)
-#define BG_COLOR (GUI_Context.BGColor)
-
-static void _ClientToScreen(int *x, int *y)
-{
-    int xPos = GUI_Context.WinPos.x;
-    int yPos = GUI_Context.WinPos.y;
-
-    if (GUI_Context.AAEnable) {
-        int factor = GUI_Context.AAFactor;
-
-        xPos *= factor;
-        yPos *= factor;
-    }
-	*x += xPos;
-	*y += yPos;
-}
-
-static void _ClientToScreenRect(GUI_RECT *pRect)
-{
-    int xPos = GUI_Context.WinPos.x;
-    int yPos = GUI_Context.WinPos.y;
-
-    if (GUI_Context.AAEnable) {
-        int factor = GUI_Context.AAFactor;
-
-        xPos *= factor;
-        yPos *= factor;
-    }
-	pRect->x0 += xPos;
-	pRect->y0 += yPos;
-	pRect->x1 += xPos;
-	pRect->y1 += yPos;
-}
-
-/* 画直径为1的点 */
-static void _DrawPoint(int x, int y)
-{
-    GUI_RECT r1;
-
-    RETURN_TRANSPARENT();
-    _ClientToScreen(&x, &y); /* 转换到屏幕坐标系 */
-    GUI_Val2Rect(&r1, x, y, 1, 1);
-    GUI_DrawAreaInit(&r1);
-    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-        GL_SetPixelClip(x, y);
-    }
-}
+    if (GUI_CurrentForeground() >> 24 == 0xff) return;
 
 /* 画点 */
 void GUI_DrawPoint(int x,int y)
 {
-    if (GUI_Context.PenSize > 1) {
-        GUI_FillCircle(x, y, GUI_Context.PenSize / 2);
+    if (GUI_PenSize() > 1) {
+        GUI_FillCircle(x, y, GUI_PenSize() / 2);
     } else {
-        _DrawPoint(x, y);
-    }
-}
-
-static void _VertLine(int x0, int y0, int len)
-{
-    GUI_RECT r;
-
-    RETURN_TRANSPARENT();
-    _ClientToScreen(&x0, &y0); /* 转换到屏幕坐标系 */
-    if (GUI_Val2Rect(&r, x0, y0, 1, len)) {
-        GUI_DrawAreaInit(&r);
-        while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-            GL_DrawVLine(x0, y0, r.y1);
-        }
+        gui_gl_apis->setPixel(x, y, GUI_CurrentForeground());
     }
 }
 
 /* 画垂直线
- * x0,y0:坐标
- * len:线长度
- * color:颜色
+ @ x0,y0:坐标
+ @ len:线长度
+ @ color:颜色
  **/
-void GUI_VertLine(int x0,int y0,int len)
+void GUI_VertLine(int x, int y, int len)
 {
-    int w = GUI_Context.PenSize;
-    
-    if (w > 1) {
-        GUI_FillRect(x0, y0, w, len);
-    } else {
-        _VertLine(x0, y0, len);
-    }
-}
-
-static void _HoriLine(int x0, int y0, int len)
-{
-    GUI_RECT r;
-
-    RETURN_TRANSPARENT();
-    _ClientToScreen(&x0, &y0); /* 转换到屏幕坐标系 */
-    if (GUI_Val2Rect(&r, x0, y0, len, 1)) {
-        GUI_DrawAreaInit(&r);
-        while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-            GL_DrawHLine(x0, y0, r.x1);
-        }
-    }
+    gui_gl_apis->drawVLine(x, y, y + len - 1, GUI_CurrentForeground());
 }
 
 /* 画水平线
- * x0,y0:坐标
- * len:线长度
- * color:颜色
+ @ x0,y0:坐标
+ @ len:线长度
+ @ color:颜色
  **/
-void GUI_HoriLine(int x0, int y0, int len)
+void GUI_HoriLine(int x, int y, int len)
 {
-    int w = GUI_Context.PenSize;
-
-    if (w > 1) {
-        GUI_FillRect(x0, y0, len, w);
-    } else {
-        _HoriLine(x0, y0, len);
-    }
-}
-
-static void _DrawRect(int x0, int y0, int x1, int y1)
-{
-    GL_DrawHLine(x0, y0, x1);
-    GL_DrawHLine(x0, y1, x1);
-    GL_DrawVLine(x0, y0 + 1, y1 - 1);
-    GL_DrawVLine(x1, y0 + 1, y1 - 1);
+    gui_gl_apis->drawHLine(x, y, x + len - 1, GUI_CurrentForeground());
 }
 
 /* 画矩形框 */
-void GUI_DrawRect(int x0, int y0, int xSize, int ySize)
+void GUI_DrawRect(int x0, int y0, int width, int height)
 {
-    GUI_RECT r;
+    int x1 = x0 + width - 1, y1 = y0 + height - 1;
+    GUI_COLOR color = GUI_CurrentForeground();
 
-    _ClientToScreen(&x0, &y0); /* 转换到屏幕坐标系 */
-    if (GUI_Val2Rect(&r, x0, y0, xSize, ySize)) {
-        GUI_DrawAreaInit(&r);
-        while (GUI_GetNextArea()) {
-            _DrawRect(x0, y0, r.x1, r.y1);
-        }
-    }
+    gui_gl_apis->drawHLine(x0, y0, x1, color);
+    gui_gl_apis->drawHLine(x0, y1, x1, color);
+    gui_gl_apis->drawVLine(x0, y0 + 1, y1 - 1, color);
+    gui_gl_apis->drawVLine(x1, y0 + 1, y1 - 1, color);
 }
 
 /* 填充矩形 */
-void GUI_FillRect(int x0, int y0, int xSize, int ySize)
+void GUI_FillRect(int x0, int y0, int width, int height)
 {
-    GUI_RECT r;
-    
-    RETURN_TRANSPARENT();
-    _ClientToScreen(&x0, &y0); /* 转换到屏幕坐标系 */
-    /* 将矩形坐标转换为结构体 */
-    if (GUI_Val2Rect(&r, x0, y0, xSize, ySize)) {
-        GUI_DrawAreaInit(&r);
-        while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-            GL_FillRect(x0, y0, r.x1, r.y1);
-        }
-    }
+    gui_gl_apis->fillRect(x0, y0,
+        x0 + width - 1, y0 + height - 1,
+        GUI_CurrentForeground());
 }
 
-/* 画任意直线, 文件内部调用 */
-static void _DrawLine(int x0, int y0, int x1, int y1)
+/* 画任意直线 */
+void GUI_DrawLine(int x0, int y0, int x1, int y1)
 {
     int dx, dy, p, diff, addx, addy, i;
+    GUI_COLOR color = GUI_CurrentForeground();
 
     if (x0 < x1) {
         dx = x1 - x0;
@@ -192,7 +86,7 @@ static void _DrawLine(int x0, int y0, int x1, int y1)
         p = dy - dx;
         diff = p - dx;
         for (i = 0; i <= dx; ++i) {
-            GL_SetPixelClip(x0, y0);
+            gui_gl_apis->setPixel(x0, y0, color);
             x0 += addx;
             if (p < 0) {
                 p += dy;
@@ -206,7 +100,7 @@ static void _DrawLine(int x0, int y0, int x1, int y1)
         p = dx - dy;
         diff = p - dy;
         for (i = 0; i <= dy; ++i) {
-            GL_SetPixelClip(x0, y0);
+            gui_gl_apis->setPixel(x0, y0, color);
             y0 += addy;
             if (p < 0) {
                 p += dx;
@@ -218,173 +112,25 @@ static void _DrawLine(int x0, int y0, int x1, int y1)
     }
 }
 
-const int aTan[] = {
-	0,       /* atan(0/16) */
-	41,      /* atan(1/16) */
-	81,      /* atan(2/16) */
-	121,     /* atan(3/16) */
-	160,     /* atan(4/16) */
-	197,     /* atan(5/16) */
-	234,     /* atan(6/16) */
-	269,     /* atan(7/16) */
-	302,     /* atan(8/16) */
-	334,     /* atan(9/16) */
-	364,     /* atan(10/16) */
-	393,     /* atan(11/16) */
-	419,     /* atan(12/16) */
-	445,     /* atan(13/16) */
-	469,     /* atan(14/16) */
-	491,     /* atan(15/16) */
-	512      /* atan(1) = 45?= 512/1024 */
-};
-
-static int _atan0_45(int q)
-{
-	int r;
-	int i, Faktor;
-	/* Now angle is reduced to 0?<= <= 90?==>  0 <= <= 256*/
-	q >>= 2;    /* make sure we do not exceed 16 bits in calculations */
-	i = q >> 4;
-	Faktor = (1 << 4) - (q&((1 << 4) - 1));
-	r = aTan[i] * Faktor;
-	if (Faktor != (1 << 4)) {
-		r += aTan[i + 1] * ((1 << 4) - Faktor);
-	}
-	r = (r + (1 << 3)) / (1 << 4);   /* divide  incl. rounding */
-	return r;
-}
-
-static int _atan2(i_32 x, i_32 y)
-{
-	u_8 q = 0;
-	int angle;
-	/* first make sure we are in angle between 0 and 45?*/
-	if (x<0) {
-		q = 1;
-		x = -x;
-	}
-	if (y<0) {
-		q |= (1 << 1);
-		y = -y;
-	}
-	if (y>x) {
-		int t = y;
-		y = x;
-		x = t;
-		q |= (1 << 2);
-	}
-	y <<= 10;
-	y += (x / 2);
-	y /= x;
-	angle = _atan0_45(y);
-	if (q&(1 << 2)) { /* y/x reverse ? */
-		angle = GUI_90DEG - angle;
-	}
-	if (q & 1) {  /* xreverse ? */
-		angle = GUI_180DEG - angle;
-	}
-	if (q&(1 << 1)) { /* y-reverse ? */
-		angle = GUI_360DEG - angle;
-	}
-	return angle;
-}
-
-static void _CalcOrto(int xDiff, int yDiff, i_32 r, int *px, int *py)
-{
-	i_32 x, y;
-	int Angle = _atan2(xDiff, yDiff);
-	Angle += GUI_90DEG;
-	x = (r*(i_32)GUI_cos(Angle));
-	y = (r*(i_32)GUI_sin(Angle));
-	x = (x<0) ? -((-x + 512) >> 10) : ((x + 512) >> 10);
-	y = (y<0) ? -((-y + 512) >> 10) : ((y + 512) >> 10);
-	*px = x;
-	*py = y;
-}
-
-/* 画任意直线, 线宽大于1 */
-static void _DrawLineW(int x0, int y0, int x1, int y1)
-{
-	GUI_POINT Poly[4];
-	int w = GUI_Context.PenSize;
-	int xOff, yOff;
-	int xOffP, yOffP, xOffM, yOffM;
-
-	_CalcOrto(x0 - x1, y0 - y1, w - 1, &xOff, &yOff);
-	/* Do rounding for offsets */
-	if (xOff >0) {
-		xOffP = (xOff + 1) / 2;
-		xOffM = xOff / 2;
-	} else {
-		xOffP = xOff / 2;
-		xOffM = (xOff - 1) / 2;
-	}
-	if (yOff >0) {
-		yOffP = (yOff + 1) / 2;
-		yOffM = yOff / 2;
-	} else {
-		yOffP = yOff / 2;
-		yOffM = (yOff - 1) / 2;
-	}
-	Poly[0].x = x0 + xOffP;
-	Poly[0].y = y0 + yOffP;
-	Poly[1].x = x0 - xOffM;
-	Poly[1].y = y0 - yOffM;
-	Poly[2].x = x1 - xOffM;
-	Poly[2].y = y1 - yOffM;
-	Poly[3].x = x1 + xOffP;
-	Poly[3].y = y1 + yOffP;
-	GUI_FillPolygon(Poly, 4);
-}
-
-/* 画任意直线, 公共代码 */
-void GUI_DrawLine(int x0, int y0, int x1, int y1)
-{
-    int w = GUI_Context.PenSize;
-    GUI_RECT r;
-
-	if (w > 1) {
-		_DrawLineW(x0, y0, x1, y1);
-		return;
-	}
-    r.x0 = x0 < x1 ? x0 : x1;
-    r.y0 = y0 < y1 ? y0 : y1;
-    r.x1 = x0 > x1 ? x0 : x1;
-    r.y1 = y0 > y1 ? y0 : y1;
-    if (x0 == x1) { /* 竖直线 */
-        GUI_VertLine(r.x0, r.y0, r.y1 - r.y0 + 1);
-        return;
-    }
-    if (y0 == y1) { /* 水平线 */
-        GUI_HoriLine(r.x0, r.y0, r.x1 - r.x0 + 1);
-        return;
-    }
-	_ClientToScreenRect(&r);
-    _ClientToScreen(&x0, &y0);
-    _ClientToScreen(&x1, &y1);
-    GUI_DrawAreaInit(&r);
-    while (GUI_GetNextArea()) {
-        _DrawLine(x0, y0, x1, y1);
-    }
-}
-
 /* 画8点 */
 static void _Draw8Point(int x0, int y0, int x, int y)
 {
-    
-    GL_SetPixelClip(x0 + x, y0 - y);
-    GL_SetPixelClip(x0 - y, y0 - x);
-    GL_SetPixelClip(x0 - x, y0 + y);
-    GL_SetPixelClip(x0 + y, y0 + x);
+    GUI_COLOR color = GUI_CurrentForeground();
+
+    gui_gl_apis->setPixel(x0 + x, y0 - y, color);
+    gui_gl_apis->setPixel(x0 - y, y0 - x, color);
+    gui_gl_apis->setPixel(x0 - x, y0 + y, color);
+    gui_gl_apis->setPixel(x0 + y, y0 + x, color);
     if (x && x != y) {
-        GL_SetPixelClip(x0 - x, y0 - y);
-        GL_SetPixelClip(x0 - y, y0 + x);
-        GL_SetPixelClip(x0 + x, y0 + y);
-        GL_SetPixelClip(x0 + y, y0 - x);
+        gui_gl_apis->setPixel(x0 - x, y0 - y, color);
+        gui_gl_apis->setPixel(x0 - y, y0 + x, color);
+        gui_gl_apis->setPixel(x0 + x, y0 + y, color);
+        gui_gl_apis->setPixel(x0 + y, y0 - x, color);
     }
 }
 
-static void _DrawCircle(int x0, int y0, int r)
+/* 画圆 */
+void GUI_DrawCircle(int x0, int y0, int r)
 {
     int x, y = r, d = -(r >> 1);
 
@@ -399,83 +145,10 @@ static void _DrawCircle(int x0, int y0, int r)
     }
 }
 
-/* 画8点, 画线宽不为1的圆时调用 */
-static void _Draw8PointW(int x0, int y0, int x, int y, int y1)
-{
-    if (y1 - x < 0) {
-        y1 = x;
-    }
-    GL_DrawVLine(x0 + x, y0 - y, y0 - y1);
-    GL_DrawHLine(x0 - y, y0 - x, x0 - y1);
-    GL_DrawVLine(x0 - x, y0 + y1, y0 + y);
-    GL_DrawHLine(x0 + y1, y0 + x, x0 + y);
-    if (x) {
-        if (y1 == x) {
-            y1 = x + 1;
-        }
-        GL_DrawVLine(x0 - x, y0 - y, y0 - y1);
-        GL_DrawHLine(x0 - y, y0 + x, x0 - y1);
-        GL_DrawVLine(x0 + x, y0 + y1, y0 + y);
-        GL_DrawHLine(x0 + y1, y0 - x, x0 + y);
-    }
-}
-
-/* 画线宽不为1的圆 */
-static void _DrawCircleW(int x0, int y0, int r)
-{
-    int x, y = r, d = -(r >> 1);
-    int r1 = r - GUI_Context.PenSize + 1;
-    int y1 = r1, d1 = -(r1 >> 1);
-
-    for (x = 0; x <= y; ++x) {
-        if (d1 < 0) {
-            d1 += x;
-        } else {
-            d1 += x - y1;
-            --y1;
-        }
-        if (d < 0) {
-            d += x;
-        } else {
-            d += x - y;
-            --y;
-        }
-        _Draw8PointW(x0, y0, x, y, y1);
-    }
-}
-
-/* 画圆 */
-void GUI_DrawCircle(int x0, int y0, int r)
-{
-    int w = GUI_Context.PenSize;
-    GUI_RECT Rect;
-    void (*circle)(int, int, int);
-
-    if (w > 1) {
-        w >>= 1;
-        if (r <= w) {
-            GUI_FillCircle(x0, y0, r);
-            return;
-        }
-        circle = _DrawCircleW;
-        r += w;
-    } else {
-        circle = _DrawCircle;
-    }
-    _ClientToScreen(&x0, &y0); /* 转换到屏幕坐标系 */
-    Rect.x0 = x0 - r;
-    Rect.x1 = x0 + r;
-    Rect.y0 = y0 - r;
-    Rect.y1 = y0 + r;
-    GUI_DrawAreaInit(&Rect);
-    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-        circle(x0, y0, r);
-    }
-}
-
 /* 填充圆 */
-static void _FillCircle(int x0, int y0, int r)
+void GUI_FillCircle(int x0, int y0, int r)
 {
+    GUI_COLOR color = GUI_CurrentForeground();
     int i, x;
     int sqmax = r * r + r / 2;
     int yMin, yMax;
@@ -490,7 +163,7 @@ static void _FillCircle(int x0, int y0, int r)
             /* calc proper x-value */
             while ((i*i + x*x) >sqmax)
                 --x;
-            GL_DrawHLine(x0 - x, y, x0 + x);
+            gui_gl_apis->drawHLine(x0 - x, y, x0 + x, color);
         }
     }
     /* Draw bottom half */
@@ -500,24 +173,8 @@ static void _FillCircle(int x0, int y0, int r)
             /* calc proper x-value */
             while ((i*i + x*x) >sqmax)
                 --x;
-            GL_DrawHLine(x0 - x, y, x0 + x);
+            gui_gl_apis->drawHLine(x0 - x, y, x0 + x, color);
         }
-    }
-}
-
-/* 填充圆 */
-void GUI_FillCircle(int x0, int y0, int r)
-{
-    GUI_RECT Rect;
-
-    _ClientToScreen(&x0, &y0); /* 转换到屏幕坐标系 */
-    Rect.x0 = x0 - r;
-    Rect.x1 = x0 + r;
-    Rect.y0 = y0 - r;
-    Rect.y1 = y0 + r;
-    GUI_DrawAreaInit(&Rect);
-    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-        _FillCircle(x0, y0, r);
     }
 }
 
@@ -549,59 +206,41 @@ void GUI_GetPolyArea(GUI_RECT *r, GUI_POINT *Points, int cnt)
     }
 }
 
-/* 绘制多边形, 内部调用 */
-static void _DrawPolygon(GUI_POINT *Points, int cnt)
-{
-    int i;
-    int xPos = GUI_Context.WinPos.x;
-    int yPos = GUI_Context.WinPos.y;
-    GUI_POINT *p1, *p2;
-
-    if (GUI_Context.AAEnable) {
-        int factor = GUI_Context.AAFactor;
-
-        xPos *= factor;
-        yPos *= factor;
-    }
-    for (i = 0; i < cnt - 1; ++i) {
-        p1 = Points + i;
-        p2 = Points + i + 1;
-        _DrawLine(p1->x + xPos, p1->y + yPos, p2->x + xPos, p2->y + yPos);
-    }
-    p1 = Points + i;
-    p2 = Points;
-    _DrawLine(p1->x + xPos, p1->y + yPos, p2->x + xPos, p2->y + yPos);
-}
-
 /* 绘制多边形 */
 void GUI_DrawPolygon(GUI_POINT *Points, int cnt)
 {
-    GUI_RECT r;
+    int i;
+    int xPos = 0;
+    int yPos = 0;
+    GUI_POINT *p1, *p2;
 
-    GUI_GetPolyArea(&r, Points, cnt);
-    _ClientToScreenRect(&r);
-    GUI_DrawAreaInit(&r);
-    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-        _DrawPolygon(Points, cnt);
+    GUI_ClientToScreen(&xPos, &yPos); /* 获取屏幕偏移 */
+    for (i = 0; i < cnt - 1; ++i) {
+        p1 = Points + i;
+        p2 = Points + i + 1;
+        GUI_DrawLine(p1->x + xPos, p1->y + yPos, p2->x + xPos, p2->y + yPos);
     }
+    p1 = Points + i;
+    p2 = Points;
+    GUI_DrawLine(p1->x + xPos, p1->y + yPos, p2->x + xPos, p2->y + yPos);
 }
 
 /* 填充多边形, 内部调用 */
-static void _FillPolygon(GUI_POINT *Points, int cnt)
+void GUI_FillPolygon(GUI_POINT *Points, int cnt)
 {
-    int xPos = GUI_Context.WinPos.x;
-    int yPos = GUI_Context.WinPos.y;
+    int xPos = 0;
+    int yPos = 0;
     int yMax = Points->y, yMin = yMax;
     int y, i, j, nodes;
     static int nodeX[GUI_MAX_POLY_CORNERS];
     GUI_POINT *pi, *pj;
+    GUI_COLOR color = GUI_CurrentForeground();
 
-    if (GUI_Context.AAEnable) {
-        int factor = GUI_Context.AAFactor;
-
-        xPos *= factor;
-        yPos *= factor;
+    if (cnt > GUI_MAX_POLY_CORNERS) {
+        return;
     }
+
+    GUI_ClientToScreen(&xPos, &yPos); /* 获取屏幕偏移 */
     /* 找出最上面的行和最下面的行 */
     for (i = 0; i < cnt; ++i) {
         y = Points[i].y;
@@ -621,9 +260,9 @@ static void _FillPolygon(GUI_POINT *Points, int cnt)
             pj = Points + j; /* 边的终点 */
             if (pi->y == y && pj->y == y) { /* 水平边直接填充 */
                 if (pi->x < pj->x) {
-                    GL_DrawHLine(pi->x + xPos, y + yPos, pj->x + xPos);
+                    gui_gl_apis->drawHLine(pi->x + xPos, y + yPos, pj->x + xPos, color);
                 } else {
-                    GL_DrawHLine(pj->x + xPos, y + yPos, pi->x + xPos);
+                    gui_gl_apis->drawHLine(pj->x + xPos, y + yPos, pi->x + xPos, color);
                 }
             } else if (((pi->y < y) && (pj->y >= y))
                 || ((pj->y < y) && (pi->y >= y))) {
@@ -648,66 +287,20 @@ static void _FillPolygon(GUI_POINT *Points, int cnt)
         }
         /* 填充线绘制 */
         for (i = 0; i < nodes; i += 2) {
-            GL_DrawHLine(nodeX[i] + xPos, y + yPos, nodeX[i + 1] + xPos);
+            gui_gl_apis->drawHLine(nodeX[i] + xPos, y + yPos, nodeX[i + 1] + xPos, color);
         }
-    }
-}
-
-/* 填充多变形 */
-void GUI_FillPolygon(GUI_POINT *Points, int cnt)
-{
-    GUI_RECT r;
-
-    if (cnt > GUI_MAX_POLY_CORNERS) {
-        return;
-    }
-    GUI_GetPolyArea(&r, Points, cnt);
-    _ClientToScreenRect(&r);
-    GUI_DrawAreaInit(&r);
-    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-        _FillPolygon(Points, cnt);
-    }
-}
-
-/* 绘制折线, 内部调用 */
-static void _DrawLines(int x, int y, GUI_POINT *Points, int cnt)
-{
-    int i;
-    int xPos = GUI_Context.WinPos.x;
-    int yPos = GUI_Context.WinPos.y;
-    GUI_POINT *p1, *p2;
-    void(*draw)(int, int, int, int);
-
-    if (GUI_Context.AAEnable) {
-        int factor = GUI_Context.AAFactor;
-
-        xPos *= factor;
-        yPos *= factor;
-    }
-    xPos += x;
-    yPos += y;
-    if (GUI_Context.PenSize > 1) {
-        draw = _DrawLineW;
-    } else {
-        draw = _DrawLine;
-    }
-    for (i = 0; i < cnt - 1; ++i) {
-        p1 = Points + i;
-        p2 = Points + i + 1;
-        draw(p1->x + xPos, p1->y + yPos, p2->x + xPos, p2->y + yPos);
     }
 }
 
 /* 绘制折线 */
 void GUI_DrawLines(int x, int y, GUI_POINT *Points, int cnt)
 {
-    GUI_RECT r;
+    int i;
+    GUI_POINT *p1, *p2;
 
-    GUI_GetPolyArea(&r, Points, cnt);
-    GUI_MoveRect(&r, x, y);
-    _ClientToScreenRect(&r);
-    GUI_DrawAreaInit(&r);
-    while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-        _DrawLines(x, y, Points, cnt);
+    for (i = 0; i < cnt - 1; ++i) {
+        p1 = Points + i;
+        p2 = Points + i + 1;
+        GUI_DrawLine(p1->x + x, p1->y + x, p2->x + y, p2->y + y);
     }
 }

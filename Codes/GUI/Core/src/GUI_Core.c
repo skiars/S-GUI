@@ -1,9 +1,6 @@
 #include "GUI_Core.h"
 #include "GUI.h"
 
-GUI_HWIN GUI_RootWin;        /* 根窗口 */
-GUI_AREA GUI_AreaHeap;       /* 裁剪区域堆 */
-GUI_CONTEXT GUI_Context;     /* GUI上下文 */
 static void * __LockPtr;
 static u_32 __LockTaskId;
 static int __TaskLockCnt;
@@ -33,8 +30,6 @@ GUI_RESULT GUI_Init(void)
     }
     GUI_SetFont(&GUI_DEF_FONT);
     GUI_SetPenSize(1); /* 默认线宽为1 */
-	GUI_Context.AAEnable = 0;
-	GUI_Context.AAFactor = 3;
     return GUI_OK;
 }
 
@@ -42,29 +37,10 @@ GUI_RESULT GUI_Init(void)
 void GUI_Unload(void)
 {
     GUI_LOCK();
-    WM_DeleteWindow(_hRootWin); /* 删除所有窗口 */
+    WM_DeleteWindow(gui_rootwin); /* 删除所有窗口 */
     GUI_MessageQueueDelete();   /* 删除消息队列 */
     GUI_DeleteDeviceList();     /* 删除设备列表 */
     GUI_UNLOCK();
-}
-
-/* 获取屏幕尺寸 */
-void GUI_ScreenSize(int *xSize, int *ySize)
-{
-    *xSize = GUI_GDev->Width;
-    *ySize = GUI_GDev->Height;
-}
-
-/* 获取屏幕宽度 */
-int GUI_GetScreenWidth(void)
-{
-    return GUI_GDev->Width;
-}
-
-/* 获取屏幕高度 */
-int GUI_GetScreenHeight(void)
-{
-    return GUI_GDev->Height;
 }
 
 /* GUI延时并更新 */
@@ -103,175 +79,6 @@ void GUI_UNLOCK(void)
     if (--__TaskLockCnt == 0) {
         GUI_TaskUnlock(__LockPtr);
     }
-}
-
-/* 复制图形上下文 */
-static void _CopyContext(GUI_CONTEXT *pDst, GUI_CONTEXT *pSrc)
-{
-    pDst->Font = pSrc->Font;
-    pDst->BGColor = pSrc->BGColor;
-    pDst->FGColor = pSrc->FGColor;
-    pDst->FontColor = pSrc->FontColor;
-    pDst->PenSize = pSrc->PenSize;
-}
-
-/* GUI开始绘制 */
-GUI_BOOL GUI_StartPaint(GUI_HWIN hWin, GUI_CONTEXT *Backup)
-{
-    GUI_RECT *r;
-    GUI_AREA Area;
-
-    Area = GUI_GetWindowClipArea(hWin); /* 获取窗口的剪切域 */
-    if (Area) {
-        _CopyContext(Backup, &GUI_Context); /* 备份图形上下文 */
-        r = WM_GetWindowRect(hWin);
-        GUI_Context.Area = Area;
-        GUI_Context.InvalidRect = WM_GetWindowInvalidRect(hWin);
-        GUI_Context.hWin = hWin;
-        GUI_Context.WinPos.x = r->x0;
-        GUI_Context.WinPos.y = r->y0;
-        return GUI_OK;
-    }
-    return GUI_ERR;
-}
-
-/* GUI绘制结束 */
-void GUI_EndPaint(GUI_CONTEXT *Backup)
-{
-    _CopyContext(&GUI_Context, Backup); /* 还原图形上下文 */
-}
-
-/* 获取当前绘制的窗口 */
-GUI_HWIN GUI_GetPaintWindow(void)
-{
-    return GUI_Context.hWin;
-}
-
-/* 返回当前的剪切域 */
-GUI_AREA GUI_GetClipArea(void)
-{
-    return GUI_Context.Area;
-}
-
-/* 初始化绘制区域 */
-void GUI_DrawAreaInit(GUI_RECT *p)
-{
-    GUI_RECT r;
-    GUI_RECT *pInvalid = GUI_Context.InvalidRect;
-
-	if (GUI_Context.AAEnable) {
-		int factor = GUI_Context.AAFactor;
-
-		r.x0 = pInvalid->x0 * (int)factor;
-		r.y0 = pInvalid->y0 * (int)factor;
-		r.x1 = (pInvalid->x1 + 1) * (int)factor - 1;
-		r.y1 = (pInvalid->y1 + 1) * (int)factor - 1;
-    } else {
-        r = *pInvalid;
-    }
-    if (GUI_RectOverlay(&GUI_Context.DrawRect, &r, p)) {
-        GUI_Context.pAreaNode = GUI_Context.Area;
-    } else {
-        GUI_Context.pAreaNode = NULL; /* 绘图区域与当前的有效绘制区域不相交 */
-    }
-}
-
-/* 获取下一个裁剪矩形 */
-GUI_BOOL GUI_GetNextArea(void)
-{
-    GUI_BOOL res = FALSE;
-    GUI_AREA Area;
-	GUI_RECT r;
-	GUI_RECT *ClipRect = &GUI_Context.ClipRect;
-	GUI_RECT *DrawRect = &GUI_Context.DrawRect;
-
-    while (GUI_Context.pAreaNode && res == FALSE) { /* 直到找到下一个相交的矩形 */
-        Area = GUI_Context.pAreaNode;
-        GUI_Context.pAreaNode = Area->pNext;
-		if (GUI_Context.AAEnable) {
-			int factor = GUI_Context.AAFactor;
-
-			r.x0 = Area->Rect.x0 * (int)factor;
-			r.y0 = Area->Rect.y0 * (int)factor;
-			r.x1 = (Area->Rect.x1 + 1) * (int)factor;
-			r.y1 = (Area->Rect.y1 + 1) * (int)factor - 1;
-		} else {
-			r = Area->Rect;
-		}
-        res = GUI_RectOverlay(ClipRect, DrawRect, &r);
-    }
-    return res;
-}
-
-/* 转换到屏幕坐标 */
-void GUI_ClientToScreen(int *x, int *y)
-{
-    *x += GUI_Context.WinPos.x;
-    *y += GUI_Context.WinPos.y;
-}
-
-/* 矩形转换到屏幕坐标 */
-void GUI_ClientToScreenRect(GUI_RECT *pRect)
-{
-    pRect->x0 += GUI_Context.WinPos.x;
-    pRect->y0 += GUI_Context.WinPos.y;
-    pRect->x1 += GUI_Context.WinPos.x;
-    pRect->y1 += GUI_Context.WinPos.y;
-}
-
-/* 转换到窗口坐标 */
-void GUI_ScreenToClient(int *x, int *y)
-{
-    *x -= GUI_Context.WinPos.x;
-    *y -= GUI_Context.WinPos.y;
-}
-
-/* 获取当前窗口在窗口坐标系下的矩形 */
-void GUI_GetClientRect(GUI_RECT *pRect)
-{
-    GUI_RECT *p;
-
-    p = WM_GetWindowRect(GUI_Context.hWin);
-    pRect->x0 = 0;
-    pRect->y0 = 0;
-    pRect->x1 = p->x1 - p->x0;
-    pRect->y1 = p->y1 - p->y0;
-}
-
-/* 设置当前字体 */
-void GUI_SetFont(GUI_FONT *Font)
-{
-    GUI_Context.Font = Font;
-}
-
-/* 设置背景色 */
-void GUI_SetBGColor(GUI_COLOR Color)
-{
-    GUI_Context.BGColor = Color;
-}
-
-/* 设置前景色 */
-void GUI_SetFGColor(GUI_COLOR Color)
-{
-    GUI_Context.FGColor = Color;
-}
-
-/* 设置字体颜色 */
-void GUI_SetFontColor(GUI_COLOR Color)
-{
-    GUI_Context.FontColor = Color;
-}
-
-/* 设置画笔大小 */
-void GUI_SetPenSize(int Width)
-{
-    GUI_Context.PenSize = Width;
-}
-
-/* 设置抗锯齿等级 */
-void GUI_SetAAFactor(int Factor)
-{
-    GUI_Context.AAFactor = Factor;
 }
 
 /* GUI调试输出 */

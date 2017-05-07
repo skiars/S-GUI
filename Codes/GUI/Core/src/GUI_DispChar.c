@@ -1,4 +1,5 @@
 #include "GUI_DispChar.h"
+#include "GUI_DrawBase.h"
 #include "GUI.h"
 #include "string.h"
 #include "GUI_Font.h"
@@ -6,7 +7,7 @@
 /* 获取字符信息 */
 static GUI_CHARINFO * _GetCharInfo(const int Char)
 {
-    GUI_FONT_PROP *pProp = GUI_Context.Font->pProp;
+    GUI_FONT_PROP *pProp = GUI_CurrentFont()->pProp;
 
     while (pProp) {
         if (Char >= pProp->FirstChar && Char <= pProp->LastChar) {
@@ -20,7 +21,7 @@ static GUI_CHARINFO * _GetCharInfo(const int Char)
 /* 获取当前字体字符的高度 */
 int GUI_GetCharHeight(void)
 {
-    return GUI_Context.Font->CharHeight;
+    return GUI_CurrentFont()->CharHeight;
 }
 
 /* 获取当前字体字符的宽度 */
@@ -49,13 +50,13 @@ int GUI_GetStringWidth(const char *Str)
 /* 字符显示透明度混合函数 */
 static void _CharSetPixel(int x, int y, u_8 light, u_8 pp)
 {
-    GUI_COLOR FontColor = GUI_Context.FontColor;
+    GUI_COLOR FontColor = GUI_CurrentFontColor();
 
     pp = (1 << pp) - 1;
     if (light == pp) { /* 不必计算透明度 */
-        GL_SetPixel(x, y, FontColor);
+        gui_gl_apis->setPixel(x, y, FontColor);
     } else { /* 抗锯齿字体计算透明度 */
-        GUI_COLOR BGColor = GL_GetPixel(x, y);
+        GUI_COLOR BGColor = gui_gl_apis->getPixel(x, y);
         GUI_COLOR R = ((FontColor >> 16) & 0xFF) * light / pp;
         GUI_COLOR G = ((FontColor >> 8) & 0xFF) * light / pp;
         GUI_COLOR B = (FontColor & 0xFF) * light / pp;
@@ -64,7 +65,7 @@ static void _CharSetPixel(int x, int y, u_8 light, u_8 pp)
         R += ((BGColor >> 16) & 0xFF) * light / pp;
         G += ((BGColor >> 8) & 0xFF) * light / pp;
         B += (BGColor & 0xFF) * light / pp;
-        GL_SetPixel(x, y, R << 16 | G << 8 | B);
+        gui_gl_apis->setPixel(x, y, R << 16 | G << 8 | B);
     }
 }
 
@@ -83,9 +84,6 @@ static void _DispChar(int x0,    /* 显示位置 */
     int ySize, i, j;
     const unsigned char *ptab;
 
-    /* 裁剪至显示区域 */
-    CLIP_X(x0, x1);
-    CLIP_Y(y0, y1);
     ySize = y1 - y0 + 1;
     pData += (y0 - y) * BytesPerLine + (x0 - x) / BytePixels;
     x0Shift = PixBits * ((x0 - x) & (BytePixels - 1));
@@ -168,10 +166,10 @@ static void _DispChar(int x0,    /* 显示位置 */
 }
 #endif
 
-/* 显示一个字符(绝对坐标) */
+/* 显示一个字符 */
 static int _DispCharAbs(int x, int y, int Char)
 {
-    u_8 PixBits = GUI_Context.Font->FontType;
+    u_8 PixBits = GUI_CurrentFont()->FontType;
     int Width, Height = GUI_GetCharHeight();
     GUI_CHARINFO *cInfo = _GetCharInfo(Char);
 
@@ -182,19 +180,16 @@ static int _DispCharAbs(int x, int y, int Char)
 
         Width = cInfo->XSize;
         GUI_Val2Rect(&r, x, y, Width, Height);
-        GUI_DrawAreaInit(&r);
-        while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-            _DispChar(r.x0, r.y0, r.x1, r.y1, pData, PixBits, BytesPerLine);
-        }
+        _DispChar(r.x0, r.y0, r.x1, r.y1, pData, PixBits, BytesPerLine);
         return Width;
     }
     return 0; /* 字体中没有该字符 */
 }
 
-/* 在指定矩形区域内显示一个字符(绝对坐标) */
+/* 在指定矩形区域内显示一个字符 */
 static int _DispCharInRectAbs(GUI_RECT *pRect, int Char)
 {
-    u_8 PixBits = GUI_Context.Font->FontType;
+    u_8 PixBits = GUI_CurrentFont()->FontType;
     int Width, Height = GUI_GetCharHeight();
     GUI_CHARINFO *cInfo = _GetCharInfo(Char);
 
@@ -206,11 +201,8 @@ static int _DispCharInRectAbs(GUI_RECT *pRect, int Char)
         Width = cInfo->XSize;
         GUI_Val2Rect(&r, pRect->x0, pRect->y0, Width, Height);
         if (GUI_RectOverlay(&r, pRect, &r) == TRUE) {
-            GUI_DrawAreaInit(&r);
-            while (GUI_GetNextArea()) { /* 遍历所有的显示区域 */
-                _DispChar(pRect->x0, pRect->y0, pRect->x1,
-                    pRect->y1, pData, PixBits, BytesPerLine);
-            }
+            _DispChar(r.x0, r.y0, r.x1,
+                r.y1, pData, PixBits, BytesPerLine);
             return Width;
         }
     }
@@ -228,14 +220,12 @@ int GUI_DispCharInRect(GUI_RECT *pRect, int Char)
 {
     GUI_RECT r = *pRect;
 
-    GUI_ClientToScreenRect(&r);
     return _DispCharInRectAbs(&r, Char);
 }
 
 /* 在当前的显示区域下显示一串字符串 */
 void GUI_DispString(int x0, int y0, const char *Str)
 {
-    GUI_ClientToScreen(&x0, &y0);
     while (*Str) {
         x0 += _DispCharAbs(x0, y0, *Str++);
     }
@@ -248,7 +238,6 @@ void GUI_DispStringInRect(GUI_RECT *pRect, const char *Str, u_8 Align)
     int Height = GUI_GetCharHeight();
     int Width = GUI_GetStringWidth(Str);
 
-    GUI_ClientToScreenRect(&r);
     /* 计算水平对齐方式, 默认左对齐 */
     switch (Align & (GUI_ALIGN_LEFT | GUI_ALIGN_RIGHT | GUI_ALIGN_HCENTER)) {
     case GUI_ALIGN_RIGHT: /* 右对齐 */

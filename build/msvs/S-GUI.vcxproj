@@ -16,9 +16,13 @@
     <ClCompile Include="..\..\Codes\App\main.c" />
     <ClCompile Include="..\..\Codes\App\pic_rootwin.c" />
     <ClCompile Include="..\..\Codes\App\sdlscreen.c" />
-    <ClCompile Include="..\..\Codes\GUI\Config\GUI_Botton.c" />
+    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_Rasterizer_AA.c" />
+    <ClCompile Include="..\..\Codes\GUI\Config\GUI_Bottom.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_ClipAreaHeap.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Context.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_PaintArea.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_DrawBase.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_GL.c" />
-    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_GL_AA.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Bitmap.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_ClipArea.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Color.c" />
@@ -32,12 +36,11 @@
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Queue.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Rect.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_String.c" />
-    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Surface.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Timer.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_TouchPad.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_WM.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\linked_list.c" />
-    <ClCompile Include="..\..\Codes\GUI\Core\src\RootWindow.c" />
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_RootWin.c" />
     <ClCompile Include="..\..\Codes\GUI\Fonts\ASCII_8x16.c" />
     <ClCompile Include="..\..\Codes\GUI\Fonts\UI17_4pp.c" />
     <ClCompile Include="..\..\Codes\GUI\Widget\BUTTON.c" />
@@ -50,12 +53,14 @@
     <ClInclude Include="..\..\Codes\App\game.h" />
     <ClInclude Include="..\..\Codes\App\GUI_Test.h" />
     <ClInclude Include="..\..\Codes\App\sdlscreen.h" />
-    <ClInclude Include="..\..\Codes\GUI\Config\GUI_Botton.h" />
+    <ClInclude Include="..\..\Codes\GUI\Config\GUI_Bottom.h" />
     <ClInclude Include="..\..\Codes\GUI\Config\GUI_Config.h" />
     <ClInclude Include="..\..\Codes\GUI\Config\GUI_Typedef.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Context.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_PaintArea.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_DrawBase.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_GL.h" />
-    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_GL_AA.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Bitmap.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_ClipArea.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Color.h" />
@@ -69,12 +74,11 @@
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Queue.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Rect.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_String.h" />
-    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Surface.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Timer.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_TouchPad.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_WM.h" />
     <ClInclude Include="..\..\Codes\GUI\Core\inc\linked_list.h" />
-    <ClInclude Include="..\..\Codes\GUI\Core\inc\RootWindow.h" />
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_RootWin.h" />
     <ClInclude Include="..\..\Codes\GUI\Fonts\GUI_Font.h" />
     <ClInclude Include="..\..\Codes\GUI\Widget\BUTTON.h" />
     <ClInclude Include="..\..\Codes\GUI\Widget\WIDGET.h" />
@@ -130,7 +134,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\Codes\GUI\Config;..\..\Codes\GUI\Core\inc;..\..\Codes\GUI\Fonts;..\..\Codes\GUI\Widget;..\..\Codes\sdl\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Codes\GUI\AntiAliasing\inc;..\..\Codes\GUI\Config;..\..\Codes\GUI\Core\inc;..\..\Codes\GUI\Fonts;..\..\Codes\GUI\Widget;..\..\Codes\sdl\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -151,7 +155,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\Codes\GUI\Config;..\..\Codes\GUI\Core\inc;..\..\Codes\GUI\Fonts;..\..\Codes\GUI\Widget;..\..\Codes\sdl\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Codes\GUI\AntiAliasing\inc;..\..\Codes\GUI\Config;..\..\Codes\GUI\Core\inc;..\..\Codes\GUI\Fonts;..\..\Codes\GUI\Widget;..\..\Codes\sdl\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

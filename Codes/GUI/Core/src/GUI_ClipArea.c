@@ -36,10 +36,10 @@ GUI_AREA GUI_ClipExcludeRect(GUI_AREA Area, GUI_RECT *Rect)
 static GUI_AREA _ClipTransChildren(GUI_AREA L, WM_Obj *pWin)
 {
     for (pWin = pWin->hFirstChild; pWin && L; pWin = pWin->hNext) {
-        if (pWin->Status & WM_WS_TRANS) {
+        if (pWin->status & WM_WS_TRANS) {
             L = _ClipTransChildren(L, pWin); /* 裁剪子窗口 */
         } else {
-            L = GUI_ClipExcludeRect(L, &pWin->Rect);  /* 裁剪透明窗口的孩子 */
+            L = GUI_ClipExcludeRect(L, &pWin->rect);  /* 裁剪透明窗口的孩子 */
         }
     }
     return L;
@@ -62,14 +62,14 @@ GUI_AREA GUI_ClipOneWindow(GUI_HWIN hWin)
        逐个计算窗口的裁剪矩形链表，最后就能得到这个窗口被它们遮挡后的裁剪矩形链表. */
     /* 再遍历它右边的同属窗口及祖先的同属窗口 */
     pObj = pWin;
-    while (pObj != _pRootWin && Area) {
+    while (pObj != gui_rootwin && Area) {
         while (pObj->hNext && Area) {
             pObj = pObj->hNext; /* 向右遍历 */
             /* 如果是普通窗口就直接计算裁剪，如果是透明窗口就用它的孩子来计算裁剪 */
-            if (pObj->Status & WM_WS_TRANS) {
+            if (pObj->status & WM_WS_TRANS) {
                 Area = _ClipTransChildren(Area, pObj);
             } else {
-                Area = GUI_ClipExcludeRect(Area, &pObj->Rect);
+                Area = GUI_ClipExcludeRect(Area, &pObj->rect);
             }
         }
         pObj = pObj->hParent; /* 向上遍历 */
@@ -79,10 +79,10 @@ GUI_AREA GUI_ClipOneWindow(GUI_HWIN hWin)
         pObj = pWin->hFirstChild;
         while (pObj && Area) {
             /* 如果是普通窗口就直接计算裁剪，如果是透明窗口就用它的孩子来计算裁剪 */
-            if (pObj->Status & WM_WS_TRANS) {
+            if (pObj->status & WM_WS_TRANS) {
                 Area = _ClipTransChildren(Area, pObj);
             } else {
-                Area = GUI_ClipExcludeRect(Area, &pObj->Rect);
+                Area = GUI_ClipExcludeRect(Area, &pObj->rect);
             }
             pObj = pObj->hNext; /* 向右遍历 */
         }
@@ -100,21 +100,21 @@ void GUI_ClipNewWindow(GUI_HWIN hWin)
     GUI_RECT Rect;
 
     /* 透明窗口直接返回 */
-    if (pWin->Status & WM_WS_TRANS) {
-        pWin->ClipArea = NULL;
+    if (pWin->status & WM_WS_TRANS) {
+        pWin->clipArea = NULL;
         return;
     }
     /* 计算新窗口的剪切域 */
-    pWin->ClipArea = GUI_ClipOneWindow(hWin);
+    pWin->clipArea = GUI_ClipOneWindow(hWin);
     WM_GetWindowAreaRect(hWin, &Rect);
     do {
         pWin = pWin->hParent; /* 跳过透明的祖先 */
-    } while (pWin && pWin->Status & WM_WS_TRANS);
+    } while (pWin && pWin->status & WM_WS_TRANS);
     /* 从窗口的父亲开始计算。 */
     while (pWin && pWin != hWin) {
-        if (!(pWin->Status & WM_WS_TRANS)) {
+        if (!(pWin->status & WM_WS_TRANS)) {
             /* 在窗口原来剪切域的基础上排除新窗口的矩形 */
-            pWin->ClipArea = GUI_ClipExcludeRect(pWin->ClipArea, &Rect);
+            pWin->clipArea = GUI_ClipExcludeRect(pWin->clipArea, &Rect);
         }
         pWin = pWin->hNextLine;
     }
@@ -131,13 +131,13 @@ void GUI_WindowClipArea(GUI_HWIN hWin)
 
     do {
         pWin = pWin->hParent; /* 跳过透明的祖先 */
-    } while (pWin && pWin->Status & WM_WS_TRANS);
+    } while (pWin && pWin->status & WM_WS_TRANS);
     while (pWin) {
-        GUI_FreeRectList(pWin->ClipArea);
-        if (!(pWin->Status & WM_WS_TRANS)) {
+        GUI_FreeRectList(pWin->clipArea);
+        if (!(pWin->status & WM_WS_TRANS)) {
             GUI_ClipNewWindow(pWin);
         } else {
-            pWin->ClipArea = NULL; /* 透明窗口不计算剪切域  */
+            pWin->clipArea = NULL; /* 透明窗口不计算剪切域  */
         }
         pWin = pWin->hNextLine;
     }
@@ -148,7 +148,7 @@ void GUI_WindowClipArea(GUI_HWIN hWin)
  **/
 void GUI_DeleteWindowClipArea(GUI_HWIN hWin)
 {
-    GUI_FreeRectList(((WM_Obj *)hWin)->ClipArea);
+    GUI_FreeRectList(WM_HandleToPtr(hWin)->clipArea);
 }
 
 /**
@@ -170,11 +170,11 @@ void GUI_ClipWindows(GUI_HWIN hWin)
         }
         /* 先计算到hWin之前的剪切域 */
         for (; pWin != pEnd; pWin = pWin->hNextLine) {
-            GUI_FreeRectList(pWin->ClipArea);
-            if (!(pWin->Status & WM_WS_TRANS)) {
+            GUI_FreeRectList(pWin->clipArea);
+            if (!(pWin->status & WM_WS_TRANS)) {
                 GUI_ClipNewWindow(pWin);
             } else {
-                pWin->ClipArea = NULL; /* 透明窗口不计算剪切域  */
+                pWin->clipArea = NULL; /* 透明窗口不计算剪切域  */
             }
         }
     }
@@ -188,10 +188,10 @@ GUI_AREA GUI_GetWindowClipArea(GUI_HWIN hWin)
 
     if (pWin) {
         /* 透明窗口直接返回上一个窗口用的剪切域 */
-        if (pWin->Status & WM_WS_TRANS) {
-            return GUI_GetClipArea();
+        if (pWin->status & WM_WS_TRANS) {
+            return GUI_CurrentClipArea();
         }
-        return pWin->ClipArea;
+        return pWin->clipArea;
     }
     return NULL;
 }

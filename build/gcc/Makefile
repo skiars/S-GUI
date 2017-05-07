@@ -23,11 +23,13 @@ endif
 
 APPDIR	 =	../../Codes/App/
 CFGDIR	 = 	../../Codes/GUI/Config/
+AADIR	 =	../../Codes/GUI/AntiAliasing/src/
 COREDIR	 =	../../Codes/GUI/Core/src/
 WDGTDIR	 =	../../Codes/GUI/Widget/
 FONTDIR	 =	../../Codes/GUI/Fonts/
 
 INCS	 =	-I"../../Codes/App"			\
+		-I"../../Codes/GUI/AntiAliasing/inc"	\
 		-I"../../Codes/GUI/Config"		\
 		-I"../../Codes/GUI/Core/inc"		\
 		-I"../../Codes/GUI/Fonts"		\
@@ -42,30 +44,33 @@ OBJ      = 	$(APPDIR)game.o				\
 		$(CFGDIR)GUI_Bottom.o			\
 		$(COREDIR)GUI_Bitmap.o			\
 		$(COREDIR)GUI_ClipArea.o		\
+		$(COREDIR)GUI_ClipAreaHeap.o		\
 		$(COREDIR)GUI_Color.o			\
+		$(COREDIR)GUI_Context.o			\
 		$(COREDIR)GUI_Core.o			\
 		$(COREDIR)GUI_Device.o			\
 		$(COREDIR)GUI_DispChar.o		\
+		$(COREDIR)GUI_DrawBase.o		\
 		$(COREDIR)GUI_GL.o			\
-		$(COREDIR)GUI_GL_AA.o			\
 		$(COREDIR)GUI_KeyBoard.o		\
 		$(COREDIR)GUI_Malloc.o			\
 		$(COREDIR)GUI_Math.o			\
+		$(COREDIR)GUI_MemDev.o			\
+		$(COREDIR)GUI_PaintArea.o		\
 		$(COREDIR)GUI_Queue.o			\
 		$(COREDIR)GUI_Rect.o			\
+		$(COREDIR)GUI_RootWin.o			\
 		$(COREDIR)GUI_String.o			\
-		$(COREDIR)GUI_Surface.o			\
 		$(COREDIR)GUI_Timer.o			\
 		$(COREDIR)GUI_TouchPad.o		\
 		$(COREDIR)GUI_WM.o			\
 		$(COREDIR)linked_list.o			\
-		$(COREDIR)RootWindow.o			\
-		$(COREDIR)GUI_MemDev.o			\
 		$(WDGTDIR)WIDGET.o			\
 		$(WDGTDIR)BUTTON.o			\
 		$(WDGTDIR)WINDOW.o			\
 		$(FONTDIR)ASCII_8x16.o			\
-		$(FONTDIR)UI17_4pp.o
+		$(FONTDIR)UI17_4pp.o			\
+		$(AADIR)GUI_Rasterizer_AA.o
 
 $(BIN): $(OBJ)
 	$(Q) echo [Linking...]

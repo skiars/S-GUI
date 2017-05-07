@@ -37,6 +37,9 @@
     <Filter Include="App\src">
       <UniqueIdentifier>{777d1b75-a909-46ad-b963-cd1ba62c2aff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="S-GUI\AntiAliasing">
+      <UniqueIdentifier>{8a69a1d5-ef74-49c8-8d22-efd5fb962033}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Bitmap.c">
@@ -78,9 +81,6 @@
     <ClCompile Include="..\..\Codes\GUI\Core\src\linked_list.c">
       <Filter>S-GUI\Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Codes\GUI\Core\src\RootWindow.c">
-      <Filter>S-GUI\Core\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Codes\GUI\Fonts\ASCII_8x16.c">
       <Filter>S-GUI\Fonts</Filter>
     </ClCompile>
@@ -95,9 +95,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Codes\GUI\Widget\WINDOW.c">
       <Filter>S-GUI\Widget\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Codes\GUI\Config\GUI_Botton.c">
-      <Filter>S-GUI\Config</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Codes\App\game.c">
       <Filter>App\src</Filter>
@@ -123,13 +120,7 @@
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_GL.c">
       <Filter>S-GUI\Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_GL_AA.c">
-      <Filter>S-GUI\Core\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Math.c">
-      <Filter>S-GUI\Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Surface.c">
       <Filter>S-GUI\Core\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_MemDev.c">
@@ -137,6 +128,27 @@
     </ClCompile>
     <ClCompile Include="..\..\Codes\GUI\Widget\CHECKBOX.c">
       <Filter>S-GUI\Widget\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Config\GUI_Bottom.c">
+      <Filter>S-GUI\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_Rasterizer_AA.c">
+      <Filter>S-GUI\AntiAliasing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_DrawBase.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Context.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_ClipAreaHeap.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_PaintArea.c">
+      <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_RootWin.c">
+      <Filter>S-GUI\Core\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,9 +194,6 @@
     <ClInclude Include="..\..\Codes\GUI\Core\inc\linked_list.h">
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Codes\GUI\Core\inc\RootWindow.h">
-      <Filter>S-GUI\Core\inc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Codes\GUI\Fonts\GUI_Font.h">
       <Filter>S-GUI\Fonts</Filter>
     </ClInclude>
@@ -196,9 +205,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Codes\GUI\Widget\WINDOW.h">
       <Filter>S-GUI\Widget\inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Codes\GUI\Config\GUI_Botton.h">
-      <Filter>S-GUI\Config</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Codes\GUI\Config\GUI_Config.h">
       <Filter>S-GUI\Config</Filter>
@@ -227,16 +233,25 @@
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_GL.h">
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_GL_AA.h">
-      <Filter>S-GUI\Core\inc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Math.h">
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Surface.h">
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_MemDev.h">
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_MemDev.h">
+    <ClInclude Include="..\..\Codes\GUI\Config\GUI_Bottom.h">
+      <Filter>S-GUI\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_DrawBase.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_Context.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_PaintArea.h">
+      <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_RootWin.h">
       <Filter>S-GUI\Core\inc</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,1 +1,1 @@
-Ö§³ÖMinGW£¬TDM-GCC£¬Linux¡£
+Compiler support: MinGW, TDM-GCC, Linux GCC¡£
