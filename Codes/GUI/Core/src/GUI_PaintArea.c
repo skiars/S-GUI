@@ -3,40 +3,42 @@
 #include "GUI_ClipArea.h"
 #include "GUI_Rect.h"
 
-/* 备份图形上下文 */
-static void _BackupContext(GUI_CONTEXT *pDst, GUI_CONTEXT *pSrc)
+/* 绘制时默认的上下文*/
+static GUI_PAINTCONTEXT paint_context;
+
+/* 备份默认的上下文 */
+void GUI_BackupContext(void)
 {
-    pDst->font = pSrc->font;
-    pDst->background = pSrc->background;
-    pDst->foreground = pSrc->foreground;
-    pDst->fontColor = pSrc->fontColor;
-    pDst->penSize = pSrc->penSize;
+    paint_context.font = gui_context.font;
+    paint_context.background = gui_context.background;
+    paint_context.foreground = gui_context.foreground;
+    paint_context.fontColor = gui_context.fontColor;
+    paint_context.penSize = gui_context.penSize;
 }
 
-/* GUI开始绘制 */
-GUI_BOOL GUI_PaintStart(GUI_HWIN hWin, GUI_CONTEXT *Backup)
+/* 同步绘制上下文 */
+void GUI_SyncContext(void)
+{
+    gui_context.font = paint_context.font;
+    gui_context.background = paint_context.background;
+    gui_context.foreground = paint_context.foreground;
+    gui_context.fontColor = paint_context.fontColor;
+    gui_context.penSize = paint_context.penSize;
+}
+
+/* 填充图形上下文 */
+void GUI_SetContext(GUI_HWIN hWin)
 {
     GUI_RECT *r;
     GUI_AREA Area;
 
     Area = GUI_GetWindowClipArea(hWin); /* 获取窗口的剪切域 */
-    if (Area) {
-        _BackupContext(Backup, &gui_context); /* 备份图形上下文 */
-        r = WM_GetWindowRect(hWin);
-        gui_context.area = Area;
-        gui_context.invalidRect = WM_GetWindowInvalidRect(hWin);
-        gui_context.hWin = hWin;
-        gui_context.winPos.x = r->x0;
-        gui_context.winPos.y = r->y0;
-        return GUI_OK;
-    }
-    return GUI_ERR;
-}
-
-/* GUI绘制结束 */
-void GUI_PaintEnd(GUI_CONTEXT *Backup)
-{
-    _BackupContext(&gui_context, Backup); /* 还原图形上下文 */
+    r = WM_GetWindowRect(hWin);
+    gui_context.hWin = hWin;
+    gui_context.area = Area;
+    gui_context.invalidRect = WM_GetWindowInvalidRect(hWin);
+    gui_context.winPos.x = r->x0;
+    gui_context.winPos.y = r->y0;
 }
 
 /* 初始化绘制区域 */

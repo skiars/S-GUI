@@ -116,6 +116,13 @@ static inline GUI_AREA GUI_CurrentClipArea(void)
     return gui_context.area;
 }
 
+/* set current window position */
+static inline void GUI_SetWinPos(int x, int y)
+{
+    gui_context.winPos.x = x;
+    gui_context.winPos.y = y;
+}
+
 void GUI_ClientToScreen(int *x, int *y);
 void GUI_ClientToScreenRect(GUI_RECT *pRect);
 void GUI_ScreenToClient(int *x, int *y);

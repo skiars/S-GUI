@@ -39,16 +39,16 @@ static void _RootWinPaint(WM_HWIN hWin)
 
 static void _RootWinTimer(WM_HWIN hWin)
 {
-    //GUI_RECT Rect = { 10, 300, 150, 320 };
+    GUI_RECT Rect = { 10, 300, 150, 320 };
 
 #if _MSC_VER > 1500
     sprintf_s(_Str, sizeof(_Str), "FPS: %d, CPU: %d%%", _FpsVal, _CPUUsage);
 #else
     sprintf(_Str, "FPS: %d, CPU: %d%%", _FpsVal, _CPUUsage);
 #endif // _WIN32
-    
-    //WM_InvalidateRect(gui_rootwin, &Rect);
-    WM_Invalidate(gui_rootwin);
+
+    WM_InvalidateRect(gui_rootwin, &Rect);
+    //WM_Invalidate(gui_rootwin);
     _FpsVal = 0; /* Ö¡ÂÊÇåÁã */
     printf("Mem usage: %d bytes\n", GUI_GetMemUsage());
 }
@@ -114,25 +114,84 @@ void Create_Window3(void)
 
 void Window4_Cb(WM_MESSAGE *pMsg)
 {
+    WM_HWIN hWin;
+    int x, y;
+    static int pos, status;
+    static PosPoint p[3] = {
+        10, 10,
+        300, 100,
+        10, 120
+    };
+
+    hWin = WM_GetClientWindow(pMsg->hWin);
     switch (pMsg->MsgId) {
     case WM_PAINT:
-    {
-        Rasterizer *ras = render_init();
+        if (pMsg->hWinSrc == hWin) {
+            GUI_Rasterizer *ras = rasterizer_init();
+            StrokeLine vc;
 
-        GUI_SetForeground(0x00FF00FF);
-        ras->min_ex = 10;
-        ras->max_ex = 60;
-        ras->min_ey = 20;
-        ras->max_ey = 90;
-        GUI_MoveTo(ras, 10 * 256, 20 * 256);
-        GUI_LineTo(ras, 60 * 256, 80 * 256);
-        GUI_LineTo(ras, 100 * 256, 83 * 256);
-        GUI_LineTo(ras, 50 * 256, 30 * 256);
-        GUI_LineTo(ras, 40 * 256, 40 * 256);
-        GUI_LineTo(ras, 10 * 256, 20 * 256);
-        sweep_scanlines(ras);
-        render_free(ras);
-    }
+            ras->min_ex = 0;
+            ras->max_ex = 400;
+            ras->min_ey = 0;
+            ras->max_ey = 300;
+
+            curve2(ras, p[0].x, p[0].y,
+                p[1].x, p[1].y, p[2].x, p[2].y);
+
+            GUI_SetForeground(0x00);
+            sweep_scanlines(ras);
+            rasterizer_free(ras);
+
+            ras = rasterizer_init();
+            ras->min_ex = 0;
+            ras->max_ex = 400;
+            ras->min_ey = 0;
+            ras->max_ey = 300;
+
+            GUI_SetForeground(0x00556B2F);
+            vc.width = 10.0f;
+            line_set_to(&vc, p[0].x, p[0].y);
+            line_move_to(ras, &vc, p[1].x, p[1].y);
+            line_move_to(ras, &vc, p[2].x, p[2].y);
+            //line_move_to(ras, &vc, p[0].x, p[0].y);
+            line_stoke_end(ras, &vc);
+            sweep_scanlines(ras);
+            rasterizer_free(ras);
+
+            /*GUI_SetForeground(0x00FF0000);
+            GUI_SetPenSize(6);
+            GUI_DrawPoint((int)p[0].x, (int)p[0].y);
+            GUI_DrawPoint((int)p[1].x, (int)p[1].y);
+            GUI_DrawPoint((int)p[2].x, (int)p[2].y);*/
+        }
+        break;
+    case WM_CREATED:
+        //GUI_TimerCreate(hWin, 0, 40, GUI_TMR_AUTO);
+        break;
+    case WM_TP_CHECKED:
+        GUI_SetWinPos(WM_HandleToPtr(hWin)->rect.x0, WM_HandleToPtr(hWin)->rect.y0);
+        x = (((GUI_POINT*)pMsg->Param)[0].x);
+        y = (((GUI_POINT*)pMsg->Param)[0].y);
+        GUI_ScreenToClient(&x, &y);
+        for (pos = 0; pos < 3; ++pos) {
+            if (x <= p[pos].x + 3 && x >= p[pos].x - 3 &&
+                y <= p[pos].y + 3 && y >= p[pos].y - 3) {
+                status = 1;
+                break;
+            } else {
+                status = 0;
+            }
+        }
+    case WM_TP_PRESS:
+        if (status) {
+            x = (((GUI_POINT*)pMsg->Param)[0].x);
+            y = (((GUI_POINT*)pMsg->Param)[0].y);
+            GUI_ScreenToClient(&x, &y);
+            p[pos].x = (pos_t)x;
+            p[pos].y = (pos_t)y;
+            WM_Invalidate(hWin);
+        }
+        break;
     }
 }
 
@@ -140,8 +199,8 @@ void Create_Window4(void)
 {
     WM_HWIN hWin;
 
-    hWin = WINDOW_Create(100, 100, 200,
-        200, NULL, WINDOW4, WM_WS_MOVE, Window4_Cb);
+    hWin = WINDOW_Create(100, 100, 400,
+        300, NULL, WINDOW4, WM_WS_MOVE, Window4_Cb);
     WINDOW_SetTitle(hWin, "AntiAliasing Test");
 }
 

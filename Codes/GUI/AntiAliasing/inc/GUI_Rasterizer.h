@@ -33,9 +33,9 @@ typedef struct {
     int  max_cells;
     int  num_cells;
 
-    void (*fill_span)(int x0, int y0, int x1);
+    void (*add_span)(int x0, int y0, int x1, int alpha);
     void (*blend_pixel)(int x0, int y0, unsigned alpha);
-} Rasterizer;
+} GUI_Rasterizer;
 
 typedef struct {
     int min_x;
@@ -45,10 +45,11 @@ typedef struct {
     Span *span;
 } Scanline;
 
-Rasterizer *render_init(void);
-void render_free(Rasterizer *ras);
-void GUI_MoveTo(Rasterizer *ras, int x, int y);
-void GUI_LineTo(Rasterizer *ras, int to_x, int to_y);
-void sweep_scanlines(Rasterizer *ras);
+GUI_Rasterizer *rasterizer_init(void);
+void rasterizer_free(GUI_Rasterizer *ras);
+void ras_move_to(GUI_Rasterizer *ras, int x, int y);
+void ras_line_to(GUI_Rasterizer *ras, int to_x, int to_y);
+void sweep_scanlines(GUI_Rasterizer *ras);
+void ras_render_line(GUI_Rasterizer *ras, int x1, int y1, int x2, int y2);
 
 #endif

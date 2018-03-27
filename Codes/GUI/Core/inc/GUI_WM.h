@@ -70,9 +70,23 @@ typedef struct {
 extern WM_HWIN gui_rootwin;
 
 /* inline functions */
+
+/* WM handle to pointer */
 static inline WM_Obj* WM_HandleToPtr(WM_HWIN hWin)
 {
     return (WM_Obj *)hWin;
+}
+
+/* get window rect */
+static inline GUI_RECT * WM_GetWindowRect(WM_HWIN hWin)
+{
+    return &WM_HandleToPtr(hWin)->rect;
+}
+
+/* get window invalid rect */
+static inline GUI_RECT * WM_GetWindowInvalidRect(WM_HWIN hWin)
+{
+    return &WM_HandleToPtr(hWin)->invalidRect;
 }
 
 GUI_RESULT WM_Init(void);

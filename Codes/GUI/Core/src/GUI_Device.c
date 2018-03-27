@@ -20,17 +20,21 @@ static GUI_COLOR _getPixel(int x, int y)
 static void _drawHLine(int x0, int y0, int x1, GUI_COLOR Color)
 {
     while (x0 <= x1) {
-        HL_SetPixel(x0, y0, Color);
-        ++x0;
+        HL_SetPixel(x0++, y0, Color);
     }
+}
+
+/* 半透明水平线 */
+static void _blendHLine(int x0, int y0, int x1, GUI_COLOR Color)
+{
+
 }
 
 /* 在设备上画垂直线 */
 static void _drawVLine(int x0, int y0, int y1, GUI_COLOR Color)
 {
     while (y0 <= y1) {
-        HL_SetPixel(x0, y0, Color);
-        ++y0;
+        HL_SetPixel(x0, y0++, Color);
     }
 }
 
@@ -41,7 +45,7 @@ static void _fillRect(GUI_FLIPOUT *Cmd)
     GUI_COLOR Color = Cmd->Color;
 
     while (y0 <= y1) {
-        gui_graph_dev->drawHLine(x0, y0, x1, Color);
+        gui_graph_dev->drawHLine(x0, y0++, x1, Color);
     }
 }
 

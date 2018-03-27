@@ -162,6 +162,10 @@ static void __ClientCallback(WM_MESSAGE *pMsg)
     }
     UserCb = ((WINDOW_Obj*)hParent)->UserCb;
     if (UserCb) {
+        // WM_PAINT消息下传送源窗口句柄
+        if (pMsg->MsgId == WM_PAINT) {
+            pMsg->hWinSrc = pMsg->hWin;
+        }
         pMsg->hWin = hParent;
         UserCb(pMsg);
     }

@@ -157,21 +157,21 @@ void GUI_FillCircle(int x0, int y0, int r)
     yMax = y0 + r;
 
     /* Draw top half */
-    for (i = 0, x = r; i<r; i++) {
+    for (i = 0, x = r; i <= r; i++) {
         int y = y0 - i;
         if ((y >= yMin) && (y <= yMax)) {
             /* calc proper x-value */
-            while ((i*i + x*x) >sqmax)
+            while ((i * i + x * x) > sqmax)
                 --x;
             gui_gl_apis->drawHLine(x0 - x, y, x0 + x, color);
         }
     }
     /* Draw bottom half */
-    for (i = 0, x = r; i<r; i++) {
+    for (i = 0, x = r; i <= r; i++) {
         int y = y0 + i;
         if ((y >= yMin) && (y <= yMax)) {
             /* calc proper x-value */
-            while ((i*i + x*x) >sqmax)
+            while ((i * i + x * x) > sqmax)
                 --x;
             gui_gl_apis->drawHLine(x0 - x, y, x0 + x, color);
         }

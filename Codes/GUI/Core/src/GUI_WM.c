@@ -106,13 +106,12 @@ static void _Invalidate1Abs(WM_Obj *pWin, GUI_RECT *pr)
 /* 重绘一个窗口 */
 static void _PaintOne(WM_Obj *pWin)
 {
-    GUI_CONTEXT Context;
-
-    if (GUI_PaintStart(pWin, &Context) == GUI_OK) {
-        /* 重绘窗口 */
+    /* 重绘窗口 */
+    GUI_SetContext(pWin);
+    if (GUI_CurrentClipArea()) {
         WM_SendMessage(pWin, WM_PAINT, 0);
-        GUI_PaintEnd(&Context);
     }
+    GUI_SyncContext();
 }
 
 /* 绘制窗口的透明子窗口 */
@@ -194,6 +193,7 @@ void WM_Exec(void)
 {
     WM_MESSAGE Msg;
 
+    GUI_BackupContext(); /* 备份上下文 */
     /* WM消息环 */
     while (GUI_GetMessage(&Msg) == GUI_OK) {
         WM__DispatchMessage(&Msg); /* 派发消息 */
@@ -734,18 +734,6 @@ GUI_RESULT WM_InvalidTree(WM_HWIN hWin)
     }
     GUI_UNLOCK();
     return GUI_OK;
-}
-
-/* 获取窗口的尺寸 */
-GUI_RECT * WM_GetWindowRect(WM_HWIN hWin)
-{
-    return &WM_HandleToPtr(hWin)->rect;
-}
-
-/* 获取窗口无效区域 */
-GUI_RECT * WM_GetWindowInvalidRect(WM_HWIN hWin)
-{
-    return &WM_HandleToPtr(hWin)->invalidRect;
 }
 
 /*

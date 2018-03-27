@@ -1,4 +1,4 @@
-#include "GUI_Rasterizer_AA.h"
+#include "GUI_Rasterizer.h"
 #include "GUI_DrawBase.h"
 #include "GUI.h"
 
@@ -16,12 +16,14 @@ enum {
     cell_block_limit   = 1024
 };
 
-static void record_curr_cell(Rasterizer *ras)
+static void record_curr_cell(GUI_Rasterizer *ras)
 {
     TCell  **pcell, *cell;
     int  x = ras->ex;
 
-
+    if (ras->ey < ras->min_ey || ras->ey > ras->max_ey) {
+        return;
+    }
     pcell = &ras->ycells[ras->ey - ras->min_ey];
     for (;;) {
         cell = *pcell;
@@ -47,10 +49,13 @@ static void record_curr_cell(Rasterizer *ras)
     *pcell = cell;
 }
 
-static void set_curr_cell(Rasterizer *ras, int ex, int ey)
+static void set_curr_cell(GUI_Rasterizer *ras, int ex, int ey)
 {
     if (ex < ras->min_ex) {
-        ex = ras->min_ex;
+        ex = ras->min_ex - 1;
+    }
+    if (ex > ras->max_ex) {
+        ex = ras->max_ex + 1;
     }
     if (ras->ex != ex || ras->ey != ey) {
         record_curr_cell(ras);
@@ -61,9 +66,9 @@ static void set_curr_cell(Rasterizer *ras, int ex, int ey)
     }
 }
 
-static void render_hline(Rasterizer *ras, int ey,
-                                             int x1, int y1,
-                                             int x2, int y2)
+static void render_hline(GUI_Rasterizer *ras, int ey,
+                                              int x1, int y1,
+                                              int x2, int y2)
 {
     int ex1 = x1 >> poly_subpixel_shift;
     int ex2 = x2 >> poly_subpixel_shift;
@@ -149,8 +154,8 @@ static void render_hline(Rasterizer *ras, int ey,
     ras->area += (fx2 + poly_subpixel_scale - first) * delta;
 }
 
-// 渲染一条线
-static void render_line(Rasterizer *ras, int x1, int y1, int x2, int y2)
+// render a outline
+void ras_render_line(GUI_Rasterizer *ras, int x1, int y1, int x2, int y2)
 {
     int dx = x2 - x1;
     int dy = y2 - y1;
@@ -281,7 +286,7 @@ static unsigned calculate_alpha(int area)
 }
 
 // 渲染扫描线
-void sweep_scanlines(Rasterizer *ras)
+void sweep_scanlines(GUI_Rasterizer *ras)
 {
     int y;
 
@@ -299,30 +304,34 @@ void sweep_scanlines(Rasterizer *ras)
             cell = cell->next;
             if (area) {
                 alpha = calculate_alpha((cover << (poly_subpixel_shift + 1)) - area);
-                if (alpha) {
+                if (alpha && x >= ras->min_ex && x <= ras->max_ex) {
                     ras->blend_pixel(x, y, alpha);
                 }
                 x++;
             }
             if (cover && cell && cell->x > x) { // 填充内部
-                ras->fill_span(x, y, cell->x - 1);
+                alpha = calculate_alpha(cover << (poly_subpixel_shift + 1));
+                ras->add_span(x, y, cell->x - 1, alpha);
             }
         }
     }
 }
 
-void GUI_MoveTo(Rasterizer *ras, int x, int y)
+void ras_move_to(GUI_Rasterizer *ras, int x, int y)
 {
+    record_curr_cell(ras); // 保存最后一个cell
     ras->x = x;
     ras->y = y;
     ras->ex = x >> poly_subpixel_shift;
     ras->ey = y >> poly_subpixel_shift;
+    ras->cover = 0;
+    ras->area = 0;
 }
 
 // 添加一条边
-void GUI_LineTo(Rasterizer *ras, int to_x, int to_y)
+void ras_line_to(GUI_Rasterizer *ras, int to_x, int to_y)
 {
-    render_line(ras, ras->x, ras->y, to_x, to_y);
+    ras_render_line(ras, ras->x, ras->y, to_x, to_y);
     ras->x = to_x;
     ras->y = to_y;
 }
@@ -340,19 +349,33 @@ static void fill_span(int x0, int y0, int x1)
     gui_gl_apis->drawHLine(x0, y0, x1, color);
 }
 
-Rasterizer *render_init(void)
+static void add_span(int x0, int y0, int x1, int alpha)
 {
-    int ycount = 256;
-    Rasterizer *ras = (Rasterizer *)GUI_Malloc(sizeof(Rasterizer));
+    if (alpha == 0) {
+        return;
+    }
+    if (alpha == 0xFF) {
+        fill_span(x0, y0, x1);
+        return;
+    }
+    while (x0 <= x1) {
+        blend_pixel(x0++, y0, alpha);
+    }
+}
 
-    ras->cells = (TCell *)GUI_Malloc(sizeof(TCell) * 1000);
+GUI_Rasterizer *rasterizer_init(void)
+{
+    int ycount = 400;
+    GUI_Rasterizer *ras = (GUI_Rasterizer *)GUI_Malloc(sizeof(GUI_Rasterizer));
+
+    ras->cells = (TCell *)GUI_Malloc(sizeof(TCell) * 3000);
     ras->ycells = (TCell **)GUI_Malloc(sizeof(TCell *) * ycount);
     while (ycount--) {
         ras->ycells[ycount] = NULL;
     }
     ras->num_cells = 0;
     ras->blend_pixel = blend_pixel;
-    ras->fill_span = fill_span;
+    ras->add_span = add_span;
     ras->ey = 0;
     ras->ex = 0;
     ras->min_ex = 0;
@@ -364,7 +387,7 @@ Rasterizer *render_init(void)
     return ras;
 }
 
-void render_free(Rasterizer *ras)
+void rasterizer_free(GUI_Rasterizer *ras)
 {
     GUI_Free(ras->cells);
     GUI_Free(ras->ycells);

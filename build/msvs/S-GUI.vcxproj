@@ -16,7 +16,10 @@
     <ClCompile Include="..\..\Codes\App\main.c" />
     <ClCompile Include="..\..\Codes\App\pic_rootwin.c" />
     <ClCompile Include="..\..\Codes\App\sdlscreen.c" />
-    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_Rasterizer_AA.c" />
+    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_Curves.c" />
+    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_Rasterizer.c" />
+    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_RenderBase.c" />
+    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_StrokeLine.c" />
     <ClCompile Include="..\..\Codes\GUI\Config\GUI_Bottom.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_ClipAreaHeap.c" />
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Context.c" />
@@ -53,6 +56,12 @@
     <ClInclude Include="..\..\Codes\App\game.h" />
     <ClInclude Include="..\..\Codes\App\GUI_Test.h" />
     <ClInclude Include="..\..\Codes\App\sdlscreen.h" />
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_AATypedef.h" />
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_AntiAliasing.h" />
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_Curves.h" />
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_Rasterizer.h" />
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_RenderBase.h" />
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_StrokeLine.h" />
     <ClInclude Include="..\..\Codes\GUI\Config\GUI_Bottom.h" />
     <ClInclude Include="..\..\Codes\GUI\Config\GUI_Config.h" />
     <ClInclude Include="..\..\Codes\GUI\Config\GUI_Typedef.h" />

@@ -40,6 +40,12 @@
     <Filter Include="S-GUI\AntiAliasing">
       <UniqueIdentifier>{8a69a1d5-ef74-49c8-8d22-efd5fb962033}</UniqueIdentifier>
     </Filter>
+    <Filter Include="S-GUI\AntiAliasing\src">
+      <UniqueIdentifier>{d662a925-3eae-49d0-96f3-65834c63aed7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="S-GUI\AntiAliasing\inc">
+      <UniqueIdentifier>{ae448299-4114-46a5-8129-440a80c7e15a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_Bitmap.c">
@@ -132,9 +138,6 @@
     <ClCompile Include="..\..\Codes\GUI\Config\GUI_Bottom.c">
       <Filter>S-GUI\Config</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_Rasterizer_AA.c">
-      <Filter>S-GUI\AntiAliasing</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_DrawBase.c">
       <Filter>S-GUI\Core\src</Filter>
     </ClCompile>
@@ -149,6 +152,18 @@
     </ClCompile>
     <ClCompile Include="..\..\Codes\GUI\Core\src\GUI_RootWin.c">
       <Filter>S-GUI\Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_Rasterizer.c">
+      <Filter>S-GUI\AntiAliasing\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_RenderBase.c">
+      <Filter>S-GUI\AntiAliasing\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_StrokeLine.c">
+      <Filter>S-GUI\AntiAliasing\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Codes\GUI\AntiAliasing\src\GUI_Curves.c">
+      <Filter>S-GUI\AntiAliasing\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +268,24 @@
     </ClInclude>
     <ClInclude Include="..\..\Codes\GUI\Core\inc\GUI_RootWin.h">
       <Filter>S-GUI\Core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_Rasterizer.h">
+      <Filter>S-GUI\AntiAliasing\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_AntiAliasing.h">
+      <Filter>S-GUI\AntiAliasing\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_RenderBase.h">
+      <Filter>S-GUI\AntiAliasing\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_StrokeLine.h">
+      <Filter>S-GUI\AntiAliasing\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_Curves.h">
+      <Filter>S-GUI\AntiAliasing\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Codes\GUI\AntiAliasing\inc\GUI_AATypedef.h">
+      <Filter>S-GUI\AntiAliasing\inc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
